@@ -66,3 +66,4 @@
 - [x] Fix: Pilar "Princípio" (P) ausente nos cartões de resumo da seção Jefferson
 - [x] Efeito flip 3D nos cartões P.A.G.O. da seção Jefferson (hover revela descrição)
 - [x] Skill reutilizável editorial-landing-platform criada em skills/ (sincronizada com GitHub)
+- [x] Skill: Adicionar references/ui-components.md com snippets de Navbar, Footer e Flip Cards

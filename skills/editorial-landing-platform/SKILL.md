@@ -53,6 +53,8 @@ Build as separate components in `client/src/components/`:
 | FAQ | `FAQSection.tsx` | Accordion with shadcn/ui `Accordion` |
 | Footer | `Footer.tsx` | Logo, nav links, legal links (privacy, terms, cookies), social |
 
+See `references/ui-components.md` for complete snippets of Navbar (scroll-aware + mobile drawer), Footer (multi-column + legal links), Flip Cards (3D hover reveal), Cookie Banner (LGPD), and CTA Form (honeypot + consent).
+
 For flip card animations, use CSS `perspective` + `rotateY(180deg)` with React `onMouseEnter`/`onMouseLeave` state. Use inline styles for `transition` and `transform` (Tailwind 4 `duration-600` may not compile).
 
 **Static assets:** Upload all images/media to CDN via `manus-upload-file --webdev`. Never store in project directory.
