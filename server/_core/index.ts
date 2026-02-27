@@ -33,6 +33,9 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
+  // Trust proxy for correct IP detection behind reverse proxy
+  app.set('trust proxy', 1);
+
   // ─── Apply Security Layers FIRST ──────────────────────────
   applyAllSecurity(app);
 

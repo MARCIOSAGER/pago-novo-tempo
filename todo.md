@@ -35,3 +35,21 @@
 - [x] Logging de segurança (audit trail)
 - [x] Proteção contra path traversal em uploads
 - [x] Honeypot anti-bot no formulário
+- [x] Fix: Navbar com fundo ciano/turquesa — conflito de cores CSS com template padrão
+- [x] Fix: Corrigir conflito de cores CSS na navbar (fundo ciano/turquesa)
+- [x] Criar CONTEXT.md com informações completas do site, segurança e arquitetura para IA
+- [x] Criar README.md profissional do projeto
+- [x] Banner de consentimento de cookies (LGPD)
+- [x] Página de Política de Privacidade
+- [x] Página de Termos de Uso
+- [x] Página de Política de Cookies
+- [x] Consentimento LGPD no formulário de inscrição
+- [x] Chatbot flutuante com IA integrada ao contexto P.A.G.O.
+- [x] Links legais no Footer
+- [x] Criar CONTEXT.md com informações completas do site
+- [x] Criar README.md profissional do projeto
+- [x] Logo para fundo escuro (versão branca/dourada)
+- [x] Logo ícone/símbolo compacto
+- [x] Favicon (16x16, 32x32, 192x192)
+- [x] Logo para redes sociais (versão quadrada)
+- [x] Integrar todas as variações no site

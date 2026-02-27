@@ -2,6 +2,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { Link } from "wouter";
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -30,6 +31,7 @@ export default function CTASection() {
     website: "", // Honeypot field — hidden from users, filled by bots
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [lgpdConsent, setLgpdConsent] = useState(false);
 
   const submitMutation = trpc.mentoria.submit.useMutation({
     onSuccess: (data) => {
@@ -52,6 +54,10 @@ export default function CTASection() {
     e.preventDefault();
 
     // Client-side validation
+    if (!lgpdConsent) {
+      toast.error("Você precisa aceitar a Política de Privacidade para continuar.");
+      return;
+    }
     if (formData.name.trim().length < 2) {
       toast.error("Nome deve ter pelo menos 2 caracteres.");
       return;
@@ -216,15 +222,37 @@ export default function CTASection() {
                   placeholder="Conte-nos um pouco sobre você..."
                 />
               </div>
+              {/* LGPD Consent Checkbox */}
+              <div className="flex items-start gap-3 mt-2">
+                <input
+                  type="checkbox"
+                  id="lgpd-consent"
+                  checked={lgpdConsent}
+                  onChange={(e) => setLgpdConsent(e.target.checked)}
+                  className="mt-1 w-4 h-4 accent-gold shrink-0 cursor-pointer"
+                />
+                <label htmlFor="lgpd-consent" className="font-body text-[11px] text-warm-white/50 leading-relaxed cursor-pointer">
+                  Li e concordo com a{" "}
+                  <Link href="/privacidade">
+                    <span className="text-gold hover:text-gold-light underline underline-offset-2 cursor-pointer">Política de Privacidade</span>
+                  </Link>{" "}
+                  e os{" "}
+                  <Link href="/termos">
+                    <span className="text-gold hover:text-gold-light underline underline-offset-2 cursor-pointer">Termos de Uso</span>
+                  </Link>.
+                  Autorizo o tratamento dos meus dados pessoais conforme a LGPD (Lei 13.709/2018).
+                </label>
+              </div>
+
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !lgpdConsent}
                 className="w-full font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy py-4 hover:bg-gold-light transition-all duration-300 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? "Enviando..." : "Quero me Inscrever"}
               </button>
               <p className="font-body text-[11px] text-warm-white/30 text-center">
-                Ao se inscrever, você concorda com nossos termos de uso e política de privacidade.
+                Seus dados estão protegidos conforme a LGPD. Você pode solicitar a exclusão a qualquer momento.
               </p>
             </form>
           </FadeIn>

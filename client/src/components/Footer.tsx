@@ -1,3 +1,5 @@
+import { Link } from "wouter";
+
 const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo_ea5770c3.jpeg";
 
 export default function Footer() {
@@ -99,6 +101,25 @@ export default function Footer() {
           <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-warm-white/20">
             &copy; {new Date().getFullYear()} P.A.G.O. Novo Tempo. Todos os direitos reservados.
           </p>
+          <div className="flex items-center gap-4">
+            <Link href="/privacidade">
+              <span className="font-accent text-[10px] uppercase tracking-[0.15em] text-warm-white/30 hover:text-warm-white/60 transition-colors cursor-pointer">
+                Privacidade
+              </span>
+            </Link>
+            <Link href="/termos">
+              <span className="font-accent text-[10px] uppercase tracking-[0.15em] text-warm-white/30 hover:text-warm-white/60 transition-colors cursor-pointer">
+                Termos
+              </span>
+            </Link>
+            <Link href="/cookies">
+              <span className="font-accent text-[10px] uppercase tracking-[0.15em] text-warm-white/30 hover:text-warm-white/60 transition-colors cursor-pointer">
+                Cookies
+              </span>
+            </Link>
+          </div>
+        </div>
+        <div className="mt-4 text-center">
           <p className="font-body text-[11px] text-warm-white/20 italic">
             "Não estou construindo sucesso. Estou administrando uma visão."
           </p>

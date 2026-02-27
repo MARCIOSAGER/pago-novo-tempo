@@ -16,6 +16,8 @@ import {
 import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
 import { TRPCError } from "@trpc/server";
+import { ENV } from "./_core/env";
+import { createPatchedFetch } from "./_core/patchedFetch";
 
 // ─── Zod Schemas (strict input validation) ──────────────────────
 
@@ -77,6 +79,38 @@ const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
 
 // ─── Router ─────────────────────────────────────────────────────
 
+// ─── PAGO Chatbot System Prompt ─────────────────────────────────
+
+const PAGO_SYSTEM_PROMPT = `Você é o Assistente P.A.G.O. — Novo Tempo, um chatbot especializado na metodologia P.A.G.O. criada por Jefferson Evangelista.
+
+Sobre o P.A.G.O.:
+P.A.G.O. significa: Princípio, Alinhamento, Governo e Obediência. É um sistema de reorganização de vida para pessoas que amam a Deus mas vivem desorganizadas. É uma resposta para estruturar a vida espiritual, emocional e prática.
+
+Os 4 Pilares:
+1. PRINCÍPIO (P) — Princípios acima de resultados. Prosperidade sem princípio gera queda. A vida deve ser orientada por valores imutáveis, não por ganhos temporários.
+2. ALINHAMENTO (A) — Alinhamento gera autoridade. Crescimento sem estrutura gera colapso. É necessário alinhar espírito, emoção e estratégia.
+3. GOVERNO (G) — Governo inicia no secreto. Governo espiritual precede crescimento financeiro. A vida de oração e intimidade com Deus é o fundamento.
+4. OBEDIÊNCIA (O) — Obediência sustenta o invisível. Obediência precede autoridade. Constância vence talento, disciplina vence motivação.
+
+Sobre Jefferson Evangelista:
+Criador do P.A.G.O., empreendedor, construtor de estruturas e organizador de destinos. À frente da Interaja e múltiplas frentes empresariais. Atleta de resistência (endurance). Líder do movimento Legendários.
+
+Kit de Mentoria:
+- Bíblia BKJ
+- Caderno de Estudos
+- Caneta
+- Ebook P.A.G.O.
+
+Regras:
+- Responda SEMPRE em português brasileiro
+- Seja acolhedor, respeitoso e profundo
+- Use linguagem que equilibre espiritualidade com praticidade
+- Não invente informações — se não souber, oriente o usuário a se inscrever na mentoria
+- Mantenha respostas concisas (máximo 3 parágrafos)
+- Não faça proselitismo agressivo — seja subliminar e elegante
+- Se perguntado sobre preços ou valores, oriente a se inscrever pelo formulário
+`;
+
 export const appRouter = router({
   system: systemRouter,
 
@@ -123,6 +157,52 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         await updateInscriptionStatus(input.id, input.status);
         return { success: true };
+      }),
+  }),
+
+  // ─── Chatbot P.A.G.O. ──────────────────────────────────────
+  chat: router({
+    sendMessage: publicProcedure
+      .input(z.object({ message: z.string().min(1).max(2000) }))
+      .mutation(async ({ input }) => {
+        try {
+          const baseURL = ENV.forgeApiUrl.endsWith("/v1")
+            ? ENV.forgeApiUrl
+            : `${ENV.forgeApiUrl}/v1`;
+
+          const patchedFetch = createPatchedFetch(fetch);
+
+          const response = await patchedFetch(`${baseURL}/chat/completions`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${ENV.forgeApiKey}`,
+            },
+            body: JSON.stringify({
+              model: "gpt-4o",
+              messages: [
+                { role: "system", content: PAGO_SYSTEM_PROMPT },
+                { role: "user", content: input.message },
+              ],
+              max_tokens: 500,
+              temperature: 0.7,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`LLM API error: ${response.status}`);
+          }
+
+          const data = await response.json() as { choices: Array<{ message: { content: string } }> };
+          const reply = data.choices?.[0]?.message?.content || "Desculpe, não consegui processar sua pergunta.";
+
+          return { reply };
+        } catch (error) {
+          console.error("[Chat] Error:", error);
+          return {
+            reply: "Desculpe, estou com dificuldades técnicas no momento. Por favor, tente novamente em alguns instantes ou utilize o formulário de inscrição para entrar em contato.",
+          };
+        }
       }),
   }),
 
