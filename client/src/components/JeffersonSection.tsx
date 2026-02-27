@@ -1,5 +1,5 @@
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -14,6 +14,119 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
     >
       {children}
     </motion.div>
+  );
+}
+
+const pillarCards = [
+  {
+    letter: "P",
+    title: "Princípio",
+    subtitle: "Acima de\nresultados",
+    description:
+      "A verdadeira prosperidade não é medida pela acumulação, mas pela fidelidade a fundamentos imutáveis. Princípios bíblicos são verdades eternas que regem a vida.",
+  },
+  {
+    letter: "A",
+    title: "Alinhamento",
+    subtitle: "Gera\nautoridade",
+    description:
+      "Quando o que cremos, sentimos e fazemos caminham na mesma direção, emanamos uma autoridade que transcende o poder humano.",
+  },
+  {
+    letter: "G",
+    title: "Governo",
+    subtitle: "Inicia no\nsecreto",
+    description:
+      "O que se manifesta publicamente é o reflexo do que foi estabelecido no secreto. A vida de oração é o fundamento de todo governo verdadeiro.",
+  },
+  {
+    letter: "O",
+    title: "Obediência",
+    subtitle: "Sustenta o\ninvisível",
+    description:
+      "A obediência é a chave que destrava o sobrenatural. Constância vence talento. Disciplina vence motivação.",
+  },
+];
+
+function FlipCard({
+  letter,
+  title,
+  subtitle,
+  description,
+}: {
+  letter: string;
+  title: string;
+  subtitle: string;
+  description: string;
+}) {
+  const [flipped, setFlipped] = useState(false);
+
+  return (
+    <div
+      className="h-44 sm:h-48 cursor-pointer"
+      style={{ perspective: "800px" }}
+      onMouseEnter={() => setFlipped(true)}
+      onMouseLeave={() => setFlipped(false)}
+      onTouchStart={() => setFlipped((prev) => !prev)}
+    >
+      <div
+        style={{
+          position: "relative",
+          width: "100%",
+          height: "100%",
+          transition: "transform 0.6s ease",
+          transformStyle: "preserve-3d",
+          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+        }}
+      >
+        {/* Front */}
+        <div
+          className="flex flex-col items-center justify-center p-5 border border-sand-dark/30 bg-warm-white"
+          style={{
+            position: "absolute",
+            inset: 0,
+            backfaceVisibility: "hidden",
+          }}
+        >
+          <span
+            className="font-display text-5xl font-bold text-gold/30 leading-none select-none"
+            style={{ position: "absolute", top: "8px", right: "12px" }}
+          >
+            {letter}
+          </span>
+          <p className="font-display text-2xl sm:text-3xl font-semibold text-navy mb-2">
+            {title}
+          </p>
+          <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-blue-muted text-center whitespace-pre-line">
+            {subtitle}
+          </p>
+        </div>
+
+        {/* Back */}
+        <div
+          className="flex flex-col items-center justify-center p-5 bg-navy border border-gold/20"
+          style={{
+            position: "absolute",
+            inset: 0,
+            backfaceVisibility: "hidden",
+            transform: "rotateY(180deg)",
+          }}
+        >
+          <span
+            className="font-display text-5xl font-bold text-gold/20 leading-none select-none"
+            style={{ position: "absolute", top: "8px", right: "12px" }}
+          >
+            {letter}
+          </span>
+          <p className="font-display text-lg font-semibold text-gold mb-3">
+            {title}
+          </p>
+          <p className="font-body text-xs text-warm-white/80 leading-relaxed text-center">
+            {description}
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -100,31 +213,13 @@ export default function JeffersonSection() {
 
             <FadeIn delay={0.6}>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-4">
-                <div className="text-center p-6 border border-sand-dark/30">
-                  <p className="font-display text-3xl font-semibold text-navy mb-2">Princípio</p>
-                  <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-blue-muted">
-                    Acima de<br />resultados
-                  </p>
-                </div>
-                <div className="text-center p-6 border border-sand-dark/30">
-                  <p className="font-display text-3xl font-semibold text-navy mb-2">Alinhamento</p>
-                  <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-blue-muted">
-                    Gera<br />autoridade
-                  </p>
-                </div>
-                <div className="text-center p-6 border border-sand-dark/30">
-                  <p className="font-display text-3xl font-semibold text-navy mb-2">Governo</p>
-                  <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-blue-muted">
-                    Inicia no<br />secreto
-                  </p>
-                </div>
-                <div className="text-center p-6 border border-sand-dark/30">
-                  <p className="font-display text-3xl font-semibold text-navy mb-2">Obediência</p>
-                  <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-blue-muted">
-                    Sustenta o<br />invisível
-                  </p>
-                </div>
+                {pillarCards.map((card) => (
+                  <FlipCard key={card.letter} {...card} />
+                ))}
               </div>
+              <p className="font-accent text-[9px] uppercase tracking-[0.2em] text-blue-muted/50 text-center mt-3">
+                Passe o mouse para revelar
+              </p>
             </FadeIn>
           </div>
         </div>
