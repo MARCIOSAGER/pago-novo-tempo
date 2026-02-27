@@ -1,0 +1,37 @@
+
+# Project TODO
+
+- [x] Basic homepage layout with all sections
+- [x] Navigation menu (Navbar)
+- [x] Hero Section with background image
+- [x] About Section (Sobre o P.A.G.O.)
+- [x] Pillars Section (Os 4 Pilares)
+- [x] Jefferson Section (Sobre o Fundador)
+- [x] Kit Mentoria Section
+- [x] CTA Section (Formulário de Inscrição)
+- [x] FAQ Section
+- [x] Footer
+- [x] Docs folder with Ebook and Technical Recommendations
+- [x] GitHub integration
+- [x] Resolve Home.tsx conflict after web-db-user upgrade
+- [x] Create database schema for mentoria inscriptions
+- [x] Create database schema for file storage metadata
+- [x] Run pnpm db:push to sync schema
+- [x] Create API routes for mentoria inscription
+- [x] Create API routes for file upload/download (S3)
+- [x] Integrate frontend form with backend API
+- [x] Create file upload API routes
+- [x] Write vitest tests for new API routes
+- [x] Save checkpoint and deliver to user
+- [x] Rate limiting (proteção contra brute force e DDoS)
+- [x] Input sanitization e validação com Zod em todas as rotas
+- [x] CSRF protection
+- [x] XSS protection (Content Security Policy headers)
+- [x] SQL injection prevention (parameterized queries via Drizzle ORM)
+- [x] Helmet.js security headers
+- [x] CORS configuration restritiva
+- [x] File upload validation (tipo, tamanho, extensão)
+- [x] Request size limiting
+- [x] Logging de segurança (audit trail)
+- [x] Proteção contra path traversal em uploads
+- [x] Honeypot anti-bot no formulário

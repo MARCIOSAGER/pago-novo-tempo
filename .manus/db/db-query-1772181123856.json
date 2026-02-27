@@ -1,0 +1,34 @@
+{
+  "query": "SHOW TABLES; SELECT COUNT(*) as total FROM mentoria_inscriptions; SELECT COUNT(*) as total FROM files;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2iUFiogWAufmz3P.460041d33ebc --database FWKBucVCwodcLLRRkU5GKw --execute SHOW TABLES; SELECT COUNT(*) as total FROM mentoria_inscriptions; SELECT COUNT(*) as total FROM files;",
+  "rows": [
+    {
+      "Tables_in_FWKBucVCwodcLLRRkU5GKw": "__drizzle_migrations"
+    },
+    {
+      "Tables_in_FWKBucVCwodcLLRRkU5GKw": "files"
+    },
+    {
+      "Tables_in_FWKBucVCwodcLLRRkU5GKw": "mentoria_inscriptions"
+    },
+    {
+      "Tables_in_FWKBucVCwodcLLRRkU5GKw": "users"
+    },
+    {
+      "Tables_in_FWKBucVCwodcLLRRkU5GKw": "total"
+    },
+    {
+      "Tables_in_FWKBucVCwodcLLRRkU5GKw": "0"
+    },
+    {
+      "Tables_in_FWKBucVCwodcLLRRkU5GKw": "total"
+    },
+    {
+      "Tables_in_FWKBucVCwodcLLRRkU5GKw": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_FWKBucVCwodcLLRRkU5GKw\n__drizzle_migrations\nfiles\nmentoria_inscriptions\nusers\ntotal\n0\ntotal\n0\n",
+  "stderr": "",
+  "execution_time_ms": 64
+}

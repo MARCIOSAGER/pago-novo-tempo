@@ -6,7 +6,7 @@
  * Typography: Cormorant (display), Lora (body), Montserrat (accent/labels)
  */
 
-
+import { useAuth } from "@/_core/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
@@ -18,6 +18,8 @@ import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 
 export default function Home() {
+  const { user, loading, isAuthenticated } = useAuth();
+
   return (
     <div className="min-h-screen bg-warm-white">
       <Navbar />
