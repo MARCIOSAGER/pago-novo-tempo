@@ -99,23 +99,29 @@ export default function JeffersonSection() {
             </FadeIn>
 
             <FadeIn delay={0.6}>
-              <div className="grid sm:grid-cols-3 gap-6 pt-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-4">
                 <div className="text-center p-6 border border-sand-dark/30">
-                  <p className="font-display text-3xl font-semibold text-navy mb-2">Governo</p>
+                  <p className="font-display text-3xl font-semibold text-navy mb-2">Princípio</p>
                   <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-blue-muted">
-                    Espiritual precede<br />crescimento financeiro
+                    Acima de<br />resultados
                   </p>
                 </div>
                 <div className="text-center p-6 border border-sand-dark/30">
                   <p className="font-display text-3xl font-semibold text-navy mb-2">Alinhamento</p>
                   <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-blue-muted">
-                    Precede<br />expansão
+                    Gera<br />autoridade
+                  </p>
+                </div>
+                <div className="text-center p-6 border border-sand-dark/30">
+                  <p className="font-display text-3xl font-semibold text-navy mb-2">Governo</p>
+                  <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-blue-muted">
+                    Inicia no<br />secreto
                   </p>
                 </div>
                 <div className="text-center p-6 border border-sand-dark/30">
                   <p className="font-display text-3xl font-semibold text-navy mb-2">Obediência</p>
                   <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-blue-muted">
-                    Precede<br />autoridade
+                    Sustenta o<br />invisível
                   </p>
                 </div>
               </div>
