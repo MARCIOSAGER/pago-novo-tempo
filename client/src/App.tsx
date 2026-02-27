@@ -10,6 +10,10 @@ import TermsOfUse from "./pages/TermsOfUse";
 import CookiePolicy from "./pages/CookiePolicy";
 import CookieBanner from "./components/CookieBanner";
 import PagoChatBot from "./components/PagoChatBot";
+import AdminLayout from "./components/AdminLayout";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminInscricoes from "./pages/AdminInscricoes";
+import AdminInscricaoDetalhe from "./pages/AdminInscricaoDetalhe";
 
 function Router() {
   return (
@@ -18,6 +22,24 @@ function Router() {
       <Route path={"/privacidade"} component={PrivacyPolicy} />
       <Route path={"/termos"} component={TermsOfUse} />
       <Route path={"/cookies"} component={CookiePolicy} />
+
+      {/* Admin routes — wrapped in AdminLayout with sidebar */}
+      <Route path="/admin">
+        <AdminLayout>
+          <AdminDashboard />
+        </AdminLayout>
+      </Route>
+      <Route path="/admin/inscricoes">
+        <AdminLayout>
+          <AdminInscricoes />
+        </AdminLayout>
+      </Route>
+      <Route path="/admin/inscricoes/:id">
+        <AdminLayout>
+          <AdminInscricaoDetalhe />
+        </AdminLayout>
+      </Route>
+
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -28,9 +50,7 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-      >
+      <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
           <Router />

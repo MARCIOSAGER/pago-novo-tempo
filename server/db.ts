@@ -1,4 +1,4 @@
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql, and, like, or, count } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser,
@@ -114,6 +114,137 @@ export async function updateInscriptionStatus(
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.update(mentoriaInscriptions).set({ status }).where(eq(mentoriaInscriptions.id, id));
+}
+
+// ─── Admin: Inscription Metrics ──────────────────────────────────
+
+export async function getInscriptionMetrics() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const [totalResult] = await db
+    .select({ total: count() })
+    .from(mentoriaInscriptions);
+
+  const statusCounts = await db
+    .select({
+      status: mentoriaInscriptions.status,
+      count: count(),
+    })
+    .from(mentoriaInscriptions)
+    .groupBy(mentoriaInscriptions.status);
+
+  const statusMap: Record<string, number> = {
+    pending: 0,
+    contacted: 0,
+    enrolled: 0,
+    rejected: 0,
+  };
+  for (const row of statusCounts) {
+    statusMap[row.status] = row.count;
+  }
+
+  // Last 7 days count
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const [recentResult] = await db
+    .select({ count: count() })
+    .from(mentoriaInscriptions)
+    .where(sql`${mentoriaInscriptions.createdAt} >= ${sevenDaysAgo}`);
+
+  // Last 30 days count
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const [monthResult] = await db
+    .select({ count: count() })
+    .from(mentoriaInscriptions)
+    .where(sql`${mentoriaInscriptions.createdAt} >= ${thirtyDaysAgo}`);
+
+  return {
+    total: totalResult.total,
+    pending: statusMap.pending,
+    contacted: statusMap.contacted,
+    enrolled: statusMap.enrolled,
+    rejected: statusMap.rejected,
+    last7Days: recentResult.count,
+    last30Days: monthResult.count,
+  };
+}
+
+// ─── Admin: Filtered & Paginated Inscriptions ────────────────────
+
+export async function listInscriptionsFiltered(params: {
+  status?: string;
+  search?: string;
+  page: number;
+  pageSize: number;
+}): Promise<{ items: MentoriaInscription[]; total: number }> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const conditions = [];
+
+  if (params.status && params.status !== "all") {
+    conditions.push(eq(mentoriaInscriptions.status, params.status as any));
+  }
+
+  if (params.search && params.search.trim().length > 0) {
+    const term = `%${params.search.trim()}%`;
+    conditions.push(
+      or(
+        like(mentoriaInscriptions.name, term),
+        like(mentoriaInscriptions.email, term),
+        like(mentoriaInscriptions.phone, term)
+      )!
+    );
+  }
+
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+  const [totalResult] = await db
+    .select({ total: count() })
+    .from(mentoriaInscriptions)
+    .where(whereClause);
+
+  const offset = (params.page - 1) * params.pageSize;
+  const items = await db
+    .select()
+    .from(mentoriaInscriptions)
+    .where(whereClause)
+    .orderBy(desc(mentoriaInscriptions.createdAt))
+    .limit(params.pageSize)
+    .offset(offset);
+
+  return { items, total: totalResult.total };
+}
+
+// ─── Admin: Get Single Inscription ───────────────────────────────
+
+export async function getInscriptionById(id: number): Promise<MentoriaInscription | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db
+    .select()
+    .from(mentoriaInscriptions)
+    .where(eq(mentoriaInscriptions.id, id))
+    .limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+// ─── Admin: Delete Inscription ───────────────────────────────────
+
+export async function deleteInscription(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(mentoriaInscriptions).where(eq(mentoriaInscriptions.id, id));
+}
+
+// ─── Admin: Export All Inscriptions (for CSV) ────────────────────
+
+export async function exportAllInscriptions(): Promise<MentoriaInscription[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.select().from(mentoriaInscriptions).orderBy(desc(mentoriaInscriptions.createdAt));
 }
 
 // ─── File Storage Helpers ────────────────────────────────────────

@@ -53,14 +53,14 @@
 - [x] Favicon (16x16, 32x32, 192x192)
 - [x] Logo para redes sociais (versão quadrada)
 - [x] Integrar todas as variações no site
-- [ ] Painel Admin: Rotas de API para listar, filtrar, atualizar e exportar inscrições
-- [ ] Painel Admin: Dashboard com métricas (total inscrições, por status, por período)
-- [ ] Painel Admin: Listagem de inscrições com filtros e busca
-- [ ] Painel Admin: Detalhes de inscrição individual com ações (aprovar, rejeitar, contatar)
-- [ ] Painel Admin: Exportação de dados (CSV)
-- [ ] Painel Admin: Proteção de acesso por role (admin only)
-- [ ] Painel Admin: Integração com DashboardLayout
-- [ ] Painel Admin: Testes vitest para rotas admin
+- [x] Painel Admin: Rotas de API para listar, filtrar, atualizar e exportar inscrições
+- [x] Painel Admin: Dashboard com métricas (total inscrições, por status, por período)
+- [x] Painel Admin: Listagem de inscrições com filtros e busca
+- [x] Painel Admin: Detalhes de inscrição individual com ações (aprovar, rejeitar, contatar)
+- [x] Painel Admin: Exportação de dados (CSV)
+- [x] Painel Admin: Proteção de acesso por role (admin only)
+- [x] Painel Admin: Integração com DashboardLayout
+- [x] Painel Admin: Testes vitest para rotas admin (19 testes passando)
 - [x] Fix: Links de Privacidade, Termos e Cookies ausentes no rodapé (Footer)
 - [x] Fix: Navbar com fundo ciano/turquesa — corrigir conflito de cores CSS após upgrade web-db-user (substituído oklch por hex)
 - [x] Fix: Pilar "Princípio" (P) ausente nos cartões de resumo da seção Jefferson

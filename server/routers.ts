@@ -8,6 +8,11 @@ import {
   createInscription,
   listInscriptions,
   updateInscriptionStatus,
+  getInscriptionMetrics,
+  listInscriptionsFiltered,
+  getInscriptionById,
+  deleteInscription,
+  exportAllInscriptions,
   createFileRecord,
   listFiles,
   getFileById,
@@ -63,6 +68,13 @@ const fileUploadSchema = z.object({
 
 const listFilesSchema = z.object({
   category: z.string().max(64).optional(),
+});
+
+const listInscriptionsFilteredSchema = z.object({
+  status: z.string().optional(),
+  search: z.string().max(200).optional(),
+  page: z.number().int().min(1).default(1),
+  pageSize: z.number().int().min(1).max(100).default(20),
 });
 
 // ─── Admin check middleware ─────────────────────────────────────
@@ -146,7 +158,7 @@ export const appRouter = router({
         return { success: true, message: "Inscrição recebida com sucesso!" };
       }),
 
-    // Admin: list all inscriptions
+    // Admin: list all inscriptions (simple, backwards compat)
     list: adminProcedure.query(async () => {
       return listInscriptions();
     }),
@@ -158,6 +170,51 @@ export const appRouter = router({
         await updateInscriptionStatus(input.id, input.status);
         return { success: true };
       }),
+
+    // Admin: dashboard metrics
+    metrics: adminProcedure.query(async () => {
+      return getInscriptionMetrics();
+    }),
+
+    // Admin: filtered & paginated list
+    listFiltered: adminProcedure
+      .input(listInscriptionsFilteredSchema)
+      .query(async ({ input }) => {
+        return listInscriptionsFiltered({
+          status: input.status,
+          search: input.search,
+          page: input.page,
+          pageSize: input.pageSize,
+        });
+      }),
+
+    // Admin: get single inscription by ID
+    getById: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .query(async ({ input }) => {
+        const inscription = await getInscriptionById(input.id);
+        if (!inscription) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Inscrição não encontrada." });
+        }
+        return inscription;
+      }),
+
+    // Admin: delete inscription
+    delete: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input }) => {
+        const inscription = await getInscriptionById(input.id);
+        if (!inscription) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Inscrição não encontrada." });
+        }
+        await deleteInscription(input.id);
+        return { success: true };
+      }),
+
+    // Admin: export all inscriptions for CSV
+    export: adminProcedure.query(async () => {
+      return exportAllInscriptions();
+    }),
   }),
 
   // ─── Chatbot P.A.G.O. ──────────────────────────────────────
