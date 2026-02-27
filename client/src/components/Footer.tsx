@@ -97,29 +97,27 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="gold-line mb-8" />
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-warm-white/20">
+
+        {/* Legal Links Row */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+          <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-warm-white/30">
             &copy; {new Date().getFullYear()} P.A.G.O. Novo Tempo. Todos os direitos reservados.
           </p>
-          <div className="flex items-center gap-4">
-            <Link href="/privacidade">
-              <span className="font-accent text-[10px] uppercase tracking-[0.15em] text-warm-white/30 hover:text-warm-white/60 transition-colors cursor-pointer">
-                Privacidade
-              </span>
+          <div className="flex items-center gap-6">
+            <Link href="/privacidade" className="font-accent text-[11px] uppercase tracking-[0.15em] text-warm-white/50 hover:text-gold transition-colors duration-300">
+              Privacidade
             </Link>
-            <Link href="/termos">
-              <span className="font-accent text-[10px] uppercase tracking-[0.15em] text-warm-white/30 hover:text-warm-white/60 transition-colors cursor-pointer">
-                Termos
-              </span>
+            <Link href="/termos" className="font-accent text-[11px] uppercase tracking-[0.15em] text-warm-white/50 hover:text-gold transition-colors duration-300">
+              Termos de Uso
             </Link>
-            <Link href="/cookies">
-              <span className="font-accent text-[10px] uppercase tracking-[0.15em] text-warm-white/30 hover:text-warm-white/60 transition-colors cursor-pointer">
-                Cookies
-              </span>
+            <Link href="/cookies" className="font-accent text-[11px] uppercase tracking-[0.15em] text-warm-white/50 hover:text-gold transition-colors duration-300">
+              Cookies
             </Link>
           </div>
         </div>
-        <div className="mt-4 text-center">
+
+        {/* Quote */}
+        <div className="text-center">
           <p className="font-body text-[11px] text-warm-white/20 italic">
             "Não estou construindo sucesso. Estou administrando uma visão."
           </p>
