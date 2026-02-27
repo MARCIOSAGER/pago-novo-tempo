@@ -104,3 +104,16 @@
 - [x] Regenerar flipbook com imagens do novo PDF sem margens
 - [x] Regenerar EPUB e MOBI com formatação corrigida
 - [x] Upload de todos os formatos para CDN e atualizar admin Downloads
+- [x] Exportar conteúdo completo do ebook em formato Markdown (.md) para diagramação externa
+- [x] Pesquisar Criart IA (criart.ia.br) como ferramenta de diagramação de ebook
+- [x] Comparar ferramentas: Typeset vs Canva vs Criart IA vs outras
+- [x] Traduzir ebook completo para espanhol
+- [x] Gerar PDF v1 (com capa) em espanhol
+- [x] Gerar PDF v2 (editorial) em espanhol
+- [ ] Criar HTML editorial em espanhol (ES) para flipbook
+- [ ] Gerar imagens do flipbook ES e upload para CDN
+- [x] Implementar sistema de internacionalização (i18n) no site - PT, EN, ES
+- [x] Criar arquivos de tradução com todo o conteúdo do site em PT, EN e ES
+- [x] Implementar contexto de idioma e seletor de idioma no site
+- [x] Aplicar traduções em todas as páginas públicas e componentes do site (10 componentes)
+- [x] Testes vitest para i18n (15 testes — chaves, valores, consistência entre idiomas)

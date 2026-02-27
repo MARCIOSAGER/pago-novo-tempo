@@ -1,6 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -18,40 +19,7 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
   );
 }
 
-const faqs = [
-  {
-    question: "O que é o P.A.G.O.?",
-    answer:
-      "O P.A.G.O. é um sistema de reorganização de vida baseado em quatro pilares bíblicos: Princípio (acima de resultados), Alinhamento (gera autoridade), Governo (inicia no secreto) e Obediência (sustenta o invisível). É uma metodologia de mentoria que ajuda pessoas a estruturarem sua vida espiritual, emocional e prática.",
-  },
-  {
-    question: "Para quem é a mentoria P.A.G.O.?",
-    answer:
-      "Para homens e mulheres que amam a Deus mas vivem desorganizados. Para quem tem fé genuína mas precisa de estrutura. Para líderes, empreendedores e cristãos que desejam construir um legado duradouro fundamentado em princípios bíblicos imutáveis.",
-  },
-  {
-    question: "O que está incluído no Kit de Mentoria?",
-    answer:
-      "O kit inclui: Bíblia BKJ (tradução King James em português), Caderno de Estudos dedicado para reflexões e exercícios, Caneta para registrar compromissos, e o Ebook P.A.G.O. com a metodologia completa, exercícios práticos e versículos fundamentadores.",
-  },
-  {
-    question: "Quanto tempo dura a mentoria?",
-    answer:
-      "A mentoria é estruturada para acompanhar cada participante em sua jornada de transformação. O ritmo é personalizado, respeitando o processo individual de cada pessoa. O P.A.G.O. não é sobre velocidade — é sobre permanência e constância.",
-  },
-  {
-    question: "Preciso ter experiência bíblica prévia?",
-    answer:
-      "Não. O P.A.G.O. foi desenhado para ser acessível a todos que desejam reorganizar sua vida com base em princípios bíblicos. A metodologia guia o participante passo a passo, desde os fundamentos até a aplicação prática.",
-  },
-  {
-    question: "Como funciona o modelo White-Label?",
-    answer:
-      "O P.A.G.O. está desenvolvendo uma plataforma escalável que permitirá que igrejas, organizações e mentores apliquem a metodologia com sua própria marca. Se você tem interesse em levar o P.A.G.O. para sua comunidade, entre em contato conosco.",
-  },
-];
-
-function FAQItem({ faq, index }: { faq: typeof faqs[0]; index: number }) {
+function FAQItem({ faq, index }: { faq: { question: string; answer: string }; index: number }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -87,22 +55,24 @@ function FAQItem({ faq, index }: { faq: typeof faqs[0]; index: number }) {
 }
 
 export default function FAQSection() {
+  const { t } = useLanguage();
+
   return (
     <section id="faq" className="py-28 lg:py-36 bg-sand">
       <div className="max-w-3xl mx-auto px-6 lg:px-12">
         <FadeIn>
           <div className="text-center mb-16">
             <p className="font-accent text-[11px] uppercase tracking-[0.4em] text-gold mb-6">
-              Perguntas Frequentes
+              {t.faq.label}
             </p>
             <h2 className="font-display text-4xl lg:text-5xl font-semibold text-navy leading-[1.15]">
-              Tire suas <span className="text-gold">dúvidas.</span>
+              {t.faq.titleLine1} <span className="text-gold">{t.faq.titleLine2}</span>
             </h2>
           </div>
         </FadeIn>
 
         <div>
-          {faqs.map((faq, i) => (
+          {t.faq.items.map((faq, i) => (
             <FAQItem key={i} faq={faq} index={i} />
           ))}
         </div>

@@ -2,19 +2,20 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Cookie, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const COOKIE_CONSENT_KEY = "pago_cookie_consent";
 
 type ConsentLevel = "all" | "essential" | null;
 
 export default function CookieBanner() {
+  const { t } = useLanguage();
   const [visible, setVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
     if (!consent) {
-      // Small delay to avoid showing immediately on page load
       const timer = setTimeout(() => setVisible(true), 1500);
       return () => clearTimeout(timer);
     }
@@ -47,12 +48,11 @@ export default function CookieBanner() {
               borderColor: "rgba(184,168,138,0.2)",
             }}
           >
-            {/* Close button */}
             <button
               onClick={handleEssentialOnly}
               className="absolute top-4 right-4 p-1 rounded-full hover:opacity-70 transition-opacity"
               style={{ color: "rgba(250,250,248,0.5)" }}
-              aria-label="Fechar"
+              aria-label="Close"
             >
               <X size={18} />
             </button>
@@ -64,10 +64,10 @@ export default function CookieBanner() {
 
               <div className="flex-1">
                 <h3 className="font-display text-lg font-semibold mb-2" style={{ color: "#FAFAF8" }}>
-                  Respeitamos sua privacidade
+                  {t.cookieBanner.message}
                 </h3>
                 <p className="font-body text-sm leading-relaxed mb-4" style={{ color: "rgba(250,250,248,0.7)" }}>
-                  Utilizamos cookies para melhorar sua experiência na plataforma. Cookies essenciais são necessários para o funcionamento básico. Cookies de desempenho nos ajudam a entender como você usa o site, de forma anônima.
+                  {t.cookieBanner.learnMore}
                 </p>
 
                 {showDetails && (
@@ -81,16 +81,16 @@ export default function CookieBanner() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-semibold" style={{ color: "#FAFAF8" }}>Cookies Essenciais</p>
-                        <p style={{ color: "rgba(250,250,248,0.5)" }}>Necessários para o funcionamento da plataforma</p>
+                        <p style={{ color: "rgba(250,250,248,0.5)" }}>Required for platform functionality</p>
                       </div>
-                      <span className="text-xs px-2 py-1 rounded" style={{ backgroundColor: "rgba(184,168,138,0.2)", color: "#B8A88A" }}>Sempre ativos</span>
+                      <span className="text-xs px-2 py-1 rounded" style={{ backgroundColor: "rgba(184,168,138,0.2)", color: "#B8A88A" }}>Always active</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-semibold" style={{ color: "#FAFAF8" }}>Cookies de Desempenho</p>
-                        <p style={{ color: "rgba(250,250,248,0.5)" }}>Analytics anônimo para melhorias</p>
+                        <p style={{ color: "rgba(250,250,248,0.5)" }}>Anonymous analytics for improvements</p>
                       </div>
-                      <span className="text-xs px-2 py-1 rounded" style={{ backgroundColor: "rgba(184,168,138,0.2)", color: "#B8A88A" }}>Opcional</span>
+                      <span className="text-xs px-2 py-1 rounded" style={{ backgroundColor: "rgba(184,168,138,0.2)", color: "#B8A88A" }}>Optional</span>
                     </div>
                   </motion.div>
                 )}
@@ -101,33 +101,32 @@ export default function CookieBanner() {
                     className="px-6 py-2.5 rounded-lg font-accent text-xs uppercase tracking-[0.15em] transition-all hover:opacity-90"
                     style={{ backgroundColor: "#B8A88A", color: "#1A2744" }}
                   >
-                    Aceitar Todos
+                    {t.cookieBanner.accept}
                   </button>
                   <button
                     onClick={handleEssentialOnly}
                     className="px-6 py-2.5 rounded-lg font-accent text-xs uppercase tracking-[0.15em] border transition-all hover:opacity-80"
                     style={{ borderColor: "rgba(250,250,248,0.2)", color: "#FAFAF8" }}
                   >
-                    Apenas Essenciais
+                    {t.cookieBanner.decline}
                   </button>
                   <button
                     onClick={() => setShowDetails(!showDetails)}
                     className="font-accent text-xs uppercase tracking-[0.15em] underline underline-offset-4 transition-opacity hover:opacity-70"
                     style={{ color: "rgba(250,250,248,0.5)" }}
                   >
-                    {showDetails ? "Ocultar detalhes" : "Ver detalhes"}
+                    {showDetails ? "−" : "+"}
                   </button>
                 </div>
 
                 <p className="font-body text-xs mt-4" style={{ color: "rgba(250,250,248,0.4)" }}>
-                  Ao continuar navegando, você concorda com o uso de cookies essenciais. Saiba mais em nossa{" "}
                   <Link href="/cookies">
-                    <span className="underline cursor-pointer hover:opacity-80" style={{ color: "#B8A88A" }}>Política de Cookies</span>
+                    <span className="underline cursor-pointer hover:opacity-80" style={{ color: "#B8A88A" }}>{t.footer.cookies}</span>
                   </Link>{" "}
-                  e{" "}
+                  &{" "}
                   <Link href="/privacidade">
-                    <span className="underline cursor-pointer hover:opacity-80" style={{ color: "#B8A88A" }}>Política de Privacidade</span>
-                  </Link>.
+                    <span className="underline cursor-pointer hover:opacity-80" style={{ color: "#B8A88A" }}>{t.footer.privacy}</span>
+                  </Link>
                 </p>
               </div>
             </div>
@@ -138,7 +137,6 @@ export default function CookieBanner() {
   );
 }
 
-// Helper to check consent level from other components
 export function getCookieConsent(): ConsentLevel {
   try {
     const stored = localStorage.getItem(COOKIE_CONSENT_KEY);

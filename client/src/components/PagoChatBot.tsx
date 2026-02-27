@@ -2,6 +2,7 @@ import { useState } from "react";
 import { MessageCircle, X, Send, Bot } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { trpc } from "@/lib/trpc";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Message {
   id: string;
@@ -10,21 +11,14 @@ interface Message {
   timestamp: Date;
 }
 
-const SUGGESTED_QUESTIONS = [
-  "O que é o P.A.G.O.?",
-  "Quais são os 4 pilares?",
-  "Como funciona a mentoria?",
-  "O que vem no kit?",
-];
-
 export default function PagoChatBot() {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
       role: "assistant",
-      content:
-        "Olá! Sou o assistente do P.A.G.O. — Novo Tempo. Posso ajudar com dúvidas sobre a mentoria, os 4 pilares (Princípio, Alinhamento, Governo e Obediência) e como iniciar sua jornada de transformação. Como posso ajudá-lo?",
+      content: t.chatbot.greeting,
       timestamp: new Date(),
     },
   ]);
@@ -32,6 +26,13 @@ export default function PagoChatBot() {
   const [isLoading, setIsLoading] = useState(false);
 
   const chatMutation = trpc.chat.sendMessage.useMutation();
+
+  const suggestedQuestions = [
+    t.faq.items[0]?.question || "P.A.G.O.?",
+    t.faq.items[1]?.question || "Mentoria?",
+    t.faq.items[2]?.question || "Kit?",
+    t.faq.items[3]?.question || "Duration?",
+  ];
 
   const handleSend = async (text?: string) => {
     const messageText = text || input.trim();
@@ -61,8 +62,7 @@ export default function PagoChatBot() {
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
         role: "assistant",
-        content:
-          "Desculpe, não consegui processar sua mensagem no momento. Por favor, tente novamente ou entre em contato pelo formulário de inscrição.",
+        content: t.chatbot.errorMessage,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -91,7 +91,7 @@ export default function PagoChatBot() {
             onClick={() => setIsOpen(true)}
             className="fixed bottom-6 right-6 z-[9998] w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110"
             style={{ backgroundColor: "#1A2744" }}
-            aria-label="Abrir chat"
+            aria-label="Open chat"
           >
             <MessageCircle size={24} style={{ color: "#B8A88A" }} />
           </motion.button>
@@ -126,10 +126,10 @@ export default function PagoChatBot() {
                 </div>
                 <div>
                   <p className="font-display text-sm font-semibold" style={{ color: "#FAFAF8" }}>
-                    Assistente P.A.G.O.
+                    {t.chatbot.title}
                   </p>
                   <p className="text-xs" style={{ color: "rgba(250,250,248,0.5)" }}>
-                    Sempre disponível
+                    {t.chatbot.subtitle}
                   </p>
                 </div>
               </div>
@@ -137,7 +137,7 @@ export default function PagoChatBot() {
                 onClick={() => setIsOpen(false)}
                 className="p-1.5 rounded-full hover:opacity-70 transition-opacity"
                 style={{ color: "rgba(250,250,248,0.6)" }}
-                aria-label="Fechar chat"
+                aria-label="Close chat"
               >
                 <X size={18} />
               </button>
@@ -184,9 +184,9 @@ export default function PagoChatBot() {
               {messages.length === 1 && (
                 <div className="space-y-2">
                   <p className="text-xs font-accent uppercase tracking-[0.15em]" style={{ color: "rgba(26,39,68,0.4)" }}>
-                    Perguntas frequentes
+                    {t.faq.label}
                   </p>
-                  {SUGGESTED_QUESTIONS.map((q) => (
+                  {suggestedQuestions.map((q) => (
                     <button
                       key={q}
                       onClick={() => handleSend(q)}
@@ -214,7 +214,7 @@ export default function PagoChatBot() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Digite sua pergunta..."
+                  placeholder={t.chatbot.placeholder}
                   disabled={isLoading}
                   className="flex-1 text-sm px-4 py-2.5 rounded-xl border outline-none transition-all focus:ring-1 disabled:opacity-50"
                   style={{
@@ -228,13 +228,13 @@ export default function PagoChatBot() {
                   disabled={!input.trim() || isLoading}
                   className="p-2.5 rounded-xl transition-all hover:opacity-80 disabled:opacity-30"
                   style={{ backgroundColor: "#1A2744" }}
-                  aria-label="Enviar mensagem"
+                  aria-label="Send"
                 >
                   <Send size={16} style={{ color: "#B8A88A" }} />
                 </button>
               </div>
               <p className="text-center text-[10px] mt-2" style={{ color: "rgba(26,39,68,0.3)" }}>
-                Assistente P.A.G.O. — Respostas baseadas na metodologia
+                {t.chatbot.title}
               </p>
             </div>
           </motion.div>

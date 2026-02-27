@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -23,12 +24,13 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/hero-bg-fyJtxWkcWj2UeE7kR85wJt.webp";
 
 export default function CTASection() {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     message: "",
-    website: "", // Honeypot field — hidden from users, filled by bots
+    website: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [lgpdConsent, setLgpdConsent] = useState(false);
@@ -36,13 +38,13 @@ export default function CTASection() {
   const submitMutation = trpc.mentoria.submit.useMutation({
     onSuccess: (data) => {
       toast.success(data.message, {
-        description: "Obrigado pelo seu interesse no P.A.G.O.",
+        description: t.cta.successMessage,
       });
       setFormData({ name: "", email: "", phone: "", message: "", website: "" });
     },
     onError: (error) => {
-      toast.error("Erro ao enviar inscrição", {
-        description: error.message || "Tente novamente mais tarde.",
+      toast.error(t.cta.errorMessage, {
+        description: error.message || t.cta.errorRetry,
       });
     },
     onSettled: () => {
@@ -53,17 +55,16 @@ export default function CTASection() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Client-side validation
     if (!lgpdConsent) {
-      toast.error("Você precisa aceitar a Política de Privacidade para continuar.");
+      toast.error(t.cta.lgpdRequired);
       return;
     }
     if (formData.name.trim().length < 2) {
-      toast.error("Nome deve ter pelo menos 2 caracteres.");
+      toast.error(t.cta.nameMinLength);
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      toast.error("Por favor, insira um email válido.");
+      toast.error(t.cta.emailInvalid);
       return;
     }
 
@@ -73,19 +74,17 @@ export default function CTASection() {
       email: formData.email.trim(),
       phone: formData.phone.trim() || undefined,
       message: formData.message.trim() || undefined,
-      website: formData.website || undefined, // Honeypot
+      website: formData.website || undefined,
     });
   };
+
+  const benefits = [t.cta.benefit1, t.cta.benefit2, t.cta.benefit3, t.cta.benefit4];
 
   return (
     <section id="inscricao" className="relative py-28 lg:py-36 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
-        <img
-          src={HERO_BG}
-          alt=""
-          className="w-full h-full object-cover"
-        />
+        <img src={HERO_BG} alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-navy/90" />
       </div>
 
@@ -95,16 +94,16 @@ export default function CTASection() {
           <div>
             <FadeIn>
               <p className="font-accent text-[11px] uppercase tracking-[0.4em] text-gold mb-6">
-                Inscrição para Mentoria
+                {t.cta.label}
               </p>
             </FadeIn>
             <FadeIn delay={0.1}>
               <h2 className="font-display text-4xl lg:text-5xl font-semibold text-warm-white leading-[1.15] mb-8">
-                Está pronto para
+                {t.cta.titleLine1}
                 <br />
-                reorganizar
+                {t.cta.titleLine2}
                 <br />
-                <span className="text-gold">sua vida?</span>
+                <span className="text-gold">{t.cta.titleLine3}</span>
               </h2>
             </FadeIn>
             <FadeIn delay={0.2}>
@@ -112,37 +111,17 @@ export default function CTASection() {
             </FadeIn>
             <FadeIn delay={0.3}>
               <p className="font-body text-base text-warm-white/60 leading-relaxed mb-8">
-                O P.A.G.O. é para quem está cansado de viver desorganizado, de ter fé
-                mas não ter estrutura, de ter chamado mas não ter direção. Se você deseja
-                construir um legado que permaneça, esta mentoria é para você.
+                {t.cta.description}
               </p>
             </FadeIn>
             <FadeIn delay={0.4}>
               <div className="space-y-4">
-                <div className="flex items-start gap-4">
-                  <div className="w-1 h-1 rounded-full bg-gold mt-2.5 shrink-0" />
-                  <p className="font-body text-sm text-warm-white/50">
-                    Acompanhamento personalizado com a metodologia P.A.G.O.
-                  </p>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-1 h-1 rounded-full bg-gold mt-2.5 shrink-0" />
-                  <p className="font-body text-sm text-warm-white/50">
-                    Kit completo: Bíblia BKJ, Caderno de Estudos, Caneta e Ebook
-                  </p>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-1 h-1 rounded-full bg-gold mt-2.5 shrink-0" />
-                  <p className="font-body text-sm text-warm-white/50">
-                    Exercícios práticos e reflexões bíblicas para cada pilar
-                  </p>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-1 h-1 rounded-full bg-gold mt-2.5 shrink-0" />
-                  <p className="font-body text-sm text-warm-white/50">
-                    Comunidade de homens e mulheres em transformação
-                  </p>
-                </div>
+                {benefits.map((benefit, i) => (
+                  <div key={i} className="flex items-start gap-4">
+                    <div className="w-1 h-1 rounded-full bg-gold mt-2.5 shrink-0" />
+                    <p className="font-body text-sm text-warm-white/50">{benefit}</p>
+                  </div>
+                ))}
               </div>
             </FadeIn>
           </div>
@@ -153,7 +132,7 @@ export default function CTASection() {
               onSubmit={handleSubmit}
               className="bg-warm-white/5 backdrop-blur-sm border border-warm-white/10 p-8 lg:p-10 space-y-6"
             >
-              {/* Honeypot field — invisible to users, bots will fill it */}
+              {/* Honeypot */}
               <div className="absolute -left-[9999px] -top-[9999px]" aria-hidden="true">
                 <label htmlFor="website">Website</label>
                 <input
@@ -169,7 +148,7 @@ export default function CTASection() {
 
               <div>
                 <label className="font-accent text-[10px] uppercase tracking-[0.3em] text-gold block mb-2">
-                  Nome Completo
+                  {t.cta.formName}
                 </label>
                 <input
                   type="text"
@@ -179,12 +158,12 @@ export default function CTASection() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full bg-transparent border-b border-warm-white/20 text-warm-white font-body text-sm py-3 focus:border-gold outline-none transition-colors placeholder:text-warm-white/30"
-                  placeholder="Seu nome"
+                  placeholder={t.cta.formNamePlaceholder}
                 />
               </div>
               <div>
                 <label className="font-accent text-[10px] uppercase tracking-[0.3em] text-gold block mb-2">
-                  Email
+                  {t.cta.formEmail}
                 </label>
                 <input
                   type="email"
@@ -193,12 +172,12 @@ export default function CTASection() {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full bg-transparent border-b border-warm-white/20 text-warm-white font-body text-sm py-3 focus:border-gold outline-none transition-colors placeholder:text-warm-white/30"
-                  placeholder="seu@email.com"
+                  placeholder={t.cta.formEmailPlaceholder}
                 />
               </div>
               <div>
                 <label className="font-accent text-[10px] uppercase tracking-[0.3em] text-gold block mb-2">
-                  Telefone / WhatsApp
+                  {t.cta.formPhone}
                 </label>
                 <input
                   type="tel"
@@ -206,12 +185,12 @@ export default function CTASection() {
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="w-full bg-transparent border-b border-warm-white/20 text-warm-white font-body text-sm py-3 focus:border-gold outline-none transition-colors placeholder:text-warm-white/30"
-                  placeholder="+55 (00) 00000-0000"
+                  placeholder={t.cta.formPhonePlaceholder}
                 />
               </div>
               <div>
                 <label className="font-accent text-[10px] uppercase tracking-[0.3em] text-gold block mb-2">
-                  Mensagem (opcional)
+                  {t.cta.formMessage}
                 </label>
                 <textarea
                   value={formData.message}
@@ -219,10 +198,10 @@ export default function CTASection() {
                   rows={3}
                   maxLength={2000}
                   className="w-full bg-transparent border-b border-warm-white/20 text-warm-white font-body text-sm py-3 focus:border-gold outline-none transition-colors resize-none placeholder:text-warm-white/30"
-                  placeholder="Conte-nos um pouco sobre você..."
+                  placeholder={t.cta.formMessagePlaceholder}
                 />
               </div>
-              {/* LGPD Consent Checkbox */}
+              {/* LGPD Consent */}
               <div className="flex items-start gap-3 mt-2">
                 <input
                   type="checkbox"
@@ -232,15 +211,15 @@ export default function CTASection() {
                   className="mt-1 w-4 h-4 accent-gold shrink-0 cursor-pointer"
                 />
                 <label htmlFor="lgpd-consent" className="font-body text-[11px] text-warm-white/50 leading-relaxed cursor-pointer">
-                  Li e concordo com a{" "}
+                  {t.cta.lgpdConsent}{" "}
                   <Link href="/privacidade">
-                    <span className="text-gold hover:text-gold-light underline underline-offset-2 cursor-pointer">Política de Privacidade</span>
+                    <span className="text-gold hover:text-gold-light underline underline-offset-2 cursor-pointer">{t.cta.privacyPolicy}</span>
                   </Link>{" "}
-                  e os{" "}
+                  {t.cta.and}{" "}
                   <Link href="/termos">
-                    <span className="text-gold hover:text-gold-light underline underline-offset-2 cursor-pointer">Termos de Uso</span>
+                    <span className="text-gold hover:text-gold-light underline underline-offset-2 cursor-pointer">{t.cta.termsOfUse}</span>
                   </Link>.
-                  Autorizo o tratamento dos meus dados pessoais conforme a LGPD (Lei 13.709/2018).
+                  {" "}{t.cta.lgpdSuffix}
                 </label>
               </div>
 
@@ -249,10 +228,10 @@ export default function CTASection() {
                 disabled={isSubmitting || !lgpdConsent}
                 className="w-full font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy py-4 hover:bg-gold-light transition-all duration-300 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? "Enviando..." : "Quero me Inscrever"}
+                {isSubmitting ? t.cta.submitting : t.cta.submitButton}
               </button>
               <p className="font-body text-[11px] text-warm-white/30 text-center">
-                Seus dados estão protegidos conforme a LGPD. Você pode solicitar a exclusão a qualquer momento.
+                {t.cta.lgpdFooter}
               </p>
             </form>
           </FadeIn>

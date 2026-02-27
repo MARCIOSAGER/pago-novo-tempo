@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/hero-bg-fyJtxWkcWj2UeE7kR85wJt.webp";
 
 export default function HeroSection() {
+  const { t } = useLanguage();
+
   return (
     <section className="relative min-h-screen flex items-center justify-start overflow-hidden">
       {/* Background Image */}
@@ -29,7 +32,7 @@ export default function HeroSection() {
             transition={{ delay: 0.3, duration: 0.8 }}
             className="font-accent text-[11px] uppercase tracking-[0.4em] text-gold-light mb-8"
           >
-            Sistema de Reorganização de Vida
+            {t.hero.microLabel}
           </motion.p>
 
           {/* Main Title */}
@@ -39,13 +42,13 @@ export default function HeroSection() {
             transition={{ delay: 0.5, duration: 0.8 }}
             className="font-display text-5xl sm:text-6xl lg:text-7xl font-semibold text-warm-white leading-[1.1] mb-6"
           >
-            Princípio.
+            {t.hero.title1}
             <br />
-            Alinhamento.
+            {t.hero.title2}
             <br />
-            Governo.
+            {t.hero.title3}
             <br />
-            Obediência.
+            {t.hero.title4}
           </motion.h1>
 
           {/* Gold line */}
@@ -63,8 +66,7 @@ export default function HeroSection() {
             transition={{ delay: 1.1, duration: 0.8 }}
             className="font-body text-lg text-warm-white/80 leading-relaxed mb-10 max-w-lg"
           >
-            Uma resposta para pessoas que amam a Deus, mas vivem desorganizadas.
-            Um caminho para estruturar a vida espiritual, emocional e prática.
+            {t.hero.subtitle}
           </motion.p>
 
           {/* CTA Buttons */}
@@ -78,13 +80,13 @@ export default function HeroSection() {
               href="#inscricao"
               className="font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy px-8 py-4 hover:bg-gold-light transition-all duration-300 text-center"
             >
-              Iniciar Mentoria
+              {t.hero.ctaPrimary}
             </a>
             <a
               href="#pilares"
               className="font-accent text-xs uppercase tracking-[0.2em] border border-warm-white/30 text-warm-white px-8 py-4 hover:bg-warm-white/10 transition-all duration-300 text-center"
             >
-              Conhecer os Pilares
+              {t.hero.ctaSecondary}
             </a>
           </motion.div>
         </div>

@@ -1,8 +1,19 @@
 import { Link } from "wouter";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo_ea5770c3.jpeg";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
+  const navLinks = [
+    { label: t.nav.about, href: "#sobre" },
+    { label: t.nav.pillars, href: "#pilares" },
+    { label: t.nav.jefferson, href: "#jefferson" },
+    { label: t.nav.kit, href: "#kit" },
+    { label: t.nav.faq, href: "#faq" },
+  ];
+
   return (
     <footer className="bg-navy py-20">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
@@ -20,30 +31,22 @@ export default function Footer() {
                   P.A.G.O.
                 </span>
                 <span className="block font-accent text-[10px] uppercase tracking-[0.3em] text-gold">
-                  Novo Tempo
+                  {t.nav.tagline}
                 </span>
               </div>
             </div>
             <p className="font-body text-sm text-warm-white/40 leading-relaxed max-w-sm">
-              Um sistema de reorganização de vida. Princípio, Alinhamento,
-              Governo e Obediência — os fundamentos para construir um legado
-              que permanece.
+              {t.footer.description}
             </p>
           </div>
 
           {/* Navigation */}
           <div className="lg:col-span-2">
             <p className="font-accent text-[10px] uppercase tracking-[0.3em] text-gold mb-6">
-              Navegação
+              {t.footer.navLabel}
             </p>
             <div className="space-y-3">
-              {[
-                { label: "Sobre", href: "#sobre" },
-                { label: "Os 4 Pilares", href: "#pilares" },
-                { label: "Jefferson", href: "#jefferson" },
-                { label: "Kit Mentoria", href: "#kit" },
-                { label: "FAQ", href: "#faq" },
-              ].map((link) => (
+              {navLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
@@ -58,20 +61,20 @@ export default function Footer() {
           {/* Pillars */}
           <div className="lg:col-span-3">
             <p className="font-accent text-[10px] uppercase tracking-[0.3em] text-gold mb-6">
-              Os Pilares
+              {t.footer.pillarsLabel}
             </p>
             <div className="space-y-3">
               <p className="font-body text-sm text-warm-white/40">
-                <span className="text-gold font-semibold">P</span> — Princípio acima de Resultados
+                <span className="text-gold font-semibold">P</span> — {t.footer.pillarP}
               </p>
               <p className="font-body text-sm text-warm-white/40">
-                <span className="text-gold font-semibold">A</span> — Alinhamento gera Autoridade
+                <span className="text-gold font-semibold">A</span> — {t.footer.pillarA}
               </p>
               <p className="font-body text-sm text-warm-white/40">
-                <span className="text-gold font-semibold">G</span> — Governo inicia no Secreto
+                <span className="text-gold font-semibold">G</span> — {t.footer.pillarG}
               </p>
               <p className="font-body text-sm text-warm-white/40">
-                <span className="text-gold font-semibold">O</span> — Obediência sustenta o Invisível
+                <span className="text-gold font-semibold">O</span> — {t.footer.pillarO}
               </p>
             </div>
           </div>
@@ -79,14 +82,14 @@ export default function Footer() {
           {/* Contact */}
           <div className="lg:col-span-3">
             <p className="font-accent text-[10px] uppercase tracking-[0.3em] text-gold mb-6">
-              Contato
+              {t.footer.contactLabel}
             </p>
             <div className="space-y-3">
               <a
                 href="#inscricao"
                 className="block font-body text-sm text-warm-white/40 hover:text-warm-white transition-colors duration-300"
               >
-                Inscreva-se na Mentoria
+                {t.footer.contactCta}
               </a>
               <p className="font-body text-sm text-warm-white/40">
                 contato@pago.com.br
@@ -101,17 +104,17 @@ export default function Footer() {
         {/* Legal Links Row */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
           <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-warm-white/30">
-            &copy; {new Date().getFullYear()} P.A.G.O. Novo Tempo. Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} {t.footer.copyright}
           </p>
           <div className="flex items-center gap-6">
             <Link href="/privacidade" className="font-accent text-[11px] uppercase tracking-[0.15em] text-warm-white/50 hover:text-gold transition-colors duration-300">
-              Privacidade
+              {t.footer.privacy}
             </Link>
             <Link href="/termos" className="font-accent text-[11px] uppercase tracking-[0.15em] text-warm-white/50 hover:text-gold transition-colors duration-300">
-              Termos de Uso
+              {t.footer.terms}
             </Link>
             <Link href="/cookies" className="font-accent text-[11px] uppercase tracking-[0.15em] text-warm-white/50 hover:text-gold transition-colors duration-300">
-              Cookies
+              {t.footer.cookies}
             </Link>
           </div>
         </div>
@@ -119,7 +122,7 @@ export default function Footer() {
         {/* Quote */}
         <div className="text-center">
           <p className="font-body text-[11px] text-warm-white/20 italic">
-            "Não estou construindo sucesso. Estou administrando uma visão."
+            {t.footer.quote}
           </p>
         </div>
       </div>

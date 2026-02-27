@@ -1,5 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -16,37 +17,6 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
     </motion.div>
   );
 }
-
-const pillarCards = [
-  {
-    letter: "P",
-    title: "Princípio",
-    subtitle: "Acima de\nresultados",
-    description:
-      "A verdadeira prosperidade não é medida pela acumulação, mas pela fidelidade a fundamentos imutáveis. Princípios bíblicos são verdades eternas que regem a vida.",
-  },
-  {
-    letter: "A",
-    title: "Alinhamento",
-    subtitle: "Gera\nautoridade",
-    description:
-      "Quando o que cremos, sentimos e fazemos caminham na mesma direção, emanamos uma autoridade que transcende o poder humano.",
-  },
-  {
-    letter: "G",
-    title: "Governo",
-    subtitle: "Inicia no\nsecreto",
-    description:
-      "O que se manifesta publicamente é o reflexo do que foi estabelecido no secreto. A vida de oração é o fundamento de todo governo verdadeiro.",
-  },
-  {
-    letter: "O",
-    title: "Obediência",
-    subtitle: "Sustenta o\ninvisível",
-    description:
-      "A obediência é a chave que destrava o sobrenatural. Constância vence talento. Disciplina vence motivação.",
-  },
-];
 
 function FlipCard({
   letter,
@@ -131,6 +101,13 @@ function FlipCard({
 }
 
 export default function JeffersonSection() {
+  const { t } = useLanguage();
+
+  const pillarCards = t.jefferson.cards.map((card, i) => ({
+    letter: ["P", "A", "G", "O"][i],
+    ...card,
+  }));
+
   return (
     <section id="jefferson" className="py-28 lg:py-36 bg-warm-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
@@ -139,14 +116,14 @@ export default function JeffersonSection() {
           <div className="lg:col-span-4">
             <FadeIn>
               <p className="font-accent text-[11px] uppercase tracking-[0.4em] text-gold mb-6">
-                O Fundador
+                {t.jefferson.label}
               </p>
             </FadeIn>
             <FadeIn delay={0.1}>
               <h2 className="font-display text-4xl lg:text-5xl font-semibold text-navy leading-[1.15] mb-8">
-                Jefferson
+                {t.jefferson.name}
                 <br />
-                <span className="text-gold">Evangelista</span>
+                <span className="text-gold">{t.jefferson.nameSurname}</span>
               </h2>
             </FadeIn>
             <FadeIn delay={0.2}>
@@ -154,13 +131,13 @@ export default function JeffersonSection() {
             </FadeIn>
             <FadeIn delay={0.3}>
               <p className="font-accent text-[10px] uppercase tracking-[0.3em] text-blue-muted mb-4">
-                Construtor de Estruturas
+                {t.jefferson.role1}
               </p>
               <p className="font-accent text-[10px] uppercase tracking-[0.3em] text-blue-muted mb-4">
-                Organizador de Destinos
+                {t.jefferson.role2}
               </p>
               <p className="font-accent text-[10px] uppercase tracking-[0.3em] text-blue-muted">
-                Atleta de Resistência
+                {t.jefferson.role3}
               </p>
             </FadeIn>
           </div>
@@ -169,19 +146,13 @@ export default function JeffersonSection() {
           <div className="lg:col-span-8 space-y-8">
             <FadeIn delay={0.1}>
               <p className="font-body text-lg text-navy/80 leading-relaxed">
-                Jefferson Evangelista não é apenas um empreendedor. Ele é um construtor de
-                estruturas e um organizador de destinos. Sua história não começou nos negócios,
-                mas na consciência de que sem governo espiritual, emocional e estratégico,
-                qualquer crescimento desmorona.
+                {t.jefferson.bio1}
               </p>
             </FadeIn>
 
             <FadeIn delay={0.2}>
               <p className="font-body text-base text-navy/70 leading-relaxed">
-                À frente da Interaja e de múltiplas frentes empresariais, Jefferson nunca buscou
-                apenas lucro. Sempre buscou estrutura, sustentabilidade e legado. Ele pensa em
-                governança antes de pensar em expansão. Pensa em base antes de pensar em
-                visibilidade.
+                {t.jefferson.bio2}
               </p>
             </FadeIn>
 
@@ -192,22 +163,17 @@ export default function JeffersonSection() {
             <FadeIn delay={0.4}>
               <blockquote className="border-l-2 border-gold pl-6 py-4 bg-sand/50">
                 <p className="font-display text-xl text-navy italic leading-relaxed mb-4">
-                  "O P.A.G.O. não foi uma ideia que eu simplesmente criei. Foi uma visão que
-                  o Espírito Santo me entregou. Eu apenas organizei, estruturei e sistematizei
-                  aquilo que recebi."
+                  {t.jefferson.quote}
                 </p>
                 <footer className="font-accent text-[10px] uppercase tracking-[0.3em] text-gold">
-                  Jefferson Evangelista
+                  — {t.jefferson.quoteAuthor}
                 </footer>
               </blockquote>
             </FadeIn>
 
             <FadeIn delay={0.5}>
               <p className="font-body text-base text-navy/70 leading-relaxed">
-                Como atleta de resistência, Jefferson carrega no corpo o que acredita na alma:
-                disciplina diária, constância silenciosa e avanço estratégico. Não é sobre
-                velocidade. É sobre permanência. Ele não lidera para aparecer. Ele estrutura
-                para permanecer.
+                {t.jefferson.bio3}
               </p>
             </FadeIn>
 
@@ -218,7 +184,7 @@ export default function JeffersonSection() {
                 ))}
               </div>
               <p className="font-accent text-[9px] uppercase tracking-[0.2em] text-blue-muted/50 text-center mt-3">
-                Passe o mouse para revelar
+                {t.jefferson.flipHint}
               </p>
             </FadeIn>
           </div>

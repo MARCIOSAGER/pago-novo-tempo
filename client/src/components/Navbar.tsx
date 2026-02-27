@@ -1,20 +1,23 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import LanguageSelector from "@/components/LanguageSelector";
 
 const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo_ea5770c3.jpeg";
 
-const navLinks = [
-  { label: "Sobre", href: "#sobre" },
-  { label: "Os 4 Pilares", href: "#pilares" },
-  { label: "Jefferson", href: "#jefferson" },
-  { label: "Kit Mentoria", href: "#kit" },
-  { label: "FAQ", href: "#faq" },
-];
-
 export default function Navbar() {
+  const { t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navLinks = [
+    { label: t.nav.about, href: "#sobre" },
+    { label: t.nav.pillars, href: "#pilares" },
+    { label: t.nav.jefferson, href: "#jefferson" },
+    { label: t.nav.kit, href: "#kit" },
+    { label: t.nav.faq, href: "#faq" },
+  ];
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
@@ -48,13 +51,13 @@ export default function Navbar() {
                   P.A.G.O.
                 </span>
                 <span className="block font-accent text-[10px] uppercase tracking-[0.3em] text-blue-muted">
-                  Novo Tempo
+                  {t.nav.tagline}
                 </span>
               </div>
             </a>
 
             {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-10">
+            <div className="hidden lg:flex items-center gap-8">
               {navLinks.map((link) => (
                 <a
                   key={link.href}
@@ -64,11 +67,12 @@ export default function Navbar() {
                   {link.label}
                 </a>
               ))}
+              <LanguageSelector />
               <a
                 href="#inscricao"
                 className="font-accent text-xs uppercase tracking-[0.2em] bg-navy text-warm-white px-6 py-3 hover:bg-navy-light transition-colors duration-300"
               >
-                Inscreva-se
+                {t.nav.subscribe}
               </a>
             </div>
 
@@ -106,12 +110,16 @@ export default function Navbar() {
                 </a>
               ))}
               <div className="gold-line mt-4" />
+              {/* Mobile Language Selector */}
+              <div className="flex justify-center">
+                <LanguageSelector variant="mobile" />
+              </div>
               <a
                 href="#inscricao"
                 onClick={() => setMobileOpen(false)}
                 className="font-accent text-sm uppercase tracking-[0.2em] bg-navy text-warm-white px-8 py-4 text-center hover:bg-navy-light transition-colors"
               >
-                Inscreva-se na Mentoria
+                {t.nav.subscribeMobile}
               </a>
             </div>
           </motion.div>

@@ -1,5 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -18,13 +19,15 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 }
 
 export default function AboutSection() {
+  const { t } = useLanguage();
+
   return (
     <section id="sobre" className="py-28 lg:py-36 bg-warm-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Section Label */}
         <FadeIn>
           <p className="font-accent text-[11px] uppercase tracking-[0.4em] text-gold mb-6">
-            Sobre o P.A.G.O.
+            {t.about.label}
           </p>
         </FadeIn>
 
@@ -33,11 +36,11 @@ export default function AboutSection() {
           <div className="lg:col-span-5">
             <FadeIn delay={0.1}>
               <h2 className="font-display text-4xl lg:text-5xl font-semibold text-navy leading-[1.15] mb-8">
-                Um sistema de
+                {t.about.titleLine1}
                 <br />
-                reorganização
+                {t.about.titleLine2}
                 <br />
-                <span className="text-gold">de vida.</span>
+                <span className="text-gold">{t.about.titleLine3}</span>
               </h2>
             </FadeIn>
             <FadeIn delay={0.2}>
@@ -45,9 +48,7 @@ export default function AboutSection() {
             </FadeIn>
             <FadeIn delay={0.3}>
               <p className="font-body text-base text-navy/70 leading-relaxed">
-                O P.A.G.O. não foi uma ideia simplesmente criada. Foi uma visão
-                que o Espírito Santo entregou. Apenas organizada, estruturada e
-                sistematizada para transformar vidas.
+                {t.about.description}
               </p>
             </FadeIn>
           </div>
@@ -56,10 +57,7 @@ export default function AboutSection() {
           <div className="lg:col-span-7 space-y-8">
             <FadeIn delay={0.2}>
               <p className="font-body text-lg text-navy/80 leading-relaxed">
-                Muitas pessoas não fracassam por falta de capacidade, mas por falta de
-                governo interior. Vivem com fé genuína, mas sem estrutura. Possuem um
-                chamado claro, mas sem direção estratégica. Amam a Deus, mas experimentam
-                desorganização em suas vidas.
+                {t.about.content}
               </p>
             </FadeIn>
 
@@ -71,20 +69,18 @@ export default function AboutSection() {
               <div className="grid sm:grid-cols-2 gap-8">
                 <div className="space-y-3">
                   <p className="font-accent text-[11px] uppercase tracking-[0.3em] text-gold">
-                    O Problema
+                    {t.about.problemLabel}
                   </p>
                   <p className="font-body text-sm text-navy/70 leading-relaxed">
-                    Prosperidade sem governo gera queda. Crescimento sem estrutura
-                    gera colapso. Fé sem alinhamento gera confusão.
+                    {t.about.problemText}
                   </p>
                 </div>
                 <div className="space-y-3">
                   <p className="font-accent text-[11px] uppercase tracking-[0.3em] text-gold">
-                    A Resposta
+                    {t.about.answerLabel}
                   </p>
                   <p className="font-body text-sm text-navy/70 leading-relaxed">
-                    O P.A.G.O. é um caminho para estruturar a vida espiritual,
-                    emocional e prática com maturidade e direção.
+                    {t.about.answerText}
                   </p>
                 </div>
               </div>
@@ -93,8 +89,7 @@ export default function AboutSection() {
             <FadeIn delay={0.5}>
               <blockquote className="border-l-2 border-gold pl-6 py-2">
                 <p className="font-display text-xl text-navy italic leading-relaxed">
-                  "Homens restaurados constroem famílias fortes. Famílias fortes
-                  sustentam empresas sólidas. Empresas sólidas impactam territórios."
+                  {t.about.quote}
                 </p>
               </blockquote>
             </FadeIn>

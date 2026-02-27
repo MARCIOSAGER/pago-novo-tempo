@@ -1,5 +1,6 @@
 import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const IMAGES = {
   principles: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-principles-HDhT4DKjE38mG8ZkecmGd4.webp",
@@ -8,50 +9,14 @@ const IMAGES = {
   obedience: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-obedience-f5zof3JxmnB8U7Po4wBCp3.webp",
 };
 
-const pillars = [
-  {
-    number: "I",
-    letter: "P",
-    title: "Princípio",
-    subtitle: "Acima de Resultados",
-    description:
-      "A verdadeira e duradoura prosperidade não é medida pela acumulação, mas pela fidelidade a fundamentos imutáveis. Princípios bíblicos são verdades eternas que regem o universo e a vida humana.",
-    verse: "\"Busquem, pois, em primeiro lugar o Reino de Deus e a sua justiça, e todas essas coisas lhes serão acrescentadas.\" — Mateus 6:33",
-    image: IMAGES.principles,
-  },
-  {
-    number: "II",
-    letter: "A",
-    title: "Alinhamento",
-    subtitle: "Gera Autoridade",
-    description:
-      "A verdadeira autoridade emana de um estado de alinhamento — espiritual, emocional e estratégico. Quando o que cremos, sentimos e fazemos caminham na mesma direção, emanamos uma autoridade que transcende o poder humano.",
-    verse: "\"Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento. Reconhece-o em todos os teus caminhos, e ele endireitará as tuas veredas.\" — Provérbios 3:5-6",
-    image: IMAGES.alignment,
-  },
-  {
-    number: "III",
-    letter: "G",
-    title: "Governo",
-    subtitle: "Inicia no Secreto",
-    description:
-      "O que se manifesta publicamente é apenas o reflexo do que foi estabelecido e consolidado no secreto. A vida de oração e comunhão com Deus é o fundamento de todo governo verdadeiro.",
-    verse: "\"Mas tu, quando orares, entra no teu aposento e, fechando a tua porta, ora a teu Pai, que vê o que está oculto; e teu Pai, que vê o que está oculto, te recompensará.\" — Mateus 6:6",
-    image: IMAGES.government,
-  },
-  {
-    number: "IV",
-    letter: "O",
-    title: "Obediência",
-    subtitle: "Sustenta o Invisível",
-    description:
-      "A obediência é a chave que destrava o sobrenatural. Não é sobre a velocidade com que se começa, mas sobre a permanência no propósito. Constância vence talento. Disciplina vence motivação.",
-    verse: "\"Se estiverdes dispostos e fordes obedientes, comereis o melhor desta terra.\" — Isaías 1:19",
-    image: IMAGES.obedience,
-  },
+const pillarMeta = [
+  { number: "I", letter: "P", image: IMAGES.principles },
+  { number: "II", letter: "A", image: IMAGES.alignment },
+  { number: "III", letter: "G", image: IMAGES.government },
+  { number: "IV", letter: "O", image: IMAGES.obedience },
 ];
 
-function PillarCard({ pillar, index }: { pillar: typeof pillars[0]; index: number }) {
+function PillarCard({ pillar, index }: { pillar: { number: string; letter: string; image: string; title: string; subtitle: string; description: string; verse: string }; index: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const isEven = index % 2 === 0;
@@ -75,7 +40,6 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[0]; index: numbe
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-navy/20" />
-        {/* Number overlay */}
         <div className="absolute bottom-6 right-6">
           <span className="font-display text-7xl lg:text-8xl font-bold text-warm-white/15">
             {pillar.number}
@@ -113,8 +77,17 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[0]; index: numbe
 }
 
 export default function PillarsSection() {
+  const { t } = useLanguage();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+
+  const pillars = pillarMeta.map((meta, i) => ({
+    ...meta,
+    title: t.pillars.items[i].title,
+    subtitle: t.pillars.items[i].subtitle,
+    description: t.pillars.items[i].description,
+    verse: t.pillars.items[i].verse,
+  }));
 
   return (
     <section id="pilares" className="py-28 lg:py-36 bg-sand">
@@ -126,12 +99,12 @@ export default function PillarsSection() {
           transition={{ duration: 0.7 }}
         >
           <p className="font-accent text-[11px] uppercase tracking-[0.4em] text-gold mb-6">
-            Os Quatro Pilares
+            {t.pillars.label}
           </p>
           <h2 className="font-display text-4xl lg:text-5xl font-semibold text-navy leading-[1.15] max-w-xl">
-            Quatro fundamentos.
+            {t.pillars.titleLine1}
             <br />
-            <span className="text-gold">Uma transformação.</span>
+            <span className="text-gold">{t.pillars.titleLine2}</span>
           </h2>
         </motion.div>
       </div>
