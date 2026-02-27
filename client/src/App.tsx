@@ -18,6 +18,7 @@ import AdminInscricaoDetalhe from "./pages/AdminInscricaoDetalhe";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminDownloads from "./pages/AdminDownloads";
 import AdminMediaRepo from "./pages/AdminMediaRepo";
+import AdminKids from "./pages/AdminKids";
 
 function Router() {
   return (
@@ -56,6 +57,11 @@ function Router() {
       <Route path="/admin/media">
         <AdminLayout>
           <AdminMediaRepo />
+        </AdminLayout>
+      </Route>
+      <Route path="/admin/kids">
+        <AdminLayout>
+          <AdminKids />
         </AdminLayout>
       </Route>
 

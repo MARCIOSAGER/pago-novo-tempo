@@ -16,6 +16,7 @@ export default function Navbar() {
     { label: t.nav.pillars, href: "#pilares" },
     { label: t.nav.jefferson, href: "#jefferson" },
     { label: t.nav.kit, href: "#kit" },
+    { label: t.nav.kids, href: "#kids" },
     { label: t.nav.faq, href: "#faq" },
   ];
 

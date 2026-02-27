@@ -124,3 +124,7 @@
 - [x] Ebook P.A.G.O. Kids: Gerar PDFs (PT e ES) — PDF editorial 39 páginas + PDFs Markdown
 - [x] Instagram: Criar 10 posts para P.A.G.O. (imagens + legendas)
 - [x] Instagram: Criar 10 posts para P.A.G.O. Kids (imagens + legendas)
+- [x] Criar seção P.A.G.O. Kids na landing page pública com ilustrações e CTA para download
+- [x] Criar página Admin "P.A.G.O. Kids" para gerenciar conteúdo da seção Kids
+- [x] Adicionar traduções i18n (PT, EN, ES) para a nova seção Kids
+- [x] Integrar navegação da nova página Admin no DashboardLayout

@@ -8,6 +8,7 @@ const en: Translations = {
     jefferson: "Jefferson",
     kit: "Mentoring Kit",
     faq: "FAQ",
+    kids: "Kids",
     subscribe: "Sign Up",
     subscribeMobile: "Sign Up for Mentoring",
     tagline: "New Season",
@@ -170,6 +171,39 @@ const en: Translations = {
     lgpdRequired: "You must accept the Privacy Policy to continue.",
     nameMinLength: "Name must be at least 2 characters.",
     emailInvalid: "Please enter a valid email.",
+  },
+
+  // === KIDS ===
+  kids: {
+    label: "For the Whole Family",
+    titleLine1: "P.A.G.O.",
+    titleLine2: "Kids",
+    subtitle: "The same 4 pillars, now adapted for children ages 6 to 12. Bible stories, fun activities, and lessons that build character from an early age.",
+    description: "P.A.G.O. Kids is a special ebook for parents who want to pass on the principles of Principle, Alignment, Government, and Obedience to their children in a playful and accessible way.",
+    features: [
+      {
+        title: "8 Illustrated Chapters",
+        description: "Bible stories adapted with child-friendly language and original colorful illustrations.",
+      },
+      {
+        title: "12 Hands-On Activities",
+        description: "Coloring, fill-in, drawing, and reflection exercises to reinforce each pillar.",
+      },
+      {
+        title: "7-Day Family Challenge",
+        description: "A weekly plan with daily missions for parents and children to practice together.",
+      },
+      {
+        title: "Letter to Parents",
+        description: "Guidance for parents to lead activities and conversations with wisdom.",
+      },
+    ],
+    ctaDownload: "Download Free Ebook",
+    ctaPreview: "Preview",
+    badge: "New",
+    ageRange: "Ages 6 to 12",
+    pages: "39 pages",
+    format: "Illustrated PDF",
   },
 
   // === FAQ ===

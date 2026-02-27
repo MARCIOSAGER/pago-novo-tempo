@@ -81,6 +81,11 @@ async function startServer() {
       url: "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/nsqXhRlGADHIgEiR.html?Expires=1803748787&Signature=ZL4IkPKQWy-ucDA2MmIrVgf-L39g8PfUmq4SsfDgvgmXd-2yucqHaG6y04BU4Z7jk1J1SNs0Yw50ueajOjthdd~TspeDO96NpekvTVcUa7FPzLrvIX7XwJiKXYQFy74Up5DCJGm6X0Xn8y~SnJwdqY2-Xz08mkrO8sPDRtBwnaYdui7BL3dIFKIW~vnMh0WaKguk0Mm~g0V8dfuSJb2nrg6nSQFAGsiZMiRB8CfFafCnKNNwJhECCjMlkXUo~8F-IO8JiIPTEDtxu2GvcD780FiTAZKHRc06HWDcanw9-XJzSfugbkdgtUt22uqWaBOM-5ctfnf6CjFv2TjocaI3zQ__&Key-Pair-Id=K2HSFNDJXOU9YS",
       filename: "PAGO-Ebook-v2.html",
     },
+    // P.A.G.O. Kids
+    "ebook-kids-pdf": {
+      url: "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/eCjhtkOqwFyWweSJ.pdf?Expires=1803760285&Signature=BAM8rL3yjWT~-N~LDTsS7jG1RbGqFwGD6f~Q280nClzIz8k7H-6cX-Y4kSM9TuIhQSl~5HI8hqmqywJ8GQagSEs7kylqjncQSKoKKjAIlOMhXWcrPZAw5rJp0PjKrdLJNZ0oJzUS568huO0EU82CCzQKzYXCeTC7VuckRWA4on6qeFB2mGrhPFOWJ4dbrU36nelS~lc6ACm1TjqqZJiiUde52ghySDCL8t-G38yWkC1JFqCcA1YdJbfnkv4zpNpfphYeYvoUPRvPnKqImXLe9pKKpjRr4un66AyD0Oxq9qy04gLj6yIw7N~T-bBNhnrkHQTAFdvZQMOJu20f26UVwA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+      filename: "PAGO-Kids-Ebook.pdf",
+    },
   };
 
   app.get("/api/downloads/:format", (req, res) => {

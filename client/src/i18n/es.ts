@@ -8,6 +8,7 @@ const es: Translations = {
     jefferson: "Jefferson",
     kit: "Kit de Mentoría",
     faq: "FAQ",
+    kids: "Kids",
     subscribe: "Inscríbete",
     subscribeMobile: "Inscríbete en la Mentoría",
     tagline: "Nuevo Tiempo",
@@ -170,6 +171,39 @@ const es: Translations = {
     lgpdRequired: "Debes aceptar la Política de Privacidad para continuar.",
     nameMinLength: "El nombre debe tener al menos 2 caracteres.",
     emailInvalid: "Por favor, ingresa un correo electrónico válido.",
+  },
+
+  // === KIDS ===
+  kids: {
+    label: "Para Toda la Familia",
+    titleLine1: "P.A.G.O.",
+    titleLine2: "Kids",
+    subtitle: "Los mismos 4 pilares, ahora adaptados para niños de 6 a 12 años. Historias bíblicas, actividades divertidas y lecciones que forman carácter desde temprano.",
+    description: "P.A.G.O. Kids es un ebook especial para padres que desean transmitir los principios de Principio, Alineamiento, Gobierno y Obediencia a sus hijos de forma lúdica y accesible.",
+    features: [
+      {
+        title: "8 Capítulos Ilustrados",
+        description: "Historias bíblicas adaptadas con lenguaje infantil e ilustraciones coloridas originales.",
+      },
+      {
+        title: "12 Actividades Prácticas",
+        description: "Ejercicios de colorear, completar, dibujar y reflexionar para fijar cada pilar.",
+      },
+      {
+        title: "Desafío 7 Días en Familia",
+        description: "Un plan semanal con misiones diarias para padres e hijos practicar juntos.",
+      },
+      {
+        title: "Carta a los Padres",
+        description: "Orientaciones para que los padres conduzcan las actividades y conversaciones con sabiduría.",
+      },
+    ],
+    ctaDownload: "Descargar Ebook Gratis",
+    ctaPreview: "Ver Vista Previa",
+    badge: "Nuevo",
+    ageRange: "6 a 12 años",
+    pages: "39 páginas",
+    format: "PDF Ilustrado",
   },
 
   // === FAQ ===

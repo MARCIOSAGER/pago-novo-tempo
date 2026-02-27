@@ -13,6 +13,7 @@ import AboutSection from "@/components/AboutSection";
 import PillarsSection from "@/components/PillarsSection";
 import JeffersonSection from "@/components/JeffersonSection";
 import KitSection from "@/components/KitSection";
+import KidsSection from "@/components/KidsSection";
 import CTASection from "@/components/CTASection";
 import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
@@ -28,6 +29,7 @@ export default function Home() {
       <PillarsSection />
       <JeffersonSection />
       <KitSection />
+      <KidsSection />
       <CTASection />
       <FAQSection />
       <Footer />

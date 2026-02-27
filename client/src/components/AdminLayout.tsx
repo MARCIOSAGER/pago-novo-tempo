@@ -30,6 +30,7 @@ import {
   ArrowLeft,
   Download,
   Image as ImageIcon,
+  Heart,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation, Link } from "wouter";
@@ -42,6 +43,7 @@ const menuItems = [
   { icon: BarChart3, label: "Análises", path: "/admin/analytics" },
   { icon: Download, label: "Downloads", path: "/admin/downloads" },
   { icon: ImageIcon, label: "Mídia", path: "/admin/media" },
+  { icon: Heart, label: "P.A.G.O. Kids", path: "/admin/kids" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "admin-sidebar-width";
