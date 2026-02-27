@@ -65,3 +65,4 @@
 - [x] Fix: Navbar com fundo ciano/turquesa — corrigir conflito de cores CSS após upgrade web-db-user (substituído oklch por hex)
 - [x] Fix: Pilar "Princípio" (P) ausente nos cartões de resumo da seção Jefferson
 - [x] Efeito flip 3D nos cartões P.A.G.O. da seção Jefferson (hover revela descrição)
+- [x] Skill reutilizável editorial-landing-platform criada em skills/ (sincronizada com GitHub)
