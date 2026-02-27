@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P.A.G.O. — Princípio · Alinhamento · Governo · Obediência</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Montserrat:wght@300;400;500;600&display=swap');
+
+  :root {
+    --navy: #1A2744;
+    --warm-white: #FAFAF8;
+    --sand: #E8E0D4;
+    --gold: #B8A88A;
+    --gold-light: #C9BC9E;
+    --navy-light: #2A3A5C;
+    --blue-muted: #6B7FA3;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body {
+    font-family: 'Lora', Georgia, serif;
+    color: var(--navy);
+    background: var(--warm-white);
+    line-height: 1.8;
+    font-size: 11pt;
+  }
+
+  /* ===== COVER PAGE ===== */
+  .cover-page {
+    width: 100%;
+    height: 100vh;
+    min-height: 1122px;
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+  }
+
+  .cover-page::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url('/home/ubuntu/webdev-static-assets/ebook-cover.png') center/cover no-repeat;
+    opacity: 0.3;
+  }
+
+  .cover-content {
+    position: relative;
+    z-index: 2;
+    padding: 60px;
+  }
+
+  .cover-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    margin: 0 auto 40px;
+  }
+
+  .cover-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 72pt;
+    font-weight: 300;
+    color: var(--gold);
+    letter-spacing: 12px;
+    margin-bottom: 16px;
+  }
+
+  .cover-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11pt;
+    font-weight: 300;
+    color: var(--warm-white);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-bottom: 60px;
+    opacity: 0.9;
+  }
+
+  .cover-tagline {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 13pt;
+    color: var(--gold-light);
+    max-width: 500px;
+    margin: 0 auto 80px;
+    line-height: 1.6;
+  }
+
+  .cover-author {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10pt;
+    font-weight: 400;
+    color: var(--warm-white);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+
+  .cover-line {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 30px auto;
+  }
+
+  /* ===== GENERAL PAGES ===== */
+  .page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 80px 60px;
+    page-break-after: always;
+  }
+
+  .page-full {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    page-break-after: always;
+  }
+
+  /* ===== CHAPTER DIVIDERS ===== */
+  .chapter-divider {
+    width: 100%;
+    height: 100vh;
+    min-height: 1122px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    page-break-after: always;
+    overflow: hidden;
+  }
+
+  .chapter-divider img {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.4;
+  }
+
+  .chapter-divider::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(180deg, rgba(26,39,68,0.85) 0%, rgba(26,39,68,0.6) 50%, rgba(26,39,68,0.85) 100%);
+  }
+
+  .chapter-content {
+    position: relative;
+    z-index: 2;
+    padding: 60px;
+  }
+
+  .chapter-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 120pt;
+    font-weight: 300;
+    color: var(--gold);
+    opacity: 0.4;
+    line-height: 1;
+    margin-bottom: -20px;
+  }
+
+  .chapter-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9pt;
+    font-weight: 400;
+    color: var(--warm-white);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 20px;
+  }
+
+  .chapter-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36pt;
+    font-weight: 400;
+    color: var(--warm-white);
+    margin-bottom: 16px;
+  }
+
+  .chapter-subtitle {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 13pt;
+    color: var(--gold-light);
+    max-width: 450px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ===== TYPOGRAPHY ===== */
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28pt;
+    font-weight: 400;
+    color: var(--navy);
+    margin-bottom: 24px;
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20pt;
+    font-weight: 500;
+    color: var(--navy);
+    margin-top: 48px;
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9pt;
+    font-weight: 500;
+    color: var(--gold);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-top: 36px;
+    margin-bottom: 12px;
+  }
+
+  p {
+    margin-bottom: 16px;
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  /* ===== VERSE BLOCKS ===== */
+  .verse-block {
+    background: var(--sand);
+    border-left: 3px solid var(--gold);
+    padding: 24px 30px;
+    margin: 32px 0;
+    position: relative;
+  }
+
+  .verse-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14pt;
+    font-style: italic;
+    color: var(--navy);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .verse-ref {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 8pt;
+    font-weight: 500;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ===== QUOTE BLOCKS ===== */
+  .quote-block {
+    background: var(--navy);
+    padding: 32px 36px;
+    margin: 36px 0;
+    position: relative;
+  }
+
+  .quote-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16pt;
+    font-style: italic;
+    color: var(--warm-white);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .quote-author {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 8pt;
+    font-weight: 400;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  /* ===== HIGHLIGHT BOX ===== */
+  .highlight-box {
+    border: 1px solid var(--gold);
+    padding: 24px 28px;
+    margin: 28px 0;
+    background: rgba(184, 168, 138, 0.05);
+  }
+
+  .highlight-box h4 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9pt;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  /* ===== PAO SECTION ===== */
+  .pao-badge {
+    display: inline-block;
+    background: var(--navy);
+    color: var(--gold);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9pt;
+    font-weight: 600;
+    letter-spacing: 4px;
+    padding: 8px 20px;
+    margin-bottom: 24px;
+  }
+
+  /* ===== EXERCISE BLOCKS ===== */
+  .exercise-block {
+    background: var(--warm-white);
+    border: 1px dashed var(--gold);
+    padding: 28px;
+    margin: 32px 0;
+  }
+
+  .exercise-block h4 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9pt;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .exercise-block ol {
+    padding-left: 20px;
+  }
+
+  .exercise-block li {
+    margin-bottom: 10px;
+  }
+
+  .notes-area {
+    border: 1px solid var(--sand);
+    min-height: 120px;
+    margin-top: 16px;
+    padding: 16px;
+    background: white;
+  }
+
+  .notes-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 7pt;
+    color: var(--blue-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  /* ===== SEPARATOR ===== */
+  .separator {
+    text-align: center;
+    margin: 48px 0;
+    color: var(--gold);
+    font-size: 14pt;
+    letter-spacing: 8px;
+  }
+
+  /* ===== INLINE IMAGE ===== */
+  .inline-image {
+    width: 100%;
+    margin: 32px 0;
+    overflow: hidden;
+  }
+
+  .inline-image img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .inline-image .caption {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 7pt;
+    color: var(--blue-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+    padding-top: 8px;
+  }
+
+  /* ===== TABLE OF CONTENTS ===== */
+  .toc {
+    list-style: none;
+    padding: 0;
+  }
+
+  .toc li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--sand);
+    font-family: 'Lora', serif;
+    font-size: 11pt;
+  }
+
+  .toc li span.toc-title {
+    color: var(--navy);
+  }
+
+  .toc li span.toc-page {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9pt;
+    color: var(--blue-muted);
+  }
+
+  .toc-section {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 8pt;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 24px;
+    margin-bottom: 4px;
+  }
+
+  /* ===== PILLAR SUMMARY TABLE ===== */
+  .pillar-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 28px 0;
+  }
+
+  .pillar-table th {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 8pt;
+    font-weight: 600;
+    color: var(--warm-white);
+    background: var(--navy);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+  }
+
+  .pillar-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--sand);
+    font-size: 10pt;
+    vertical-align: top;
+  }
+
+  .pillar-table tr:nth-child(even) td {
+    background: rgba(232, 224, 212, 0.3);
+  }
+
+  /* ===== FOOTER ===== */
+  .page-footer {
+    text-align: center;
+    padding-top: 40px;
+    margin-top: 40px;
+    border-top: 1px solid var(--sand);
+  }
+
+  .page-footer p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 7pt;
+    color: var(--blue-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* ===== BACK COVER ===== */
+  .back-cover {
+    width: 100%;
+    height: 100vh;
+    min-height: 1122px;
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px;
+  }
+
+  .back-cover .back-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18pt;
+    font-style: italic;
+    color: var(--warm-white);
+    max-width: 500px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+
+  .back-cover .back-author {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9pt;
+    color: var(--gold);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 60px;
+  }
+
+  .back-cover .back-pago {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24pt;
+    color: var(--gold);
+    letter-spacing: 8px;
+    margin-bottom: 12px;
+  }
+
+  .back-cover .back-pillars {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 8pt;
+    color: var(--warm-white);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- ============================================ -->
+<!-- COVER PAGE -->
+<!-- ============================================ -->
+<div class="cover-page">
+  <div class="cover-content">
+    <div class="cover-title">P.A.G.O.</div>
+    <div class="cover-subtitle">Princípio · Alinhamento · Governo · Obediência</div>
+    <div class="cover-line"></div>
+    <div class="cover-tagline">
+      "Prosperidade sem governo gera queda. Crescimento sem estrutura gera colapso. Fé sem alinhamento gera confusão."
+    </div>
+    <div class="cover-line"></div>
+    <div class="cover-author">Jefferson Evangelista</div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- TABLE OF CONTENTS -->
+<!-- ============================================ -->
+<div class="page">
+  <h3>Sumário</h3>
+  <h1>Conteúdo</h1>
+
+  <p class="toc-section">Fundamentos</p>
+  <ul class="toc">
+    <li><span class="toc-title">Introdução — O Que é o P.A.G.O.?</span></li>
+    <li><span class="toc-title">Sobre Jefferson Evangelista</span></li>
+    <li><span class="toc-title">O Conceito P.A.O. — Princípio, Alinhamento, Obediência</span></li>
+  </ul>
+
+  <p class="toc-section">Os Quatro Pilares</p>
+  <ul class="toc">
+    <li><span class="toc-title">Parte I — Princípios Acima de Resultados</span></li>
+    <li><span class="toc-title">Parte II — Alinhamento Gera Autoridade</span></li>
+    <li><span class="toc-title">Parte III — Governo Inicia no Secreto</span></li>
+    <li><span class="toc-title">Parte IV — Obediência Sustenta o Invisível</span></li>
+  </ul>
+
+  <p class="toc-section">Integração</p>
+  <ul class="toc">
+    <li><span class="toc-title">Do Governo Pessoal ao Legado Corporativo</span></li>
+    <li><span class="toc-title">Declaração de Compromisso P.A.G.O.</span></li>
+  </ul>
+</div>
+
+<!-- ============================================ -->
+<!-- INTRODUCTION -->
+<!-- ============================================ -->
+<div class="page">
+  <h3>Fundamentos</h3>
+  <h1>O Que é o P.A.G.O.?</h1>
+
+  <p><strong>P.A.G.O.</strong> é um acrónimo para <strong>Princípio, Alinhamento, Governo e Obediência</strong> — quatro pilares que formam um sistema de reorganização de vida criado por Jefferson Evangelista. Destinado a pessoas que amam a Deus mas vivem desorganizadas, o P.A.G.O. oferece um caminho para estruturar a vida espiritual, emocional e prática através de mentoria fundamentada em princípios bíblicos.</p>
+
+  <div class="quote-block">
+    <div class="quote-text">"O P.A.G.O. não foi uma ideia que eu simplesmente criei. Foi uma visão que o Espírito Santo me entregou. Eu apenas organizei, estruturei e sistematizei aquilo que recebi."</div>
+    <div class="quote-author">Jefferson Evangelista</div>
+  </div>
+
+  <p>O projecto não é apenas um programa de mentoria espiritual — é um <strong>ecossistema de governo pessoal e corporativo</strong> que visa formar líderes conscientes, organizados e posicionados. A sua convicção central é que prosperidade sem governo gera queda, crescimento sem estrutura gera colapso, e fé sem alinhamento gera confusão.</p>
+
+  <p>Este manual foi concebido para ser mais do que uma leitura. É uma ferramenta de trabalho. Cada capítulo contém ensinamentos fundamentados nas Escrituras, reflexões práticas e exercícios que o convidam a aplicar os princípios na sua vida quotidiana. O objectivo não é acumular conhecimento, mas transformar a forma como governa a si mesmo, a sua família e os seus empreendimentos.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"Ensina-nos a contar os nossos dias, para que alcancemos coração sábio."</div>
+    <div class="verse-ref">Salmos 90:12</div>
+  </div>
+
+  <table class="pillar-table">
+    <thead>
+      <tr>
+        <th>Pilar</th>
+        <th>Significado</th>
+        <th>Princípio Central</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>P</strong> — Princípio</td>
+        <td>Acima de Resultados</td>
+        <td>A fundação determina a altura da construção</td>
+      </tr>
+      <tr>
+        <td><strong>A</strong> — Alinhamento</td>
+        <td>Gera Autoridade</td>
+        <td>Coerência entre fé, palavras e acções</td>
+      </tr>
+      <tr>
+        <td><strong>G</strong> — Governo</td>
+        <td>Inicia no Secreto</td>
+        <td>Governo espiritual precede crescimento financeiro</td>
+      </tr>
+      <tr>
+        <td><strong>O</strong> — Obediência</td>
+        <td>Sustenta o Invisível</td>
+        <td>Obediência precede autoridade</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ============================================ -->
+<!-- ABOUT JEFFERSON -->
+<!-- ============================================ -->
+<div class="page">
+  <h3>O Fundador</h3>
+  <h1>Jefferson Evangelista</h1>
+
+  <p>Jefferson Evangelista é o criador e defensor do P.A.G.O. Ele define-se como um <strong>construtor de estruturas e organizador de destinos</strong>. À frente da Interaja e de múltiplas frentes empresariais, Jefferson opera como um arquitecto de sistemas sustentáveis. A sua convicção é clara: governo espiritual precede crescimento financeiro, alinhamento precede expansão, obediência precede autoridade.</p>
+
+  <p>Atleta de resistência (endurance) e líder do movimento Legendários, Jefferson carrega no corpo o que acredita na alma: disciplina diária, constância silenciosa e avanço estratégico. Não é sobre velocidade. É sobre permanência. Ele não lidera para aparecer. Ele estrutura para permanecer.</p>
+
+  <div class="quote-block">
+    <div class="quote-text">"Não estou a construir sucesso. Estou a administrar uma visão. Homens restaurados constroem famílias fortes. Famílias fortes constroem empresas sólidas. Empresas sólidas impactam territórios."</div>
+    <div class="quote-author">Jefferson Evangelista</div>
+  </div>
+
+  <p>A visão de Jefferson não se limita ao indivíduo. Ela se estende à família, à empresa e ao território. O P.A.G.O. é, portanto, um sistema que começa no governo pessoal e se expande para o legado corporativo. Cada pilar é uma camada de fundação que sustenta a seguinte, criando uma estrutura que não apenas resiste às tempestades, mas que se fortalece através delas.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"Todo aquele que ouve estas minhas palavras e as pratica será comparado a um homem prudente que edificou a sua casa sobre a rocha."</div>
+    <div class="verse-ref">Mateus 7:24</div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- P.A.O. CONCEPT -->
+<!-- ============================================ -->
+<div class="page">
+  <h3>Conceito Essencial</h3>
+  <h1>P.A.O. — A Tríade Fundamental</h1>
+  <div class="pao-badge">P · A · O</div>
+
+  <p>Antes de aprofundar os quatro pilares do P.A.G.O., é fundamental compreender o conceito <strong>P.A.O.</strong> — <strong>Princípio, Alinhamento e Obediência</strong>. Esta tríade representa o ciclo essencial de toda transformação genuína no Reino de Deus. Enquanto o P.A.G.O. é o sistema completo com quatro pilares, o P.A.O. destila a essência do processo em três movimentos indissociáveis.</p>
+
+  <h2>Princípio: O Fundamento Inabalável</h2>
+
+  <p>Tudo começa com o Princípio. Sem uma base sólida de valores e verdades bíblicas, qualquer construção — seja pessoal, familiar ou empresarial — está fadada ao colapso. O Princípio é a pedra angular sobre a qual todo o edifício se ergue. Não se trata de regras religiosas, mas de verdades eternas que governam a realidade, independentemente de as reconhecermos ou não.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"No princípio era o Verbo, e o Verbo estava com Deus, e o Verbo era Deus. Ele estava no princípio com Deus. Todas as coisas foram feitas por intermédio dele, e sem ele nada do que foi feito se fez."</div>
+    <div class="verse-ref">João 1:1-3</div>
+  </div>
+
+  <p>O Princípio não é negociável. Ele não se adapta às circunstâncias — as circunstâncias é que devem se adaptar a ele. Quando um homem ou uma mulher decide viver por princípios e não por conveniência, estabelece-se uma fundação que nenhuma tempestade pode destruir.</p>
+
+  <h2>Alinhamento: A Ponte Entre o Invisível e o Visível</h2>
+
+  <p>O segundo movimento do P.A.O. é o Alinhamento. Conhecer os princípios não é suficiente — é necessário alinhar toda a vida com eles. O Alinhamento é o processo contínuo de ajustar pensamentos, palavras, emoções e acções à verdade que se professa. É a coerência que gera autoridade.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"Mas sede cumpridores da palavra e não somente ouvintes, enganando-vos a vós mesmos."</div>
+    <div class="verse-ref">Tiago 1:22</div>
+  </div>
+
+  <p>O desalinhamento é a causa silenciosa de muitas falhas. Uma pessoa pode ter fé genuína, mas se as suas acções não estão alinhadas com a sua fé, a autoridade espiritual é comprometida. O Alinhamento é a ponte que conecta o que se crê ao que se vive, transformando convicção em influência.</p>
+
+  <h2>Obediência: O Selo da Transformação</h2>
+
+  <p>O terceiro e último movimento do P.A.O. é a Obediência. Ela é o selo que valida todo o processo. Sem obediência, os princípios permanecem teoria e o alinhamento permanece intenção. A obediência é a acção que materializa o invisível no visível, que transforma promessa em realidade.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"Se estiverdes dispostos e fordes obedientes, comereis o melhor desta terra."</div>
+    <div class="verse-ref">Isaías 1:19</div>
+  </div>
+
+  <p>A obediência no contexto do P.A.O. não é submissão passiva — é uma escolha activa e radical de seguir a direcção divina, mesmo quando o caminho não faz sentido para a mente natural. É a obediência que destrava o sobrenatural e abre portas que nenhum esforço humano poderia abrir.</p>
+
+  <div class="highlight-box">
+    <h4>O Ciclo P.A.O. na Prática</h4>
+    <p>O P.A.O. funciona como um ciclo contínuo: <strong>Princípio</strong> estabelece a fundação → <strong>Alinhamento</strong> ajusta a direcção → <strong>Obediência</strong> executa o plano. E o ciclo recomeça, cada vez mais profundo, cada vez mais refinado. É um processo de maturidade espiritual que nunca termina, mas que produz frutos cada vez mais abundantes.</p>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- CHAPTER I — PRINCÍPIO -->
+<!-- ============================================ -->
+<div class="chapter-divider">
+  <img src="/home/ubuntu/webdev-static-assets/ebook-chapter-principio.png" alt="Montanha ao amanhecer">
+  <div class="chapter-content">
+    <div class="chapter-number">I</div>
+    <div class="chapter-label">Parte Um</div>
+    <div class="chapter-title">Princípios Acima de Resultados</div>
+    <div class="chapter-subtitle">"A fundação determina a altura da construção. Sem princípios sólidos, qualquer resultado é temporário."</div>
+  </div>
+</div>
+
+<div class="page">
+  <h3>Parte I</h3>
+  <h1>Princípios Acima de Resultados</h1>
+
+  <p>O primeiro pilar do P.A.G.O. é, talvez, o mais contra-cultural numa sociedade obcecada por resultados imediatos. <strong>Princípios Acima de Resultados</strong> é uma declaração de que a verdadeira prosperidade não se mede pelo que se acumula, mas pela solidez da fundação sobre a qual se constrói. É a convicção de que a integridade, a verdade e a fidelidade aos valores divinos são mais valiosos do que qualquer ganho material ou reconhecimento público.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"Buscai primeiro o Reino de Deus e a sua justiça, e todas estas coisas vos serão acrescentadas."</div>
+    <div class="verse-ref">Mateus 6:33</div>
+  </div>
+
+  <h2>O Que São Princípios no Contexto do P.A.G.O.</h2>
+
+  <p>Princípios, no contexto do P.A.G.O., são verdades bíblicas imutáveis que servem como a bússola para todas as decisões e acções. Não são regras arbitrárias, mas leis espirituais que governam a realidade, da mesma forma que as leis da física governam o mundo natural. Ignorá-los não os invalida; apenas nos coloca em rota de colisão com a realidade.</p>
+
+  <p>Estes princípios abrangem todas as esferas da vida: espiritual, relacional, financeira e profissional. Eles incluem a honestidade como base de toda transacção, a generosidade como motor da prosperidade, a humildade como pré-requisito para a sabedoria, e a fidelidade como medida de carácter. Quando estes princípios são colocados acima dos resultados, os resultados que surgem são sustentáveis, éticos e abençoados.</p>
+
+  <h2>A Armadilha dos Resultados Sem Princípios</h2>
+
+  <p>A sociedade contemporânea celebra os resultados — o lucro, o crescimento, a visibilidade — muitas vezes sem questionar os meios utilizados para alcançá-los. No entanto, resultados obtidos sem princípios são como edifícios construídos sobre areia: impressionantes à vista, mas vulneráveis à primeira tempestade.</p>
+
+  <div class="quote-block">
+    <div class="quote-text">"Prosperidade sem governo gera queda. Crescimento sem estrutura gera colapso. Fé sem alinhamento gera confusão."</div>
+    <div class="quote-author">Jefferson Evangelista</div>
+  </div>
+
+  <p>Quantas empresas cresceram rapidamente apenas para desmoronar por falta de integridade? Quantas famílias aparentam sucesso externo enquanto se desintegram internamente? O P.A.G.O. nos convida a inverter a ordem: primeiro os princípios, depois os resultados. Quando a fundação é sólida, a construção pode alcançar alturas inimagináveis.</p>
+
+  <h2>Princípios Bíblicos Fundamentais</h2>
+
+  <p>As Escrituras são a fonte inesgotável de princípios que sustentam o P.A.G.O. Alguns dos mais relevantes para a vida prática incluem:</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"O temor do Senhor é o princípio da sabedoria, e o conhecimento do Santo é entendimento."</div>
+    <div class="verse-ref">Provérbios 9:10</div>
+  </div>
+
+  <p>A <strong>integridade</strong> como fundamento de toda relação e negócio — "O justo anda na sua integridade; bem-aventurados serão os seus filhos depois dele" (Provérbios 20:7). A <strong>generosidade</strong> como semente de prosperidade — "Há quem dê generosamente, e vê aumentar a sua riqueza; outros retêm o que deveriam dar, e caem na pobreza" (Provérbios 11:24). A <strong>fidelidade no pouco</strong> como qualificação para o muito — "Quem é fiel no pouco também é fiel no muito" (Lucas 16:10).</p>
+
+  <div class="exercise-block">
+    <h4>Exercício: Identificar os Seus Princípios Inegociáveis</h4>
+    <ol>
+      <li><strong>Reflexão pessoal:</strong> Quais são os três princípios bíblicos que você considera inegociáveis na sua vida? Escreva-os abaixo.</li>
+      <li><strong>Avaliação honesta:</strong> Nas últimas decisões importantes que tomou (financeiras, profissionais, relacionais), esses princípios foram respeitados? Onde houve compromisso?</li>
+      <li><strong>Compromisso:</strong> Escreva uma declaração pessoal de compromisso com esses princípios, independentemente dos resultados imediatos.</li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">Espaço para anotações</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- CHAPTER II — ALINHAMENTO -->
+<!-- ============================================ -->
+<div class="chapter-divider">
+  <img src="/home/ubuntu/webdev-static-assets/ebook-chapter-alinhamento.png" alt="Ponte sobre rio calmo">
+  <div class="chapter-content">
+    <div class="chapter-number">II</div>
+    <div class="chapter-label">Parte Dois</div>
+    <div class="chapter-title">Alinhamento Gera Autoridade</div>
+    <div class="chapter-subtitle">"A autoridade não é conquistada pelo cargo, mas pela coerência entre o que se prega e o que se vive."</div>
+  </div>
+</div>
+
+<div class="page">
+  <h3>Parte II</h3>
+  <h1>Alinhamento Gera Autoridade</h1>
+
+  <p>Com os princípios estabelecidos como fundação, o P.A.G.O. nos conduz ao segundo pilar: <strong>Alinhamento Gera Autoridade</strong>. Este pilar revela uma verdade profunda: a autoridade genuína — aquela que inspira, transforma e permanece — não é concedida por títulos ou posições, mas é gerada pela coerência entre o que se crê, o que se diz e o que se faz. O alinhamento é a estrutura invisível que sustenta a autoridade visível.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"Sede meus imitadores, como também eu sou de Cristo."</div>
+    <div class="verse-ref">1 Coríntios 11:1</div>
+  </div>
+
+  <h2>As Três Dimensões do Alinhamento</h2>
+
+  <p>O alinhamento no P.A.G.O. opera em três dimensões simultâneas e interdependentes:</p>
+
+  <p><strong>Alinhamento Espiritual</strong> é a conexão íntima e contínua com Deus. É garantir que a nossa vida espiritual não seja apenas ritualística, mas genuinamente alimentada pela oração, pela Palavra e pela comunhão com o Espírito Santo. Sem alinhamento espiritual, as outras dimensões carecem de fundamento.</p>
+
+  <p><strong>Alinhamento Emocional</strong> é a gestão inteligente das emoções à luz dos princípios bíblicos. Não se trata de reprimir sentimentos, mas de processá-los com maturidade, evitando que reacções impulsivas comprometam decisões estratégicas. O líder alinhado emocionalmente é estável, previsível na sua integridade e resiliente diante das adversidades.</p>
+
+  <p><strong>Alinhamento Estratégico</strong> é a capacidade de traduzir a visão espiritual em acções práticas e mensuráveis. É garantir que os planos, os investimentos, as parcerias e as decisões quotidianas estejam em harmonia com os princípios e com a direcção divina para a sua vida.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento. Reconhece-o em todos os teus caminhos, e ele endireitará as tuas veredas."</div>
+    <div class="verse-ref">Provérbios 3:5-6</div>
+  </div>
+
+  <h2>Como o Desalinhamento Destrói a Autoridade</h2>
+
+  <p>O desalinhamento é subtil e progressivo. Raramente acontece de forma abrupta. Começa com pequenas concessões: uma decisão financeira que ignora a ética, uma palavra que contradiz a fé, uma emoção que governa em vez de ser governada. Com o tempo, essas pequenas fissuras comprometem toda a estrutura.</p>
+
+  <p>Um líder desalinhado pode manter a aparência de autoridade por um tempo, mas a sua influência real se esvai. As pessoas percebem a incoerência, mesmo quando não a verbalizam. A confiança se erode, os relacionamentos se fragilizam e os resultados se tornam insustentáveis. O alinhamento, portanto, não é um luxo — é uma necessidade vital para quem deseja exercer autoridade genuína.</p>
+
+  <div class="quote-block">
+    <div class="quote-text">"Alinhamento precede expansão. Não se pode expandir o que não está alinhado sem amplificar o caos."</div>
+    <div class="quote-author">Jefferson Evangelista</div>
+  </div>
+
+  <div class="exercise-block">
+    <h4>Exercício: Auditoria de Alinhamento Pessoal</h4>
+    <ol>
+      <li>Avalie o seu alinhamento espiritual (1-10): A sua vida de oração e comunhão com Deus está consistente?</li>
+      <li>Avalie o seu alinhamento emocional (1-10): As suas reacções emocionais reflectem maturidade e domínio próprio?</li>
+      <li>Avalie o seu alinhamento estratégico (1-10): As suas decisões práticas estão em harmonia com os seus princípios?</li>
+      <li>Identifique a área com menor pontuação e escreva três acções concretas para melhorar o alinhamento nessa dimensão.</li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">Espaço para anotações</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- CHAPTER III — GOVERNO -->
+<!-- ============================================ -->
+<div class="chapter-divider">
+  <img src="/home/ubuntu/webdev-static-assets/ebook-chapter-governo.png" alt="Biblioteca e escritório">
+  <div class="chapter-content">
+    <div class="chapter-number">III</div>
+    <div class="chapter-label">Parte Três</div>
+    <div class="chapter-title">Governo Inicia no Secreto</div>
+    <div class="chapter-subtitle">"O que se manifesta publicamente é apenas o reflexo do que foi estabelecido e consolidado no secreto."</div>
+  </div>
+</div>
+
+<div class="page">
+  <h3>Parte III</h3>
+  <h1>Governo Inicia no Secreto</h1>
+
+  <p>Com os princípios estabelecidos e o alinhamento em curso, o P.A.G.O. nos conduz ao terceiro pilar: <strong>Governo Inicia no Secreto</strong>. Esta é uma verdade profunda e muitas vezes negligenciada numa sociedade que valoriza o palco em detrimento dos bastidores. Jefferson Evangelista, com a sua visão de que "governo espiritual precede crescimento financeiro", lembra-nos que a verdadeira autoridade e a capacidade de influenciar o mundo exterior nascem de um governo interior cultivado na intimidade com Deus.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"Mas tu, quando orares, entra no teu quarto e, fechando a tua porta, ora a teu Pai, que está em secreto; e teu Pai, que vê em secreto, te recompensará."</div>
+    <div class="verse-ref">Mateus 6:6</div>
+  </div>
+
+  <h2>Governo Espiritual e Emocional</h2>
+
+  <p>Governo, neste contexto, não se refere a controlo ou dominação externa, mas à <strong>autodisciplina e à gestão eficaz do nosso mundo interior</strong> — espírito, alma (mente, emoções e vontade) e corpo — sob a soberania de Deus. É a capacidade de ordenar a nossa vida de acordo com os princípios divinos, permitindo que o Espírito Santo seja o verdadeiro governante do nosso ser.</p>
+
+  <p>O <strong>governo espiritual</strong> é a submissão consciente e voluntária do nosso espírito ao Espírito de Deus. Envolve a prática da oração, meditação na Palavra, adoração e obediência à voz de Deus. É reconhecer que somos seres espirituais e que a nossa vida deve ser governada por verdades eternas, não por circunstâncias temporais.</p>
+
+  <p>O <strong>governo emocional</strong> é a gestão inteligente e bíblica das nossas emoções. Não se trata de reprimir sentimentos, mas de compreendê-los, processá-los à luz da Palavra e direccioná-los para propósitos construtivos. Um governo emocional saudável permite-nos reagir com sabedoria, e não por impulso.</p>
+
+  <h2>Por Que Governo Espiritual Precede Crescimento Financeiro</h2>
+
+  <p>A afirmação de que "governo espiritual precede crescimento financeiro" desafia a lógica do mundo, que muitas vezes inverte essa ordem. A sociedade ensina-nos a buscar primeiro a riqueza, acreditando que ela trará segurança e controlo. No entanto, a sabedoria do P.A.G.O. revela que o verdadeiro e duradouro crescimento financeiro é um subproduto de um governo espiritual bem estabelecido.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"Se alguém de vós tem falta de sabedoria, peça-a a Deus, que a todos dá liberalmente e não censura, e ser-lhe-á dada."</div>
+    <div class="verse-ref">Tiago 1:5</div>
+  </div>
+
+  <p>Quando o nosso espírito está alinhado com Deus e governado pelos Seus princípios, a nossa mente é renovada, as nossas emoções são estabilizadas e as nossas decisões estratégicas são inspiradas. Isto traduz-se em sabedoria para gerir recursos, integridade nos negócios e generosidade com propósito.</p>
+
+  <h2>A Vida de Oração Como Fundamento</h2>
+
+  <p>O "secreto" onde o governo inicia é, por excelência, o lugar da oração e da comunhão com Deus. É no quarto fechado, longe das distracções e das demandas do mundo, que a nossa alma encontra o seu verdadeiro centro de gravidade.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"Não andeis ansiosos por coisa alguma; antes, em tudo, sejam os vossos pedidos conhecidos diante de Deus pela oração e súplica, com acções de graças; e a paz de Deus, que excede todo o entendimento, guardará os vossos corações e as vossas mentes em Cristo Jesus."</div>
+    <div class="verse-ref">Filipenses 4:6-7</div>
+  </div>
+
+  <div class="exercise-block">
+    <h4>Exercício: Estabelecer Disciplinas de Governo Pessoal</h4>
+    <ol>
+      <li>Avalie a sua vida de oração e comunhão com Deus. Tem um tempo e um lugar dedicados ao secreto?</li>
+      <li>Escolha uma ou duas disciplinas espirituais para praticar diariamente: oração, leitura bíblica, meditação, jejum ou adoração.</li>
+      <li>Identifique um lugar na sua casa onde possa se retirar para o secreto, livre de distracções.</li>
+      <li>Defina um horário específico. Comece pequeno — 15 minutos — e aumente gradualmente.</li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">Espaço para anotações</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- CHAPTER IV — OBEDIÊNCIA -->
+<!-- ============================================ -->
+<div class="chapter-divider">
+  <img src="/home/ubuntu/webdev-static-assets/ebook-chapter-obediencia.png" alt="Caminho entre oliveiras">
+  <div class="chapter-content">
+    <div class="chapter-number">IV</div>
+    <div class="chapter-label">Parte Quatro</div>
+    <div class="chapter-title">Obediência Sustenta o Invisível</div>
+    <div class="chapter-subtitle">"A obediência é a chave que destrava o sobrenatural. Não é sobre a velocidade com que se começa, mas sobre a permanência no propósito."</div>
+  </div>
+</div>
+
+<div class="page">
+  <h3>Parte IV</h3>
+  <h1>Obediência Sustenta o Invisível</h1>
+
+  <p>Chegamos ao quarto e último pilar do P.A.G.O.: <strong>Obediência Sustenta o Invisível</strong>. Este pilar é a coroação dos anteriores, a manifestação prática de uma vida governada por princípios e alinhada com a vontade divina. Jefferson Evangelista afirma que "obediência precede autoridade", uma verdade que inverte a lógica humana de que a autoridade nos dá o direito de mandar. Na perspectiva do Reino, é a submissão voluntária e consistente que nos qualifica para exercer influência e ver o invisível manifestar-se no visível.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"Se estiverdes dispostos e fordes obedientes, comereis o melhor desta terra."</div>
+    <div class="verse-ref">Isaías 1:19</div>
+  </div>
+
+  <h2>Por Que Obediência Precede Autoridade</h2>
+
+  <p>A autoridade, no contexto do P.A.G.O., não é um poder para controlar, mas uma capacidade de influenciar e transformar, que é concedida àqueles que demonstram fidelidade e submissão. A obediência, portanto, não é um acto passivo, mas uma escolha activa de alinhar as nossas acções com a direcção divina, mesmo quando não compreendemos plenamente o caminho.</p>
+
+  <p>Considere a vida de grandes líderes bíblicos. Moisés só viu o Mar Vermelho abrir-se depois de obedecer à ordem de estender o cajado. Josué só viu as muralhas de Jericó caírem depois de obedecer à estratégia aparentemente ilógica de marchar ao redor da cidade. Em cada caso, a obediência precedeu a manifestação da autoridade e do poder de Deus.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"Pela fé, Abraão, quando chamado, obedeceu, indo para um lugar que havia de receber por herança; e saiu, sem saber para onde ia."</div>
+    <div class="verse-ref">Hebreus 11:8</div>
+  </div>
+
+  <h2>Permanência Vence Impulso</h2>
+
+  <p>Num mundo que valoriza a velocidade e o impulso, o P.A.G.O. lembra-nos que <strong>"permanência vence impulso"</strong>. A obediência é o motor da permanência. É a disciplina diária, a constância silenciosa e o avanço estratégico que nos mantêm no caminho, mesmo diante de adversidades.</p>
+
+  <p>Como atleta de resistência, Jefferson Evangelista carrega no corpo o que acredita na alma: disciplina diária, constância silenciosa e avanço estratégico. Essa mentalidade de endurance é um reflexo da obediência. Não é sobre a velocidade com que se começa, mas sobre a permanência no propósito.</p>
+
+  <h2>Constância Vence Talento</h2>
+
+  <p>O talento pode abrir portas, mas é a constância que as mantém abertas. Muitas pessoas talentosas falham em alcançar o seu pleno potencial por falta de disciplina e obediência aos processos. A obediência, manifestada na constância, é o que transforma o talento bruto em excelência lapidada.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"Não nos cansemos de fazer o bem, pois no tempo próprio colheremos, se não desanimarmos."</div>
+    <div class="verse-ref">Gálatas 6:9</div>
+  </div>
+
+  <div class="exercise-block">
+    <h4>Exercício: Compromisso com Obediência Radical</h4>
+    <ol>
+      <li>Pense numa área específica onde sabe que Deus tem falado, mas tem resistido ou procrastinado em obedecer.</li>
+      <li>Identifique a raiz da resistência: medo, orgulho, conforto ou falta de fé?</li>
+      <li>Escreva uma declaração de compromisso de obediência radical para essa área específica.</li>
+      <li>Dê um pequeno passo de obediência ainda hoje — uma oração de rendição, um pedido de perdão, uma acção concreta.</li>
+      <li>Partilhe o seu compromisso com alguém de confiança que o ajude a manter-se responsável.</li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">Espaço para anotações</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- CONCLUSION -->
+<!-- ============================================ -->
+<div class="page">
+  <h3>Integração</h3>
+  <h1>Do Governo Pessoal ao Legado Corporativo</h1>
+
+  <p>Percorremos uma jornada transformadora através dos pilares do P.A.G.O.: <strong>Princípio, Alinhamento, Governo e Obediência</strong>. Iniciámos compreendendo que a verdadeira prosperidade não reside nos resultados efémeros, mas na fidelidade a Princípios imutáveis. Em seguida, vimos como o Alinhamento — espiritual, emocional e estratégico — é a estrutura invisível que gera autoridade e sustenta o crescimento. Aprofundámos no Governo que se inicia no secreto, no lugar de intimidade com Deus, de onde emana a capacidade de influenciar o mundo exterior. E, finalmente, abraçámos a Obediência radical como a chave que destrava o sobrenatural e sustenta a manifestação do invisível no visível.</p>
+
+  <div class="quote-block">
+    <div class="quote-text">"Homens restaurados constroem famílias fortes. Famílias fortes constroem empresas sólidas. Empresas sólidas impactam territórios."</div>
+    <div class="quote-author">Jefferson Evangelista</div>
+  </div>
+
+  <p>Jefferson Evangelista não está a construir sucesso; ele está a administrar uma visão. E essa visão manifesta-se na crença profunda de que homens restaurados constroem famílias fortes. Uma vida governada pelos princípios do P.A.G.O. transforma o indivíduo, que então se torna um pilar de força e estabilidade no seu lar. Famílias fortes, por sua vez, são o alicerce para empresas sólidas. Negócios construídos sobre integridade, alinhamento, governo e obediência não são apenas lucrativos, mas também éticos, sustentáveis e impactantes. E, por fim, empresas sólidas impactam territórios, estendendo o governo de Deus e os Seus princípios para além das quatro paredes de um escritório ou de uma igreja.</p>
+
+  <div class="verse-block">
+    <div class="verse-text">"Porque eu sei os planos que tenho para vós, diz o Senhor, planos de paz e não de mal, para vos dar um futuro e uma esperança."</div>
+    <div class="verse-ref">Jeremias 29:11</div>
+  </div>
+
+  <p>O P.A.G.O. é, portanto, um convite a uma vida de propósito e legado. Não se trata de acumular, mas de estruturar e deixar de pé. Não se trata de aparecer, mas de permanecer. A sua jornada com o P.A.G.O. é um compromisso com a construção de um governo interior que se manifestará em todas as esferas da sua vida, transformando-o num agente de transformação no seu próprio destino e no destino daqueles ao seu redor.</p>
+
+  <div class="separator">✦ ✦ ✦</div>
+
+  <h2>Declaração de Compromisso P.A.G.O.</h2>
+
+  <div class="highlight-box">
+    <p><em>Eu, _________________________________, declaro o meu compromisso com os princípios do P.A.G.O. Comprometo-me a viver por <strong>Princípios</strong> acima de resultados, a buscar o <strong>Alinhamento</strong> espiritual, emocional e estratégico em todas as áreas da minha vida, a cultivar o <strong>Governo</strong> no secreto como fundamento de toda influência pública, e a praticar a <strong>Obediência</strong> radical como chave para destravar o sobrenatural na minha vida, na minha família e nos meus empreendimentos.</em></p>
+    <p><em>Que o meu legado não seja medido pelo que acumulei, mas pelo quanto fui fiel ao que recebi.</em></p>
+    <br>
+    <p style="text-align: right; font-family: 'Montserrat', sans-serif; font-size: 8pt; color: var(--blue-muted); letter-spacing: 2px;">DATA: ____/____/________</p>
+    <p style="text-align: right; font-family: 'Montserrat', sans-serif; font-size: 8pt; color: var(--blue-muted); letter-spacing: 2px;">ASSINATURA: ________________________________</p>
+  </div>
+
+  <div class="page-footer">
+    <p>P.A.G.O. — Princípio · Alinhamento · Governo · Obediência</p>
+    <p>© Jefferson Evangelista — Novo Tempo</p>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- BACK COVER -->
+<!-- ============================================ -->
+<div class="back-cover">
+  <div class="back-quote">"Que este manual seja uma ferramenta nas suas mãos para organizar aquilo que Deus lhe confiou, para que o seu legado não seja medido pelo que acumulou, mas pelo quanto foi fiel ao que recebeu."</div>
+  <div class="back-author">Jefferson Evangelista</div>
+  <div style="width: 60px; height: 1px; background: var(--gold); margin: 0 auto 40px;"></div>
+  <div class="back-pago">P.A.G.O.</div>
+  <div class="back-pillars">Princípio · Alinhamento · Governo · Obediência</div>
+</div>
+
+</body>
+</html>

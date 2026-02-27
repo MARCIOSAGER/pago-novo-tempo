@@ -68,3 +68,8 @@
 - [x] Skill reutilizável editorial-landing-platform criada em skills/ (sincronizada com GitHub)
 - [x] Skill: Adicionar references/ui-components.md com snippets de Navbar, Footer e Flip Cards
 - [x] Painel Admin: Página de Analytics/Monitoramento com KPIs de tráfego, gráfico de tendência, e cards de breakdown (Page Traffic, País, OS, Referrer, Dispositivos)
+- [x] Ebook: Gerar capa profissional editorial
+- [x] Ebook: Gerar imagens de separadores de capítulo (P, A, G, O)
+- [x] Ebook: Expandir conteúdo com P.A.O. (Princípio, Alinhamento, Obediência)
+- [x] Ebook: Inserir versículos bíblicos destacados e fotos
+- [x] Ebook: Gerar PDF profissional com design editorial

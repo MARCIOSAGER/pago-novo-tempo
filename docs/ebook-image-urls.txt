@@ -1,0 +1,7 @@
+Ebook Image URLs:
+
+Cover: /home/ubuntu/webdev-static-assets/ebook-cover.png
+Chapter Principio: /home/ubuntu/webdev-static-assets/ebook-chapter-principio.png
+Chapter Alinhamento: /home/ubuntu/webdev-static-assets/ebook-chapter-alinhamento.png
+Chapter Governo: /home/ubuntu/webdev-static-assets/ebook-chapter-governo.png
+Chapter Obediencia: /home/ubuntu/webdev-static-assets/ebook-chapter-obediencia.png
