@@ -89,9 +89,25 @@ const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   return next({ ctx });
 });
 
-// ─── Router ─────────────────────────────────────────────────────
+// ─── Umami Analytics Helper ─────────────────────────────────────
 
-// ─── PAGO Chatbot System Prompt ─────────────────────────────────
+async function fetchUmami(path: string) {
+  const endpoint = ENV.analyticsEndpoint;
+  if (!endpoint) {
+    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Analytics endpoint not configured." });
+  }
+  const url = `${endpoint}${path}`;
+  const res = await fetch(url, {
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!res.ok) {
+    console.error(`[Analytics] Umami API error: ${res.status} ${res.statusText}`);
+    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erro ao buscar dados de analytics." });
+  }
+  return res.json();
+}// ─── Router ─────────────────────────────────────────────────────────────
+
+// ─── PAGO Chatbot System Prompt ───────────────────────────────
 
 const PAGO_SYSTEM_PROMPT = `Você é o Assistente P.A.G.O. — Novo Tempo, um chatbot especializado na metodologia P.A.G.O. criada por Jefferson Evangelista.
 
@@ -330,6 +346,89 @@ export const appRouter = router({
         }
         await deleteFileRecord(input.id);
         return { success: true };
+      }),
+  }),
+
+  // ─── Analytics (Umami proxy) ────────────────────────────────
+  analytics: router({
+    // Admin: get active visitors
+    active: adminProcedure.query(async () => {
+      return fetchUmami(`/api/websites/${ENV.analyticsWebsiteId}/active`);
+    }),
+
+    // Admin: get website stats (pageviews, visitors, visits, bounces, totaltime)
+    stats: adminProcedure
+      .input(
+        z.object({
+          startAt: z.number(),
+          endAt: z.number(),
+        })
+      )
+      .query(async ({ input }) => {
+        const params = new URLSearchParams({
+          startAt: input.startAt.toString(),
+          endAt: input.endAt.toString(),
+        });
+        return fetchUmami(
+          `/api/websites/${ENV.analyticsWebsiteId}/stats?${params}`
+        );
+      }),
+
+    // Admin: get pageviews time series
+    pageviews: adminProcedure
+      .input(
+        z.object({
+          startAt: z.number(),
+          endAt: z.number(),
+          unit: z.enum(["minute", "hour", "day", "month", "year"]).default("day"),
+          timezone: z.string().default("Africa/Luanda"),
+        })
+      )
+      .query(async ({ input }) => {
+        const params = new URLSearchParams({
+          startAt: input.startAt.toString(),
+          endAt: input.endAt.toString(),
+          unit: input.unit,
+          timezone: input.timezone,
+        });
+        return fetchUmami(
+          `/api/websites/${ENV.analyticsWebsiteId}/pageviews?${params}`
+        );
+      }),
+
+    // Admin: get metrics by type (path, country, browser, os, device, referrer, etc.)
+    metrics: adminProcedure
+      .input(
+        z.object({
+          startAt: z.number(),
+          endAt: z.number(),
+          type: z.enum([
+            "path",
+            "referrer",
+            "browser",
+            "os",
+            "device",
+            "country",
+            "region",
+            "city",
+            "language",
+            "screen",
+            "event",
+            "hostname",
+          ]),
+          limit: z.number().int().min(1).max(100).default(10),
+        })
+      )
+      .query(async ({ input }) => {
+        const params = new URLSearchParams({
+          startAt: input.startAt.toString(),
+          endAt: input.endAt.toString(),
+          type: input.type,
+          limit: input.limit.toString(),
+        });
+        return fetchUmami(
+          `/api/websites/${ENV.analyticsWebsiteId}/metrics?${params}`
+        );
       }),
   }),
 });

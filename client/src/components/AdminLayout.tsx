@@ -24,6 +24,7 @@ import { useIsMobile } from "@/hooks/useMobile";
 import {
   LayoutDashboard,
   Users,
+  BarChart3,
   LogOut,
   PanelLeft,
   ArrowLeft,
@@ -36,6 +37,7 @@ import { Button } from "./ui/button";
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
   { icon: Users, label: "Inscrições", path: "/admin/inscricoes" },
+  { icon: BarChart3, label: "Análises", path: "/admin/analytics" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "admin-sidebar-width";

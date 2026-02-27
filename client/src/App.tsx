@@ -14,6 +14,7 @@ import AdminLayout from "./components/AdminLayout";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminInscricoes from "./pages/AdminInscricoes";
 import AdminInscricaoDetalhe from "./pages/AdminInscricaoDetalhe";
+import AdminAnalytics from "./pages/AdminAnalytics";
 
 function Router() {
   return (
@@ -37,6 +38,11 @@ function Router() {
       <Route path="/admin/inscricoes/:id">
         <AdminLayout>
           <AdminInscricaoDetalhe />
+        </AdminLayout>
+      </Route>
+      <Route path="/admin/analytics">
+        <AdminLayout>
+          <AdminAnalytics />
         </AdminLayout>
       </Route>
 
