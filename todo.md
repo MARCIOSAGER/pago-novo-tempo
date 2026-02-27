@@ -77,3 +77,13 @@
 - [x] Substituir imagens de monge/padre no ebook e landing page por imagens mais adequadas ao contexto de mentoria espiritual/empresarial
 - [x] Criar versão flipbook HTML5 interativa do ebook com efeito de virar páginas
 - [x] Gerar ebook em formato EPUB (Apple Books) e MOBI (Kindle)
+- [x] Fix: Corrigir páginas cortadas, imagens faltando e formatação perdida no EPUB
+- [x] Fix: Corrigir paginação no PDF para evitar cortes de conteúdo
+- [x] Fix: Regenerar flipbook com PDF corrigido
+- [x] Fix: Regenerar MOBI com EPUB corrigido
+- [x] Fix: Capa do PDF não preenche página inteira (faixa branca na parte inferior)
+- [x] Fix: Páginas vazias/quase vazias no PDF e flipbook (ex: página 21)
+- [x] Fix: Regenerar flipbook com PDF corrigido
+- [x] Gerar PDF de alta qualidade para gráfica (300 DPI, bleed, marcas de corte)
+- [x] Criar subpágina Downloads no admin (PDF, EPUB, MOBI, flipbook HTML5)
+- [x] Criar subpágina Repositório de Mídia no admin (imagens, logos, favicon)

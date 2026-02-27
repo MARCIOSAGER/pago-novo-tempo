@@ -349,6 +349,23 @@ export const appRouter = router({
       }),
   }),
 
+  // ─── Ebook Downloads ───────────────────────────────────────
+  downloads: router({
+    // Public: get download links for all ebook formats
+    getLinks: publicProcedure.query(() => {
+      return {
+        pdf: "/api/downloads/ebook-pdf",
+        pdfGrafica: "/api/downloads/ebook-pdf-grafica",
+        epub: "/api/downloads/ebook-epub",
+        mobi: "/api/downloads/ebook-mobi",
+        flipbook: "/api/downloads/ebook-flipbook",
+        html: "/api/downloads/ebook-html",
+        version: "2.0",
+        updatedAt: "2025-02-27",
+      };
+    }),
+  }),
+
   // ─── Analytics (Umami proxy) ────────────────────────────────
   analytics: router({
     // Admin: get active visitors

@@ -74,7 +74,7 @@ strong { color: var(--navy); font-weight: 700; }
 .exercise-label { font-family: 'Montserrat', sans-serif; font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.3rem; display: block; }
 .exercise ol, .exercise ul { padding-left: 1.3rem; margin-bottom: 1rem; }
 .exercise li { margin-bottom: 0.8rem; }
-.exercise-lines { border-bottom: 1px dotted var(--sand); height: 2rem; margin: 0.3rem 0; }
+.exercise-lines { border-bottom: 1px dotted var(--sand); height: 1.5rem; margin: 0.2rem 0; }
 .exercise-card { background: var(--sand); padding: 1.2rem 1.5rem; margin: 0.8rem 0; border-radius: 4px; border-left: 3px solid var(--gold); }
 .exercise-card-title { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--navy); margin-bottom: 0.3rem; }
 .exercise-card p { font-size: 0.9rem; margin-bottom: 0; text-align: left; }
@@ -138,13 +138,104 @@ td { padding: 0.8rem; border-bottom: 1px solid var(--sand); vertical-align: top;
   .chapter-header { min-height: 40vh; }
 }
 
+/* === WEASYPRINT PDF PAGINAÇÃO === */
+@page {
+  size: A4;
+  margin: 2cm 2cm 2cm 2cm;
+}
+@page :first {
+  margin: 0;
+}
+
+/* Capa: ocupa página inteira sem margens */
+.cover {
+  page-break-after: always;
+  height: 297mm;
+  min-height: 297mm;
+  max-height: 297mm;
+  width: 210mm;
+  margin: 0;
+  padding: 3rem 2rem;
+  box-sizing: border-box;
+}
+
+/* Capítulos: sempre começam em nova página */
+.chapter-header {
+  page-break-before: always;
+  page-break-inside: avoid;
+  min-height: auto;
+  height: auto;
+  padding: 3rem 1.5rem;
+}
+
+/* TODAS as seções: permitir quebra livre */
+section {
+  page-break-inside: auto;
+  page-break-before: auto;
+}
+
+/* Backgrounds coloridos: desabilitar no PDF para evitar blocos que forçam quebras */
+section.navy-bg, section.sand-bg {
+  page-break-inside: auto;
+  padding: 1.5rem 0;
+}
+
+/* Títulos nunca ficam sozinhos no fim da página */
+h2, h3, h4 {
+  page-break-after: avoid;
+}
+
+/* Parágrafos: mínimo 2 linhas antes/depois da quebra */
+p {
+  orphans: 2;
+  widows: 2;
+}
+
+/* Blocos: permitir quebra em TODOS exceto os muito pequenos */
+.verse {
+  page-break-inside: avoid;
+}
+.quote {
+  page-break-inside: avoid;
+}
+table {
+  page-break-inside: auto;
+}
+.declaration {
+  page-break-inside: auto;
+}
+.glossary-item {
+  page-break-inside: avoid;
+}
+.study-question {
+  page-break-inside: auto;
+}
+.plan-day {
+  page-break-inside: auto;
+}
+
+/* Exercícios: PERMITIR quebra em tudo */
+.exercise {
+  page-break-inside: auto;
+}
+.exercise-card {
+  page-break-inside: auto;
+}
+
 /* === PRINT === */
 @media print {
-  .cover { page-break-after: always; }
-  .chapter-header { page-break-before: always; page-break-after: always; }
-  section { page-break-inside: avoid; }
-  .exercise { page-break-inside: avoid; }
   body { font-size: 11pt; }
+  .cover {
+    page-break-after: always;
+    height: 100vh;
+    min-height: 100vh;
+  }
+  .chapter-header {
+    page-break-before: always;
+    page-break-inside: avoid;
+  }
+  h2, h3, h4 { page-break-after: avoid; }
+  p { orphans: 2; widows: 2; }
 }
 </style>
 </head>
@@ -845,8 +936,7 @@ td { padding: 0.8rem; border-bottom: 1px solid var(--sand); vertical-align: top;
         <li><div class="exercise-lines"></div></li>
         <li><div class="exercise-lines"></div></li>
       </ol>
-      <p><strong>Qual desses passos você vai dar esta semana?</strong></p>
-      <div class="exercise-lines"></div>
+      <p><strong>Qual desses passos você vai dar esta semana?</strong> <div class="exercise-lines"></div></p>
     </div>
 
     <div class="exercise">
