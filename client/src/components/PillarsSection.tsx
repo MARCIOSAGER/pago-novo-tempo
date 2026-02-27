@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 const IMAGES = {
   principles: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-principles-HDhT4DKjE38mG8ZkecmGd4.webp",
   alignment: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-alignment-8YXRToADNaAGsGXCjL5Bc7.webp",
-  government: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-government-FR3LgatrhZbMSEfDZavEpF.webp",
+  government: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-governo-new-RzVSXAyWeKmPtBV6tXgtTv.webp",
   obedience: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-obedience-f5zof3JxmnB8U7Po4wBCp3.webp",
 };
 

@@ -23,7 +23,7 @@ O projeto não é apenas um programa de mentoria espiritual — é um **ecossist
 
 ### Sobre Jefferson Evangelista
 
-Jefferson Evangelista é o criador e defensor do P.A.G.O. Ele se define como um **construtor de estruturas e organizador de destinos**. À frente da Interaja e de múltiplas frentes empresariais, Jefferson opera como um arquiteto de sistemas sustentáveis. Atleta de resistência (endurance), líder do movimento Legendários. Sua convicção: governo espiritual precede crescimento financeiro, alinhamento precede expansão, obediência precede autoridade.
+Jefferson Evangelista é o criador e defensor do P.A.G.O. Ele se define como um **construtor de estruturas e organizador de destinos**. À frente da Interaja e de múltiplas frentes empresariais, Jefferson opera como um arquiteto de sistemas sustentáveis. Atleta de resistência (endurance), Legendário e embaixador dos Legendários. Sua convicção: governo espiritual precede crescimento financeiro, alinhamento precede expansão, obediência precede autoridade.
 
 ---
 

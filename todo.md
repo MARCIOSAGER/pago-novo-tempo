@@ -73,3 +73,5 @@
 - [x] Ebook: Expandir conteúdo com P.A.O. (Princípio, Alinhamento, Obediência)
 - [x] Ebook: Inserir versículos bíblicos destacados e fotos
 - [x] Ebook: Gerar PDF profissional com design editorial
+- [x] Fix: Atualizar texto sobre Jefferson — ele é Legendário e embaixador dos Legendários (não líder)
+- [x] Substituir imagens de monge/padre no ebook e landing page por imagens mais adequadas ao contexto de mentoria espiritual/empresarial

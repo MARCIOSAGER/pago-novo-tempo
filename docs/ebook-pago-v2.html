@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P.A.G.O. — Princípio, Alinhamento, Governo, Obediência</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1A2744;
+  --warm-white: #FAFAF8;
+  --sand: #E8E0D4;
+  --gold: #B8A88A;
+  --gold-light: #C9BC9E;
+  --navy-light: #2A3A5C;
+  --text-muted: #6B7280;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 18px; scroll-behavior: smooth; }
+body { font-family: 'Lora', Georgia, serif; line-height: 1.85; color: var(--navy); background: var(--warm-white); }
+
+/* === COVER === */
+.cover { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: var(--navy); color: var(--warm-white); padding: 3rem 1.5rem; position: relative; overflow: hidden; }
+.cover::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(184,168,138,0.08) 0%, transparent 50%, rgba(184,168,138,0.05) 100%); }
+.cover-ornament { width: 60px; height: 1px; background: var(--gold); margin: 1.5rem auto; }
+.cover h1 { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 700; letter-spacing: 0.15em; position: relative; }
+.cover .subtitle { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-top: 0.5rem; }
+.cover .full-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-style: italic; color: var(--gold-light); margin-top: 1.5rem; font-weight: 400; }
+.cover .author { font-family: 'Montserrat', sans-serif; font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(250,250,248,0.5); margin-top: 3rem; }
+.cover .edition { font-family: 'Montserrat', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(250,250,248,0.3); margin-top: 0.5rem; }
+.cover-logo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 1.5rem; border: 2px solid var(--gold); position: relative; }
+
+/* === LAYOUT === */
+.container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
+section { padding: 4rem 0; }
+section.sand-bg { background: var(--sand); }
+section.navy-bg { background: var(--navy); color: var(--warm-white); }
+
+/* === TYPOGRAPHY === */
+h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: var(--navy); margin-bottom: 1.5rem; line-height: 1.2; }
+h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--navy); margin: 2.5rem 0 1rem; line-height: 1.3; }
+h4 { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin: 2rem 0 0.8rem; }
+.navy-bg h2, .navy-bg h3 { color: var(--warm-white); }
+p { margin-bottom: 1.2rem; text-align: justify; }
+strong { color: var(--navy); font-weight: 700; }
+.navy-bg strong { color: var(--gold-light); }
+
+/* === CHAPTER HEADER === */
+.chapter-header { min-height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background-size: cover; background-position: center; position: relative; padding: 4rem 1.5rem; }
+.chapter-header::before { content: ''; position: absolute; inset: 0; background: rgba(26,39,68,0.75); }
+.chapter-header * { position: relative; z-index: 1; }
+.chapter-number { font-family: 'Cormorant Garamond', serif; font-size: 5rem; font-weight: 700; color: var(--gold); opacity: 0.4; line-height: 1; }
+.chapter-header h2 { color: var(--warm-white); font-size: 2.8rem; margin: 0.5rem 0; }
+.chapter-header .chapter-subtitle { font-family: 'Lora', serif; font-style: italic; color: var(--gold-light); font-size: 1.1rem; }
+
+/* === VERSE === */
+.verse { background: linear-gradient(135deg, rgba(232,224,212,0.5), rgba(232,224,212,0.3)); border-left: 3px solid var(--gold); padding: 1.5rem 1.8rem; margin: 2rem 0; border-radius: 0 4px 4px 0; }
+.verse-text { font-style: italic; font-size: 1.05rem; color: var(--navy); line-height: 1.7; }
+.verse-ref { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--gold); text-align: right; margin-top: 0.8rem; display: block; }
+.navy-bg .verse { background: rgba(250,250,248,0.08); border-left-color: var(--gold); }
+.navy-bg .verse-text { color: var(--warm-white); }
+
+/* === QUOTE === */
+.quote { background: rgba(26,39,68,0.04); border-left: 3px solid var(--navy); padding: 1.5rem 1.8rem; margin: 2rem 0; border-radius: 0 4px 4px 0; }
+.quote-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.2rem; color: var(--navy); line-height: 1.6; }
+.quote-author { font-family: 'Montserrat', sans-serif; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); text-align: right; margin-top: 0.8rem; display: block; }
+.navy-bg .quote { background: rgba(250,250,248,0.06); border-left-color: var(--gold); }
+.navy-bg .quote-text { color: var(--warm-white); }
+
+/* === EXERCISE === */
+.exercise { background: var(--warm-white); border: 1px solid var(--sand); padding: 2rem; margin: 2.5rem 0; border-radius: 6px; box-shadow: 0 2px 8px rgba(26,39,68,0.06); }
+.exercise-title { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.exercise-title::before { content: '✦'; color: var(--gold); font-size: 0.9rem; }
+.exercise-label { font-family: 'Montserrat', sans-serif; font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.3rem; display: block; }
+.exercise ol, .exercise ul { padding-left: 1.3rem; margin-bottom: 1rem; }
+.exercise li { margin-bottom: 0.8rem; }
+.exercise-lines { border-bottom: 1px dotted var(--sand); height: 2rem; margin: 0.3rem 0; }
+.exercise-card { background: var(--sand); padding: 1.2rem 1.5rem; margin: 0.8rem 0; border-radius: 4px; border-left: 3px solid var(--gold); }
+.exercise-card-title { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--navy); margin-bottom: 0.3rem; }
+.exercise-card p { font-size: 0.9rem; margin-bottom: 0; text-align: left; }
+.sand-bg .exercise { background: var(--warm-white); }
+
+/* === TABLE === */
+table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.9rem; }
+th { font-family: 'Montserrat', sans-serif; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); text-align: left; padding: 0.8rem; border-bottom: 2px solid var(--gold); }
+td { padding: 0.8rem; border-bottom: 1px solid var(--sand); vertical-align: top; }
+.navy-bg th { border-bottom-color: var(--gold); }
+.navy-bg td { border-bottom-color: rgba(250,250,248,0.1); }
+
+/* === SEPARATOR === */
+.separator { text-align: center; margin: 3rem 0; }
+.separator::before { content: '◆ ◆ ◆'; font-size: 0.6rem; letter-spacing: 0.5em; color: var(--gold); }
+
+/* === TOC === */
+.toc { list-style: none; padding: 0; }
+.toc li { padding: 0.6rem 0; border-bottom: 1px dotted var(--sand); display: flex; justify-content: space-between; align-items: baseline; }
+.toc li a { color: var(--navy); text-decoration: none; font-family: 'Lora', serif; }
+.toc li a:hover { color: var(--gold); }
+.toc .toc-chapter { font-family: 'Montserrat', sans-serif; font-size: 0.65rem; letter-spacing: 0.15em; color: var(--text-muted); }
+
+/* === DECLARATION === */
+.declaration { border: 2px solid var(--gold); padding: 2.5rem; margin: 3rem 0; text-align: center; background: linear-gradient(135deg, rgba(232,224,212,0.2), rgba(184,168,138,0.1)); border-radius: 6px; }
+.declaration h3 { text-align: center; }
+.declaration p { text-align: center; }
+
+/* === PLAN 21 === */
+.plan-week { margin: 2rem 0; }
+.plan-week-title { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--gold); }
+.plan-day { display: flex; gap: 1rem; padding: 0.6rem 0; border-bottom: 1px dotted var(--sand); }
+.plan-day-num { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; font-weight: 600; color: var(--navy); min-width: 3rem; }
+.plan-day-content { flex: 1; font-size: 0.9rem; }
+
+/* === GLOSSARY === */
+.glossary-item { margin: 1.5rem 0; }
+.glossary-term { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 700; color: var(--navy); }
+.glossary-def { font-size: 0.95rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+/* === STUDY QUESTIONS === */
+.study-question { padding: 0.8rem 0 0.8rem 1.2rem; border-left: 2px solid var(--sand); margin: 0.8rem 0; }
+.study-question strong { color: var(--gold); font-family: 'Montserrat', sans-serif; font-size: 0.7rem; letter-spacing: 0.1em; }
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  html { font-size: 16px; }
+  .cover h1 { font-size: 2.8rem; }
+  .cover .full-title { font-size: 1.1rem; }
+  .chapter-header h2 { font-size: 2rem; }
+  .chapter-number { font-size: 3.5rem; }
+  h2 { font-size: 1.8rem; }
+  h3 { font-size: 1.3rem; }
+  .container { padding: 0 1rem; }
+  section { padding: 3rem 0; }
+  .exercise { padding: 1.5rem; }
+}
+@media (max-width: 480px) {
+  html { font-size: 15px; }
+  .cover h1 { font-size: 2.2rem; }
+  .chapter-header { min-height: 40vh; }
+}
+
+/* === PRINT === */
+@media print {
+  .cover { page-break-after: always; }
+  .chapter-header { page-break-before: always; page-break-after: always; }
+  section { page-break-inside: avoid; }
+  .exercise { page-break-inside: avoid; }
+  body { font-size: 11pt; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== CAPA ==================== -->
+<div class="cover">
+  <img src="https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo_ea5770c3.jpeg" alt="P.A.G.O. Logo" class="cover-logo">
+  <h1>P.A.G.O.</h1>
+  <div class="cover-ornament"></div>
+  <p class="subtitle">Princípio · Alinhamento · Governo · Obediência</p>
+  <p class="full-title">Um Sistema de Reorganização de Vida<br>baseado em Princípios Bíblicos</p>
+  <div class="cover-ornament"></div>
+  <p class="author">Jefferson Evangelista</p>
+  <p class="edition">Edição Expandida — 2025</p>
+</div>
+
+<!-- ==================== SUMÁRIO ==================== -->
+<section class="sand-bg">
+  <div class="container">
+    <h4>Sumário</h4>
+    <h2>Conteúdo</h2>
+    <ul class="toc">
+      <li><a href="#fundamentos">Fundamentos — O Porquê do P.A.G.O.</a></li>
+      <li><a href="#jefferson">Sobre Jefferson Evangelista</a></li>
+      <li><a href="#pao">P.A.O. — A Tríade Fundamental</a></li>
+      <li><a href="#principio">Parte I — Princípio Acima de Resultados</a> <span class="toc-chapter">Capítulo 1</span></li>
+      <li><a href="#alinhamento">Parte II — Alinhamento Gera Autoridade</a> <span class="toc-chapter">Capítulo 2</span></li>
+      <li><a href="#governo">Parte III — Governo Inicia no Secreto</a> <span class="toc-chapter">Capítulo 3</span></li>
+      <li><a href="#obediencia">Parte IV — Obediência Sustenta o Invisível</a> <span class="toc-chapter">Capítulo 4</span></li>
+      <li><a href="#integracao">Integração dos Pilares — O Sistema Completo</a></li>
+      <li><a href="#estudos">Estudos de Caso</a></li>
+      <li><a href="#grupo">Perguntas para Grupos de Estudo</a></li>
+      <li><a href="#plano21">Plano de Transformação — 21 Dias</a></li>
+      <li><a href="#legado">Do Governo Pessoal ao Legado Corporativo</a></li>
+      <li><a href="#declaracao">Declaração P.A.G.O.</a></li>
+      <li><a href="#glossario">Glossário</a></li>
+      <li><a href="#versiculos">Índice de Versículos Bíblicos</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== FUNDAMENTOS ==================== -->
+<section id="fundamentos">
+  <div class="container">
+    <h4>Introdução</h4>
+    <h2>Fundamentos — O Porquê do P.A.G.O.</h2>
+
+    <div class="quote">
+      <p class="quote-text">"O P.A.G.O. não foi uma ideia que eu simplesmente criei. Foi uma visão que o Espírito Santo me entregou. Eu apenas organizei, estruturei e sistematizei aquilo que recebi."</p>
+      <span class="quote-author">Jefferson Evangelista</span>
+    </div>
+
+    <p>Muitas pessoas não fracassam por falta de capacidade, talento ou até mesmo fé. O verdadeiro calcanhar de Aquiles de muitos é a <strong>falta de governo interior</strong>. Observamos indivíduos com grande potencial, com um chamado claro e um amor genuíno por Deus, mas que vivem em constante desorganização. Essa desorganização não se manifesta apenas em suas agendas ou finanças; ela permeia o espírito, as emoções e as decisões estratégicas, levando a um ciclo de frustração e estagnação.</p>
+
+    <div class="verse">
+      <p class="verse-text">"Busquem, pois, em primeiro lugar o Reino de Deus e a sua justiça, e todas essas coisas lhes serão acrescentadas."</p>
+      <span class="verse-ref">— Mateus 6:33</span>
+    </div>
+
+    <p>A prosperidade sem governo gera queda. O crescimento sem estrutura leva ao colapso. A fé sem alinhamento resulta em confusão. Sem um sistema interno que ordene a vida, qualquer avanço se torna insustentável, e o que parecia ser sucesso momentâneo se revela uma base frágil.</p>
+
+    <p>O P.A.G.O. — <strong>Princípio, Alinhamento, Governo e Obediência</strong> — é mais do que um acrônimo. É um sistema de reorganização de vida, uma resposta para aqueles que, amando a Deus, se veem desorganizados em sua jornada. É um caminho para estruturar a vida espiritual, emocional e prática, transformando a fé em fundamento operacional para um legado duradouro.</p>
+
+    <h3>Os Quatro Pilares</h3>
+
+    <table>
+      <thead>
+        <tr><th>Pilar</th><th>Significado</th><th>Princípio Central</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>P</strong></td><td>Princípio</td><td>Princípios acima de resultados</td></tr>
+        <tr><td><strong>A</strong></td><td>Alinhamento</td><td>Alinhamento gera autoridade</td></tr>
+        <tr><td><strong>G</strong></td><td>Governo</td><td>Governo inicia no secreto</td></tr>
+        <tr><td><strong>O</strong></td><td>Obediência</td><td>Obediência sustenta o invisível</td></tr>
+      </tbody>
+    </table>
+
+    <div class="quote">
+      <p class="quote-text">"Prosperidade sem governo gera queda. Crescimento sem estrutura gera colapso. Fé sem alinhamento gera confusão."</p>
+      <span class="quote-author">Jefferson Evangelista</span>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício Introdutório</span>
+      <p class="exercise-title">Diagnóstico Inicial — Onde Você Está?</p>
+      <p>Antes de mergulhar nos pilares, faça uma avaliação honesta do seu momento atual. Para cada área, atribua uma nota de 1 a 10:</p>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Vida Espiritual</p>
+        <p>Intimidade com Deus, oração, leitura da Palavra, obediência à voz do Espírito.</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Vida Emocional</p>
+        <p>Equilíbrio emocional, gestão de conflitos, paz interior, relacionamentos saudáveis.</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Vida Financeira</p>
+        <p>Organização financeira, dízimos e ofertas, planejamento, investimentos.</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Vida Profissional</p>
+        <p>Propósito no trabalho, excelência, liderança, impacto no ambiente.</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Vida Familiar</p>
+        <p>Relacionamento conjugal, criação dos filhos, presença, governo do lar.</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <p><strong>Reflexão:</strong> Em qual área a nota é mais baixa? Essa provavelmente é onde o P.A.G.O. terá maior impacto na sua vida. Anote abaixo o que você espera transformar ao longo desta jornada:</p>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== JEFFERSON ==================== -->
+<section id="jefferson" class="sand-bg">
+  <div class="container">
+    <h4>O Fundador</h4>
+    <h2>Jefferson Evangelista</h2>
+
+    <p>Jefferson Evangelista é o criador e defensor do P.A.G.O. Ele se define como um <strong>construtor de estruturas e organizador de destinos</strong>. À frente da Interaja e de múltiplas frentes empresariais, Jefferson opera como um arquiteto de sistemas sustentáveis — não apenas no mundo corporativo, mas na vida das pessoas que o cercam.</p>
+
+    <p>Como <strong>atleta de resistência (endurance)</strong>, Jefferson carrega no corpo o que acredita na alma: disciplina diária, constância silenciosa e avanço estratégico. Não é sobre velocidade. É sobre permanência. Ele não lidera para aparecer. Ele estrutura para permanecer.</p>
+
+    <p><strong>Legendário</strong> e <strong>embaixador dos Legendários</strong>, sua convicção é clara e inabalável: governo espiritual precede crescimento financeiro, alinhamento precede expansão, obediência precede autoridade. Cada decisão, cada projeto, cada relacionamento é filtrado por esses princípios.</p>
+
+    <div class="quote">
+      <p class="quote-text">"Não estou construindo sucesso. Estou administrando uma visão. Homens restaurados constroem famílias fortes. Famílias fortes constroem empresas sólidas. Empresas sólidas impactam territórios."</p>
+      <span class="quote-author">Jefferson Evangelista</span>
+    </div>
+
+    <h3>A Filosofia de Vida</h3>
+
+    <p>Jefferson pensa em base antes de pensar em visibilidade. Ele acredita que a verdadeira liderança não é construída sobre plataformas, mas sobre fundações. Enquanto o mundo corre atrás de resultados imediatos, ele investe em processos que geram frutos permanentes.</p>
+
+    <div class="verse">
+      <p class="verse-text">"Portanto, todo aquele que ouve estas minhas palavras e as pratica é como um homem prudente que construiu a sua casa sobre a rocha."</p>
+      <span class="verse-ref">— Mateus 7:24</span>
+    </div>
+
+    <p>Sua abordagem é a de um <strong>arquiteto espiritual</strong>: primeiro o alicerce (princípios), depois a estrutura (alinhamento), em seguida o governo (disciplinas internas), e finalmente a manifestação (obediência que gera autoridade). Cada etapa é inegociável. Cada pilar sustenta o próximo.</p>
+  </div>
+</section>
+
+<!-- ==================== P.A.O. ==================== -->
+<section id="pao" class="navy-bg">
+  <div class="container">
+    <h4>A Tríade Fundamental</h4>
+    <h2>P.A.O. — Princípio, Alinhamento, Obediência</h2>
+
+    <p>Antes de compreender o sistema completo P.A.G.O., é essencial entender a <strong>tríade fundamental P.A.O.</strong> — Princípio, Alinhamento e Obediência. Esta tríade representa o ciclo essencial da vida governada: estabelecer fundamentos (Princípio), harmonizar todas as esferas da vida com esses fundamentos (Alinhamento), e agir em conformidade radical (Obediência).</p>
+
+    <div class="verse">
+      <p class="verse-text">"O temor do Senhor é o princípio da sabedoria, e o conhecimento do Santo é entendimento."</p>
+      <span class="verse-ref">— Provérbios 9:10</span>
+    </div>
+
+    <h3>Por Que a Tríade Importa</h3>
+
+    <p>O P.A.O. é o <strong>DNA do P.A.G.O.</strong> — a essência destilada. Se o sistema completo é a casa, a tríade é o alicerce, as paredes e o teto. Sem Princípio, não há fundamento. Sem Alinhamento, não há coerência. Sem Obediência, não há manifestação. O Governo (G) é o resultado natural de quem vive o P.A.O. com integridade.</p>
+
+    <table>
+      <thead>
+        <tr><th>Elemento</th><th>Função</th><th>Pergunta-Chave</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Princípio</strong></td><td>Fundamento</td><td>Em que eu creio de forma inegociável?</td></tr>
+        <tr><td><strong>Alinhamento</strong></td><td>Coerência</td><td>Minhas ações refletem o que eu creio?</td></tr>
+        <tr><td><strong>Obediência</strong></td><td>Manifestação</td><td>Estou agindo conforme a direção divina?</td></tr>
+      </tbody>
+    </table>
+
+    <h3>O Ciclo P.A.O. na Prática</h3>
+
+    <p>Imagine um empresário cristão que acredita no princípio da integridade (<strong>P</strong>). Ele alinha suas práticas comerciais com esse princípio, recusando atalhos antiéticos (<strong>A</strong>). E quando Deus lhe pede para perdoar um sócio que o traiu, ele obedece, mesmo que doa (<strong>O</strong>). O resultado? Um governo interior que se manifesta em autoridade exterior — clientes confiam nele, funcionários o respeitam, e seu negócio prospera de forma sustentável.</p>
+
+    <div class="quote">
+      <p class="quote-text">"O P.A.O. é o teste diário. Cada manhã, pergunte-se: meus princípios estão firmes? Minhas ações estão alinhadas? Minha obediência está ativa?"</p>
+      <span class="quote-author">Jefferson Evangelista</span>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício P.A.O.</span>
+      <p class="exercise-title">Teste Diário da Tríade</p>
+      <p>Durante os próximos 7 dias, responda estas três perguntas todas as manhãs:</p>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Princípio (P)</p>
+        <p>Qual princípio bíblico vai guiar minhas decisões hoje? Escreva um versículo que será sua bússola.</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Alinhamento (A)</p>
+        <p>Onde minhas ações de ontem desalinharam com meus princípios? O que preciso corrigir hoje?</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Obediência (O)</p>
+        <p>O que Deus tem me pedido que eu ainda não fiz? Qual passo de obediência vou dar hoje?</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <p>À noite, revise: fui fiel ao princípio? Mantive o alinhamento? Obedeci? Anote os resultados.</p>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== PARTE I — PRINCÍPIO ==================== -->
+<div class="chapter-header" id="principio" style="background-image: url('https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-principles-HDhT4DKjE38mG8ZkecmGd4.webp');">
+  <span class="chapter-number">I</span>
+  <h2>Princípio</h2>
+  <p class="chapter-subtitle">Acima de Resultados</p>
+</div>
+
+<section>
+  <div class="container">
+    <h4>Capítulo 1</h4>
+    <h2>Princípio — A Fundação Inabalável</h2>
+
+    <div class="verse">
+      <p class="verse-text">"O temor do Senhor é o princípio da sabedoria, e o conhecimento do Santo é entendimento."</p>
+      <span class="verse-ref">— Provérbios 9:10</span>
+    </div>
+
+    <p>Vivemos numa era que celebra resultados acima de tudo. Métricas, números, crescimento exponencial — o mundo corporativo e até mesmo o mundo cristão foram contaminados pela idolatria dos resultados. Mas o P.A.G.O. começa com uma afirmação radical: <strong>princípios estão acima de resultados</strong>.</p>
+
+    <p>Isso não significa que resultados não importam. Significa que resultados construídos sobre fundamentos frágeis são castelos de areia. A primeira chuva forte os derruba. Princípios bíblicos são verdades eternas que não mudam com o mercado, com a cultura ou com as circunstâncias. Eles são a rocha sobre a qual tudo deve ser edificado.</p>
+
+    <h3>O Que São Princípios Bíblicos?</h3>
+
+    <p>Princípios bíblicos não são regras religiosas. São <strong>leis espirituais</strong> que governam a realidade, assim como a gravidade governa o mundo físico. Você pode ignorar a gravidade, mas ela não vai ignorar você. Da mesma forma, você pode ignorar o princípio da semeadura e colheita, mas ele continuará operando na sua vida.</p>
+
+    <div class="verse">
+      <p class="verse-text">"Não se deixem enganar: de Deus não se zomba. Pois o que o homem semear, isso também colherá."</p>
+      <span class="verse-ref">— Gálatas 6:7</span>
+    </div>
+
+    <p>Jefferson Evangelista costuma dizer: <em>"Princípios não são sugestões. São fundamentos. Você não negocia com o alicerce de uma casa."</em> Quando um empreendedor decide que a integridade é um princípio inegociável, ele não abre exceções — nem quando o contrato é milionário, nem quando o prazo aperta, nem quando todos ao redor estão tomando atalhos.</p>
+
+    <h3>Os Cinco Princípios Fundamentais do P.A.G.O.</h3>
+
+    <table>
+      <thead>
+        <tr><th>Princípio</th><th>Base Bíblica</th><th>Aplicação Prática</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Integridade</strong></td><td>Provérbios 11:3</td><td>Fazer o certo mesmo quando ninguém está vendo</td></tr>
+        <tr><td><strong>Mordomia</strong></td><td>Lucas 16:10</td><td>Administrar com excelência o que foi confiado</td></tr>
+        <tr><td><strong>Semeadura</strong></td><td>Gálatas 6:7-9</td><td>Investir antes de colher, dar antes de receber</td></tr>
+        <tr><td><strong>Excelência</strong></td><td>Colossenses 3:23</td><td>Fazer tudo como para o Senhor, não para os homens</td></tr>
+        <tr><td><strong>Fidelidade</strong></td><td>Mateus 25:21</td><td>Ser fiel no pouco para receber autoridade sobre o muito</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Princípios vs. Valores: A Diferença Crucial</h3>
+
+    <p>Muitas pessoas confundem princípios com valores. Valores são pessoais e culturais — podem mudar com o tempo. Princípios bíblicos são <strong>universais e eternos</strong>. Um valor pode ser "sucesso financeiro". Um princípio é "a integridade do justo o guia" (Provérbios 11:3). Valores nos motivam. Princípios nos governam.</p>
+
+    <div class="quote">
+      <p class="quote-text">"Quando você constrói sobre princípios, os resultados são consequência. Quando você constrói sobre resultados, os princípios são as primeiras vítimas."</p>
+      <span class="quote-author">Jefferson Evangelista</span>
+    </div>
+
+    <h3>O Custo de Viver por Princípios</h3>
+
+    <p>Viver por princípios tem um custo. Às vezes significa perder um negócio lucrativo porque ele exigia comprometer a integridade. Às vezes significa ser o mais lento na corrida porque você se recusa a tomar atalhos. Às vezes significa solidão, porque poucos estão dispostos a pagar o preço da coerência.</p>
+
+    <div class="verse">
+      <p class="verse-text">"Bem-aventurado o homem que não anda segundo o conselho dos ímpios, nem se detém no caminho dos pecadores, nem se assenta na roda dos escarnecedores. Antes, tem o seu prazer na lei do Senhor, e na sua lei medita de dia e de noite."</p>
+      <span class="verse-ref">— Salmo 1:1-2</span>
+    </div>
+
+    <p>Mas o custo de <strong>não</strong> viver por princípios é infinitamente maior. É a empresa que cresce rápido e desmorona mais rápido ainda. É o ministério que impressiona multidões mas não transforma vidas. É a família que parece perfeita por fora mas está desmoronando por dentro.</p>
+
+    <h3>Princípios no Dia a Dia</h3>
+
+    <p>Princípios não são apenas para grandes decisões. Eles se manifestam nas pequenas escolhas diárias: como você trata o garçom, como você responde um email difícil, como você administra seu tempo quando ninguém está cobrando. A excelência no secreto é o verdadeiro teste de caráter.</p>
+
+    <div class="separator"></div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 1.1</span>
+      <p class="exercise-title">Identificar os Seus Princípios Inegociáveis</p>
+      <p>Liste 5 princípios bíblicos que você considera absolutamente inegociáveis na sua vida. Para cada um, escreva uma situação real em que esse princípio foi testado:</p>
+      <ol>
+        <li>Princípio: <div class="exercise-lines"></div> Situação em que foi testado: <div class="exercise-lines"></div></li>
+        <li>Princípio: <div class="exercise-lines"></div> Situação em que foi testado: <div class="exercise-lines"></div></li>
+        <li>Princípio: <div class="exercise-lines"></div> Situação em que foi testado: <div class="exercise-lines"></div></li>
+        <li>Princípio: <div class="exercise-lines"></div> Situação em que foi testado: <div class="exercise-lines"></div></li>
+        <li>Princípio: <div class="exercise-lines"></div> Situação em que foi testado: <div class="exercise-lines"></div></li>
+      </ol>
+      <p><strong>Reflexão:</strong> Em alguma dessas situações você cedeu? O que aconteceu depois?</p>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 1.2</span>
+      <p class="exercise-title">Auditoria de Decisões Recentes</p>
+      <p>Pense nas últimas 5 decisões importantes que você tomou (profissionais, financeiras, relacionais). Para cada uma, avalie:</p>
+      <ol>
+        <li>Essa decisão foi baseada em princípio ou em conveniência?</li>
+        <li>Se eu pudesse voltar no tempo, tomaria a mesma decisão?</li>
+        <li>Qual princípio bíblico deveria ter guiado essa decisão?</li>
+      </ol>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Decisão 1</p>
+        <div class="exercise-lines"></div><div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Decisão 2</p>
+        <div class="exercise-lines"></div><div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Decisão 3</p>
+        <div class="exercise-lines"></div><div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Decisão 4</p>
+        <div class="exercise-lines"></div><div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Decisão 5</p>
+        <div class="exercise-lines"></div><div class="exercise-lines"></div>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 1.3</span>
+      <p class="exercise-title">Carta de Princípios Pessoais</p>
+      <p>Escreva uma "Carta de Princípios" — um documento pessoal que declare seus fundamentos inegociáveis. Inclua: o que você defende, o que você não tolera, e como pretende viver cada princípio no seu dia a dia. Esta carta será sua bússola nos momentos de pressão.</p>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PARTE II — ALINHAMENTO ==================== -->
+<div class="chapter-header" id="alinhamento" style="background-image: url('https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-alignment-8YXRToADNaAGsGXCjL5Bc7.webp');">
+  <span class="chapter-number">II</span>
+  <h2>Alinhamento</h2>
+  <p class="chapter-subtitle">Gera Autoridade</p>
+</div>
+
+<section class="sand-bg">
+  <div class="container">
+    <h4>Capítulo 2</h4>
+    <h2>Alinhamento — Quando Tudo Caminha na Mesma Direção</h2>
+
+    <div class="verse">
+      <p class="verse-text">"Andarão dois juntos, se não estiverem de acordo?"</p>
+      <span class="verse-ref">— Amós 3:3</span>
+    </div>
+
+    <p>Alinhamento é a <strong>coerência entre o que cremos, o que sentimos e o que fazemos</strong>. É a harmonia entre fé e prática, entre visão e ação, entre o que declaramos e o que vivemos. Quando há alinhamento, emanamos uma autoridade que transcende o poder humano. Quando há desalinhamento, vivemos em conflito interno que sabota cada avanço.</p>
+
+    <p>Muitos cristãos vivem em desalinhamento crônico. Creem em generosidade mas vivem em avareza. Pregam amor mas praticam julgamento. Declaram fé mas agem com medo. Esse desalinhamento não é apenas hipocrisia — é uma <strong>fratura espiritual</strong> que impede o fluxo da graça e da autoridade divina.</p>
+
+    <h3>As Três Dimensões do Alinhamento</h3>
+
+    <table>
+      <thead>
+        <tr><th>Dimensão</th><th>Pergunta</th><th>Sinal de Desalinhamento</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Vertical</strong></td><td>Estou alinhado com Deus?</td><td>Oração mecânica, distância espiritual, desobediência</td></tr>
+        <tr><td><strong>Horizontal</strong></td><td>Estou alinhado com as pessoas?</td><td>Conflitos não resolvidos, isolamento, ressentimento</td></tr>
+        <tr><td><strong>Interna</strong></td><td>Estou alinhado comigo mesmo?</td><td>Contradição entre valores e ações, culpa constante</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Alinhamento Vertical — Com Deus</h3>
+
+    <p>O alinhamento vertical é o primeiro e mais fundamental. Sem ele, todos os outros são impossíveis. Estar alinhado com Deus significa viver em <strong>sintonia com Sua vontade</strong>, não apenas conhecê-la intelectualmente, mas praticá-la com o coração. É a diferença entre saber o caminho e andar nele.</p>
+
+    <div class="verse">
+      <p class="verse-text">"Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento. Reconhece-o em todos os teus caminhos, e ele endireitará as tuas veredas."</p>
+      <span class="verse-ref">— Provérbios 3:5-6</span>
+    </div>
+
+    <h3>Alinhamento Horizontal — Com as Pessoas</h3>
+
+    <p>Nenhum homem é uma ilha. O alinhamento horizontal envolve nossos relacionamentos — cônjuge, filhos, sócios, equipe, comunidade. Quando há desalinhamento relacional, há vazamento de energia, de foco e de autoridade. Um líder que não está em paz com sua família não pode governar com integridade sua empresa.</p>
+
+    <div class="quote">
+      <p class="quote-text">"Alinhamento não é concordância cega. É caminhar na mesma direção com propósito compartilhado. Você pode discordar em métodos, mas nunca em princípios."</p>
+      <span class="quote-author">Jefferson Evangelista</span>
+    </div>
+
+    <h3>Alinhamento Interno — Consigo Mesmo</h3>
+
+    <p>O alinhamento mais difícil é o interno. É olhar no espelho e reconhecer que há áreas da sua vida onde você vive em contradição. Onde suas ações não refletem suas crenças. Onde seu comportamento privado contradiz sua imagem pública. O alinhamento interno exige <strong>honestidade brutal</strong> e <strong>coragem para mudar</strong>.</p>
+
+    <div class="verse">
+      <p class="verse-text">"Examina-me, ó Deus, e conhece o meu coração; prova-me e conhece os meus pensamentos. Vê se há em mim algum caminho mau e guia-me pelo caminho eterno."</p>
+      <span class="verse-ref">— Salmo 139:23-24</span>
+    </div>
+
+    <div class="separator"></div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 2.1</span>
+      <p class="exercise-title">Mapa de Alinhamento Pessoal</p>
+      <p>Para cada área da sua vida, avalie de 1 a 10 o nível de alinhamento entre o que você crê e o que você pratica:</p>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Vida Espiritual</p>
+        <p>Nota: ___ / 10. O que está desalinhado?</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Casamento / Relacionamento</p>
+        <p>Nota: ___ / 10. O que está desalinhado?</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Finanças</p>
+        <p>Nota: ___ / 10. O que está desalinhado?</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Trabalho / Negócios</p>
+        <p>Nota: ___ / 10. O que está desalinhado?</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Saúde / Corpo</p>
+        <p>Nota: ___ / 10. O que está desalinhado?</p>
+        <div class="exercise-lines"></div>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 2.2</span>
+      <p class="exercise-title">Inventário de Conflitos Não Resolvidos</p>
+      <p>Liste todas as pessoas com quem você tem algum conflito, ressentimento ou distância relacional. Para cada uma, escreva o que seria necessário para restaurar o alinhamento:</p>
+      <ol>
+        <li>Nome: <div class="exercise-lines"></div> O que precisa ser feito: <div class="exercise-lines"></div></li>
+        <li>Nome: <div class="exercise-lines"></div> O que precisa ser feito: <div class="exercise-lines"></div></li>
+        <li>Nome: <div class="exercise-lines"></div> O que precisa ser feito: <div class="exercise-lines"></div></li>
+      </ol>
+      <p><strong>Compromisso:</strong> Qual dessas restaurações você vai iniciar esta semana?</p>
+      <div class="exercise-lines"></div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 2.3</span>
+      <p class="exercise-title">Diário de Coerência — 7 Dias</p>
+      <p>Durante 7 dias, registre ao final de cada dia: uma situação onde você agiu em alinhamento com seus princípios e uma onde você falhou. Sem julgamento — apenas observação honesta.</p>
+      <div class="exercise-card"><p class="exercise-card-title">Dia 1</p><p>Alinhado: </p><div class="exercise-lines"></div><p>Desalinhado: </p><div class="exercise-lines"></div></div>
+      <div class="exercise-card"><p class="exercise-card-title">Dia 2</p><p>Alinhado: </p><div class="exercise-lines"></div><p>Desalinhado: </p><div class="exercise-lines"></div></div>
+      <div class="exercise-card"><p class="exercise-card-title">Dia 3</p><p>Alinhado: </p><div class="exercise-lines"></div><p>Desalinhado: </p><div class="exercise-lines"></div></div>
+      <div class="exercise-card"><p class="exercise-card-title">Dia 4</p><p>Alinhado: </p><div class="exercise-lines"></div><p>Desalinhado: </p><div class="exercise-lines"></div></div>
+      <div class="exercise-card"><p class="exercise-card-title">Dia 5</p><p>Alinhado: </p><div class="exercise-lines"></div><p>Desalinhado: </p><div class="exercise-lines"></div></div>
+      <div class="exercise-card"><p class="exercise-card-title">Dia 6</p><p>Alinhado: </p><div class="exercise-lines"></div><p>Desalinhado: </p><div class="exercise-lines"></div></div>
+      <div class="exercise-card"><p class="exercise-card-title">Dia 7</p><p>Alinhado: </p><div class="exercise-lines"></div><p>Desalinhado: </p><div class="exercise-lines"></div></div>
+      <p><strong>Padrão observado:</strong> Após 7 dias, qual padrão de desalinhamento você identificou?</p>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== PARTE III — GOVERNO ==================== -->
+<div class="chapter-header" id="governo" style="background-image: url('https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-governo-new-RzVSXAyWeKmPtBV6tXgtTv.webp');">
+  <span class="chapter-number">III</span>
+  <h2>Governo</h2>
+  <p class="chapter-subtitle">Inicia no Secreto</p>
+</div>
+
+<section>
+  <div class="container">
+    <h4>Capítulo 3</h4>
+    <h2>Governo — A Disciplina que Ninguém Vê</h2>
+
+    <div class="verse">
+      <p class="verse-text">"Toda autoridade é instituída por Deus."</p>
+      <span class="verse-ref">— Romanos 13:1</span>
+    </div>
+
+    <p>Governo, no contexto do P.A.G.O., não é poder sobre outros. É <strong>domínio sobre si mesmo</strong>. É a capacidade de administrar a própria vida com a mesma seriedade com que se administra uma empresa, um ministério ou uma nação. O governo pessoal é o fundamento de toda autoridade legítima.</p>
+
+    <p>Jefferson Evangelista afirma: <em>"Quem não governa o secreto, não sustenta o público."</em> Esta frase encapsula a essência deste pilar. O que acontece na sua vida privada — seus hábitos de oração, sua disciplina financeira, sua integridade quando ninguém está olhando — determina a qualidade e a durabilidade de tudo o que você constrói publicamente.</p>
+
+    <h3>Os Quatro Domínios do Governo Pessoal</h3>
+
+    <table>
+      <thead>
+        <tr><th>Domínio</th><th>O Que Governa</th><th>Disciplina-Chave</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Espiritual</strong></td><td>Intimidade com Deus</td><td>Oração diária, jejum, meditação na Palavra</td></tr>
+        <tr><td><strong>Emocional</strong></td><td>Reações e sentimentos</td><td>Autocontrole, perdão, gestão de conflitos</td></tr>
+        <tr><td><strong>Financeiro</strong></td><td>Recursos e mordomia</td><td>Orçamento, dízimo, investimento, generosidade</td></tr>
+        <tr><td><strong>Temporal</strong></td><td>Tempo e prioridades</td><td>Agenda estruturada, descanso intencional, foco</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Governo Espiritual — O Fundamento Invisível</h3>
+
+    <p>O governo espiritual é a base de todos os outros. Sem uma vida de oração consistente, sem intimidade real com Deus, todo o resto é esforço humano disfarçado de espiritualidade. O governo espiritual não é sobre quantidade de horas em oração — é sobre a <strong>qualidade da entrega</strong> e a <strong>consistência da presença</strong>.</p>
+
+    <div class="verse">
+      <p class="verse-text">"Mas tu, quando orares, entra no teu quarto, fecha a porta e ora a teu Pai, que está em secreto; e teu Pai, que vê em secreto, te recompensará."</p>
+      <span class="verse-ref">— Mateus 6:6</span>
+    </div>
+
+    <h3>Governo Emocional — O Campo de Batalha Interior</h3>
+
+    <p>As emoções não governadas são como um rio sem margens — destroem tudo ao redor. O governo emocional não significa suprimir sentimentos, mas <strong>administrá-los com sabedoria</strong>. Um líder que explode de raiva em uma reunião perde mais autoridade do que ganha em meses de trabalho competente.</p>
+
+    <div class="verse">
+      <p class="verse-text">"Melhor é o que domina o seu espírito do que o que toma uma cidade."</p>
+      <span class="verse-ref">— Provérbios 16:32</span>
+    </div>
+
+    <p>O autocontrole é um fruto do Espírito (Gálatas 5:22-23), não um produto do esforço humano. Isso significa que o governo emocional começa no governo espiritual. Quanto mais íntimos somos de Deus, mais Seu caráter se manifesta em nossas reações.</p>
+
+    <h3>Governo Financeiro — A Mordomia Fiel</h3>
+
+    <p>Dinheiro é um amplificador. Ele amplifica o que já existe no coração. Se há generosidade, o dinheiro a multiplica. Se há ganância, o dinheiro a expõe. O governo financeiro no P.A.G.O. não é sobre enriquecer — é sobre <strong>administrar com fidelidade</strong> o que Deus confiou.</p>
+
+    <div class="verse">
+      <p class="verse-text">"Quem é fiel no pouco, também é fiel no muito; e quem é injusto no pouco, também é injusto no muito."</p>
+      <span class="verse-ref">— Lucas 16:10</span>
+    </div>
+
+    <h3>Governo Temporal — O Recurso Mais Precioso</h3>
+
+    <p>O tempo é o único recurso que não pode ser recuperado. Governar o tempo significa ter <strong>clareza de prioridades</strong> e <strong>coragem para dizer não</strong>. Significa entender que nem tudo que é urgente é importante, e que o secreto (oração, família, descanso) sempre precede o público (trabalho, ministério, projetos).</p>
+
+    <div class="quote">
+      <p class="quote-text">"Disciplina é a ponte entre o que você é e o que Deus quer que você se torne. Sem disciplina, a visão morre na intenção."</p>
+      <span class="quote-author">Jefferson Evangelista</span>
+    </div>
+
+    <div class="separator"></div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 3.1</span>
+      <p class="exercise-title">Auditoria dos Quatro Domínios</p>
+      <p>Para cada domínio do governo pessoal, avalie sua situação atual e defina uma ação concreta de melhoria:</p>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Governo Espiritual</p>
+        <p>Frequência de oração: ___ vezes/semana. Leitura bíblica: ___ dias/semana.</p>
+        <p>O que preciso mudar:</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Governo Emocional</p>
+        <p>Última vez que perdi o controle emocional: ___. Gatilho principal: ___</p>
+        <p>O que preciso mudar:</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Governo Financeiro</p>
+        <p>Tenho orçamento? ___. Dízimo em dia? ___. Dívidas? ___</p>
+        <p>O que preciso mudar:</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Governo Temporal</p>
+        <p>Horas de sono: ___. Tempo com família: ___. Tempo desperdiçado: ___</p>
+        <p>O que preciso mudar:</p>
+        <div class="exercise-lines"></div>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 3.2</span>
+      <p class="exercise-title">Rotina do Secreto — Construindo Disciplinas</p>
+      <p>Projete uma rotina matinal de governo pessoal. Comece com 30 minutos e aumente gradualmente. Inclua pelo menos um elemento de cada domínio:</p>
+      <div class="exercise-card">
+        <p class="exercise-card-title">Minha Rotina Matinal do Secreto</p>
+        <p>Horário de despertar: ___</p>
+        <div class="exercise-lines"></div>
+        <p>Espiritual (oração/Palavra): </p>
+        <div class="exercise-lines"></div>
+        <p>Emocional (gratidão/reflexão): </p>
+        <div class="exercise-lines"></div>
+        <p>Financeiro (revisão/planejamento): </p>
+        <div class="exercise-lines"></div>
+        <p>Temporal (prioridades do dia): </p>
+        <div class="exercise-lines"></div>
+      </div>
+      <p><strong>Compromisso:</strong> Vou praticar esta rotina por ___ dias consecutivos antes de avaliar.</p>
+      <div class="exercise-lines"></div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 3.3</span>
+      <p class="exercise-title">Mapa de Vulnerabilidades</p>
+      <p>Identifique suas 3 maiores vulnerabilidades — áreas onde você consistentemente perde o governo. Para cada uma, defina uma "cerca de proteção" (uma disciplina ou limite que previne a queda):</p>
+      <ol>
+        <li>Vulnerabilidade: <div class="exercise-lines"></div> Cerca de proteção: <div class="exercise-lines"></div></li>
+        <li>Vulnerabilidade: <div class="exercise-lines"></div> Cerca de proteção: <div class="exercise-lines"></div></li>
+        <li>Vulnerabilidade: <div class="exercise-lines"></div> Cerca de proteção: <div class="exercise-lines"></div></li>
+      </ol>
+      <p><strong>Pessoa de confiança:</strong> Quem vai me cobrar sobre essas cercas?</p>
+      <div class="exercise-lines"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PARTE IV — OBEDIÊNCIA ==================== -->
+<div class="chapter-header" id="obediencia" style="background-image: url('https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-obediencia-new-kerqTpabe9CesvsDAfEFFS.webp');">
+  <span class="chapter-number">IV</span>
+  <h2>Obediência</h2>
+  <p class="chapter-subtitle">Sustenta o Invisível</p>
+</div>
+
+<section class="sand-bg">
+  <div class="container">
+    <h4>Capítulo 4</h4>
+    <h2>Obediência — O Ato que Destrava o Sobrenatural</h2>
+
+    <div class="verse">
+      <p class="verse-text">"Se estiverdes dispostos e fordes obedientes, comereis o melhor desta terra."</p>
+      <span class="verse-ref">— Isaías 1:19</span>
+    </div>
+
+    <p>A obediência é a chave que destrava o sobrenatural. Não é sobre a velocidade com que se começa, mas sobre a <strong>permanência no propósito</strong>. Constância vence talento. Disciplina vence motivação. A obediência radical — aquela que age mesmo quando não entende, mesmo quando dói, mesmo quando o mundo inteiro diz o contrário — é o que separa os que sonham dos que realizam.</p>
+
+    <p>No sistema P.A.G.O., a obediência é o pilar final porque é o <strong>teste supremo</strong>. Você pode ter princípios claros, alinhamento perfeito e governo disciplinado, mas se não obedece à voz de Deus nos momentos cruciais, todo o sistema fica incompleto. A obediência é o que transforma conhecimento em experiência, teoria em testemunho.</p>
+
+    <h3>Os Três Níveis de Obediência</h3>
+
+    <table>
+      <thead>
+        <tr><th>Nível</th><th>Descrição</th><th>Exemplo Bíblico</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Obediência Básica</strong></td><td>Fazer o que é claramente mandado</td><td>Os Dez Mandamentos</td></tr>
+        <tr><td><strong>Obediência Radical</strong></td><td>Obedecer mesmo sem entender</td><td>Abraão oferecendo Isaque (Gn 22)</td></tr>
+        <tr><td><strong>Obediência Profética</strong></td><td>Agir por revelação do Espírito</td><td>Noé construindo a arca (Gn 6)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Obediência Básica — O Fundamento</h3>
+
+    <p>A obediência básica é cumprir o que já está escrito. Não precisa de revelação especial — basta ler a Palavra e fazer. Dizimar, perdoar, amar o próximo, ser honesto nos negócios. Muitos cristãos buscam "palavras proféticas" enquanto ignoram os mandamentos básicos. Deus não dá direção nova a quem não obedece a direção que já foi dada.</p>
+
+    <div class="verse">
+      <p class="verse-text">"Se me amais, guardareis os meus mandamentos."</p>
+      <span class="verse-ref">— João 14:15</span>
+    </div>
+
+    <h3>Obediência Radical — O Teste da Fé</h3>
+
+    <p>A obediência radical é quando Deus pede algo que não faz sentido para a mente natural. Abraão foi chamado a sacrificar seu filho — a promessa que ele esperou 25 anos para receber. A obediência radical exige <strong>confiança absoluta</strong> no caráter de Deus, mesmo quando Seus caminhos são incompreensíveis.</p>
+
+    <div class="verse">
+      <p class="verse-text">"Porque os meus pensamentos não são os vossos pensamentos, nem os vossos caminhos os meus caminhos, diz o Senhor. Porque, assim como os céus são mais altos do que a terra, assim são os meus caminhos mais altos do que os vossos caminhos."</p>
+      <span class="verse-ref">— Isaías 55:8-9</span>
+    </div>
+
+    <h3>Obediência Profética — O Avanço Sobrenatural</h3>
+
+    <p>A obediência profética é agir por revelação direta do Espírito Santo. Noé construiu uma arca quando nunca tinha chovido. Moisés estendeu a vara sobre o mar. Josué marchou ao redor de Jericó. Essas ações não tinham lógica humana — tinham <strong>lógica divina</strong>. E o resultado foi sobrenatural.</p>
+
+    <div class="quote">
+      <p class="quote-text">"A obediência é a chave que destrava o sobrenatural. Não é sobre a velocidade com que se começa, mas sobre a permanência no propósito."</p>
+      <span class="quote-author">Jefferson Evangelista</span>
+    </div>
+
+    <h3>O Fruto da Obediência</h3>
+
+    <p>A obediência gera <strong>autoridade espiritual</strong>. Quem obedece fielmente recebe autoridade para governar. Quem governa com integridade recebe mais responsabilidade. É um ciclo ascendente: obediência → autoridade → governo → mais obediência → mais autoridade. Este é o caminho do Reino.</p>
+
+    <div class="verse">
+      <p class="verse-text">"Muito bem, servo bom e fiel; foste fiel no pouco, sobre o muito te colocarei; entra no gozo do teu senhor."</p>
+      <span class="verse-ref">— Mateus 25:21</span>
+    </div>
+
+    <div class="separator"></div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 4.1</span>
+      <p class="exercise-title">Inventário de Obediência Pendente</p>
+      <p>Faça uma lista honesta de tudo que Deus já te pediu e você ainda não fez. Pode ser algo grande (mudar de cidade, iniciar um ministério) ou pequeno (perdoar alguém, devolver algo). Não julgue — apenas liste:</p>
+      <ol>
+        <li><div class="exercise-lines"></div></li>
+        <li><div class="exercise-lines"></div></li>
+        <li><div class="exercise-lines"></div></li>
+        <li><div class="exercise-lines"></div></li>
+        <li><div class="exercise-lines"></div></li>
+      </ol>
+      <p><strong>Qual desses passos você vai dar esta semana?</strong></p>
+      <div class="exercise-lines"></div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 4.2</span>
+      <p class="exercise-title">Diário de Obediência — 14 Dias</p>
+      <p>Durante 14 dias, registre um ato de obediência diário — pode ser algo simples como orar quando não tem vontade, ou algo difícil como pedir perdão. O objetivo é criar o <strong>hábito da obediência imediata</strong>.</p>
+      <div class="exercise-card"><p class="exercise-card-title">Dia 1</p><p>Ato de obediência:</p><div class="exercise-lines"></div><p>Como me senti:</p><div class="exercise-lines"></div></div>
+      <div class="exercise-card"><p class="exercise-card-title">Dia 2</p><p>Ato de obediência:</p><div class="exercise-lines"></div><p>Como me senti:</p><div class="exercise-lines"></div></div>
+      <div class="exercise-card"><p class="exercise-card-title">Dia 3</p><p>Ato de obediência:</p><div class="exercise-lines"></div><p>Como me senti:</p><div class="exercise-lines"></div></div>
+      <div class="exercise-card"><p class="exercise-card-title">Dia 4</p><p>Ato de obediência:</p><div class="exercise-lines"></div><p>Como me senti:</p><div class="exercise-lines"></div></div>
+      <div class="exercise-card"><p class="exercise-card-title">Dia 5</p><p>Ato de obediência:</p><div class="exercise-lines"></div><p>Como me senti:</p><div class="exercise-lines"></div></div>
+      <div class="exercise-card"><p class="exercise-card-title">Dia 6</p><p>Ato de obediência:</p><div class="exercise-lines"></div><p>Como me senti:</p><div class="exercise-lines"></div></div>
+      <div class="exercise-card"><p class="exercise-card-title">Dia 7</p><p>Ato de obediência:</p><div class="exercise-lines"></div><p>Como me senti:</p><div class="exercise-lines"></div></div>
+      <div class="exercise-card"><p class="exercise-card-title">Dias 8-14</p><p>Continue registrando em um caderno separado. O padrão que você observar revelará onde Deus está trabalhando na sua vida.</p></div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 4.3</span>
+      <p class="exercise-title">Compromisso de Obediência Radical</p>
+      <p>Escreva uma declaração pessoal de compromisso com a obediência. Seja específico sobre as áreas onde você vai obedecer, independentemente do custo:</p>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+      <div class="exercise-lines"></div>
+      <p><strong>Testemunha:</strong> Compartilhe esta declaração com alguém de confiança que possa te cobrar.</p>
+      <p>Nome da testemunha: <div class="exercise-lines"></div></p>
+      <p>Data: <div class="exercise-lines"></div></p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== INTEGRAÇÃO DOS PILARES ==================== -->
+<section id="integracao" class="navy-bg">
+  <div class="container">
+    <h4>Síntese</h4>
+    <h2>Integração dos Pilares — O Sistema Completo</h2>
+
+    <p>Os quatro pilares do P.A.G.O. não funcionam isoladamente. Eles formam um <strong>sistema integrado</strong> onde cada pilar sustenta e potencializa os demais. Princípio sem Alinhamento é hipocrisia. Alinhamento sem Governo é fragilidade. Governo sem Obediência é religiosidade vazia. E Obediência sem Princípio é legalismo.</p>
+
+    <table>
+      <thead>
+        <tr><th>Combinação</th><th>Resultado Positivo</th><th>Sem o Pilar = Risco</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>P + A</td><td>Coerência com fundamento</td><td>Sem G = inconsistência</td></tr>
+        <tr><td>P + A + G</td><td>Vida estruturada e íntegra</td><td>Sem O = estagnação</td></tr>
+        <tr><td>A + G + O</td><td>Disciplina e ação</td><td>Sem P = ativismo vazio</td></tr>
+        <tr><td>P + A + G + O</td><td><strong>Vida plena e autoridade legítima</strong></td><td>Sistema completo</td></tr>
+      </tbody>
+    </table>
+
+    <div class="quote">
+      <p class="quote-text">"O P.A.G.O. não é um programa. É um estilo de vida. Não é algo que você faz — é algo que você se torna."</p>
+      <span class="quote-author">Jefferson Evangelista</span>
+    </div>
+
+    <h3>O Ciclo Virtuoso</h3>
+
+    <p>Quando os quatro pilares operam juntos, criam um <strong>ciclo virtuoso ascendente</strong>: Princípios claros geram Alinhamento natural. Alinhamento gera Governo consistente. Governo gera capacidade de Obediência. E a Obediência fortalece os Princípios, reiniciando o ciclo em um nível mais elevado. Cada volta do ciclo produz mais maturidade, mais autoridade e mais impacto.</p>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício de Integração</span>
+      <p class="exercise-title">Autoavaliação P.A.G.O. Completa</p>
+      <p>Atribua uma nota de 1 a 10 para cada pilar na sua vida atual. Depois, identifique o pilar mais fraco — ele é o gargalo do seu sistema:</p>
+      <div class="exercise-card">
+        <p class="exercise-card-title">P — Princípio</p>
+        <p>Nota: ___ / 10. Meus princípios estão claros e inegociáveis?</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">A — Alinhamento</p>
+        <p>Nota: ___ / 10. Minhas ações refletem meus princípios?</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">G — Governo</p>
+        <p>Nota: ___ / 10. Tenho disciplinas consistentes no secreto?</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <div class="exercise-card">
+        <p class="exercise-card-title">O — Obediência</p>
+        <p>Nota: ___ / 10. Estou obedecendo ao que Deus tem me pedido?</p>
+        <div class="exercise-lines"></div>
+      </div>
+      <p><strong>Pilar mais fraco:</strong> ___ → Este é onde você deve concentrar seus esforços nos próximos 21 dias.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ESTUDOS DE CASO ==================== -->
+<section id="estudos">
+  <div class="container">
+    <h4>Aplicação Real</h4>
+    <h2>Estudos de Caso</h2>
+
+    <h3>Caso 1: O Empresário que Recusou o Atalho</h3>
+
+    <p>Carlos era dono de uma construtora em crescimento. Recebeu uma proposta para um contrato governamental que triplicaria seu faturamento — mas exigia "facilitação" (suborno). Seus sócios pressionaram: "Todo mundo faz isso." Carlos, fundamentado no <strong>Princípio</strong> da integridade, recusou. Perdeu o contrato. Nos 6 meses seguintes, três concorrentes que aceitaram foram investigados e fechados. Carlos recebeu dois contratos ainda maiores, por indicação de um cliente que admirava sua postura. <strong>Princípio acima de resultado.</strong></p>
+
+    <div class="verse">
+      <p class="verse-text">"A integridade dos retos os guia, mas a falsidade dos infiéis os destrói."</p>
+      <span class="verse-ref">— Provérbios 11:3</span>
+    </div>
+
+    <h3>Caso 2: A Pastora que Realinhou Sua Vida</h3>
+
+    <p>Ana liderava uma igreja de 500 membros, mas sua vida pessoal estava em caos. Casamento distante, filhos rebeldes, saúde deteriorada. Ela pregava sobre família mas não vivia o que pregava. Ao estudar o pilar do <strong>Alinhamento</strong>, percebeu a fratura: seu alinhamento vertical (com Deus) era forte, mas o horizontal (com a família) estava destruído. Ela tomou a decisão corajosa de reduzir suas atividades ministeriais por 6 meses para restaurar seu casamento e sua presença com os filhos. A igreja diminuiu temporariamente, mas sua família foi restaurada — e com ela, sua autoridade espiritual genuína.</p>
+
+    <h3>Caso 3: O Jovem que Aprendeu Governo no Secreto</h3>
+
+    <p>Pedro, 24 anos, tinha grandes sonhos mas zero disciplina. Acordava tarde, gastava mais do que ganhava, e sua vida de oração era inexistente. Ao aplicar o pilar do <strong>Governo</strong>, começou com uma rotina simples: acordar às 5h30, 20 minutos de oração, 10 minutos de planejamento financeiro. Nos primeiros 30 dias, falhou 12 vezes. Nos segundos 30 dias, falhou 5 vezes. Após 90 dias, a rotina era natural. Em um ano, Pedro tinha economizado seu primeiro fundo de emergência, sido promovido no trabalho, e iniciado um grupo de estudo bíblico com 15 jovens.</p>
+
+    <h3>Caso 4: A Família que Obedeceu Contra Toda Lógica</h3>
+
+    <p>Marcos e Juliana tinham uma vida confortável em São Paulo. Deus os chamou para mudar para uma cidade pequena no interior de Minas e iniciar um projeto social. Não fazia sentido: salários menores, longe da família, sem garantias. Mas o pilar da <strong>Obediência</strong> os sustentou. Três anos depois, o projeto atendia 200 famílias, Marcos liderava a associação comercial da cidade, e Juliana havia fundado uma escola que se tornou referência regional. A obediência destrancou portas que a lógica humana nunca teria encontrado.</p>
+  </div>
+</section>
+
+<!-- ==================== PERGUNTAS PARA GRUPOS ==================== -->
+<section id="grupo" class="sand-bg">
+  <div class="container">
+    <h4>Estudo em Grupo</h4>
+    <h2>Perguntas para Grupos de Estudo</h2>
+
+    <p>Estas perguntas foram desenhadas para discussão em pequenos grupos (4-8 pessoas). Reserve 60-90 minutos por sessão. O líder do grupo deve criar um ambiente seguro onde todos possam ser honestos sem medo de julgamento.</p>
+
+    <h3>Sessão 1 — Princípio</h3>
+    <div class="study-question"><strong>Pergunta 1:</strong> Qual princípio bíblico você mais admira mas tem mais dificuldade de viver?</div>
+    <div class="study-question"><strong>Pergunta 2:</strong> Conte uma situação onde manter um princípio te custou algo valioso. Valeu a pena?</div>
+    <div class="study-question"><strong>Pergunta 3:</strong> Como a cultura atual desafia os princípios bíblicos no ambiente de trabalho?</div>
+    <div class="study-question"><strong>Pergunta 4:</strong> O que significa "princípios acima de resultados" na prática do seu dia a dia?</div>
+
+    <h3>Sessão 2 — Alinhamento</h3>
+    <div class="study-question"><strong>Pergunta 1:</strong> Em qual área da sua vida há maior desalinhamento entre o que você crê e o que você pratica?</div>
+    <div class="study-question"><strong>Pergunta 2:</strong> Como o desalinhamento relacional (conflitos não resolvidos) afeta sua autoridade espiritual?</div>
+    <div class="study-question"><strong>Pergunta 3:</strong> O que seria necessário para restaurar o alinhamento em uma área específica da sua vida?</div>
+    <div class="study-question"><strong>Pergunta 4:</strong> Como podemos nos ajudar mutuamente a manter o alinhamento?</div>
+
+    <h3>Sessão 3 — Governo</h3>
+    <div class="study-question"><strong>Pergunta 1:</strong> Qual dos quatro domínios do governo pessoal (espiritual, emocional, financeiro, temporal) é o mais desafiador para você?</div>
+    <div class="study-question"><strong>Pergunta 2:</strong> "Quem não governa o secreto, não sustenta o público." Como essa frase se aplica à sua vida?</div>
+    <div class="study-question"><strong>Pergunta 3:</strong> Que disciplina prática você poderia começar esta semana para fortalecer seu governo pessoal?</div>
+    <div class="study-question"><strong>Pergunta 4:</strong> Como a falta de governo em uma área contamina as outras áreas?</div>
+
+    <h3>Sessão 4 — Obediência</h3>
+    <div class="study-question"><strong>Pergunta 1:</strong> Existe algo que Deus te pediu e você ainda não obedeceu? O que te impede?</div>
+    <div class="study-question"><strong>Pergunta 2:</strong> Qual a diferença entre obediência religiosa (por medo) e obediência relacional (por amor)?</div>
+    <div class="study-question"><strong>Pergunta 3:</strong> Conte um testemunho de quando a obediência gerou um resultado sobrenatural na sua vida.</div>
+    <div class="study-question"><strong>Pergunta 4:</strong> Como podemos criar uma cultura de obediência radical neste grupo?</div>
+
+    <h3>Sessão 5 — Integração P.A.G.O.</h3>
+    <div class="study-question"><strong>Pergunta 1:</strong> Após estudar os 4 pilares, qual é o seu pilar mais forte e qual é o mais fraco?</div>
+    <div class="study-question"><strong>Pergunta 2:</strong> Como os pilares se conectam na sua experiência pessoal?</div>
+    <div class="study-question"><strong>Pergunta 3:</strong> Que compromisso concreto você quer fazer diante deste grupo para os próximos 21 dias?</div>
+    <div class="study-question"><strong>Pergunta 4:</strong> Como este grupo pode se tornar um espaço de prestação de contas mútua?</div>
+  </div>
+</section>
+
+<!-- ==================== PLANO 21 DIAS ==================== -->
+<section id="plano21">
+  <div class="container">
+    <h4>Transformação Prática</h4>
+    <h2>Plano de Transformação — 21 Dias</h2>
+
+    <p>Este plano foi desenhado para criar novos hábitos baseados nos pilares P.A.G.O. Cada semana foca em uma dimensão diferente, e a última semana integra tudo. Comprometa-se com <strong>21 dias sem interrupção</strong>. Se falhar um dia, não desista — retome no dia seguinte.</p>
+
+    <div class="plan-week">
+      <p class="plan-week-title">Semana 1 — Fundamento (Princípio + Alinhamento)</p>
+      <div class="plan-day"><span class="plan-day-num">Dia 1</span><span class="plan-day-content">Escreva seus 5 princípios inegociáveis. Ore sobre cada um.</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 2</span><span class="plan-day-content">Identifique 3 áreas de desalinhamento na sua vida. Escolha uma para corrigir hoje.</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 3</span><span class="plan-day-content">Leia Salmo 1 inteiro. Medite: o que significa ser "como árvore plantada junto a ribeiros de águas"?</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 4</span><span class="plan-day-content">Faça uma ligação ou envie uma mensagem para restaurar um relacionamento que está desalinhado.</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 5</span><span class="plan-day-content">Revise suas finanças: seus gastos refletem seus princípios? Ajuste o que for necessário.</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 6</span><span class="plan-day-content">Jejue uma refeição. Use o tempo para orar sobre seus princípios e pedir alinhamento divino.</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 7</span><span class="plan-day-content">Dia de descanso e reflexão. Escreva no diário: o que aprendi sobre Princípio e Alinhamento esta semana?</span></div>
+    </div>
+
+    <div class="plan-week">
+      <p class="plan-week-title">Semana 2 — Estrutura (Governo)</p>
+      <div class="plan-day"><span class="plan-day-num">Dia 8</span><span class="plan-day-content">Estabeleça uma rotina matinal de 30 minutos: oração (15min) + planejamento (15min).</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 9</span><span class="plan-day-content">Faça um orçamento detalhado do mês. Inclua dízimo, economias e generosidade.</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 10</span><span class="plan-day-content">Identifique seu maior "ladrão de tempo" e elimine-o por 24 horas.</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 11</span><span class="plan-day-content">Pratique o autocontrole: quando sentir raiva, frustração ou ansiedade, pare e ore antes de reagir.</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 12</span><span class="plan-day-content">Leia Provérbios 16:32. Medite: em que área você precisa de mais domínio próprio?</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 13</span><span class="plan-day-content">Organize seu ambiente: limpe seu escritório, organize seus arquivos, arrume sua casa. Ambiente governa comportamento.</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 14</span><span class="plan-day-content">Dia de descanso. Escreva: como o governo pessoal mudou minha semana? O que foi mais difícil?</span></div>
+    </div>
+
+    <div class="plan-week">
+      <p class="plan-week-title">Semana 3 — Ação (Obediência + Integração)</p>
+      <div class="plan-day"><span class="plan-day-num">Dia 15</span><span class="plan-day-content">Identifique algo que Deus te pediu e você adiou. Dê o primeiro passo hoje.</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 16</span><span class="plan-day-content">Pratique generosidade radical: dê algo valioso (tempo, dinheiro, atenção) sem esperar retorno.</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 17</span><span class="plan-day-content">Aplique o teste P.A.O. em cada decisão do dia: Princípio? Alinhado? Obediente?</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 18</span><span class="plan-day-content">Perdoe alguém que te magoou. Escreva uma carta (não precisa enviar) liberando o perdão.</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 19</span><span class="plan-day-content">Compartilhe o P.A.G.O. com alguém. Ensinar é a melhor forma de aprender.</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 20</span><span class="plan-day-content">Faça a autoavaliação P.A.G.O. completa. Compare com o Dia 1. O que mudou?</span></div>
+      <div class="plan-day"><span class="plan-day-num">Dia 21</span><span class="plan-day-content">Escreva sua Declaração P.A.G.O. pessoal. Celebre a jornada. Planeje os próximos 21 dias.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== LEGADO ==================== -->
+<section id="legado" class="navy-bg">
+  <div class="container">
+    <h4>Visão de Futuro</h4>
+    <h2>Do Governo Pessoal ao Legado Corporativo</h2>
+
+    <div class="verse">
+      <p class="verse-text">"O homem de bem deixa herança aos filhos de seus filhos."</p>
+      <span class="verse-ref">— Provérbios 13:22</span>
+    </div>
+
+    <p>O P.A.G.O. não termina no indivíduo. Ele se expande em círculos concêntricos: do governo pessoal para o governo familiar, do governo familiar para o governo empresarial, e do governo empresarial para o impacto territorial. <strong>Homens restaurados constroem famílias fortes. Famílias fortes constroem empresas sólidas. Empresas sólidas impactam territórios.</strong></p>
+
+    <p>Jefferson Evangelista enxerga o P.A.G.O. como um movimento de restauração. Não é apenas sobre sucesso individual — é sobre criar uma <strong>cultura de governo</strong> que transforma comunidades inteiras. Cada pessoa que vive o P.A.G.O. se torna um agente de transformação no seu círculo de influência.</p>
+
+    <h3>A Visão de Longo Prazo</h3>
+
+    <p>O legado não é construído em dias ou meses. É construído ao longo de décadas de fidelidade consistente. É o resultado cumulativo de milhares de pequenas decisões baseadas em princípios, alinhadas com propósito, governadas por disciplina e sustentadas por obediência. O legado é o fruto que outros colhem da árvore que você plantou.</p>
+
+    <div class="quote">
+      <p class="quote-text">"Não estou construindo sucesso. Estou administrando uma visão. O sucesso é temporal. O legado é eterno."</p>
+      <span class="quote-author">Jefferson Evangelista</span>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== DECLARAÇÃO ==================== -->
+<section id="declaracao">
+  <div class="container">
+    <h4>Compromisso</h4>
+    <h2>Declaração P.A.G.O.</h2>
+
+    <div class="declaration">
+      <h3>Minha Declaração</h3>
+      <p><em>Eu declaro que meus <strong>Princípios</strong> estão acima dos meus resultados.</em></p>
+      <p><em>Eu declaro que busco <strong>Alinhamento</strong> entre o que creio, o que sinto e o que faço.</em></p>
+      <p><em>Eu declaro que o <strong>Governo</strong> da minha vida começa no secreto, na disciplina diária, na intimidade com Deus.</em></p>
+      <p><em>Eu declaro que a <strong>Obediência</strong> é minha resposta à voz de Deus — imediata, radical e sem reservas.</em></p>
+      <div class="separator"></div>
+      <p><em>Eu não construo para aparecer. Eu estruturo para permanecer.</em></p>
+      <p><em>Eu não busco sucesso. Eu administro uma visão.</em></p>
+      <p><em>Eu sou P.A.G.O.</em></p>
+      <div style="margin-top: 2rem;">
+        <p>Nome: <span style="border-bottom: 1px solid var(--navy); display: inline-block; width: 250px;">&nbsp;</span></p>
+        <p>Data: <span style="border-bottom: 1px solid var(--navy); display: inline-block; width: 150px;">&nbsp;</span></p>
+        <p>Assinatura: <span style="border-bottom: 1px solid var(--navy); display: inline-block; width: 250px;">&nbsp;</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== GLOSSÁRIO ==================== -->
+<section id="glossario" class="sand-bg">
+  <div class="container">
+    <h4>Referência</h4>
+    <h2>Glossário</h2>
+
+    <div class="glossary-item"><p class="glossary-term">Alinhamento</p><p class="glossary-def">Coerência entre crenças, palavras e ações. No P.A.G.O., refere-se à harmonia entre vida espiritual, relacional e prática.</p></div>
+    <div class="glossary-item"><p class="glossary-term">Governo Pessoal</p><p class="glossary-def">Capacidade de administrar a própria vida com disciplina e intencionalidade nos domínios espiritual, emocional, financeiro e temporal.</p></div>
+    <div class="glossary-item"><p class="glossary-term">Governo Silencioso</p><p class="glossary-def">Filosofia de design e vida do P.A.G.O. que valoriza a elegância subliminar, a estrutura invisível e o impacto duradouro sobre a aparência momentânea.</p></div>
+    <div class="glossary-item"><p class="glossary-term">Legado</p><p class="glossary-def">O impacto duradouro que transcende a vida individual. No P.A.G.O., é o fruto cumulativo de uma vida governada por princípios bíblicos.</p></div>
+    <div class="glossary-item"><p class="glossary-term">Mordomia</p><p class="glossary-def">Administração fiel dos recursos (tempo, dinheiro, talentos, relacionamentos) que Deus confiou. Não somos donos — somos mordomos.</p></div>
+    <div class="glossary-item"><p class="glossary-term">Obediência Radical</p><p class="glossary-def">Ato de obedecer à direção divina mesmo quando não faz sentido para a mente natural, confiando no caráter de Deus acima da lógica humana.</p></div>
+    <div class="glossary-item"><p class="glossary-term">P.A.G.O.</p><p class="glossary-def">Acrônimo para Princípio, Alinhamento, Governo e Obediência — sistema de reorganização de vida baseado em princípios bíblicos, criado por Jefferson Evangelista.</p></div>
+    <div class="glossary-item"><p class="glossary-term">P.A.O.</p><p class="glossary-def">Tríade fundamental (Princípio, Alinhamento, Obediência) que representa o ciclo essencial da vida governada. É o DNA do P.A.G.O.</p></div>
+    <div class="glossary-item"><p class="glossary-term">Princípio</p><p class="glossary-def">Verdade bíblica eterna e universal que serve como fundamento inegociável para decisões e comportamentos. Diferente de valores (pessoais e mutáveis).</p></div>
+    <div class="glossary-item"><p class="glossary-term">Secreto</p><p class="glossary-def">A vida interior e privada — oração, disciplinas pessoais, hábitos quando ninguém está vendo. No P.A.G.O., o secreto é onde o governo verdadeiro começa.</p></div>
+  </div>
+</section>
+
+<!-- ==================== ÍNDICE DE VERSÍCULOS ==================== -->
+<section id="versiculos">
+  <div class="container">
+    <h4>Referência Bíblica</h4>
+    <h2>Índice de Versículos</h2>
+
+    <table>
+      <thead>
+        <tr><th>Versículo</th><th>Referência</th><th>Pilar</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Busquem em primeiro lugar o Reino de Deus...</td><td>Mateus 6:33</td><td>Fundamentos</td></tr>
+        <tr><td>O temor do Senhor é o princípio da sabedoria...</td><td>Provérbios 9:10</td><td>Princípio / P.A.O.</td></tr>
+        <tr><td>Não se deixem enganar: de Deus não se zomba...</td><td>Gálatas 6:7</td><td>Princípio</td></tr>
+        <tr><td>Bem-aventurado o homem que não anda...</td><td>Salmo 1:1-2</td><td>Princípio</td></tr>
+        <tr><td>A integridade dos retos os guia...</td><td>Provérbios 11:3</td><td>Princípio</td></tr>
+        <tr><td>Todo aquele que ouve estas palavras e as pratica...</td><td>Mateus 7:24</td><td>Jefferson</td></tr>
+        <tr><td>Andarão dois juntos, se não estiverem de acordo?</td><td>Amós 3:3</td><td>Alinhamento</td></tr>
+        <tr><td>Confia no Senhor de todo o teu coração...</td><td>Provérbios 3:5-6</td><td>Alinhamento</td></tr>
+        <tr><td>Examina-me, ó Deus, e conhece o meu coração...</td><td>Salmo 139:23-24</td><td>Alinhamento</td></tr>
+        <tr><td>Toda autoridade é instituída por Deus</td><td>Romanos 13:1</td><td>Governo</td></tr>
+        <tr><td>Mas tu, quando orares, entra no teu quarto...</td><td>Mateus 6:6</td><td>Governo</td></tr>
+        <tr><td>Melhor é o que domina o seu espírito...</td><td>Provérbios 16:32</td><td>Governo</td></tr>
+        <tr><td>Quem é fiel no pouco, também é fiel no muito...</td><td>Lucas 16:10</td><td>Governo</td></tr>
+        <tr><td>Se estiverdes dispostos e fordes obedientes...</td><td>Isaías 1:19</td><td>Obediência</td></tr>
+        <tr><td>Se me amais, guardareis os meus mandamentos</td><td>João 14:15</td><td>Obediência</td></tr>
+        <tr><td>Os meus pensamentos não são os vossos pensamentos...</td><td>Isaías 55:8-9</td><td>Obediência</td></tr>
+        <tr><td>Muito bem, servo bom e fiel...</td><td>Mateus 25:21</td><td>Obediência</td></tr>
+        <tr><td>O homem de bem deixa herança aos filhos...</td><td>Provérbios 13:22</td><td>Legado</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ==================== RODAPÉ ==================== -->
+<section class="navy-bg" style="padding: 2rem 0;">
+  <div class="container" style="text-align: center;">
+    <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 700; color: var(--gold); margin-bottom: 0.5rem;">P.A.G.O.</p>
+    <p style="font-family: 'Montserrat', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(250,250,248,0.5);">Princípio · Alinhamento · Governo · Obediência</p>
+    <div class="separator"></div>
+    <p style="font-size: 0.8rem; color: rgba(250,250,248,0.4);">© 2025 Jefferson Evangelista — Todos os direitos reservados</p>
+    <p style="font-size: 0.75rem; color: rgba(250,250,248,0.3); margin-top: 0.5rem;">Edição Expandida — Novo Tempo</p>
+  </div>
+</section>
+
+</body>
+</html>
