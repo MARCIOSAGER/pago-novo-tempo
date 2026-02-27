@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P.A.G.O. — Ebook Interativo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap');
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: #0f1a2e;
+    color: #FAFAF8;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: #1A2744;
+    border-bottom: 1px solid rgba(184,168,138,0.2);
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  .header h1 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: #B8A88A;
+  }
+  .header .subtitle {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(250,250,248,0.4);
+  }
+  .page-info {
+    font-size: 0.75rem;
+    color: rgba(250,250,248,0.5);
+  }
+
+  /* Viewer */
+  .viewer {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 10px;
+  }
+
+  .book-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .page-wrapper {
+    position: relative;
+    display: flex;
+    box-shadow: 0 10px 60px rgba(0,0,0,0.5), 0 2px 20px rgba(0,0,0,0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: transform 0.1s ease;
+  }
+
+  .page {
+    display: block;
+    max-height: calc(100vh - 120px);
+    width: auto;
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  /* Page turn animation */
+  .page-wrapper.turning-right {
+    animation: turnRight 0.4s ease-in-out;
+  }
+  .page-wrapper.turning-left {
+    animation: turnLeft 0.4s ease-in-out;
+  }
+
+  @keyframes turnRight {
+    0% { transform: perspective(1200px) rotateY(0deg); }
+    50% { transform: perspective(1200px) rotateY(-15deg); }
+    100% { transform: perspective(1200px) rotateY(0deg); }
+  }
+  @keyframes turnLeft {
+    0% { transform: perspective(1200px) rotateY(0deg); }
+    50% { transform: perspective(1200px) rotateY(15deg); }
+    100% { transform: perspective(1200px) rotateY(0deg); }
+  }
+
+  /* Navigation arrows */
+  .nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 80px;
+    background: rgba(26,39,68,0.7);
+    border: 1px solid rgba(184,168,138,0.3);
+    color: #B8A88A;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 5;
+    backdrop-filter: blur(4px);
+  }
+  .nav-btn:hover {
+    background: rgba(26,39,68,0.9);
+    border-color: #B8A88A;
+  }
+  .nav-btn:disabled {
+    opacity: 0.2;
+    cursor: default;
+  }
+  .nav-btn.prev { left: 15px; }
+  .nav-btn.next { right: 15px; }
+
+  /* Click zones */
+  .click-zone {
+    position: absolute;
+    top: 0;
+    width: 35%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 3;
+  }
+  .click-zone.left { left: 0; }
+  .click-zone.right { right: 0; }
+
+  /* Controls bar */
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 10px 20px;
+    background: #1A2744;
+    border-top: 1px solid rgba(184,168,138,0.2);
+    flex-shrink: 0;
+  }
+  .controls button {
+    background: rgba(184,168,138,0.15);
+    border: 1px solid rgba(184,168,138,0.3);
+    color: #B8A88A;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .controls button:hover {
+    background: rgba(184,168,138,0.3);
+  }
+  .controls button:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+  .controls .page-slider {
+    width: 200px;
+    accent-color: #B8A88A;
+  }
+  .controls .page-num {
+    font-size: 0.75rem;
+    color: rgba(250,250,248,0.6);
+    min-width: 80px;
+    text-align: center;
+  }
+
+  /* Fullscreen */
+  .fs-btn {
+    background: none;
+    border: 1px solid rgba(184,168,138,0.3);
+    color: #B8A88A;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+  }
+  .fs-btn:hover { background: rgba(184,168,138,0.15); }
+
+  /* Loading */
+  .loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #B8A88A;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+  }
+  .loading .spinner {
+    width: 30px;
+    height: 30px;
+    border: 2px solid rgba(184,168,138,0.2);
+    border-top-color: #B8A88A;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 10px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Thumbnail strip */
+  .thumbnails {
+    display: none;
+    position: fixed;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+    background: rgba(15,26,46,0.95);
+    border-top: 1px solid rgba(184,168,138,0.2);
+    padding: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+    z-index: 20;
+    backdrop-filter: blur(8px);
+  }
+  .thumbnails.open { display: block; }
+  .thumbnails img {
+    height: 80px;
+    margin: 0 3px;
+    border: 2px solid transparent;
+    border-radius: 3px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all 0.2s;
+  }
+  .thumbnails img:hover { opacity: 0.8; }
+  .thumbnails img.active {
+    border-color: #B8A88A;
+    opacity: 1;
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .nav-btn { width: 36px; height: 60px; font-size: 1.2rem; }
+    .nav-btn.prev { left: 5px; }
+    .nav-btn.next { right: 5px; }
+    .controls { gap: 8px; padding: 8px 10px; }
+    .controls .page-slider { width: 120px; }
+    .header h1 { font-size: 0.9rem; }
+  }
+
+  /* Swipe hint */
+  .swipe-hint {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(184,168,138,0.6);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    animation: fadeOut 3s forwards;
+    pointer-events: none;
+  }
+  @keyframes fadeOut {
+    0%, 70% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>P.A.G.O.</h1>
+    <div class="subtitle">Princípio · Alinhamento · Governo · Obediência</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span class="page-info" id="pageInfo">Página 1 de 67</span>
+    <button class="fs-btn" onclick="toggleFullscreen()" title="Tela cheia">⛶</button>
+  </div>
+</div>
+
+<div class="viewer" id="viewer">
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    Carregando...
+  </div>
+
+  <div class="book-container" id="bookContainer">
+    <div class="page-wrapper" id="pageWrapper">
+      <img class="page" id="pageImg" alt="Página do ebook" />
+      <div class="click-zone left" onclick="prevPage()"></div>
+      <div class="click-zone right" onclick="nextPage()"></div>
+    </div>
+  </div>
+
+  <button class="nav-btn prev" id="btnPrev" onclick="prevPage()">‹</button>
+  <button class="nav-btn next" id="btnNext" onclick="nextPage()">›</button>
+
+  <div class="swipe-hint" id="swipeHint">← Deslize ou clique para navegar →</div>
+</div>
+
+<div class="controls">
+  <button onclick="goToPage(0)">⏮ Início</button>
+  <button id="btnPrevCtrl" onclick="prevPage()">◀ Anterior</button>
+  <input type="range" class="page-slider" id="slider" min="0" max="66" value="0" oninput="goToPage(parseInt(this.value))">
+  <span class="page-num" id="pageNum">1 / 67</span>
+  <button id="btnNextCtrl" onclick="nextPage()">Próxima ▶</button>
+  <button onclick="goToPage(pages.length-1)">Fim ⏭</button>
+  <button onclick="toggleThumbnails()">☰ Índice</button>
+</div>
+
+<div class="thumbnails" id="thumbnails"></div>
+
+<script>
+const pages = [
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/BmFVequoxPbnMGLq.jpg?Expires=1803742103&Signature=LmLQw85g5uMEb7sDirI3pfxTg4rTDchoEhTiyvsOPTgeZYdF9wKVh8luS29bKEPuZpbpXu2jykdAVkPw8DbKweQP~Vg0i~coDzmxqWOuNrD3hdzImFwnHFbcdG6pMC8A3LZyYHQ83DLxAxCTIobOU2DsrxuJwc5EDwG-x~pTPvwC1ORQm~qWjZB-mdOOHpD3Oi1YtaiVi0y3AnlTu9Mq6WARNNSrOpxO9P5BGokTSbQv7Is6Mvf9NM4Sveq-3g6oU6WacHM2Xs6oH1DQ7V58hA9P21kTen5IJANNjBKhQNPNEnG8J5f1Sf-8aWQpTOAtjDF7zo7n6mmFuN3jKnUdyg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/RmrBAZNZiQcgWrbd.jpg?Expires=1803742103&Signature=ByAfA9SkkdFktreY2NuXPFdz7efniU-i7rm6AvjQXGYFVlltSidlWYRyge2PwHwiXy2iY55cqypMadTR7II18riUsR2aAwZuwyWzWW-ZLW~HZCR3GDtDhJyH93SwQiXPfDnCNsk72wLSualihGP2CsX10u0A101CU6o63J8UbL6kthz-YYidZI0BKn3tj-yB8eafcX34IccCHmSz2U7KAEITrdXsaoIPKtu22xmg3P7eH7o7onySe~s5GzyGTfy9fdCvofiSU1h3WOUHotp2dzWK7vVlzDqwzxj~I1MYQx5ct-qZwJDONAknRsv5caAXYDN0H-DbnCJnSY8PRP~mYw__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/TvkYWaCtcMEiNtpB.jpg?Expires=1803742103&Signature=HqdbViB-3I4X9XK4BO3TSLPlC0vMuCF~K4oTo8a7Ryk1SzTMEe43tzEzqURcjS3p6eoeEzdHQ4kq~mzHlGvFzHD-nuDecvcGLr2Yh7z3WkwFYUAJL7LfJtfpCk9YWq5RwnBO0G8VehcMWoJHAgRaHqDZmTXT-1OoTefJjiBnCPb3nkUbLd4t5pkLBcPLaxhvB-aohgWA6HyLVOqnx2VQLVXqQQsG-sjQlWhTXvROoKBFMO~oh6NdGTq0Azagbqy3HBEUF34Fd1YI-P33EN4jg-9M~r3oYnvhb55O5k11Qo2LCDa~IbxR3zwYwdHTAzERQ6KM~GUI4JoNM9K20pg1rw__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/tTTzehNIAACwhSmc.jpg?Expires=1803742103&Signature=a56xAvkx-0jnkNssRJZNEWaP00p3xC6107ZEWVq3o~Yw4e4~Szf~qLLI~07wfNYFmQbUDkBQq8Kan19H6Ly~jTGp8mpMzuEndrKFcHvzzUMN~oUqkoEuM3UtkAEP0wbDCnwPwITK4iQFPoq9kuvSsMj~AcUKWej6WNXLLY6nHqWxrrn1fQSn7qKxWhzz9-~QdyzCkV-dX0D12qvpOREyqeHtVcjCB6i8whVWP~pDAAbvh~VzepKIvcoRuzCR7ezhILLv7CsS1XQ3ZJxxVkrrQn83ixEN0L0oLjD5GmMMUYfZgN7dnnqgoJXUAJkWNxxfO5ktkfPMvWfHAGdlhUK05Q__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/ROAcHiFzAPRFEoAK.jpg?Expires=1803742103&Signature=Y2r7REHUnHJdhw~r-25KnTy0t4FLqcLTl1hGx63Ri0GfJO3CeOxfJKk3xCb5glOBxLV5WiTZX554JjF6Ls0KQTpo2h2zwe~kysLv5kuxTIryKkE7kkIpe-YKBZYNjQ3tFeP6jbMoMM2~Ijf0qTlY58jRlStQV39yFxsgGWoUYrP-PSQujCFVvKA0cnRXg-28U66XsLpu0zsiJdUa9JFUZjugIrKKJxbuH3NZB2Rhb1z1eXRNqDWuQpz8rc0AX5eE-zOXuNK36wMlHDcMejDODJrSLHIlz~d4p19T0gSBp7IXh9kTlDtdyUQFJt37Xbk3quSnG9RbjTT~ZQk2c2t67A__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/cVSAqHDTtEzGxKIf.jpg?Expires=1803742103&Signature=rF8qv47RnRrpC8nc3A-fUpaOAuwCCReic-ZdN1X7G~YYic8ydb7IQPSjeS6TLymHQUsNbriQnB1t9mO~KZ4E~Asbr8bLiXWA1r~UPDnpKZ4YAKrUxQDC4IJ5sxWoAOcwFCIUEwHTQwj9AI~QhFR76x6f9hFKz-F2xOe8UzxyJ8EcQKHRouVLnltNiNs-Lv4A3Jk3fs-W24kgSDDbwCPouMy~oXwhSTX7i-dVgEqjeyUc8RXW8cewlsdiPQ0REDsEztJshZNcvTmhv4BSwoz79dJwmi9hDY7PAUOZP3A52p6WnGc-plvG3eb9jU2mMCn5qUxNGwMyS-Xfzc8W4HrvhQ__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/uVopFMGJbJlDuzLE.jpg?Expires=1803742103&Signature=Lq7xM~LHLnZLsRYoj45pDiBRaeBSKe6qGC1yzcZ7qwQzOpslqEQe5x0qHIfGcSsy7QxfE-TYHqKAbfSNGvEJr-6NGaLnfhlxfrfxH0z-QGrdf7AFi-~Q~GWnnwxL~OkfSNiU9lQVaDgdKGPjz~1wKejWo2FczqBLgONh2vvDQgZyuWli-dyunkG4Yu7KiCXi44UiQm8M1YSgWz51~uUu508lAFWFhNoOpdzkzGFrD~CkBLAWxGIieWcp5oWYvVAQbnSFy2SUFl94M0lUHBpcgdFGCySbGyqlkjfxAONKwVjNVdJzxW0optEugvudPOwHh-misJoauzlgdVHcvUfC2A__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/ltQBXbJvAmcFGSis.jpg?Expires=1803742103&Signature=T2C7k-RIhk8PXjjrEOD1hC6rZxOGIeZwdyFNhWM-YpTmclHF4khLXx7WQiLd~e5ykwR8H61FTcKgPdCJVsbVgNBnbb5kRkU-EbIekwVYmxb~DwIUFuyAur1Om8AGk~7pEK8Ip~maIIOuwvu5VHL1IX-tMke2Ja37jKyE1m~8DZzNdSW9p6mWZd~xKFlS9XgtEsyl5HWGNIwVDyVmd9RlLbgeWlWpoL5P8B8Fy9MFPkeby2ddDZ-RKp-ZGwwFJNZ19gfVMtlaX2kE-B6o5I8S5vMR5V77tOTDgP67gY~fGcub1x4AqZEhDr3IwQJv2SKj5r3vALZLcqVWWEGZQvYNUg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/dNdketHBLeOLWBtJ.jpg?Expires=1803742103&Signature=d3aLUv6V1vl5h6e8opS-uqx9FYI8T~5KSuJC86MtC65JqsAODGLmUL4unCiYJMs90JnLuClNUsVCFh0G-7JXNI8eg11hwRcoH0O4tYJwGj6Ppo~5EyjWbD88Y7NhRK~hYHqIQD4zL6S2MU7su0DKH~dE45S3vWBoks32xsQIimSlrDO0cYlEdAzgvw4LwC4-YeDEJiifhTwr4xqrW9PE0WBjCXCqlrdW2JY1VTU04Ke7hClJD9-15j2SD7ADrMYM8uAB3thUXrARiC5sBfX9GPUwqXVDa9HPGHv~20NOl5iBkcbvJ7QUZP3oSMFj2F1k6il1QUsR2ilCq30CMvgJlA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/YbsgiXjtksJaNypp.jpg?Expires=1803742103&Signature=mvUzB25XumuYJa0Kz9KMnaKIprF9Itfq~DmM3lNuerAzL4wCR8naRYqGEdnv1PqMjUyNsEDCIFqp90QHzxZAUNqlJvp2Z3Dwhq1yjsbPcOaefgTyOuaUwgcHvRoojidlEcMOruVV7skmQuR4he~FEZgVWwVAOzerm8RKW~XgrjGzVpyh~MSBJtdqQBD610~8yKp8l47oD4FvEU5MkpGNxLR49A-RD5~KwAT4h0fsJ0jVXkuor5LcFAtZBBl~mnXrUWLOsvm8lnOrbD~225l91hoH04WyEXnk9TNyCbvl4hZwyj4nB-1lnW1SXUB~CfJtEFbefXGizCgKiJwDCLIYUw__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/PEVrKhYErBmCqKpP.jpg?Expires=1803742103&Signature=q7WzFX2IHOS4q91xk-zLmUFGAQYnOM~0qj9JE9wMJGlO8tmu3demO604fjQGrmZQCFJzxo9v8w4AWLzie2xLEGy6ES~wJ9UrlDf7kRSWK7LjhduuQ-zS2LtLnzQ0X7mEKAoo7SZDhEHN399YaHRLLUggCumd1wU8FuuOM0~dhkup4clOqNncxgZ-M9SvzBXfz3V6KzUPW0BXa55eXOnYuxFbGXi3Kf8Uzel0OtIashM84WnX2eTQKoT0gQ7PjRctzH0W0rAob5GKpgG6JdH2LrSgW1kpPmnEf1DTSXaaH4IhMRF24R81djdoe0XxLk5ZRzEql40W2wUcPwRlS1KtFg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/NyAyWomLmQdCFFqX.jpg?Expires=1803742103&Signature=MFZ4MHoIsXcC61Pfq9zHFa4JI-UYd68eCnMBAQ9ndEsAxKk2MWFPsyjoiS6fOacpUPWB5~l1gpgk9quHNyiJ5IGpnT74B0vAKcsiVPWkLGiHs11dSXqXd4u3ByfMOdP8jM0qpnRxQQEve1X9iNo5cBrQ~OVMnoyLM1bSTEqneriO1Ej-Xeu3-cPUgthdzbVcuOj6aiBHQP29FbKG1WRj~EKlNRbA9hvQ7sFmeb8EZJt4NRjmu~0gwZU1~siEtAzcB4JBwBxk0ZA7h7uQL~mXE~ubFmLmuk9dxqilvvdooqt5CISg8ez7ABuYkwknE9vGCb4BCl04Erl2f9SZauqhyg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/sEUnLHtiLzwmYiFQ.jpg?Expires=1803742103&Signature=PxeIqLkck0nZhYm-F083~~-PMofCuNp7WaovvvxGLbk-e3cXodokQB~PBRZcZ7nnfgwpaygxlbie~HQfodNLNYYy3ZC49B-kIYrTyhl4o0ERBq2NSl1ZVVyInNiPYMH242ViN1Oq0gRHbi7jXX~HBtAmsi~C2HL-AGpWJyMPqHd6dKkJSEmTFojsY3vSo8fFOerOVJUx0GXp7ldUrWv0-BjKWyLmkbQaldJNs1y17UfsDohU51oVpV96Ujp-ViazBHm9LXVJXssKso9B5Mu~Om0mbLeq0mbTrlII0ZDwiWwyfPropFHXM8XCAtjvIK2YRyZw-eWe0-ZVn4Q8lWC6jg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/fKdAvaqEvQYOTEwE.jpg?Expires=1803742103&Signature=CDrx8l4zEUmwVhZLr9kEIZQN0OJwaID7~RlNHcmqwsgGx7RcH5gd5dNdcwkso6Mw5vTDJAj73eQqE0~VANh4itTg9mLx1u2Z3QUqvc8gVgNpIS-4BURWha5ndalhbQzh9ExB9HFndwxbTARAZMLOiyonXvawRnl2G2-ZaS5O4UWTs3q4wXkuHtkDwruMeHkO~O~PRgKCzhOwq1p5d8O6g0UfYc5-CU~zG-91pqSagIPL3ZGCs5rOgLFyTTj21SMJS9C89wqDwYipICwHaxrFE0PEi1OM89pXGLHZHf2xweDAWX5iBQfgSxANsCjBJtuMIH-j1q4Qktthr4hoWPMsfw__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/mKBmrCzBrvInWXpy.jpg?Expires=1803742103&Signature=jpDBSQHO0hf7cvyZJ1h-C~wKlaJ9NUMPbpxAPKKG~UJI3vxV6t~NgvZmq6IZrN2bI20-hT8GwfXzVCLX51HEldw3jiCcs8R1VwUPA5wGl13oNMMbqFSEWREMEwo81hxiOnqwzvjk1hkqRQ3L6bNq28~-YpT0pxPnZAW9u0Q8N9oGrSuCrBvzbyacgOeSrsrXgbg2SOzlq8lg-vs~Obz8PFF~VnkS5rTknQSNi0ZtZktc9MCE7rPmo8JGF~Ny9hq8ynZpse3ner8gu843BpT4~58J4YAhmp3OshVthksmpIqzeS~daEMUi8lWxIXv89MZ9rfRnQo6jjTPyGINN7BUcg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/HUHiUCrbhZJxuIys.jpg?Expires=1803742103&Signature=rlnHJCxjsXUaBUkY3XJkW1MkdhZJNMJ0CVcAjXkcbybUDqxVKZ4Gg9Nd4an-1KEZ8bhIUgapS~YxtD6Zu8uG7RJ1eo474Xwga2O9dX-n7chStFcc9Ggri5EWD~MBLgDptQzPzvhQVs6ib7xkIHcnTfyK0~mMaAjTlfpkiVu~Lcmt8-vsW9cBt3XRyDotYq7w9dJZEa7KPCtukqZUNgFFUc3WYmHqlrNbJBBiqEXEB4CezaFybh7fyk2m4IqzSAvrpkm~5ltLKFoUpbVkhZ2sV4KSd8KAoKFHmrZh5egBu8sKD-NhfzjXTExEUbzXk5VQ1F-l-lLGcEbHK9kSdrU7oQ__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/KHEEDQiEhTAvOORZ.jpg?Expires=1803742103&Signature=DqzVzzuqCeSzCGZsEoFd3hzEZjfszfheb4ChP0f-cnwJWq8Nbq9nIvo-uTP5T2pzogTLW6MZn7VXnxu8eXMb3yA5mqSL2LQ6hIJEi77~F8HjoO9G2LewqR80ncqVDjUa6FzXb2GQmmSEyWOSrBrFsIP98Ts5pLlRoTWKbfr8FF3AD7durBPv3PsfoJ~Dpw6F6AQZ4qcQ0ibnz8Aa1R0cVa7ngmtO2bUk~chvFa7RWgC~I88oeWSQrPY6U-kwTP-d2kl08ESz7UABJArrG7otn268kWtaOmd6BJMZE48injJIzRf-oAuxQuEZ-r4WNBZo9WNybmg8L1xa8m6KL4vTdg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/bLyJagdygQEzIBeO.jpg?Expires=1803742103&Signature=vnZX1EsYeUhTI4ROPEMmPC4VKMVuhwGDh9AeJvlbzR1y~UxdhVb8Q-EpSM08mEYD3H0kUb0w91FAadkbqUynS8hgLitZCdwuOhxXET7a6fmXKgH2f43rXuBM6n4LX94iyO1XQPhUFWSj5VzSOLuKMDySpxTboITeu6Dvy3Z8HX-lrIaCL6tkgq7v35j-ZQkj0W0z3Y8PX198eJXFqZ~CPOiz~6OBpDJtiK~MuHsjprdRssB85HnWSwsy0DClMc-1cv9baSJodJ9osGHejXRHd9f4XL2J~bobTcCZ4mIkNMSiLMbYuC622OMsYQAFslEU5R63dtmTUPA68iPaU-FGjQ__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/KJGyUdKbjhIkMBJQ.jpg?Expires=1803742103&Signature=OmWdOZZJ8dQ42kKJybR~9xR66QdbtyPw5EXisEQ4-XMLQFR433d6Qqam5CEaAZvD5-QanvfACeqnSg96mNtt-odbX6it1NRXoNQj0t42T2RsltCCc9SniNmIjhQ8y9SaQP5Tg~voeNeXCiQuFh8GJfFaCRgq6aHO9GmU20hjiHG3PDNlRnQ~Un-y~4CnXasJS8X8R7ujiDYQ9yJ1G5wJ8XpFErSLbiFmTxzct2810OLryrum-54IbqbRzqJxCQ-8vjB2~RcGC7IeyHYgxv1AmjAzOQr60cZwu2PYBGMetBnUftwMCXB4m529xYx3jUg6IGlDvKG6g7OQ3ucIiM6D7A__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/ZmMdpbAeviKNrrJV.jpg?Expires=1803742103&Signature=OKwr-u2-cKPlEKdYLAQVQgD-twcbWLET8an-dryaNZ8MpKqgATI-gcc2kfnAkF8lQ76HoVNZKVpDkY7QnEf9h2JYcBXYapHX-eaxu7-nN3og4xEZY~gqzYCt3p6XZ~rG9DdzXDzQYauBQWe10qia1WcDWFRM8WH6PE-qUlwbM8Z-KXSdNTNtNDR~GMi-V1eqKJhtMh9JxX7cpRFMkSp-lcPsfyhrGLk9kF~IiUREcxomL3T7LjMhO0B7Sgpz034lLCCKvlq0kcV7pZ0TOBTe483FEZ5p4z8MxB-kP5tXJFxx0sC6gZAzEBAPBtpiGoh9m5Cfzxy7HY9m2fTs5dVPow__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/lQEkAumLctqYNiZz.jpg?Expires=1803742103&Signature=skjzffSJPH-ZTCc1EfaEMSmMLvULdLzo3Pou2-oFxb64dykQhZKL2r2efMlAL0Qoz0Xb2xN8sCcFAXQT0KeOBkO6gmYdpG4EBiTmB-hen0KEMIeYzZo3tMNSbnP2n4KRNO90hXg4Rq7LrbVXt9bjpHsDtnGUQug8BPHMh2wnEDLgCXVQSw-m9fsPGCMqdJdcfK0WM~r07gKnaMprQQ7Zj6hWrjbIYb0qj7PRt4vGXYqWeAmdAT~Bp4~KhUpwUoWPJXbbhySISKCVUVUeFxHF-xxqkSqiwFQK539VeGPTHi0CSO9MfBvGlnXHTxmlDT~x80-4kNoO6r1EFNzVwtevAA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/abXlwhPpIOOjkGaD.jpg?Expires=1803742103&Signature=vQIf5rDarPFejsJXylZb07iun2citSg4bdTindaiwGYextSuhKSQRPWRnI7BSajptBL4niDmIe37xNB8bF00PDD2XLE7kzSONjq4BqJOEHoEDpF~fDvzNemBydPXaGqJCc20RuUJ8T4tYMmy-R4lZr~XeyoE4T9YMxwP53s6ye~qOgLwsFBun-dTm9gkCEZlLcODNePMHACUCLJ97x4d99GyiAZjEug9rutkXZSLVqBD06GrvAcUn7GmIiXtGUrG1ZmvBl0U75OspwGG-IKO4Newc63Ec28-yiOYhW5-PWAOqOgbZ-zl-F2LF7pjZ4lkM9dwOg8xJG51BcMemTYuPA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/aAfWkwtaGOvJgHPj.jpg?Expires=1803742103&Signature=IldOY~cePyBii2HnQqAJKSOS8R~fzsyy7nGG3X54K~5mrwoUVjKkEo44y2qmh1KJJ61o2JPqqlPoNXPicnyJZV1ys~41dinsBWeSu24859AZSLvgR9heR1oS9tM7dxX-k7zFE2rbJXfo3tmohLiwWuuupqHme-gLgm92Y2e206wlhQkE6repyQXfptOlcc8PvJfd7EWB8TvMppW~V1XognjCWBHjtRYspGn3zus0YtJPbUFJFdlxGIjHSRHo-2CfM38wyYCMUnBsjb4N7PrDHn6-H8gKP87KEFbRktJ3bVFRK~maE1KgmH7P6IrTg-YOkPLlZDC3bkfD0t5lAZKJvA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/GtZZIbWRLxuHCNBc.jpg?Expires=1803742103&Signature=g6XjfHYg8xCqq9aAaG0IdJNckZhSYCbYTT3eyBl5XQtBdvAxASsCZis0WdyzhbzViXkySEjyxSbN9XkLVk16-1uAvF89n4SUpY3ou5145ZcngixxCBW6OcVRW9u4eDK38wst48Q95kTPrQIFkUTYeC4MEN0wrScCRROzct0ZHc8ZOYnx9uLHPkOhIj5eerCIbP0ZppFHJWoNfoAnEsO89zdhPY1ahHD0zzY6CQySESD8wVWdv6sXczngwmxyl~j9pZmRtwR3mUuVlPgHcqiIJ0Nqsx83IRRdP5krZM02IjCFVxvFOQMiAqJj3yYanADh55OTEdb9RQQs9Q8-8rzh1g__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/CCHHDYjTQDqPMiUo.jpg?Expires=1803742103&Signature=HB~1IhHKOexjQvXG7kkWiY~OSHH~8j-cU-fF-VukFat7UL2Gm5g5Xv1qa7HkSXPV8k1NTUiY~hmrkOt2vyFGp5JtzDJ10qgbfFqXDyztu0CV1XfnQNTyR31si~aAWrS2R0d0NDshj-A7vS05whi9QSLnGb80ucNImGRiny0RsiSB~8zWOKnq~6sjUS4LYhy0yVX-x2uLigrSPrRMtMnzaNaiSFfsjjMxTjDRhXvxWldwlJoqEuHMWpC3vrrCKwZGfkgQL741uMf~J5EXjsbspEqLGG9ecXk7EJuCucR5bCX3SFvcSuPHZ-~wYQQtuyLw5dunyPDs8UlHQuUamJyLZg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/HIxCAGTTldNrVWlR.jpg?Expires=1803742103&Signature=l5g8tC5Rb2ZKChOdyWzjjk8NqO-vmZ8ly9HK89EVh9x23Qb2e3voNwr4w2fN8gRJTaP7RxqSmEA3jZKG2xuw1obu7PvGmodReiQ5IAIpW2xPzhGN~rXW-wj9-1blbBZhqPe2vAGplMSR0MhogMNoFuo4cgGHDsOEPxNERfi2bt8tLdi4UUXOX4oa8C-1iYxxSIlyaPemplGdnu8xstQJd4R4ZdspHpXLgh6EfN3UTkaIZDibkzAnO0bPCjzGnr4Beo4RWoWo63MZ~GE-~aGwMqaoa73owFJpAXpNr-V9pL~X~Jdh4qQsK5sIO1EQUFDfXERoyxGNUTHNTJgPiqXseQ__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/sybKoZDHscbkVIbP.jpg?Expires=1803742103&Signature=o1S7tpEF9RRyIgrjGuphLYU6EP9vPjrXRE~CSsJ8-DlvvDA5mvRxuyRRU95hXh3BeQ33~F0xd7OyhOZs~8-kvmx0fpR5x-~5csiAuE19jEZGiOnPDnBOH31Td4DhScZ0RqURh3BGeJChjUqZMn8bs0Pj1dT6FpwA99ZOvDcagSnsa-LjsHFI8PkwwxfqklV-5DLMwbGPaCcjewxfrU93cBgIzqGb6kcc9~S~ACQXANJ06jsNmNxdDWaz01DrNpdH9JYadzJfACtyZwzOuUgR9kTmgaX-wTHCRKeie22BixC3mYjN5~G-Fg-WQs-1wx6b42rcLJL37XhkrdRiScp1PQ__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/RPqDzJesNbcEyIny.jpg?Expires=1803742103&Signature=s6wygYwDpejyVe~PXkwwPSFvp~qKGrGHplDT93bHconyNN0SE2vWJa2U7VRjrZTvRfg8EuY2ZsHz~exPqNgWT3zErQpAJoLn3Z4zs~rF7MQJzyyhxEolgrobI-7bMPuIla34EAgkDJgqlPa3nbh667KgdvYuTZJzMDMLNMeg-wbHgUXC6HYyXn-ipR4X1rzn7b9pQ8DZGA6oQWTkAe9WcI19wT-ME02arWU06MOKF9YvOF3-iWvxInpuzEpprIOLhoxi8knqPBIazMawDHrk8QCFiNWOLRZVhjgl35nOclbeYRB~71L6nsMWlqY-YEZy~T7OxqvNe-81FavlkfWANg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/fFxSbvqNzZlsiTAf.jpg?Expires=1803742103&Signature=eMvNRau0x0O6uyCnQM6H0s1VURG82V4DHVYyxXCILow9ANTzfWLYlWXXIs793aAWyGYqigyktWiJcuf9x9AfzhYV7tIKM3o91F2WE9SuFcJ0hYIG~qaboD-dj7u9JYLG9~VLcgNsj13S3ZR7xfojulyxELpixOJkeu7Fh6mzZ06bTML~X0xdyUiDr6a2PPBLdH0bQV8SfordDI9~vjTanu8C5-YCMMfu7qo9D-Kfm9C2uBBga~2P1aP3k0Tr-3RfTE4kEhIrcRGrB70pg-WUUEaUPd1SMTMCm0fRi7hYbCpZI6D40DzEduXl7OhtRDcnCbFSc9tK6txl25atEEjpBg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/DASQQNVqYltumcrH.jpg?Expires=1803742103&Signature=EXOpq7a3HuHyU-0Ad1ogXYYkeRt367GcvDHYbe1uOvMvmVRXOcYTV--5nGYd8Xa6~kHYmsLXM~ray6TMUhc~titCRabdptYLx000dDmsvYDFDPLCmmPinuFtXKsTPAO4Q--EhmJeqEkkJXmXd1n2CEMHLHg29n4IBaTcVU-7TGtmHZDJP30JJYIBl0MovELFUXqYJ6LJwAqbf57xpb-F1-GF4~pHso7pJGvZTDPdtojOFo~tFCj4-XJPeCuApeuqP8JZhIDgzr2gCmbAq9mvnFeXY2PQHXw-QKk~rwXx~2Vb~83XkM5gybVDNSAYYWtYsW6Y9DxqaJB0SEfq6ImQ0w__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/bpKsWVbqlqQsBLwG.jpg?Expires=1803742103&Signature=hTe~leFiL5pGcglL4YX95ozg0cmGv1bf21VQTIRtkQRDYPO9FyhW8ExwbYAkvtD-neGQQ7A9lYb-6lJfvUHk60retUIEOIt9dtBecqbSGqTj8av00326VUbEbJzI9fHmcQ4rTpZdnY33RTDWgEgjsgbjUphrqMXrmoXIW1iFRjFKpD7124YWdol5m3n9X3CvdsDqo501Gv6vFqiohrECiJ~qSUrPWoNl-YgfnTtos9wJ3lg~ZZqyQF8db2buF5zNDO7gUWpcoDVzr0Ink2kpCwtSNTJeSaB1~M~ILW1y0cgvM0X7JRN6q1yxJj6auoz5SpISdUSU9uc9UB39qUhZrA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/XCOCxtAdgJOhRhkR.jpg?Expires=1803742103&Signature=HwqoBvRL0hdn4eqtQILUbrAGmEnoZ3AgWxCRAlvEkY4Yq0-C290qPlSkqq---m1jRWzJM9q8UmpaKyLlURy75-yvjdSsMHD5-fJY4U2Ped1HqsXDZvfrdCLcTfmjA0ZuWwRdU4gTGYx84-L8AaOatDlsq79ZhmmS~ID0Clt10t3ZVOjA2L5a9s3bpDPTl4uoAXQriOSIckVE4uB2n7UNBKkQNfkMOMrGPGXDxlqCEjlB087OTRMAHRE~OBt1Iq8HNVn3xfPONxC4UAPxZLEeBwbhTaKWIpsqibkhaydd2o0L9bbYc4Bc3-7Y7~4oy0BsdPJbaSaoXqSRKGTSdfUHuQ__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/EAnixaujurVnpVCF.jpg?Expires=1803742103&Signature=ceuUT~7S-3DBpxL-gu6aq5xIM5DArsKB5f~bD2HXhWfMK93x1zfxuvRSXm-yEPq3UxSgIXCxDnpB1dZITWYVzBfYgW0l5UnOwI4YjB-15nd20BSlNAanJ1U6oyDSsxxgNHRmc4HZ7BJp4t9rq2wij8P1ME5l0En-NjhkyQK438hBxOxXfSYX2J0TyF3duxFnaYYohHLvs2h6yImka4iyIjYjD8ILLm4Nx3vj-m6BlR44oxM7MPcIuNywuon7ARGnjApfZRVTzhesyLrqUcvzdteaw~-WybupAtTr34d65pGhB6xzOUBRE8POEMY7cW9OO5Z-cpNIeBL7~k2LTLiApg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/FsbwFloHAkMhrPQH.jpg?Expires=1803742103&Signature=l9FPX-uDG2yjEG1cJKcKj-l8~2bHUh3ZwblX9G5FO6nybGTwB4uer7C7UpJr8zdlT~G5m5teZtMlRLShrITUkIWxIIXOsZICxx4-ck3eOC9Yu8HdeSzAP2DzUmLGivnkfjlXy-LILWvJqSzzAYg9jqO0BylDAO2vHS0QG5G84iCS6n-zOKNGQDpGeKj1oJb1X1kidjTibxuykd04mDZ~N~-s6befonoQJZW00LX7TZP02Or99kBgbl6ZsK-RhMrANjd65y8M-Hl3LjRurVszkt1no4npiUhuvxID~BgRCOYQW9Q-Z777ouTASbX4YaM7k5wKohz7O4GMQnAZQAn60Q__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/ArOOxxVfpKjpFsTU.jpg?Expires=1803742103&Signature=GzhUpIn1vWzJ0I0TMu~2mcRdea5ueQK1xGTntziFOHZkLFW~HxTPsWgrpFOrXhKthpaA-Y7yAF8gAcmyg5vJJ8yMwhyfzt00BLVBSeiEjmsWnPR3CbIt5byZ5gJ3tZcBUpjKBTF9DR6nPbh~b496W3rUiRJCF9viattmEQGIsXXFf5ApcxbCE4VcLZkF3AkMEA5zwnAXCkeh6RDyW9Ej0m~reP9xSh3t2~37rIupgETje4SgUWl8BenNYJRmVQXV~QkWDMHvW3LMDM1s3djxkQJXdsMZBtkjpxFsq6Kv1bt3yZX4EKssXQid5Pkaw4PjBBn823DU4gMqRaEeuX4xjg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/yjkIhVaHxzrnIXxo.jpg?Expires=1803742103&Signature=bY5heysG3CC8EDrufcv2dM7SDeX8ckPDkba5-vXoI3v13gT1noUf5zZHOBnoLpjWSSaR6g2wMGpL3hwos3p~CfY0jxyNL766tCoDWQh9n1m4gNGPnglKuWmBOk74MyeUq60Wx9CVYWhiUmuEpNLUX912wvmRyDUoC6CfWT2H5DU436f0kVhVP7C3xfSeqc9PaZxxgn74ooh0cRQERQJmP53TBYovvu11IzMVEls4ZMCGZ6z6gKg7ccIotXXrIYJrBzI7czZ3Ro0HoUiOocFaYkb~BXLXwfPUbqPedCuYLWIz7jb6yXzJ087pagJ9htq45NWayqSYMmvbmqmMo~Wt9Q__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/ZCjqeYRDdDmsswbs.jpg?Expires=1803742103&Signature=A6sPEkDLkvWNrMdK1VA7SbbMq0nGlPKgDAFWAu2cyZXRnFmGT93GHXqKYYFssYViPYp0HIHAfyQnOqi2u3kmA9r4470BXDYaKc6JeMn6r8zwoO2sPo-YjptNXcGMvM74PSpwYRgXj-94nwBxoovergNfjfr6LhbOBn4b2D5j8erYVjPP-Or5k5hsAEiyXPdK6dYP6jbE3yun3VPNEuOmjd09peClL3gyJIEYnACGSBBf1yJvolBihXAMylzK5OUjW4fRzOwLB6rfR6QEuPcG25LBNM5ubg1b74Z~aSVQk~uag4eY8Hf9y7XNFAIVvPFXUsIspxn6MuKS2JkyeLgVLg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/szUsQXwvhlMJqgdr.jpg?Expires=1803742103&Signature=mhm9ZwEykDRNN1kcpJHSF2Xg2CWHphDndc9Kf5J-cFnMcq3qZ63edRrH~cFiEn-x-iKx70dnBAEdp0BESvk7pyh6iowLa5lusJjm0CU8QocNZ2JqthUiLUH1x3veLRBBuTn9sUT6KJZ8W~APbAYGQR1QP2Pd474R2avWprpvZO2frOACYj-DfUK7tXg1gRgskiHvuQYoiYOyqUvyEuVnmZBywiNuGqzG5aEe6h2DdA8bfquqt7OqXNdOG1aLSGzChN3W~2c79~4Gpb4X8rrypkpcdzU5BFOLKzwtkhpsmw2VmHe8pamOG34SPTN1C0lDbiTSQ6nnZiYthxEUp29kRg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/JuetfwUPhIXbMpXN.jpg?Expires=1803742103&Signature=isWGYO8hqQeWDfhy9vQndHrmr9MUZv1gHXYcK7LASKUmQ950sy-R~FCdcH-hHFw4KU6I31XstyqLrxd0bPDMUdZ0Pes2eAjo8gJWSsJ9y94YugBz54I4R89nqxanZLbIm47j1~HGtyfCxTU-7utUgJL3owPwHXGEO9saXA6Hhf5UygSEJ6t5IZxjlgeyL6aM3LvE87ZbgQdq67LzygjwMhHtRiB5bhO2dVY01gW-itNs1qS9F0YdAwE37vtuS09yvA523AI490D3q4wtVd~6uenQ-YJAkM6ja8ts1L5tlQMGH0Dil6kiUO6qP8m3~Ur6LGnoiXUxkhlxKgJFpR3DLw__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/NfoogGSaAJbIaCIw.jpg?Expires=1803742103&Signature=qjiWGAgeSLl6f~jmVfbUTWRCociZG1DOnc-eihOhd4LJ055N~gY2WDyeqximEJHGuDVbHoHEoLMfPi6I9k8pkQNsObUr2DmZ1St4uDDfVsK2YVZNAqBHqGn-bz~INOCBZYOAvhyJZsgUyzkoejJ8WGm9Tfu-RmEY-7Hlui6TfHYM4rDgEN3-5IWAwzvGZjXuOddksnROVSjIbPeCWP9DWOjlmi89p7npGBd3bc6u5MVeG120PI33uEg8jPbY6olUcJ3eLr~p9SM9UHibBr1ohmiRgp1ClaNemTohpwzJhvHUiuqOT4kclHzBiss~9yjyqf~r4R8NFxOlclHAUXQ64Q__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/MoqVpRLvwANwFrLZ.jpg?Expires=1803742103&Signature=Gy9yGb76PFz58RIHPBU2FbzsuNOfWVtYfcUZOfFs3s3e1fD7LmX~RhT6jCQFI8aODVAp5rjifV41fS7GrcO0pAogNaC~KHo2e82NPyKxBH5-8szF-VnVp0ldYpJVsejFRtPI2jQy3rHshySHdtOtFFrmrrGOPgEhXNe9ANmlxoc9kGlj600ivL0x8T0gKRGvNmoVJzKH99lN6eVSoRRILIc1oQK6anOzHmEvpEV1ffi9GzvZ2o0pT7vn7xrut0X89d5pJdqST2rYsPUWxcc1bO-N35NGkcBZGHDP3Trw7Vm~fkDTJMereUHi28F58FAacr9JW3FxFOK7OpR3hS5OpA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/fmkbQUnazLpxKCNK.jpg?Expires=1803742103&Signature=WQc5NSZYVxWkzTnE1t6dIXDics512gTNRY6RGreOV085dfrgAXcy80adh5l219dt7od4YVeLnPXPCv5c7thH-JIOPF-Z8V7wuDjklfHyDkb9A8K-sOpI1nd8t7Ehe5V9sh1WCaz6x-B72Q3OJvUNO5Cm1vQQaK771A2Ww99UM4PKsghtbWgaw2sFeakPrKjEBogKzNnylRZ0ps0YqVqivqDnY8gaxoAHCmiTGoXW5Xla5WFb1RxqqWNsrXjA8FVd8iHAcT1TO9KKdoca5duK0w6c4sQ7KoXn8Hd-7sV5GFn2T08ce0Itc52I7ZEEpQUH4J4RFWc1Iktb~T6V-19Tpw__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/BIKwTpuInieVeYMX.jpg?Expires=1803742103&Signature=gt~ju3LMnPDr-QbtwdEDuI1yi2vI5juwrUHQPZyXuWLaVIUsWyPSa7H0QfaHlfEL6KrPT~Gr5lajP3Ij37rBDIG5Z517l8zSQgvxQPUEqJTv94FFAJbCXj1-pITF1Tq6B9qiJjH5-aqM0VEDVcc20ZtQsOaR9IayjfjVI00Rgdr8-K-SVPRqNMNwuRjjOqk10OWN2L4AXhaeoOSHOgQ9xJv8nuBQaKVzHRzBcuJVJypo~0NzQGlGkJ93Lj3cGdp8uz-27x4xZgTaDXTf3h5nM7TWGrJg7tX4G9kI9K7QXWmMi~7rJRLyyhosIRtWls9SnQcW0ocYJ6NzGVNVymC8XA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/bzWnMEEOXOkdhWrY.jpg?Expires=1803742103&Signature=qKJjH8bYIALFzDbfMi-A-Ma3ikmd0ht~0j0FU5RE-o6muEnzyUrVfvs9nLecWD2C50Zcod50oZC778rbLSstecMyo7bxsFGvwimRyLGQGnOwhCkRyAqQjnBwb8d1law0gPvdkqvjR-Llzb8fN3eGKZvbI7JO~pLtxynBD~jEyr5KCL9qdQAZftWnRI2~weZ-rvO5HQx8~N8ChQMIpzXJJBxCuYknKHoFQZLGZX88MaW7oe~LfQOMb-BLn00g0uz01TnyAdnj0sC-6ZgOme9ynUk1vVVXYjbHbRIi-kLvSpiG6nuH~HkYXEJvyAjWdqkaTdAjXAf4u-3jjBgcvSKV8Q__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/DrQfjTIvDFFJdNxo.jpg?Expires=1803742103&Signature=DJhAm6cj4OK-hl~ltmDlQVTF3-84LlzhpLFypd4efJ4R5Igh4JY0ukVUk9zJbL2PMsO1ZTUiYvEGbhWgCiNYRrKv6f8wdtXWpHPlInGrSxS1WCThqw9Dy09VOLWC6ByhYuPrfgRjCsCL6S7wYcMYVZNHUVii0Y62qWi057A2c86KncbihLl0x6c9mOyqzTWc5uVsigLp7X7mDdeyq0vSlECSrkVgARmRC1Xdbm68121KzMNzIzDBrlARcUadwCBCVaHA36Mg3bcDActycnznUYS0zPy7y-KGGL58T0W9rx0q9l5dpkTG6jAt3vGNMImMmq8TsEJziDXQxifWDqmMMg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/dudnaZesALmWvIdQ.jpg?Expires=1803742103&Signature=DWyLThTI7eucXAhHfBNbDV46h46ygSW3-~J1rYKib08lcxM41Af~T5WvrGzsSpiRpw~MnX8iV9NURQ12jC2XN1Z5ADShN2mt5M9T3l8brNXhg1NgieuVUxFZc4OVi-~B5ImXs0I67f5FuGqJu0WKkzCoTzUICtnVbPGl3C-PKy7nE2Mtx6Cyvx~mPu-bLfK3SyVFRwepWqFovVNMiMsvzH7cN8FJ2VEieELLEZ7DTLySyfjEH2w~ue6k1ivQhOeSjKYn3P178hI8W0CY0-K6mT98fgUziO9rjD-Zq6ydk54zSkioZrS~d4n26Lkp1fJfuwYArZQo95pMwx4N8VI5QQ__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/qXJSovGObBPnCaet.jpg?Expires=1803742103&Signature=oftYLNBEPjAiD4E7AqlTOgM8g-WA7uAkEjPpSkOFrXndwzdepFvR8gIoJ6bzQez-AUsoZJAuJG0YuAl5387EgmzwpyI4KIetJCy6EZA8egAw831L31oNM9JboDerNw~avndgeEibCM7xDDKul2IFzo~MS8isIa3TgVeUc47Wg~iwsLLeW6Wo9P0xJQZyXZwc0NnaTlt4BQghqRFFlpPOHOuYLA6Vs52iJCtm4IsBF8Rmb2iF3vM8rxR1G9i5bSOSmJXNYYBAcxH1BD6pFBzqvjnwA7XMEh6X5qzPCq0P6-bLtN6THFMdPQ-UgWMbRb3heS4c-uOQbMBbbWzd5aViZA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/sOFgSCavxVAaeqFT.jpg?Expires=1803742103&Signature=ZukOBiqW5ziqMAnQI5t5vTiQ6tRMaSArxAcoNw9Iff0kv2eHhXRjXsdNoshgT5JHK7GJ5f6GFQ9muqDDzLcY5AfHQMQKd33fBJQwHuEV-VyaEy2Xo3aUeXk7rIr84yvngy8GrmBfbCzSxiAinNI8LgJLniN6u0D~C8bSVGaqgYZWK0ve~BXF6Q4CMrVIjzqDYnr0ZPFYvmxyJTTCPU~igBHxoOYwnSeDVmy9HdR~DXX9txo42TjwtezVq4wHKcws0Bxe6Sui0A6RuCW7WkYnjwNdqoHBFCPrmuge5e7o3ycbOCI1dZ4WvhoBLUSXn87x1q4NJP~P342yG6b0dRkbrQ__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/fGqJOYHaOTiqYBGQ.jpg?Expires=1803742103&Signature=XnNdQzWRSMdbXgOLIMDa3oxRH-KWLbUBK7aHSurAa8sNyWJMCa47J3TROHsao5-cramVn41bs9RyAwVcnOMVPujoNkZjb3XiZYBfk~v-qGn0DkmIlSvMzawNoeFUKaBUyKEiPzU--Mi-rSNAU8UR0pN3RP1wnuHfJFLHB2Lcjyp0VaD8dzIsy0oSFO2nKrUahHUizCfX-3IbSOnCzwp87BAwPD6ZXi-bi9C0ZgU36nDIQOdK7gFKaPJ2d-~EY8PfR3ze4GfGih4Hl2BLfTiI~EgnQcIQV48yrX0jXL8~4KNdCf9uDkeLrPJIr78d8vgUCSo6yrEbdbHf5Pns~koMyg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/pTqObIPbvKllFOsj.jpg?Expires=1803742103&Signature=u-QNJo3aDizW4gORRcJpgc1xV9aBjUdEIyVHEcDGIgemr1cParUc5WQRgY2Wu11akyhkqzfbXZSgbPl6j39MY-3yOABFTJjecxfeK-XPqKQXTI3ImP0QS5YM1Gsalgvd2ZkKrC2tzDlTbi0yJ2tOCDORoqE945ijeWLb7U9v6Pl69SXAUA6fWzLEHgYp4cjlkgXnBvnADDjIyoIXX-6B2kpslx5c-eD3j7IlrLJIkMLLeia96v~ThHS3HfCCljA6cFHSniu6v9WqPcokE0liUbEk6tDhwjdCrH~Y0uuXgwUhPFuI7HPGG03FfZz0Mg0qSbTL8J9PkbNxQ2p0AacFzg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/nIacfjfkWjMPBMKM.jpg?Expires=1803742103&Signature=auV3JE6SIfxzHKRnq8fGU-kfMuFE00aqiKRyTPYkNMn8n3nIiBG8eUy1TQZrjMbSninQXk2oHkvr0nDzpd2FlhwMpXjJYr6bYcb~cEE3~hiUNxS9imA2T2~Ol9TU72AQ~nZDIftnkZTG9YakNgNssk8em-aTWY6MqBiKA54NcYN0b2WDxVOQE10O7wnw-8Crpvfe2KlRYxrKTskt0SS5TDaMMb993AfYs99a6FVzbM1Q9-1PzelL3Fgn-weD-oTr2SHrWemzBaCn2Inx5nY-QRrZfVfddgN0C2KaKaJK6~WFUa0hluTBWpDEjF0FOIp3y0JRemEP7AL5E7kkshIGAw__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/BSiccoxoVqkpLbDk.jpg?Expires=1803742103&Signature=RskNqAWcD40rJ2DO~iqa-mDwGSwUTIYy59g-vejgkGG9OsO-gr8H~vGFprBtZeA4mkgMaV7arQuSWpQ3fxW2x3Bfs3sTLESDvlDub8XOsqQjc-JqtUNMMJryyupB2WzmY7t4T3BUIpM6y9LN0SJJNDDPbSz7oW1fqICwfmqQY44O8OiEj4HQMgJiCSB~VfpP47e8l2LkfE8ZsMVH60QIZF8Vo0Ei3P-07IBt4kegnMLPd5Pt-av0ZX0FxL4-fvAAG-P0U7p3HRI3Nf11qsNMhCNoaQqJ3K5MbXbatZGzU3D9CjoBK8lGrnNsxkXsBpoae2wT7SOdXPOyXtUL68HnkA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/NqYdLbzCOmpyyIVT.jpg?Expires=1803742103&Signature=TeFclBRmyUKsuVjHoVmt6M5mBLg~o5ehmxI5niV2Y-O5NsHtdYlGCvlRlmJ09v9AnT9A20tXvm8gel0Zhf~cX7QPObBQ~tqXpfwR2tkqiQohIYiSZ2SysiQSXICPR5GkY4gDta9NjUDiANBaCBKv0yI~-aw7JThnStV6FX~nWoHz9Y84dNJvbuY-c7nj5Bw5~AC22B93ScjRu-BIs72GJMmpOgRV3DGr90xau3fGP9zIAnKxAdUo1WjWv52cY60pSDcA8F3Dfx~PkKtkUfiBqd6PSXxOY1AgxkZmJtkQk5nzgUAVOGCSLeXxS8E6RzDBka74crvcm3P3KQP2KKuiPw__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/pIHWMLnLeWpDSugM.jpg?Expires=1803742103&Signature=JGgdAFNtRxN1DzPw0O-jcWQgZaNPH3ZasP61aSBZ1bVvkXpkDA1u3E0zDmhJ4dK66ezwptUCS3EdvYOv8gpN3nR6PeZ2sLNF7eLNkQOoTxvOPskRKrYhgUGiVIvuAcilZOs28Kf0IHmlvbr2V7ExAGiPUgpjVVXeUJhTrNcpmomawD--3FMTUGxXiu~okxqWQtBFvQq9ueOPGdnuJeXfOcJSgbbyQHmr0cYpKYqZIBFXOMqaqkOPrMqKOLA0608iYmfnpbCohlHpRLaCuK97E1dF3fjb8PLQQ8hzg3uYJ9vokRrobtKB06ZbhWj9J4HqSIaq9hIQmEFinIMol5rVzA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/KfekXClHPZPqqEAY.jpg?Expires=1803742103&Signature=othOsm8V1SHjJee7Py9ucagQb4T17XdN-fGCVoLOSVRlFFhIkdYGKzYoI2Vg21Tjd3Kt0xZ4gK1zGY9RuFfTGP7tXJtk8dIBDLn-c8ifhzvg5iJg7JnIPrBZRiyfMtJTHc7DcIgQrapFEiS6LO0-NsHvw~Kpjtr8Lg59EhK5AxBpyYMnjSvAJjEt0Wq5W9fn1GAFmdDxNVRrrodMyHYeVksbJHmybDCOVUQC8snbgzn3g16ypE45gEuA3TcucZwuXa5wlZjcDcYLEuu4NzAauCYATm7ZWrQnR2PR9mqICDtafvxieWlKthdu~iEiI-s9HdUYatlqqK7T~hZ2hpm2ng__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/xKhFaLRKMteyZVMM.jpg?Expires=1803742103&Signature=lWvixXS8lMwWSluNkc7JkBJi2oRQznHIZVkeHgF3xcNrb85zA41wVjC~sMbFhgx2~MGqD7S0Um5jiaISMskU1ByKpbPW-XqjWAtOPIYwlaNyL7G0ZpSUk2xiQctmtNAR3xO~HUgiHqvwHDXNTOCifWYufumGwJGn9Y3Z6MiORXQs7aB8u06WDa7EmxG3Lz9noJgEpSTwPig3QM6fJgtzIqgCsfzAmbRYZdTeNKP01J9BsDp7V8VjRKOEbl9fdeoHm0wYyx-g2fL5jfdrEtMMKtQhcq8XGzlUAZrgU9g6iKnFn957AAkOI3oBP163B~SnTPjevuF1buMjrCSXa-1q7g__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/HdKpDocyiVZIaxpk.jpg?Expires=1803742103&Signature=eaqWuns6Erw7O5DdmHyj3WBzS-NB6uGUR4s268RUoypRGRjHlZCUFFtLsOWa6eV~~p2AdHzhqv9a80V8uVl7iWOSgzNrjrM-6Zywloh~bQDQJGFdxy15JZWWiYd5bB4utNC-6~DSRYxdQjYbOGXzecox3CMGtt3jGBA6zwvZMYrlHm~MahXbu4sSLMBmCVucnbhNcxeut1UuI1UMA-gijIB5-iZH2EIIcCY9xNNZ~MtuF5fVwBMSNJY0Kb2gF5VL6blLvtNAHbAosI-BOJiSN4d06sJ14wMNkjPcvjXfgHBehBfCSNGQrExSswezyFVqFYnZhEtzBL~chHJLDnXtdg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/sklVlcVSnrkwJBsT.jpg?Expires=1803742103&Signature=cEjwC-dahjXHQK9VH3xfe6YfhWzWzmfjC9U65ZFdVZMsNgF9fqBC-VPCyDvu5p2x2m3LHjQhPUnW9CHuTE10oRIwasNN98EGiPMKBkxB7P8SZ~52kaBXh-PYwst5LEYF4L21tYtGV9hrfq1LZypnhyFX4PfbAQauwBYjfBQLvGrCh-BlD-YuwwfAlhPvKhXTjEzCQHEk-0Aqx8Oyx2rjToSe0lyHkQh1v8Z-h3Pdwk5Wmtjo5kGSslMI577NEGcf2XD5Sy0w3UOsG9qGD3ZsVQY-YOmbnH4u1DMy~mTedRhxATEsidJKRQ0mHOM5b-Wj-f2KvrrKO3rUAI1WZVA3Qw__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/qIEUowaJECpaeLfB.jpg?Expires=1803742103&Signature=jRkvfEzgw8Gy97AyPnxEEZOxC7~zAiwih7ASIZT1HZ1I2ioWTRxZyc~ppaPtYwMHcVJZHtO2FZAt6h22fsu5gatsOC~k6WbdXs1BcD0Ia7QJURTsl03Je4YmD~0eZ-tNO~iTylrR7gbpYLowyTUxts9S8mx-aZbGvv0lkyOybW1O0CjXa3UoHmHWd9vqsgOkLF18sjYyTzt7CkG22uL2BAB95wDP0C3T0Mic32qJvaePgxrFNTyq1vDNEIPeETzTltzzolc3oLXXyIsdDJn4Urj-oHEfT0iA9h~CxxTcBxS5Iw6yoPkcIcxfMynICg7VjTaDjfXdLNZd3fB3YVU9Zg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/chRAVdTYXiQSTQve.jpg?Expires=1803742103&Signature=Lghz5IucMA9b4dFlom6r-4KXQ1m1GFd3rdIABfbKVZIjN4tNbtrO9DHzwyH9Xb9OU1PmRfW9dWi9tAJwuH6LTEO5~bAL3w0GUH-3-RZoih1vcgkWPBwHUozAnv0LnwW3PspCkr0qsfQt7454yJxje21o2otKlX5EsXghr8thmA8zBxbRQklhWXSl0zJVdcnm1POqBbJdEpgWU6Pgdxcgf2zEUmHmrWIKaEYpexanQ6gX-B6hEDQQZSR~fVDFE6TaLFLHgolX29GcOSRyuNCJyeQJrU98sXQRXtbfryfeSERL74VIzyCKl2G~xJM3v2GeXGhOFd6qLzN58mIH2Nal3w__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/edvHcNwRqnXhYquD.jpg?Expires=1803742103&Signature=VaJeg1lLu27NGgDzcDEiZTZ3d1Q5l15CYB0sImN8KfTGZ~~f4qHvhT7WzvqKvs3oJ09zCPXxLf~JRUlqw5EaM~gk7OJ322a2DPcfrQMFmB8g1YZ5jXEpiEhIKxIAUnum~B3r6OrArcISkaSQhlrZq3ZjWFGI3caxgwBAeAaSLBImFPERfZ8o9HoWoeu1H6QxaJc01QOWWMUklHfFFRpPDwSJWs~rFVWcIbtkb~~nR2QWF85THRiOT-qhMZRsIuUb7XskXqcAd-aerYJs445vndEyvwfv~Al1HadvztD9uYAqZuGzDV8uco0sqFVxDR8q9LCfdBbxOVzCz15-DZ0ybg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/plDSGESrTTCJtNbG.jpg?Expires=1803742103&Signature=pYf9YPHDSz4-BWKsOg2~18MW0ND2DyZZ2-WuROu0aLmf0EOU5dP1~4uqX1bMd8iPN6s8yjYBFx0mpBX3eMkPlffuqS78esOGZrdFsUHQEPjH5HuhdECjiVgBgfJvAiNsmofL6lfyMJ8cCuoPw8GN2FK-MNJbOnMrKu4v3l3PPXzElpppqzjTOiuIQgn0V7k4Ad-qBnn~moxIT1cV~6E0aiKm2c0ojsACX-EH1-O77jeL6w3iZPGPkQ51OHY3clgunk4f5huMEaLP4cSCDmShdV20B~~2ji94zX673xyaC8ajPr2tm2EZKID67MoopiYeIg7jcH9EfNU1sb8dn6pLGQ__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/MPdmLjWYZPMFbPeP.jpg?Expires=1803742103&Signature=FDM-buDPvtOQcVYg0IWmtEEhM6F2Lb2vPGIcZMHaNG6b5YCRyMWFp5wPW0O95u8KathqOLi6wFRCU8RCicTAO5KB5f6sorxn8SkxIkFLmwWHqBWdXJwYEy47Wmxu7qsCyHwhpXu~Ykz5Pt--LBdZrEnkponPOaMpliaV~~KgrFcAmnp2gJs2UHq5xeb3fYDfGC6BJHodhVoIyxqRXO6AtyVf2w~WiZ-DDJkGzF4uhe~sB9jBbURXbMowfZM-cNc1NaPUIWyZMK0Ia4-fzTh0B6ZLet6AocqQ7cc7muwh3wA-TiwIMpNGJaVA4NT593z3qkUJxZYdIWvkjT9AfVtcrA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/yQdMdJfVhuFzslgn.jpg?Expires=1803742103&Signature=aJF6uLGUUdGK7rceUFDMBuEtIotUny1j10B8z1iN0T3G8sJwgF4yHNdErT~jl0zmCPN1w4kFYj1WJeGf8Inrw-gx2CPeNVZVynwJtT775nqkac9bFe3545QPRtivRkFVpMvoae6auS3q1pWqZzRZAZwJQ2LfVAOB-HHaEV1P3vaZAt1CLdHiiTNgv3QlcSohKkYJUfg1sAUANfSNbJLm~4fjxDhy-QP9WgZy5jMACvpWt7loiwtHwvE96IkoPW9mHPU2XZwe7CeouQEB9LC~~g4f68Hu8zn8D1nu3AebLBsNWxr6Ss4b9JtxOHKwOpvr3CB7b15CXAmrISsagtg6Jg__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/OaDfspVbeNfAKGhF.jpg?Expires=1803742103&Signature=G4qbvQ~F-eUp2dktWxoz3dqr53EBuCUqhO0tWbatrGZMrEOABGzy-PezUd3C-iZcJNy0wGdvZYnVYS54-V4TlGREMuny-ZC4xCQ1T39gWMIsrL5te5FSH-Df0ZYlLiSSSqZwgMivahwGgVGYAgvnktNY~kGiSn5tbC8-XCyZvWWL8-jtAy6hQEYOXpJp5lQfL05JeZ~Unmww2bdtrLZlkrDeku2l5cczCmraTAE-dotGDsrlzGLTQnJ6E7RGeBZUWD45OJ3QmWBaQjOYCOFZqYfYGt0wkKbew-5u-EHSvAD~oAc1K8DU2qRip~xqAOmlshoGDKUmDiA6LErMxkbxGw__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/GeitGfijIjDxyLUT.jpg?Expires=1803742103&Signature=gba~MQIpF37J-iXwov7RXnkIDhQW3eXRr2w57K64sJvYOqYpl~3Ry1ypD0JLlgUtH6hLE557GEgauhgZrOyMX19dUPk5kq-Q3acHsYYA0qndweO9SVKJj12h35s1IzaTVAoQI2h0JbaBH6BeiDpQYaU7WilMrgpWV1CzGkMVrd55PpMdLKaztxNAQJW2hwOSCt95IdoEIxyMQkKiNS1-MQrwB9w9052iakRnhGQ2nr2UKLBp3rXuSWWK0eFrGi9XsQR0mnzVYyUQNB1kx55PMvB5Or~Yl3yXN1wdYlvPh-EfzWKsuMO7Q6mRGwsoFt40dwL~eyLbg-q1P-EccUdCtQ__&Key-Pair-Id=K2HSFNDJXOU9YS",
+  "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/JPwNIdZAcFcvZTnz.jpg?Expires=1803742103&Signature=B09VDflYCsM7Y3VBRDAbgASu47P1g8IH7szY-ftoEg68YvzYyOFGseeMfqrgqLxkLo8fuV66OEXlPAUFoCcr8SPYHHVtg3KrQkurOJuO58~m9reJJM1si56HLBg0QH6Ht8b0F0KzdsW~oJO49zYzaelr8ffveKEVm140iJsdlxiBTXhNvsor8UboVhKFOMLedzzVd3HNdOE-AWaoHGk5z-lkDGA~hlRVPe~FwQU9AjiWlEPkJ0KJWLynClTGXOlRsT9vkbpgtYcWnZM7~8wlnqk34VGj8tzx-Lx6-ObBNq0b5C1aQ1G0bPohceoR3dq7v4lEdsV-xsMtzQQsyU~6QA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+];
+
+let currentPage = 0;
+const totalPages = pages.length;
+const pageImg = document.getElementById('pageImg');
+const pageWrapper = document.getElementById('pageWrapper');
+const slider = document.getElementById('slider');
+const pageNum = document.getElementById('pageNum');
+const pageInfo = document.getElementById('pageInfo');
+const loading = document.getElementById('loading');
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnPrevCtrl = document.getElementById('btnPrevCtrl');
+const btnNextCtrl = document.getElementById('btnNextCtrl');
+const thumbnails = document.getElementById('thumbnails');
+
+// Preload cache
+const imageCache = {};
+
+function preloadImage(index) {
+  if (index < 0 || index >= totalPages || imageCache[index]) return;
+  const img = new Image();
+  img.src = pages[index];
+  imageCache[index] = img;
+}
+
+function showPage(index, direction) {
+  if (index < 0 || index >= totalPages) return;
+  
+  currentPage = index;
+  
+  // Animation
+  if (direction) {
+    pageWrapper.classList.remove('turning-right', 'turning-left');
+    void pageWrapper.offsetWidth; // force reflow
+    pageWrapper.classList.add(direction === 'right' ? 'turning-right' : 'turning-left');
+  }
+  
+  pageImg.src = pages[index];
+  slider.value = index;
+  pageNum.textContent = `${index + 1} / ${totalPages}`;
+  pageInfo.textContent = `Página ${index + 1} de ${totalPages}`;
+  
+  btnPrev.disabled = index === 0;
+  btnNext.disabled = index === totalPages - 1;
+  btnPrevCtrl.disabled = index === 0;
+  btnNextCtrl.disabled = index === totalPages - 1;
+  
+  // Update thumbnail highlight
+  document.querySelectorAll('.thumbnails img').forEach((img, i) => {
+    img.classList.toggle('active', i === index);
+  });
+  
+  // Preload adjacent pages
+  preloadImage(index + 1);
+  preloadImage(index + 2);
+  preloadImage(index - 1);
+}
+
+function nextPage() {
+  if (currentPage < totalPages - 1) showPage(currentPage + 1, 'right');
+}
+
+function prevPage() {
+  if (currentPage > 0) showPage(currentPage - 1, 'left');
+}
+
+function goToPage(index) {
+  const dir = index > currentPage ? 'right' : index < currentPage ? 'left' : null;
+  showPage(index, dir);
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+function toggleThumbnails() {
+  thumbnails.classList.toggle('open');
+  if (thumbnails.classList.contains('open')) {
+    // Scroll to active
+    const active = thumbnails.querySelector('.active');
+    if (active) active.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+  }
+}
+
+// Build thumbnails
+pages.forEach((url, i) => {
+  const img = document.createElement('img');
+  img.src = url;
+  img.loading = 'lazy';
+  img.alt = `Página ${i + 1}`;
+  if (i === 0) img.classList.add('active');
+  img.onclick = () => {
+    goToPage(i);
+    thumbnails.classList.remove('open');
+  };
+  thumbnails.appendChild(img);
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextPage(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prevPage(); }
+  if (e.key === 'Home') { e.preventDefault(); goToPage(0); }
+  if (e.key === 'End') { e.preventDefault(); goToPage(totalPages - 1); }
+  if (e.key === 'Escape') { thumbnails.classList.remove('open'); }
+  if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); }
+});
+
+// Touch/swipe support
+let touchStartX = 0;
+let touchStartY = 0;
+const viewer = document.getElementById('viewer');
+
+viewer.addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+viewer.addEventListener('touchend', (e) => {
+  const deltaX = e.changedTouches[0].clientX - touchStartX;
+  const deltaY = e.changedTouches[0].clientY - touchStartY;
+  
+  if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+    if (deltaX < 0) nextPage();
+    else prevPage();
+  }
+}, { passive: true });
+
+// Mouse wheel
+viewer.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  if (e.deltaY > 0 || e.deltaX > 0) nextPage();
+  else prevPage();
+}, { passive: false });
+
+// Initial load
+pageImg.onload = () => {
+  loading.style.display = 'none';
+};
+showPage(0);
+
+// Preload first few pages
+for (let i = 0; i < 5; i++) preloadImage(i);
+</script>
+
+</body>
+</html>

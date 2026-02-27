@@ -75,3 +75,5 @@
 - [x] Ebook: Gerar PDF profissional com design editorial
 - [x] Fix: Atualizar texto sobre Jefferson — ele é Legendário e embaixador dos Legendários (não líder)
 - [x] Substituir imagens de monge/padre no ebook e landing page por imagens mais adequadas ao contexto de mentoria espiritual/empresarial
+- [x] Criar versão flipbook HTML5 interativa do ebook com efeito de virar páginas
+- [x] Gerar ebook em formato EPUB (Apple Books) e MOBI (Kindle)
