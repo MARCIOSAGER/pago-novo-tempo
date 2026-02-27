@@ -34,18 +34,20 @@
 
   /* ===== COVER PAGE ===== */
   .cover-page {
-    width: 100%;
-    height: 100vh;
-    min-height: 1122px;
-    background: var(--navy);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    position: relative;
+    width: 210mm;
+    height: 297mm;
+    min-height: 297mm;
+    max-height: 297mm;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
     page-break-after: always;
+  }
+  .cover-page img {
+    width: 210mm;
+    height: 297mm;
+    object-fit: cover;
+    display: block;
   }
 
   .cover-page::before {
@@ -491,9 +493,10 @@
 
   /* ===== BACK COVER ===== */
   .back-cover {
-    width: 100%;
-    height: 100vh;
-    min-height: 1122px;
+    width: 210mm;
+    height: 297mm;
+    min-height: 297mm;
+    max-height: 297mm;
     background: var(--navy);
     display: flex;
     flex-direction: column;
@@ -501,6 +504,8 @@
     justify-content: center;
     text-align: center;
     padding: 80px;
+    page-break-before: always;
+    margin: 0;
   }
 
   .back-cover .back-quote {
@@ -541,6 +546,54 @@
 
   strong { font-weight: 600; }
   em { font-style: italic; }
+
+  /* ===== PAGE BREAK RULES ===== */
+  h1, h2, h3, h4 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  .verse-block {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .quote-block {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .exercise-block {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .highlight-box {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .notes-area {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .pillar-table {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  table tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  table thead {
+    display: table-header-group;
+  }
+  .separator {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .chapter-divider {
+    page-break-inside: avoid;
+  }
 </style>
 </head>
 <body>
@@ -549,16 +602,7 @@
 <!-- COVER PAGE -->
 <!-- ============================================ -->
 <div class="cover-page">
-  <div class="cover-content">
-    <div class="cover-title">P.A.G.O.</div>
-    <div class="cover-subtitle">Princípio · Alinhamento · Governo · Obediência</div>
-    <div class="cover-line"></div>
-    <div class="cover-tagline">
-      "Prosperidade sem governo gera queda. Crescimento sem estrutura gera colapso. Fé sem alinhamento gera confusão."
-    </div>
-    <div class="cover-line"></div>
-    <div class="cover-author">Jefferson Evangelista</div>
-  </div>
+  <img src="/home/ubuntu/webdev-static-assets/ebook-cover-real.png" alt="P.A.G.O. — Princípio, Alinhamento, Governo, Obediência — Jefferson Evangelista">
 </div>
 
 <!-- ============================================ -->

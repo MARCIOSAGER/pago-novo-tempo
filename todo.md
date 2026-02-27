@@ -87,3 +87,20 @@
 - [x] Gerar PDF de alta qualidade para gráfica (300 DPI, bleed, marcas de corte)
 - [x] Criar subpágina Downloads no admin (PDF, EPUB, MOBI, flipbook HTML5)
 - [x] Criar subpágina Repositório de Mídia no admin (imagens, logos, favicon)
+- [x] Fix: Usar imagem de capa real (ebook-cover.png) como background full-page no PDF
+- [x] Fix: Blocos de conteúdo cortados entre páginas (ex: VIDA FAMILIAR cortado do título)
+- [x] Fix: Parágrafos cortados no meio entre páginas
+- [x] Fix: Regenerar todos os formatos (flipbook, EPUB, MOBI) com PDF corrigido
+- [x] Fix: Usar imagem de capa real (ebook-cover.png) como background full-page no PDF
+- [x] Adicionar contra-capa/verso profissional no final do ebook
+- [x] Fix: Blocos cortados entre páginas (exercícios, áreas de vida)
+- [ ] Fix: Logos não carregando na página Mídia do admin
+- [x] Flipbook em formato livro aberto (duas páginas lado a lado)
+- [ ] Fix: Logos e imagens com URLs expiradas (403) na página Mídia do admin
+- [x] Adicionar primeira versão do ebook (PAGO-Ebook-completo) na página de Downloads
+- [x] CRITICAL: Corrigir quebras de página - cards/exercícios/citações/áreas da vida NÃO podem ser cortados
+- [x] CRITICAL: page-break-inside: avoid em TODOS os blocos de conteúdo
+- [x] CRITICAL: PDF full-page sem margens brancas em nenhuma página
+- [x] Regenerar flipbook com imagens do novo PDF sem margens
+- [x] Regenerar EPUB e MOBI com formatação corrigida
+- [x] Upload de todos os formatos para CDN e atualizar admin Downloads

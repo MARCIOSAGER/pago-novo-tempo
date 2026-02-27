@@ -20,19 +20,29 @@ html { font-size: 18px; scroll-behavior: smooth; }
 body { font-family: 'Lora', Georgia, serif; line-height: 1.85; color: var(--navy); background: var(--warm-white); }
 
 /* === COVER === */
-.cover { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: var(--navy); color: var(--warm-white); padding: 3rem 1.5rem; position: relative; overflow: hidden; }
-.cover::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(184,168,138,0.08) 0%, transparent 50%, rgba(184,168,138,0.05) 100%); }
-.cover-ornament { width: 60px; height: 1px; background: var(--gold); margin: 1.5rem auto; }
-.cover h1 { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 700; letter-spacing: 0.15em; position: relative; }
-.cover .subtitle { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-top: 0.5rem; }
-.cover .full-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-style: italic; color: var(--gold-light); margin-top: 1.5rem; font-weight: 400; }
-.cover .author { font-family: 'Montserrat', sans-serif; font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(250,250,248,0.5); margin-top: 3rem; }
-.cover .edition { font-family: 'Montserrat', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(250,250,248,0.3); margin-top: 0.5rem; }
-.cover-logo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 1.5rem; border: 2px solid var(--gold); position: relative; }
+.cover { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: var(--navy); color: var(--warm-white); padding: 0; position: relative; overflow: hidden; }
+.cover-img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+.cover-ornament { display: none; }
+.cover h1 { display: none; }
+.cover .subtitle { display: none; }
+.cover .full-title { display: none; }
+.cover .author { display: none; }
+.cover .edition { display: none; }
+.cover-logo { display: none; }
+
+/* === BACK COVER === */
+.back-cover { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: var(--navy); color: var(--warm-white); padding: 3rem 2rem; position: relative; }
+.back-cover h2 { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 700; color: var(--gold); margin-bottom: 1rem; }
+.back-cover .tagline { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 2rem; }
+.back-cover .back-text { font-family: 'Lora', serif; font-size: 1rem; color: rgba(250,250,248,0.7); max-width: 500px; line-height: 1.8; text-align: center; margin-bottom: 2rem; }
+.back-cover .back-verse { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.1rem; color: var(--gold-light); max-width: 450px; margin-bottom: 0.5rem; }
+.back-cover .back-ref { font-family: 'Montserrat', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--gold); }
+.back-cover .back-author { font-family: 'Montserrat', sans-serif; font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(250,250,248,0.4); margin-top: 3rem; }
+.back-cover .back-logo { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); margin-bottom: 1.5rem; }
 
 /* === LAYOUT === */
-.container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
-section { padding: 4rem 0; }
+.container { max-width: 720px; margin: 0 auto; padding: 0 2cm; }
+section { padding: 2cm 0; }
 section.sand-bg { background: var(--sand); }
 section.navy-bg { background: var(--navy); color: var(--warm-white); }
 
@@ -138,16 +148,19 @@ td { padding: 0.8rem; border-bottom: 1px solid var(--sand); vertical-align: top;
   .chapter-header { min-height: 40vh; }
 }
 
-/* === WEASYPRINT PDF PAGINAÇÃO === */
+/* ============================================================
+   WEASYPRINT PDF — PAGINAÇÃO COMPLETA
+   Estratégia: @page margin:0 para backgrounds full-page,
+   padding interno no .container para legibilidade,
+   page-break-inside: avoid em TODOS os blocos de conteúdo.
+   ============================================================ */
+
 @page {
   size: A4;
-  margin: 2cm 2cm 2cm 2cm;
-}
-@page :first {
   margin: 0;
 }
 
-/* Capa: ocupa página inteira sem margens */
+/* ---- CAPA: full-page sem nada ---- */
 .cover {
   page-break-after: always;
   height: 297mm;
@@ -155,71 +168,146 @@ td { padding: 0.8rem; border-bottom: 1px solid var(--sand); vertical-align: top;
   max-height: 297mm;
   width: 210mm;
   margin: 0;
-  padding: 3rem 2rem;
+  padding: 0;
   box-sizing: border-box;
+  overflow: hidden;
+}
+.cover-img {
+  width: 210mm;
+  height: 297mm;
+  object-fit: cover;
 }
 
-/* Capítulos: sempre começam em nova página */
+/* ---- CONTRA-CAPA: full-page ---- */
+.back-cover {
+  page-break-before: always;
+  height: 297mm;
+  min-height: 297mm;
+  max-height: 297mm;
+  width: 210mm;
+  margin: 0;
+  padding: 3rem 2rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ---- CAPÍTULOS: sempre nova página ---- */
 .chapter-header {
   page-break-before: always;
   page-break-inside: avoid;
+  page-break-after: avoid;
   min-height: auto;
   height: auto;
-  padding: 3rem 1.5rem;
+  padding: 4rem 2rem;
 }
 
-/* TODAS as seções: permitir quebra livre */
+/* ---- CONTAINER: margens internas para texto ---- */
+.container {
+  padding: 0 2cm;
+}
+
+/* ---- SEÇÕES: backgrounds full-page ---- */
 section {
   page-break-inside: auto;
   page-break-before: auto;
+  padding: 1.5cm 0;
 }
-
-/* Backgrounds coloridos: desabilitar no PDF para evitar blocos que forçam quebras */
-section.navy-bg, section.sand-bg {
+section.sand-bg {
   page-break-inside: auto;
-  padding: 1.5rem 0;
+  padding: 1.5cm 0;
+}
+section.navy-bg {
+  page-break-inside: auto;
+  padding: 1.5cm 0;
 }
 
-/* Títulos nunca ficam sozinhos no fim da página */
+/* ---- TÍTULOS: nunca sozinhos no fim da página ---- */
 h2, h3, h4 {
   page-break-after: avoid;
+  page-break-inside: avoid;
 }
 
-/* Parágrafos: mínimo 2 linhas antes/depois da quebra */
+/* ---- PARÁGRAFOS: mínimo 3 linhas antes/depois ---- */
 p {
-  orphans: 2;
-  widows: 2;
+  orphans: 3;
+  widows: 3;
 }
 
-/* Blocos: permitir quebra em TODOS exceto os muito pequenos */
+/* ---- VERSÍCULOS: nunca cortar ---- */
 .verse {
   page-break-inside: avoid;
-}
-.quote {
-  page-break-inside: avoid;
-}
-table {
-  page-break-inside: auto;
-}
-.declaration {
-  page-break-inside: auto;
-}
-.glossary-item {
-  page-break-inside: avoid;
-}
-.study-question {
-  page-break-inside: auto;
-}
-.plan-day {
-  page-break-inside: auto;
+  break-inside: avoid;
 }
 
-/* Exercícios: PERMITIR quebra em tudo */
-.exercise {
-  page-break-inside: auto;
+/* ---- CITAÇÕES: nunca cortar ---- */
+.quote {
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
+
+/* ---- EXERCÍCIOS: nunca cortar o bloco inteiro ---- */
+.exercise {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* ---- EXERCISE CARDS: nunca cortar ---- */
 .exercise-card {
-  page-break-inside: auto;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* ---- TABELAS: nunca cortar ---- */
+table {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+table tr {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+table thead {
+  display: table-header-group;
+}
+
+/* ---- DECLARAÇÃO: nunca cortar ---- */
+.declaration {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* ---- GLOSSÁRIO: nunca cortar item ---- */
+.glossary-item {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* ---- PERGUNTAS DE ESTUDO: nunca cortar ---- */
+.study-question {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* ---- PLANO 21 DIAS: semana inteira e dias individuais ---- */
+.plan-week {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.plan-day {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* ---- SEPARADORES: nunca cortar ---- */
+.separator {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* ---- TOC: nunca cortar ---- */
+.toc {
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
 
 /* === PRINT === */
@@ -235,7 +323,16 @@ table {
     page-break-inside: avoid;
   }
   h2, h3, h4 { page-break-after: avoid; }
-  p { orphans: 2; widows: 2; }
+  p { orphans: 3; widows: 3; }
+  .exercise { page-break-inside: avoid; break-inside: avoid; }
+  .exercise-card { page-break-inside: avoid; break-inside: avoid; }
+  .verse { page-break-inside: avoid; break-inside: avoid; }
+  .quote { page-break-inside: avoid; break-inside: avoid; }
+  table { page-break-inside: avoid; break-inside: avoid; }
+  .declaration { page-break-inside: avoid; break-inside: avoid; }
+  .glossary-item { page-break-inside: avoid; break-inside: avoid; }
+  .study-question { page-break-inside: avoid; break-inside: avoid; }
+  .plan-week { page-break-inside: avoid; break-inside: avoid; }
 }
 </style>
 </head>
@@ -243,14 +340,7 @@ table {
 
 <!-- ==================== CAPA ==================== -->
 <div class="cover">
-  <img src="https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo_ea5770c3.jpeg" alt="P.A.G.O. Logo" class="cover-logo">
-  <h1>P.A.G.O.</h1>
-  <div class="cover-ornament"></div>
-  <p class="subtitle">Princípio · Alinhamento · Governo · Obediência</p>
-  <p class="full-title">Um Sistema de Reorganização de Vida<br>baseado em Princípios Bíblicos</p>
-  <div class="cover-ornament"></div>
-  <p class="author">Jefferson Evangelista</p>
-  <p class="edition">Edição Expandida — 2025</p>
+  <img src="/home/ubuntu/webdev-static-assets/ebook-cover-real.png" alt="P.A.G.O. — Princípio, Alinhamento, Governo, Obediência — Jefferson Evangelista" class="cover-img">
 </div>
 
 <!-- ==================== SUMÁRIO ==================== -->
@@ -338,6 +428,11 @@ table {
         <p>Organização financeira, dízimos e ofertas, planejamento, investimentos.</p>
         <div class="exercise-lines"></div>
       </div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício Introdutório (continuação)</span>
+      <p class="exercise-title">Diagnóstico Inicial — Mais Áreas</p>
       <div class="exercise-card">
         <p class="exercise-card-title">Vida Profissional</p>
         <p>Propósito no trabalho, excelência, liderança, impacto no ambiente.</p>
@@ -560,6 +655,11 @@ table {
         <p class="exercise-card-title">Decisão 3</p>
         <div class="exercise-lines"></div><div class="exercise-lines"></div>
       </div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 1.2 (continuação)</span>
+      <p class="exercise-title">Auditoria de Decisões Recentes</p>
       <div class="exercise-card">
         <p class="exercise-card-title">Decisão 4</p>
         <div class="exercise-lines"></div><div class="exercise-lines"></div>
@@ -668,6 +768,11 @@ table {
         <p>Nota: ___ / 10. O que está desalinhado?</p>
         <div class="exercise-lines"></div>
       </div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 2.1 (continuação)</span>
+      <p class="exercise-title">Mapa de Alinhamento Pessoal</p>
       <div class="exercise-card">
         <p class="exercise-card-title">Trabalho / Negócios</p>
         <p>Nota: ___ / 10. O que está desalinhado?</p>
@@ -700,6 +805,11 @@ table {
       <div class="exercise-card"><p class="exercise-card-title">Dia 1</p><p>Alinhado: </p><div class="exercise-lines"></div><p>Desalinhado: </p><div class="exercise-lines"></div></div>
       <div class="exercise-card"><p class="exercise-card-title">Dia 2</p><p>Alinhado: </p><div class="exercise-lines"></div><p>Desalinhado: </p><div class="exercise-lines"></div></div>
       <div class="exercise-card"><p class="exercise-card-title">Dia 3</p><p>Alinhado: </p><div class="exercise-lines"></div><p>Desalinhado: </p><div class="exercise-lines"></div></div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 2.3 (continuação)</span>
+      <p class="exercise-title">Diário de Coerência — Dias 4 a 7</p>
       <div class="exercise-card"><p class="exercise-card-title">Dia 4</p><p>Alinhado: </p><div class="exercise-lines"></div><p>Desalinhado: </p><div class="exercise-lines"></div></div>
       <div class="exercise-card"><p class="exercise-card-title">Dia 5</p><p>Alinhado: </p><div class="exercise-lines"></div><p>Desalinhado: </p><div class="exercise-lines"></div></div>
       <div class="exercise-card"><p class="exercise-card-title">Dia 6</p><p>Alinhado: </p><div class="exercise-lines"></div><p>Desalinhado: </p><div class="exercise-lines"></div></div>
@@ -946,9 +1056,19 @@ table {
       <div class="exercise-card"><p class="exercise-card-title">Dia 1</p><p>Ato de obediência:</p><div class="exercise-lines"></div><p>Como me senti:</p><div class="exercise-lines"></div></div>
       <div class="exercise-card"><p class="exercise-card-title">Dia 2</p><p>Ato de obediência:</p><div class="exercise-lines"></div><p>Como me senti:</p><div class="exercise-lines"></div></div>
       <div class="exercise-card"><p class="exercise-card-title">Dia 3</p><p>Ato de obediência:</p><div class="exercise-lines"></div><p>Como me senti:</p><div class="exercise-lines"></div></div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 4.2 (continuação)</span>
+      <p class="exercise-title">Diário de Obediência — Dias 4 a 14</p>
       <div class="exercise-card"><p class="exercise-card-title">Dia 4</p><p>Ato de obediência:</p><div class="exercise-lines"></div><p>Como me senti:</p><div class="exercise-lines"></div></div>
       <div class="exercise-card"><p class="exercise-card-title">Dia 5</p><p>Ato de obediência:</p><div class="exercise-lines"></div><p>Como me senti:</p><div class="exercise-lines"></div></div>
       <div class="exercise-card"><p class="exercise-card-title">Dia 6</p><p>Ato de obediência:</p><div class="exercise-lines"></div><p>Como me senti:</p><div class="exercise-lines"></div></div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício 4.2 (conclusão)</span>
+      <p class="exercise-title">Diário de Obediência — Dia 7 em diante</p>
       <div class="exercise-card"><p class="exercise-card-title">Dia 7</p><p>Ato de obediência:</p><div class="exercise-lines"></div><p>Como me senti:</p><div class="exercise-lines"></div></div>
       <div class="exercise-card"><p class="exercise-card-title">Dias 8-14</p><p>Continue registrando em um caderno separado. O padrão que você observar revelará onde Deus está trabalhando na sua vida.</p></div>
     </div>
@@ -1012,6 +1132,11 @@ table {
         <p>Nota: ___ / 10. Minhas ações refletem meus princípios?</p>
         <div class="exercise-lines"></div>
       </div>
+    </div>
+
+    <div class="exercise">
+      <span class="exercise-label">Exercício de Integração (continuação)</span>
+      <p class="exercise-title">Autoavaliação P.A.G.O. Completa</p>
       <div class="exercise-card">
         <p class="exercise-card-title">G — Governo</p>
         <p>Nota: ___ / 10. Tenho disciplinas consistentes no secreto?</p>
@@ -1243,16 +1368,18 @@ table {
   </div>
 </section>
 
-<!-- ==================== RODAPÉ ==================== -->
-<section class="navy-bg" style="padding: 2rem 0;">
-  <div class="container" style="text-align: center;">
-    <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 700; color: var(--gold); margin-bottom: 0.5rem;">P.A.G.O.</p>
-    <p style="font-family: 'Montserrat', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(250,250,248,0.5);">Princípio · Alinhamento · Governo · Obediência</p>
-    <div class="separator"></div>
-    <p style="font-size: 0.8rem; color: rgba(250,250,248,0.4);">© 2025 Jefferson Evangelista — Todos os direitos reservados</p>
-    <p style="font-size: 0.75rem; color: rgba(250,250,248,0.3); margin-top: 0.5rem;">Edição Expandida — Novo Tempo</p>
-  </div>
-</section>
+<!-- ==================== CONTRA-CAPA ==================== -->
+<div class="back-cover">
+  <img src="https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo_ea5770c3.jpeg" alt="P.A.G.O. Logo" class="back-logo">
+  <h2>P.A.G.O.</h2>
+  <p class="tagline">Princípio · Alinhamento · Governo · Obediência</p>
+  <p class="back-text">Um sistema de reorganização de vida baseado em princípios bíblicos. Quatro pilares que transformam a fé em fundamento operacional para um legado duradouro.</p>
+  <p class="back-verse">"Busquem, pois, em primeiro lugar o Reino de Deus e a sua justiça, e todas essas coisas lhes serão acrescentadas."</p>
+  <p class="back-ref">— Mateus 6:33</p>
+  <p class="back-author">Jefferson Evangelista</p>
+  <p style="font-size: 0.75rem; color: rgba(250,250,248,0.3); margin-top: 0.5rem;">Edição Expandida — 2025</p>
+  <p style="font-size: 0.65rem; color: rgba(250,250,248,0.2); margin-top: 2rem;">© 2025 Jefferson Evangelista — Todos os direitos reservados</p>
+</div>
 
 </body>
 </html>
