@@ -117,3 +117,10 @@
 - [x] Implementar contexto de idioma e seletor de idioma no site
 - [x] Aplicar traduções em todas as páginas públicas e componentes do site (10 componentes)
 - [x] Testes vitest para i18n (15 testes — chaves, valores, consistência entre idiomas)
+- [x] Ebook P.A.G.O. Kids: Planejar estrutura (capítulos, atividades, faixa etária)
+- [x] Ebook P.A.G.O. Kids: Escrever conteúdo completo em português (903 linhas, 6.284 palavras)
+- [x] Ebook P.A.G.O. Kids: Traduzir para espanhol (554 linhas, 4.027 palavras)
+- [x] Ebook P.A.G.O. Kids: Gerar ilustrações infantis (8 ilustrações Nano Banana)
+- [x] Ebook P.A.G.O. Kids: Gerar PDFs (PT e ES) — PDF editorial 39 páginas + PDFs Markdown
+- [x] Instagram: Criar 10 posts para P.A.G.O. (imagens + legendas)
+- [x] Instagram: Criar 10 posts para P.A.G.O. Kids (imagens + legendas)

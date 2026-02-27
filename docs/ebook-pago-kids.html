@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P.A.G.O. Kids — Uma Aventura de Fé para Pequenos Construtores</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; }
+
+/* ===== COLORS ===== */
+:root {
+  --navy: #1A2744;
+  --gold: #B8A88A;
+  --sand: #FFF8F0;
+  --warm-white: #FFFDF9;
+  --coral: #E8725C;
+  --sky: #6BB8E8;
+  --green: #5CB85C;
+  --purple: #9B6DB7;
+  --orange: #F5A623;
+  --pink: #E88BAF;
+  --light-blue: #E8F4FD;
+  --light-green: #E8F8E8;
+  --light-coral: #FFF0ED;
+  --light-purple: #F3E8F9;
+  --light-gold: #FDF6EB;
+}
+
+/* ===== TYPOGRAPHY ===== */
+body {
+  font-family: 'Nunito', sans-serif;
+  color: var(--navy);
+  line-height: 1.7;
+  background: var(--warm-white);
+}
+h1, h2, h3 { font-family: 'Baloo 2', cursive; }
+h1 { font-size: 2.2rem; font-weight: 800; }
+h2 { font-size: 1.7rem; font-weight: 700; }
+h3 { font-size: 1.3rem; font-weight: 600; }
+
+/* ===== PRINT / PAGE SETUP ===== */
+@page { size: A4; margin: 0; }
+@media print {
+  body { margin: 0; padding: 0; }
+  .page { page-break-after: always; break-after: page; }
+  .no-break { page-break-inside: avoid; break-inside: avoid; }
+}
+
+/* ===== PAGE STRUCTURE ===== */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto 20px;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+.page-content {
+  padding: 50px 55px;
+}
+
+/* ===== COVER PAGE ===== */
+.cover-page {
+  background: linear-gradient(135deg, var(--sky) 0%, #A8D8EA 50%, var(--light-blue) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.cover-page img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ===== BACK COVER ===== */
+.back-cover {
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.back-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ===== SECTION BACKGROUNDS ===== */
+.bg-sand { background: var(--sand); }
+.bg-light-blue { background: var(--light-blue); }
+.bg-light-green { background: var(--light-green); }
+.bg-light-coral { background: var(--light-coral); }
+.bg-light-purple { background: var(--light-purple); }
+.bg-light-gold { background: var(--light-gold); }
+.bg-navy { background: var(--navy); color: white; }
+
+/* ===== CHAPTER HEADERS ===== */
+.chapter-header {
+  text-align: center;
+  padding: 80px 55px 50px;
+}
+.chapter-number {
+  font-family: 'Baloo 2', cursive;
+  font-size: 5rem;
+  font-weight: 800;
+  opacity: 0.15;
+  line-height: 1;
+  margin-bottom: -20px;
+}
+.chapter-title {
+  font-size: 2rem;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+.chapter-subtitle {
+  font-size: 1.15rem;
+  color: var(--gold);
+  font-weight: 600;
+  font-family: 'Quicksand', sans-serif;
+}
+.chapter-image {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin: 25px 0;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+/* ===== VERSE / QUOTE ===== */
+.verse {
+  background: linear-gradient(135deg, var(--light-gold), #FFF8E8);
+  border-left: 5px solid var(--gold);
+  border-radius: 0 12px 12px 0;
+  padding: 18px 22px;
+  margin: 20px 0;
+  font-style: italic;
+  font-size: 0.95rem;
+}
+.verse .reference {
+  display: block;
+  text-align: right;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--gold);
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+/* ===== TABLES ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+th {
+  background: var(--navy);
+  color: white;
+  padding: 12px 16px;
+  text-align: left;
+  font-family: 'Baloo 2', cursive;
+  font-size: 0.9rem;
+}
+td {
+  padding: 10px 16px;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9rem;
+}
+tr:nth-child(even) { background: #f8f6f2; }
+tr:last-child td { border-bottom: none; }
+
+/* ===== ACTIVITY BOXES ===== */
+.activity {
+  background: white;
+  border: 3px dashed var(--coral);
+  border-radius: 16px;
+  padding: 25px;
+  margin: 25px 0;
+}
+.activity-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.2rem;
+  color: var(--coral);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.activity-title::before {
+  content: '✏️';
+  font-size: 1.4rem;
+}
+.write-line {
+  border-bottom: 2px dotted #ccc;
+  min-height: 32px;
+  margin: 8px 0;
+  display: block;
+}
+.draw-space {
+  border: 2px dashed #ddd;
+  border-radius: 12px;
+  min-height: 180px;
+  margin: 15px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  font-style: italic;
+  background: #fafafa;
+}
+
+/* ===== PARENT BOX ===== */
+.parent-box {
+  background: linear-gradient(135deg, #E8F4FD, #F0F8FF);
+  border-left: 5px solid var(--sky);
+  border-radius: 0 12px 12px 0;
+  padding: 20px 22px;
+  margin: 25px 0;
+}
+.parent-box-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.1rem;
+  color: var(--sky);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.parent-box-title::before {
+  content: '👨‍👩‍👧‍👦';
+  font-size: 1.3rem;
+}
+
+/* ===== HERO CARDS ===== */
+.hero-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 20px 0;
+}
+.hero-card {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  text-align: center;
+}
+.hero-card .hero-name {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1rem;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.hero-card .hero-desc {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* ===== MISSION DAYS ===== */
+.mission-day {
+  background: white;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin: 12px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-left: 5px solid var(--green);
+}
+.mission-day.day-p { border-left-color: var(--coral); }
+.mission-day.day-a { border-left-color: var(--sky); }
+.mission-day.day-g { border-left-color: var(--green); }
+.mission-day.day-o { border-left-color: var(--purple); }
+.mission-day.day-pa { border-left-color: var(--orange); }
+.mission-day.day-go { border-left-color: var(--pink); }
+.mission-day.day-pago { border-left-color: var(--gold); }
+.mission-day-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+
+/* ===== DECLARATION ===== */
+.declaration {
+  background: linear-gradient(135deg, var(--navy), #2A3A5C);
+  color: white;
+  border-radius: 16px;
+  padding: 35px;
+  margin: 25px 0;
+  text-align: center;
+}
+.declaration p {
+  font-size: 1rem;
+  margin: 12px 0;
+  line-height: 1.8;
+}
+.declaration .sign-line {
+  border-bottom: 2px solid rgba(255,255,255,0.4);
+  min-height: 30px;
+  margin: 10px 40px;
+  display: block;
+}
+
+/* ===== GLOSSARY ===== */
+.glossary-item {
+  margin: 15px 0;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.glossary-word {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.05rem;
+  color: var(--coral);
+}
+.glossary-def {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 4px;
+}
+
+/* ===== CHECKBOX OPTIONS ===== */
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+  font-size: 0.9rem;
+}
+.checkbox-option::before {
+  content: '○';
+  font-size: 1.2rem;
+  color: #ccc;
+}
+
+/* ===== LETTER PAGE ===== */
+.letter-page {
+  padding: 60px 55px;
+}
+.letter-page p {
+  margin: 14px 0;
+  text-align: justify;
+}
+
+/* ===== TOC ===== */
+.toc-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 10px 0;
+  border-bottom: 1px dotted #ddd;
+  font-size: 1rem;
+}
+.toc-item:last-child { border-bottom: none; }
+.toc-number {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  color: var(--coral);
+  margin-right: 10px;
+}
+
+/* ===== UTILITIES ===== */
+p { margin: 12px 0; text-align: justify; font-size: 0.95rem; }
+strong { color: var(--navy); }
+.text-center { text-align: center; }
+.text-gold { color: var(--gold); }
+.text-coral { color: var(--coral); }
+.text-navy { color: var(--navy); }
+.mt-1 { margin-top: 10px; }
+.mt-2 { margin-top: 20px; }
+.mb-1 { margin-bottom: 10px; }
+.mb-2 { margin-bottom: 20px; }
+.emoji { font-size: 1.4rem; }
+</style>
+</head>
+<body>
+
+<!-- ===== CAPA ===== -->
+<div class="page cover-page">
+  <img src="pago-kids-cover.png" alt="P.A.G.O. Kids — Uma Aventura de Fé para Pequenos Construtores">
+</div>
+
+<!-- ===== CARTA AOS PAIS ===== -->
+<div class="page bg-sand">
+  <div class="letter-page">
+    <h2 class="text-center mb-2" style="color: var(--navy);">Carta aos Pais e Responsáveis</h2>
+    
+    <p>Queridos pais,</p>
+    
+    <p>Este livro foi criado com um propósito muito especial: ajudar vocês a transmitirem aos seus filhos os valores que transformam vidas. O <strong>P.A.G.O.</strong> — Princípio, Alinhamento, Governo e Obediência — não é apenas para adultos. Na verdade, quanto mais cedo esses fundamentos são plantados no coração de uma criança, mais profundas serão as raízes que sustentarão a árvore no futuro.</p>
+    
+    <p>Cada capítulo deste livro foi pensado para ser lido <strong>junto com a criança</strong>. Não é um livro para a criança ler sozinha e depois guardar na estante. É um livro para sentar no sofá, abrir juntos, conversar, desenhar, colorir e — acima de tudo — viver.</p>
+    
+    <div class="verse">
+      <em>"Instruirás os teus filhos e deles falarás, sentado em tua casa e andando pelo teu caminho, ao deitar-te e ao levantar-te."</em>
+      <span class="reference">— Deuteronômio 6:7</span>
+    </div>
+    
+    <p><strong>Como usar este livro:</strong> Não existe pressa. Vocês podem fazer um capítulo por semana, um por mês, ou no ritmo que funcionar para a família. O importante é que cada pilar seja vivido, não apenas lido. Depois de cada capítulo, há atividades práticas para fazer juntos — desde desenhos até desafios do dia a dia.</p>
+    
+    <p>Que este livro seja uma semente plantada no coração dos seus filhos. E que, no tempo certo, essa semente se torne uma árvore forte, frutífera e inabalável.</p>
+    
+    <p>Com carinho e propósito,</p>
+    <p><em><strong>Jefferson Evangelista</strong></em></p>
+  </div>
+</div>
+
+<!-- ===== SUMÁRIO ===== -->
+<div class="page bg-light-blue">
+  <div class="page-content">
+    <h2 class="text-center mb-2">Conteúdo</h2>
+    
+    <div class="toc-item"><span><span class="toc-number">1</span>O Que É o P.A.G.O.? — Uma Aventura Começa!</span></div>
+    <div class="toc-item"><span><span class="toc-number">2</span>O Pilar P — Princípio: O Alicerce da Casa</span></div>
+    <div class="toc-item"><span><span class="toc-number">3</span>O Pilar A — Alinhamento: Andando na Mesma Direção</span></div>
+    <div class="toc-item"><span><span class="toc-number">4</span>O Pilar G — Governo: O Capitão do Navio</span></div>
+    <div class="toc-item"><span><span class="toc-number">5</span>O Pilar O — Obediência: O Segredo dos Heróis de Deus</span></div>
+    <div class="toc-item"><span><span class="toc-number">6</span>Os 4 Pilares Juntos — Construindo Minha Casa Forte</span></div>
+    <div class="toc-item"><span><span class="toc-number">7</span>Desafio de 7 Dias — Missão P.A.G.O. Kids</span></div>
+    <div class="toc-item"><span><span class="toc-number">8</span>Minha Declaração P.A.G.O.</span></div>
+    <div class="toc-item"><span><span class="toc-number">9</span>Glossário para Pequenos Construtores</span></div>
+    <div class="toc-item"><span><span class="toc-number">10</span>Versículos para Decorar</span></div>
+    
+    <div class="text-center mt-2">
+      <img src="pago-kids-ch6-house.png" alt="Casa P.A.G.O." style="width: 80%; border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.1);">
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+
+<!-- ===== CAPÍTULO 1 — O QUE É O P.A.G.O.? ===== -->
+<div class="page bg-light-coral">
+  <div class="chapter-header">
+    <div class="chapter-number">1</div>
+    <h1 class="chapter-title">O Que É o P.A.G.O.?</h1>
+    <div class="chapter-subtitle">Uma Aventura Começa!</div>
+    <img class="chapter-image" src="pago-kids-ch1-builders.png" alt="Os Dois Construtores">
+  </div>
+</div>
+
+<div class="page bg-sand">
+  <div class="page-content">
+    <p>Olá, pequeno construtor!</p>
+    
+    <p>Você já brincou de construir uma casa com blocos de montar? Sabe o que acontece quando a gente coloca os blocos de qualquer jeito, sem prestar atenção? A casa cai! Mas quando a gente constrói com cuidado, bloco por bloco, a casa fica forte e bonita.</p>
+    
+    <p>A nossa vida é parecida com uma casa. Deus quer que a gente construa uma vida forte, bonita e que dure para sempre. E para isso, Ele nos deu <strong>quatro blocos especiais</strong>. Esses blocos têm um nome: <strong>P.A.G.O.</strong></p>
+    
+    <table>
+      <tr><th>Letra</th><th>Bloco</th><th>O Que Significa</th></tr>
+      <tr><td><strong>P</strong></td><td>Princípio</td><td>As regras de Deus que nunca mudam</td></tr>
+      <tr><td><strong>A</strong></td><td>Alinhamento</td><td>Fazer o que a gente fala</td></tr>
+      <tr><td><strong>G</strong></td><td>Governo</td><td>Cuidar bem de tudo que Deus nos deu</td></tr>
+      <tr><td><strong>O</strong></td><td>Obediência</td><td>Ouvir e fazer o que Deus pede</td></tr>
+    </table>
+    
+    <div class="verse">
+      <em>"Portanto, todo aquele que ouve estas minhas palavras e as pratica é como um homem prudente que construiu a sua casa sobre a rocha."</em>
+      <span class="reference">— Mateus 7:24</span>
+    </div>
+    
+    <h3>A História dos Dois Construtores</h3>
+    
+    <p>Jesus contou uma história muito importante sobre dois homens que construíram casas. Um construiu na <strong>rocha</strong> e o outro construiu na <strong>areia</strong>.</p>
+    
+    <p>Quando veio a chuva forte e o vento soprou com toda a força, a casa na areia caiu — PLOFT! Mas a casa na rocha ficou firme, forte e de pé!</p>
+    
+    <p>Sabe por quê? Porque o homem sábio construiu no lugar certo, com o fundamento certo. E é isso que o P.A.G.O. vai te ensinar: a construir sua vida na <strong>rocha</strong>, que é a Palavra de Deus.</p>
+    
+    <h3>Você É um Construtor!</h3>
+    
+    <p>Sim, você! Mesmo sendo criança, você já está construindo a sua vida. Cada vez que você faz uma escolha — ser honesto, obedecer os pais, ser gentil com um amigo, orar antes de dormir — você está colocando um bloco na sua casa.</p>
+  </div>
+</div>
+
+<div class="page bg-warm-white">
+  <div class="page-content">
+    <div class="activity no-break">
+      <div class="activity-title">Atividade 1 — Minha Casa P.A.G.O.</div>
+      <p>Desenhe uma casa com quatro blocos grandes na base. Em cada bloco, escreva uma letra do P.A.G.O.:</p>
+      <p>• No primeiro bloco: <strong>P</strong> (Princípio)<br>
+      • No segundo bloco: <strong>A</strong> (Alinhamento)<br>
+      • No terceiro bloco: <strong>G</strong> (Governo)<br>
+      • No quarto bloco: <strong>O</strong> (Obediência)</p>
+      <p>Agora decore a casa do jeito que você quiser!</p>
+      <div class="draw-space">Espaço para desenho 🎨</div>
+    </div>
+    
+    <div class="activity no-break">
+      <div class="activity-title">Atividade 2 — Quem Sou Eu?</div>
+      <p>Antes de começar a aventura, vamos nos conhecer melhor!</p>
+      <p>Meu nome é: <span class="write-line"></span></p>
+      <p>Minha idade: <span class="write-line"></span></p>
+      <p>Minha coisa favorita de fazer: <span class="write-line"></span></p>
+      <p>Meu versículo favorito da Bíblia: <span class="write-line"></span></p>
+      <p>Uma coisa que eu quero aprender com Deus: <span class="write-line"></span></p>
+      <p>O que eu quero ser quando crescer: <span class="write-line"></span></p>
+    </div>
+    
+    <div class="parent-box no-break">
+      <div class="parent-box-title">Para os Pais — Momento Juntos</div>
+      <p>Converse com seu filho sobre o que significa "construir" a vida. Pergunte: "Se a nossa vida fosse uma casa, o que você colocaria dentro dela?" Ouça com atenção. Use essa conversa para introduzir a ideia de que Deus nos deu um "manual de construção" — e o P.A.G.O. é uma forma de seguir esse manual.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CAPÍTULO 2 — PRINCÍPIO ===== -->
+<div class="page bg-light-gold">
+  <div class="chapter-header">
+    <div class="chapter-number">2</div>
+    <h1 class="chapter-title">O Pilar P — Princípio</h1>
+    <div class="chapter-subtitle">O Alicerce da Casa</div>
+    <img class="chapter-image" src="pago-kids-ch2-daniel.png" alt="Daniel recusando a comida do rei">
+  </div>
+</div>
+
+<div class="page bg-sand">
+  <div class="page-content">
+    <p>Imagine que você vai construir a casa mais incrível do mundo. A primeira coisa que você precisa fazer é preparar o <strong>alicerce</strong> — aquela parte forte que fica embaixo de tudo e segura a casa inteira. Se o alicerce for fraco, a casa vai rachar e cair. Mas se o alicerce for forte, a casa aguenta qualquer tempestade!</p>
+    
+    <p>O <strong>Princípio</strong> é o alicerce da nossa vida. São as verdades de Deus que <strong>nunca mudam</strong>.</p>
+    
+    <div class="verse">
+      <em>"O temor do Senhor é o princípio da sabedoria."</em>
+      <span class="reference">— Provérbios 9:10</span>
+    </div>
+    
+    <h3>Os Cinco Princípios do Pequeno Construtor</h3>
+    
+    <table>
+      <tr><th>Princípio</th><th>O Que Significa</th><th>Na Prática</th></tr>
+      <tr><td><strong>Honestidade</strong></td><td>Falar sempre a verdade</td><td>Não mentir, mesmo quando dá medo</td></tr>
+      <tr><td><strong>Cuidado</strong></td><td>Cuidar bem do que é seu</td><td>Guardar os brinquedos, cuidar do material</td></tr>
+      <tr><td><strong>Generosidade</strong></td><td>Dar com alegria</td><td>Dividir o lanche, emprestar um brinquedo</td></tr>
+      <tr><td><strong>Excelência</strong></td><td>Fazer o melhor que puder</td><td>Caprichar no dever de casa</td></tr>
+      <tr><td><strong>Fidelidade</strong></td><td>Cumprir o que prometeu</td><td>Se prometeu, faz!</td></tr>
+    </table>
+    
+    <h3>A História de Daniel — O Menino dos Princípios</h3>
+    
+    <p>Quando Daniel era jovem, foi levado para um país estranho, longe da família. O rei queria que Daniel comesse comidas que Deus não aprovava. Todos os outros jovens comeram. Mas Daniel disse: <strong>"Não. Eu vou seguir os princípios de Deus."</strong></p>
+    
+    <p>Daniel ficou mais forte e mais sábio do que todos os outros! E Deus cuidou dele de um jeito incrível — até na cova dos leões!</p>
+    
+    <div class="verse">
+      <em>"Mas Daniel decidiu no seu coração que não se contaminaria."</em>
+      <span class="reference">— Daniel 1:8</span>
+    </div>
+    
+    <h3>Princípios São Inegociáveis</h3>
+    
+    <p><strong>Inegociável</strong> significa que não está à venda, não se troca, não se negocia. Os princípios de Deus são inegociáveis. É como o alicerce da casa: você não tira o alicerce porque está com preguiça. Se tirar, a casa cai!</p>
+  </div>
+</div>
+
+<div class="page bg-warm-white">
+  <div class="page-content">
+    <div class="activity no-break">
+      <div class="activity-title">Atividade 3 — Meus 3 Princípios</div>
+      <p>Escolha 3 princípios que você quer seguir sempre:</p>
+      <p>Meu Princípio 1: <span class="write-line"></span></p>
+      <p>Meu Princípio 2: <span class="write-line"></span></p>
+      <p>Meu Princípio 3: <span class="write-line"></span></p>
+      <p>Agora faça um desenho de você seguindo um desses princípios:</p>
+      <div class="draw-space">Espaço para desenho 🎨</div>
+    </div>
+    
+    <div class="activity no-break">
+      <div class="activity-title">Atividade 4 — O Jogo do "E Se...?"</div>
+      <p><strong>E se...</strong> seu amigo pedir para você mentir para a professora?</p>
+      <p>Eu faria: <span class="write-line"></span></p>
+      <p><strong>E se...</strong> você encontrar um brinquedo que não é seu no chão da escola?</p>
+      <p>Eu faria: <span class="write-line"></span></p>
+      <p><strong>E se...</strong> alguém te oferecer algo que você sabe que não deveria aceitar?</p>
+      <p>Eu faria: <span class="write-line"></span></p>
+      <p><strong>E se...</strong> todo mundo estiver fazendo algo errado e te chamando para participar?</p>
+      <p>Eu faria: <span class="write-line"></span></p>
+    </div>
+    
+    <div class="parent-box no-break">
+      <div class="parent-box-title">Para os Pais — Momento Juntos</div>
+      <p>Conte para seu filho uma história real da sua vida em que você precisou manter um princípio, mesmo sendo difícil. Pergunte: "Qual princípio é mais difícil para você seguir?" e ajude-o a criar estratégias práticas. Orem juntos pedindo a Deus força para manter os princípios firmes.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CAPÍTULO 3 — ALINHAMENTO ===== -->
+<div class="page bg-light-blue">
+  <div class="chapter-header">
+    <div class="chapter-number">3</div>
+    <h1 class="chapter-title">O Pilar A — Alinhamento</h1>
+    <div class="chapter-subtitle">Andando na Mesma Direção</div>
+    <img class="chapter-image" src="pago-kids-ch3-noah.png" alt="Noé construindo a arca">
+  </div>
+</div>
+
+<div class="page bg-sand">
+  <div class="page-content">
+    <p>Você já tentou andar com um amigo, mas cada um ia para um lado diferente? Não funciona, né? Para andar juntos, vocês precisam ir na <strong>mesma direção</strong>. Isso é <strong>alinhamento</strong>.</p>
+    
+    <p>Na vida, alinhamento significa que o que você <strong>pensa</strong>, o que você <strong>fala</strong> e o que você <strong>faz</strong> andam na mesma direção.</p>
+    
+    <div class="verse">
+      <em>"Andarão dois juntos, se não estiverem de acordo?"</em>
+      <span class="reference">— Amós 3:3</span>
+    </div>
+    
+    <h3>Os Três Tipos de Alinhamento</h3>
+    
+    <p>Imagine que você é um avião. Para voar direitinho, o avião precisa estar alinhado em três direções:</p>
+    
+    <table>
+      <tr><th>Direção</th><th>Alinhamento</th><th>O Que Significa</th></tr>
+      <tr><td><strong>Para cima</strong></td><td>Com Deus</td><td>Orar, ler a Bíblia, ouvir a voz de Deus</td></tr>
+      <tr><td><strong>Para os lados</strong></td><td>Com as pessoas</td><td>Ser bom amigo, respeitar os pais</td></tr>
+      <tr><td><strong>Para dentro</strong></td><td>Consigo mesmo</td><td>Ser honesto com seus sentimentos</td></tr>
+    </table>
+    
+    <h3>A História de Noé — Alinhado com Deus</h3>
+    
+    <p>Noé vivia num mundo onde <strong>ninguém</strong> seguia a Deus. Mas Noé era diferente. A Bíblia diz que Noé <strong>andava com Deus</strong>.</p>
+    
+    <p>Quando Deus pediu para Noé construir uma arca gigante no meio do deserto, todo mundo riu dele. Mas Noé não se desalinhou. Ele continuou fazendo o que Deus pediu. E quando a chuva veio? Noé e sua família estavam seguros!</p>
+    
+    <div class="verse">
+      <em>"Noé era homem justo, íntegro entre o povo da sua época; Noé andava com Deus."</em>
+      <span class="reference">— Gênesis 6:9</span>
+    </div>
+    
+    <h3>Quando Ficamos Desalinhados</h3>
+    
+    <p>Às vezes, a gente fica desalinhado sem perceber:</p>
+    <p>• Você <strong>diz</strong> que é amigo, mas <strong>fala mal</strong> pelas costas. (Desalinhamento!)<br>
+    • Você <strong>promete</strong> arrumar o quarto, mas <strong>não arruma</strong>. (Desalinhamento!)<br>
+    • Você <strong>sabe</strong> que deveria orar, mas <strong>não ora</strong>. (Desalinhamento!)</p>
+    
+    <p>O bom é que Deus não espera que a gente seja perfeito. Ele espera que a gente seja <strong>honesto</strong> e <strong>tente de novo</strong> quando errar!</p>
+    
+    <div class="verse">
+      <em>"Confia no Senhor de todo o teu coração e não te apoies no teu próprio entendimento; reconhece-O em todos os teus caminhos, e Ele endireitará as tuas veredas."</em>
+      <span class="reference">— Provérbios 3:5-6</span>
+    </div>
+  </div>
+</div>
+
+<div class="page bg-warm-white">
+  <div class="page-content">
+    <div class="activity no-break">
+      <div class="activity-title">Atividade 5 — O Teste do Alinhamento</div>
+      <p>Para cada frase, marque como você está:</p>
+      <p><strong>Eu digo a verdade para meus pais:</strong></p>
+      <div class="checkbox-option">Sempre alinhado</div>
+      <div class="checkbox-option">Às vezes desalinhado</div>
+      <div class="checkbox-option">Preciso melhorar</div>
+      <p><strong>Eu trato meus amigos do jeito que quero ser tratado:</strong></p>
+      <div class="checkbox-option">Sempre alinhado</div>
+      <div class="checkbox-option">Às vezes desalinhado</div>
+      <div class="checkbox-option">Preciso melhorar</div>
+      <p><strong>Eu oro e converso com Deus:</strong></p>
+      <div class="checkbox-option">Sempre alinhado</div>
+      <div class="checkbox-option">Às vezes desalinhado</div>
+      <div class="checkbox-option">Preciso melhorar</div>
+      <p><strong>Eu cumpro o que prometo:</strong></p>
+      <div class="checkbox-option">Sempre alinhado</div>
+      <div class="checkbox-option">Às vezes desalinhado</div>
+      <div class="checkbox-option">Preciso melhorar</div>
+      <p>Minha área que mais precisa de alinhamento: <span class="write-line"></span></p>
+    </div>
+    
+    <div class="activity no-break">
+      <div class="activity-title">Atividade 6 — O Avião Alinhado</div>
+      <p>Desenhe um avião voando no céu. Nas duas asas e na cauda, escreva: Asa esquerda: <strong>Deus</strong>, Asa direita: <strong>Pessoas</strong>, Cauda: <strong>Eu mesmo</strong></p>
+      <div class="draw-space">Espaço para desenho ✈️</div>
+    </div>
+    
+    <div class="parent-box no-break">
+      <div class="parent-box-title">Para os Pais — Momento Juntos</div>
+      <p>Pergunte ao seu filho: "Em que área da sua vida você sente que as coisas não estão combinando?" Ajude-o a identificar desalinhamentos sem julgamento. O objetivo não é criar culpa, mas consciência. Orem juntos pedindo a Deus que alinhe o coração da família toda.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CAPÍTULO 4 — GOVERNO ===== -->
+<div class="page bg-light-green">
+  <div class="chapter-header">
+    <div class="chapter-number">4</div>
+    <h1 class="chapter-title">O Pilar G — Governo</h1>
+    <div class="chapter-subtitle">O Capitão do Navio</div>
+    <img class="chapter-image" src="pago-kids-ch4-ship.png" alt="Criança capitã do navio P.A.G.O.">
+  </div>
+</div>
+
+<div class="page bg-sand">
+  <div class="page-content">
+    <p>Imagine um navio enorme navegando no mar. Quem decide para onde o navio vai? O <strong>capitão</strong>! Se o capitão dormir no volante, o navio pode bater numa pedra e afundar!</p>
+    
+    <p>O <strong>Governo</strong> no P.A.G.O. é como ser o capitão do seu próprio navio. Deus te deu coisas para cuidar — seu tempo, seus estudos, seus brinquedos, suas emoções.</p>
+    
+    <div class="verse">
+      <em>"Melhor é o que governa o seu espírito do que o que toma uma cidade."</em>
+      <span class="reference">— Provérbios 16:32</span>
+    </div>
+    
+    <table>
+      <tr><th>O Que Governar</th><th>Como Governar</th><th>Exemplo</th></tr>
+      <tr><td><strong>Meu tempo</strong></td><td>Não desperdiçar</td><td>Hora de estudar, hora de brincar</td></tr>
+      <tr><td><strong>Minhas emoções</strong></td><td>Não explodir de raiva</td><td>Contar até 10 quando ficar bravo</td></tr>
+      <tr><td><strong>Meus estudos</strong></td><td>Fazer com capricho</td><td>Não deixar para última hora</td></tr>
+      <tr><td><strong>Minhas coisas</strong></td><td>Cuidar do que tenho</td><td>Guardar os brinquedos</td></tr>
+      <tr><td><strong>Minhas palavras</strong></td><td>Pensar antes de falar</td><td>Não falar o que machuca</td></tr>
+    </table>
+    
+    <h3>A História de José — O Jovem Governador</h3>
+    
+    <p>José aprendeu a governar desde cedo. Seus irmãos o venderam como escravo. Mas José não deixou a raiva governá-lo. Na casa de Potifar, governou tão bem que recebeu autoridade sobre tudo. Na prisão, governou tão bem que cuidou de todos os presos.</p>
+    
+    <p>No final, Deus colocou José para governar o <strong>Egito inteiro</strong>! Porque quem governa bem o pouco, recebe autoridade sobre o muito.</p>
+    
+    <div class="verse">
+      <em>"Quem é fiel no pouco também é fiel no muito."</em>
+      <span class="reference">— Lucas 16:10</span>
+    </div>
+    
+    <h3>O Termômetro das Emoções</h3>
+    
+    <p>Quando a raiva vier, você pode: 1) Respirar fundo (conta até 10!), 2) Falar com Deus, 3) Falar com um adulto de confiança, 4) Esperar antes de reagir. Isso é governo!</p>
+  </div>
+</div>
+
+<div class="page bg-warm-white">
+  <div class="page-content">
+    <div class="activity no-break">
+      <div class="activity-title">Atividade 7 — O Capitão do Meu Navio</div>
+      <p>Desenhe um navio no mar. Você é o capitão! No navio, escreva 3 coisas que você precisa governar melhor:</p>
+      <div class="draw-space">Espaço para desenho ⛵</div>
+      <p>1. <span class="write-line"></span></p>
+      <p>2. <span class="write-line"></span></p>
+      <p>3. <span class="write-line"></span></p>
+    </div>
+    
+    <div class="activity no-break">
+      <div class="activity-title">Atividade 8 — Minha Rotina de Governador</div>
+      <table>
+        <tr><th>Horário</th><th>O Que Fazer</th></tr>
+        <tr><td>Ao acordar</td><td><span class="write-line"></span></td></tr>
+        <tr><td>Antes da escola</td><td><span class="write-line"></span></td></tr>
+        <tr><td>Na escola</td><td><span class="write-line"></span></td></tr>
+        <tr><td>Depois da escola</td><td><span class="write-line"></span></td></tr>
+        <tr><td>À noite</td><td><span class="write-line"></span></td></tr>
+        <tr><td>Antes de dormir</td><td><span class="write-line"></span></td></tr>
+      </table>
+      <p><strong>Desafio:</strong> Siga essa rotina por 3 dias seguidos!</p>
+    </div>
+    
+    <div class="parent-box no-break">
+      <div class="parent-box-title">Para os Pais — Momento Juntos</div>
+      <p>Em vez de dizer "Arrume seu quarto!", experimente: "Você é o governador do seu quarto. Como um bom governador cuida do seu território?" Isso muda a perspectiva de obrigação para honra. Celebre cada dia que ele conseguir seguir a rotina.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CAPÍTULO 5 — OBEDIÊNCIA ===== -->
+<div class="page bg-light-purple">
+  <div class="chapter-header">
+    <div class="chapter-number">5</div>
+    <h1 class="chapter-title">O Pilar O — Obediência</h1>
+    <div class="chapter-subtitle">O Segredo dos Heróis de Deus</div>
+    <img class="chapter-image" src="pago-kids-ch5-david.png" alt="Davi enfrentando Golias">
+  </div>
+</div>
+
+<div class="page bg-sand">
+  <div class="page-content">
+    <p>Você sabe o que todos os heróis da Bíblia têm em comum? O segredo deles era um só: <strong>obediência</strong>. Eles ouviam a voz de Deus e faziam o que Ele pedia — mesmo quando era difícil.</p>
+    
+    <p><strong>Obediência</strong> é ouvir e fazer. Não é só ouvir. É <strong>fazer</strong>!</p>
+    
+    <div class="verse">
+      <em>"Se me amais, guardareis os meus mandamentos."</em>
+      <span class="reference">— João 14:15</span>
+    </div>
+    
+    <h3>Os Heróis da Obediência</h3>
+    
+    <table>
+      <tr><th>Herói</th><th>O Que Deus Pediu</th><th>O Que Aconteceu</th></tr>
+      <tr><td><strong>Abraão</strong></td><td>Sair da sua terra sem saber para onde</td><td>Pai de uma grande nação</td></tr>
+      <tr><td><strong>Moisés</strong></td><td>Falar com o Faraó</td><td>Deus abriu o Mar Vermelho</td></tr>
+      <tr><td><strong>Josué</strong></td><td>Marchar ao redor de Jericó</td><td>Os muros caíram!</td></tr>
+      <tr><td><strong>Davi</strong></td><td>Enfrentar o gigante Golias</td><td>Derrotou o gigante com uma pedra</td></tr>
+      <tr><td><strong>Maria</strong></td><td>Ser a mãe de Jesus</td><td>Deu à luz o Salvador do mundo</td></tr>
+    </table>
+    
+    <h3>Os Três Tipos de Obediência</h3>
+    
+    <p><strong>"Só Quando Eu Quero"</strong> — Você só obedece quando é fácil. "Mãe, eu arrumo... mas só se eu ganhar sorvete." Isso é negociação!</p>
+    
+    <p><strong>"Tá Bom, Mas Depois"</strong> — Você diz que vai fazer, mas fica adiando. Obediência atrasada é desobediência disfarçada!</p>
+    
+    <p><strong>Obediência de Verdade</strong> — Você ouve e faz. Sem negociar. Sem adiar. Essa é a obediência que Deus ama!</p>
+    
+    <div class="verse">
+      <em>"Eis que o obedecer é melhor do que o sacrificar."</em>
+      <span class="reference">— 1 Samuel 15:22</span>
+    </div>
+    
+    <h3>Obedecer aos Pais É Obedecer a Deus</h3>
+    
+    <div class="verse">
+      <em>"Filhos, obedeçam a seus pais no Senhor, pois isso é justo. Honra teu pai e tua mãe — este é o primeiro mandamento com promessa."</em>
+      <span class="reference">— Efésios 6:1-3</span>
+    </div>
+  </div>
+</div>
+
+<div class="page bg-warm-white">
+  <div class="page-content">
+    <div class="activity no-break">
+      <div class="activity-title">Atividade 9 — O Ranking da Obediência</div>
+      <p><strong>Quando mamãe/papai pede para arrumar o quarto:</strong></p>
+      <div class="checkbox-option">Faço na hora!</div>
+      <div class="checkbox-option">Demoro um pouquinho</div>
+      <div class="checkbox-option">Preciso que peçam várias vezes</div>
+      <p><strong>Quando a professora passa dever de casa:</strong></p>
+      <div class="checkbox-option">Faço com capricho!</div>
+      <div class="checkbox-option">Faço correndo</div>
+      <div class="checkbox-option">Às vezes esqueço</div>
+      <p><strong>Quando preciso parar de jogar para jantar:</strong></p>
+      <div class="checkbox-option">Paro na hora!</div>
+      <div class="checkbox-option">Peço mais 5 minutos</div>
+      <div class="checkbox-option">Fico reclamando</div>
+      <p>Minha nota de obediência (1 a 10): <span class="write-line"></span></p>
+    </div>
+    
+    <div class="activity no-break">
+      <div class="activity-title">Atividade 10 — Carta para Deus</div>
+      <p>Escreva uma cartinha para Deus dizendo que você quer ser obediente:</p>
+      <p>Querido Deus,</p>
+      <p><span class="write-line"></span></p>
+      <p><span class="write-line"></span></p>
+      <p><span class="write-line"></span></p>
+      <p><span class="write-line"></span></p>
+      <p>Com amor,</p>
+      <p><span class="write-line"></span></p>
+    </div>
+    
+    <div class="parent-box no-break">
+      <div class="parent-box-title">Para os Pais — Momento Juntos</div>
+      <p>A chave é mostrar que obediência não é submissão cega — é <strong>confiança</strong>. Pergunte: "Você confia em mim? Então quando eu peço algo, é porque eu sei o que é melhor para você." Compartilhe um momento em que você obedeceu a Deus sem entender e viu o resultado positivo depois.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CAPÍTULO 6 — OS 4 PILARES JUNTOS ===== -->
+<div class="page bg-light-gold">
+  <div class="chapter-header">
+    <div class="chapter-number">6</div>
+    <h1 class="chapter-title">Os 4 Pilares Juntos</h1>
+    <div class="chapter-subtitle">Construindo Minha Casa Forte</div>
+    <img class="chapter-image" src="pago-kids-ch6-house.png" alt="Casa P.A.G.O. completa com os 4 pilares">
+  </div>
+</div>
+
+<div class="page bg-sand">
+  <div class="page-content">
+    <p>Parabéns, pequeno construtor! Você já conhece os <strong>quatro blocos</strong> da casa mais forte do mundo:</p>
+    
+    <table>
+      <tr><th>Bloco</th><th>O Que É</th><th>Resumo</th></tr>
+      <tr><td><strong>P — Princípio</strong></td><td>O alicerce</td><td>As verdades de Deus que nunca mudam</td></tr>
+      <tr><td><strong>A — Alinhamento</strong></td><td>As paredes</td><td>Pensar, falar e fazer na mesma direção</td></tr>
+      <tr><td><strong>G — Governo</strong></td><td>O telhado</td><td>Cuidar bem de tudo que Deus te deu</td></tr>
+      <tr><td><strong>O — Obediência</strong></td><td>A porta</td><td>Ouvir e fazer o que Deus pede</td></tr>
+    </table>
+    
+    <p>Agora é hora de juntar tudo! Porque uma casa sem alicerce cai. Uma casa sem paredes não protege. Uma casa sem telhado não abriga. E uma casa sem porta não deixa ninguém entrar.</p>
+    
+    <p>Mas quando os quatro blocos estão juntos? Aí sim, a casa é <strong>forte</strong>, <strong>bonita</strong> e <strong>segura</strong>!</p>
+    
+    <div class="verse">
+      <em>"Pela sabedoria se constrói a casa, e pelo entendimento ela se firma; pelo conhecimento os seus cômodos se enchem de toda riqueza preciosa e agradável."</em>
+      <span class="reference">— Provérbios 24:3-4</span>
+    </div>
+    
+    <h3>O Teste dos 4 Pilares</h3>
+    
+    <p>Vamos ver como cada pilar funciona junto com os outros:</p>
+    
+    <p><strong>Situação:</strong> Seu amigo quer que você minta para a professora.</p>
+    <p>• <strong>P (Princípio):</strong> Mentir é errado — meu alicerce diz NÃO.<br>
+    • <strong>A (Alinhamento):</strong> Eu digo a verdade e faço a verdade — estou alinhado.<br>
+    • <strong>G (Governo):</strong> Eu governo minha boca — não vou mentir.<br>
+    • <strong>O (Obediência):</strong> Eu obedeço a Deus, mesmo que meu amigo fique bravo.</p>
+    
+    <p><strong>Resultado:</strong> Sua casa fica de pé! Você é um construtor sábio!</p>
+    
+    <div class="activity no-break">
+      <div class="activity-title">Atividade 11 — Minha Casa Completa</div>
+      <p>Desenhe sua casa P.A.G.O. completa! Não esqueça de colocar:</p>
+      <p>• O <strong>alicerce</strong> (Princípio) — escreva um princípio que você segue<br>
+      • As <strong>paredes</strong> (Alinhamento) — escreva algo que você fala E faz<br>
+      • O <strong>telhado</strong> (Governo) — escreva algo que você governa bem<br>
+      • A <strong>porta</strong> (Obediência) — escreva algo que você obedece com alegria</p>
+      <div class="draw-space">Espaço para desenho 🏠</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CAPÍTULO 7 — DESAFIO 7 DIAS ===== -->
+<div class="page bg-light-coral">
+  <div class="chapter-header">
+    <div class="chapter-number">7</div>
+    <h1 class="chapter-title">Desafio de 7 Dias</h1>
+    <div class="chapter-subtitle">Missão P.A.G.O. Kids</div>
+    <img class="chapter-image" src="pago-kids-ch7-mission.png" alt="Mapa da Missão P.A.G.O. Kids de 7 dias">
+  </div>
+</div>
+
+<div class="page bg-sand">
+  <div class="page-content">
+    <p>Chegou a hora da <strong>Missão P.A.G.O. Kids</strong>! Durante 7 dias, você vai praticar tudo o que aprendeu. Cada dia tem uma missão especial. Peça ajuda dos seus pais e, no final de cada dia, marque se você completou a missão!</p>
+    
+    <div class="mission-day day-p no-break">
+      <div class="mission-day-title">Dia 1 — Missão Princípio 📖</div>
+      <p><strong>Missão:</strong> Leia um versículo da Bíblia com seus pais e escreva o que você entendeu.</p>
+      <p>Versículo que li: <span class="write-line"></span></p>
+      <p>O que eu entendi: <span class="write-line"></span></p>
+    </div>
+    
+    <div class="mission-day day-a no-break">
+      <div class="mission-day-title">Dia 2 — Missão Alinhamento 🤝</div>
+      <p><strong>Missão:</strong> Faça algo gentil por alguém sem que ninguém peça.</p>
+      <p>O que eu fiz: <span class="write-line"></span></p>
+      <p>Como a pessoa reagiu: <span class="write-line"></span></p>
+    </div>
+    
+    <div class="mission-day day-g no-break">
+      <div class="mission-day-title">Dia 3 — Missão Governo 🧹</div>
+      <p><strong>Missão:</strong> Organize seu quarto ou espaço de estudos sem que ninguém peça.</p>
+      <p>O que eu organizei: <span class="write-line"></span></p>
+      <p>Como ficou: <span class="write-line"></span></p>
+    </div>
+    
+    <div class="mission-day day-o no-break">
+      <div class="mission-day-title">Dia 4 — Missão Obediência ✅</div>
+      <p><strong>Missão:</strong> Obedeça seus pais na primeira vez que pedirem algo, sem reclamar.</p>
+      <p>O que me pediram: <span class="write-line"></span></p>
+      <p>Obedeci na hora? <span class="write-line"></span></p>
+    </div>
+  </div>
+</div>
+
+<div class="page bg-warm-white">
+  <div class="page-content">
+    <div class="mission-day day-pa no-break">
+      <div class="mission-day-title">Dia 5 — Missão Generosidade 🎁</div>
+      <p><strong>Missão:</strong> Dê algo seu para alguém que precisa (pode ser um brinquedo, um lanche, um abraço).</p>
+      <p>O que eu dei: <span class="write-line"></span></p>
+      <p>Para quem: <span class="write-line"></span></p>
+    </div>
+    
+    <div class="mission-day day-go no-break">
+      <div class="mission-day-title">Dia 6 — Missão Oração 🙏</div>
+      <p><strong>Missão:</strong> Ore por 3 pessoas (pode ser amigo, professor, familiar).</p>
+      <p>Orei por: 1. <span class="write-line"></span></p>
+      <p>2. <span class="write-line"></span></p>
+      <p>3. <span class="write-line"></span></p>
+    </div>
+    
+    <div class="mission-day day-pago no-break">
+      <div class="mission-day-title">Dia 7 — Missão P.A.G.O. Completa! 🏆</div>
+      <p><strong>Missão:</strong> Pratique os 4 pilares num só dia! Leia a Bíblia (P), seja gentil (A), organize algo (G), obedeça com alegria (O).</p>
+      <p>Meu Princípio de hoje: <span class="write-line"></span></p>
+      <p>Meu Alinhamento de hoje: <span class="write-line"></span></p>
+      <p>Meu Governo de hoje: <span class="write-line"></span></p>
+      <p>Minha Obediência de hoje: <span class="write-line"></span></p>
+    </div>
+    
+    <div class="parent-box no-break">
+      <div class="parent-box-title">Para os Pais — Celebração!</div>
+      <p>Ao final dos 7 dias, celebrem juntos! Pode ser um sorvete, um passeio especial, ou simplesmente um abraço apertado com as palavras: "Estou orgulhoso de você, pequeno construtor!" A celebração marca na memória da criança que viver os princípios de Deus traz alegria.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CAPÍTULO 8 — DECLARAÇÃO ===== -->
+<div class="page bg-navy">
+  <div class="page-content" style="padding-top: 70px;">
+    <h2 class="text-center" style="color: var(--gold); margin-bottom: 30px;">Minha Declaração P.A.G.O.</h2>
+    
+    <div class="declaration">
+      <p style="font-size: 1.1rem;"><strong>Eu, ________________________________,</strong></p>
+      <p>declaro que sou um <strong>Pequeno Construtor</strong> de Deus.</p>
+      <p>Eu construo minha vida sobre a <strong>Rocha</strong>, que é a Palavra de Deus.</p>
+      <p>Meu <strong>Princípio</strong> é inegociável — eu sigo a verdade de Deus.</p>
+      <p>Meu <strong>Alinhamento</strong> é verdadeiro — o que eu penso, falo e faço andam juntos.</p>
+      <p>Meu <strong>Governo</strong> é responsável — eu cuido bem de tudo que Deus me deu.</p>
+      <p>Minha <strong>Obediência</strong> é de coração — eu ouço e faço o que Deus pede.</p>
+      <p style="margin-top: 25px;">Eu sou <strong>P.A.G.O.</strong> — e minha casa está sobre a Rocha!</p>
+      <p style="margin-top: 30px;">Assinatura: <span class="sign-line"></span></p>
+      <p>Data: <span class="sign-line"></span></p>
+    </div>
+    
+    <div class="verse" style="background: rgba(255,255,255,0.1); border-left-color: var(--gold);">
+      <em style="color: white;">"Ensina a criança no caminho em que deve andar, e, ainda quando for velho, não se desviará dele."</em>
+      <span class="reference" style="color: var(--gold);">— Provérbios 22:6</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GLOSSÁRIO ===== -->
+<div class="page bg-light-blue">
+  <div class="page-content">
+    <h2 class="text-center mb-2">Glossário para Pequenos Construtores</h2>
+    
+    <div class="glossary-item no-break">
+      <div class="glossary-word">Alicerce</div>
+      <div class="glossary-def">A parte mais forte da casa, que fica embaixo de tudo e segura tudo em cima. Na vida, é a base que sustenta quem somos.</div>
+    </div>
+    <div class="glossary-item no-break">
+      <div class="glossary-word">Alinhamento</div>
+      <div class="glossary-def">Quando tudo está na mesma direção. Na vida, é quando o que pensamos, falamos e fazemos combinam.</div>
+    </div>
+    <div class="glossary-item no-break">
+      <div class="glossary-word">Caráter</div>
+      <div class="glossary-def">Quem você é quando ninguém está olhando. É o seu "eu de verdade".</div>
+    </div>
+    <div class="glossary-item no-break">
+      <div class="glossary-word">Fidelidade</div>
+      <div class="glossary-def">Cumprir o que prometeu. Ser fiel é ser alguém em quem as pessoas podem confiar.</div>
+    </div>
+    <div class="glossary-item no-break">
+      <div class="glossary-word">Governo</div>
+      <div class="glossary-def">Cuidar bem de algo. Governar é ser responsável pelo que Deus te deu.</div>
+    </div>
+    <div class="glossary-item no-break">
+      <div class="glossary-word">Inegociável</div>
+      <div class="glossary-def">Algo que não está à venda, não se troca. Os princípios de Deus são inegociáveis.</div>
+    </div>
+    <div class="glossary-item no-break">
+      <div class="glossary-word">Integridade</div>
+      <div class="glossary-def">Ser inteiro, completo. Não ser uma pessoa na igreja e outra na escola.</div>
+    </div>
+    <div class="glossary-item no-break">
+      <div class="glossary-word">Obediência</div>
+      <div class="glossary-def">Ouvir e fazer. Não é só ouvir — é fazer o que Deus e os pais pedem.</div>
+    </div>
+    <div class="glossary-item no-break">
+      <div class="glossary-word">Princípio</div>
+      <div class="glossary-def">Uma verdade de Deus que nunca muda. É como a lei da gravidade — funciona sempre.</div>
+    </div>
+    <div class="glossary-item no-break">
+      <div class="glossary-word">Sabedoria</div>
+      <div class="glossary-def">Saber fazer a coisa certa, na hora certa, do jeito certo. Vem de Deus!</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VERSÍCULOS ===== -->
+<div class="page bg-light-gold">
+  <div class="page-content">
+    <h2 class="text-center mb-2">Versículos para Decorar</h2>
+    
+    <div class="verse no-break">
+      <em>"Portanto, todo aquele que ouve estas minhas palavras e as pratica é como um homem prudente que construiu a sua casa sobre a rocha."</em>
+      <span class="reference">— Mateus 7:24</span>
+    </div>
+    <div class="verse no-break">
+      <em>"O temor do Senhor é o princípio da sabedoria."</em>
+      <span class="reference">— Provérbios 9:10</span>
+    </div>
+    <div class="verse no-break">
+      <em>"Mas Daniel decidiu no seu coração que não se contaminaria."</em>
+      <span class="reference">— Daniel 1:8</span>
+    </div>
+    <div class="verse no-break">
+      <em>"Andarão dois juntos, se não estiverem de acordo?"</em>
+      <span class="reference">— Amós 3:3</span>
+    </div>
+    <div class="verse no-break">
+      <em>"Confia no Senhor de todo o teu coração e não te apoies no teu próprio entendimento."</em>
+      <span class="reference">— Provérbios 3:5-6</span>
+    </div>
+    <div class="verse no-break">
+      <em>"Melhor é o que governa o seu espírito do que o que toma uma cidade."</em>
+      <span class="reference">— Provérbios 16:32</span>
+    </div>
+    <div class="verse no-break">
+      <em>"Quem é fiel no pouco também é fiel no muito."</em>
+      <span class="reference">— Lucas 16:10</span>
+    </div>
+    <div class="verse no-break">
+      <em>"Se me amais, guardareis os meus mandamentos."</em>
+      <span class="reference">— João 14:15</span>
+    </div>
+    <div class="verse no-break">
+      <em>"Eis que o obedecer é melhor do que o sacrificar."</em>
+      <span class="reference">— 1 Samuel 15:22</span>
+    </div>
+    <div class="verse no-break">
+      <em>"Filhos, obedeçam a seus pais no Senhor, pois isso é justo."</em>
+      <span class="reference">— Efésios 6:1</span>
+    </div>
+    <div class="verse no-break">
+      <em>"Ensina a criança no caminho em que deve andar, e, ainda quando for velho, não se desviará dele."</em>
+      <span class="reference">— Provérbios 22:6</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONTRACAPA ===== -->
+<div class="page back-cover">
+  <img src="pago-kids-backcover.png" alt="P.A.G.O. Kids — Contracapa">
+</div>
+
+</body>
+</html>
