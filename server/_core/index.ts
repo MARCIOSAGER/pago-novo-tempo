@@ -57,7 +57,9 @@ async function startServer() {
     })
   );
   // ─── Ebook Download Routes (serve from local docs/ folder) ──
-  const docsDir = path.resolve(import.meta.dirname, "..", "..", "docs");
+  const docsDir = process.env.NODE_ENV === "development"
+    ? path.resolve(import.meta.dirname, "../..", "docs")
+    : path.resolve(import.meta.dirname, "..", "docs");
   const ebookFiles: Record<string, { filepath: string; filename: string }> = {
     "ebook-pdf": { filepath: path.join(docsDir, "ebook-pago-v2.pdf"), filename: "PAGO-Ebook-v2.pdf" },
     "ebook-pdf-grafica": { filepath: path.join(docsDir, "ebook-pago-v2-grafica.pdf"), filename: "PAGO-Ebook-v1-Grafica.pdf" },

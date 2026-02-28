@@ -8,7 +8,7 @@ global.fetch = mockFetch;
 vi.mock("./_core/env", () => ({
   ENV: {
     cookieSecret: "test-secret",
-    databaseUrl: "mysql://test",
+    databaseUrl: "postgresql://test:test@localhost:5432/test",
     isProduction: false,
     googleClientId: "test-google-id",
     googleClientSecret: "test-google-secret",
