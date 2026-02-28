@@ -97,11 +97,15 @@ async function fetchUmami(path: string) {
     throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Analytics endpoint not configured." });
   }
   const url = `${endpoint}${path}`;
-  const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
-  });
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  // Authenticate with Forge API key (required by Manus analytics proxy)
+  if (ENV.forgeApiKey) {
+    headers["Authorization"] = `Bearer ${ENV.forgeApiKey}`;
+  }
+  const res = await fetch(url, { headers });
   if (!res.ok) {
-    console.error(`[Analytics] Umami API error: ${res.status} ${res.statusText}`);
+    const body = await res.text().catch(() => "");
+    console.error(`[Analytics] Umami API error: ${res.status} ${res.statusText} — ${body}`);
     throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erro ao buscar dados de analytics." });
   }
   return res.json();

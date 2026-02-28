@@ -128,3 +128,8 @@
 - [x] Criar página Admin "P.A.G.O. Kids" para gerenciar conteúdo da seção Kids
 - [x] Adicionar traduções i18n (PT, EN, ES) para a nova seção Kids
 - [x] Integrar navegação da nova página Admin no DashboardLayout
+- [ ] Fix: Página de Análises (Analytics) não carrega dados — "Erro ao carregar analytics"
+- [x] SEO: Corrigir título da página (21 chars → 52 chars: "P.A.G.O. — Sistema de Reorganização de Vida | Novo Tempo")
+- [x] SEO: Adicionar palavras-chave (meta keywords) — 14 termos relevantes
+- [x] SEO: Corrigir 4 imagens sem texto alternativo (alt) — hero bg, CTA bg, kids builders, kids house
+- [x] Fix: Erros TypeScript em Markdown.tsx (plugins prop), AIChatBox.tsx (UIMessagePart generics, mode prop), ComponentShowcase.tsx (height prop) — 0 erros TS

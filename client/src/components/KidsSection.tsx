@@ -102,7 +102,7 @@ export default function KidsSection() {
               {/* Floating illustration — builders */}
               <motion.img
                 src={KIDS_BUILDERS_URL}
-                alt=""
+                alt="P.A.G.O. Kids Capítulo 1 - Crianças construtoras aprendendo princípios bíblicos"
                 className="absolute -left-4 top-8 w-28 h-28 rounded-xl shadow-lg object-cover border-4 border-white z-0 hidden lg:block"
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -111,7 +111,7 @@ export default function KidsSection() {
               {/* Floating illustration — house */}
               <motion.img
                 src={KIDS_HOUSE_URL}
-                alt=""
+                alt="P.A.G.O. Kids Capítulo 6 - Casa construída sobre a rocha simbolizando obediência"
                 className="absolute -right-4 bottom-8 w-24 h-24 rounded-xl shadow-lg object-cover border-4 border-white z-0 hidden lg:block"
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}

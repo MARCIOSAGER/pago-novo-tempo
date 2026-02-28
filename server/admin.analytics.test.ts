@@ -88,7 +88,7 @@ describe("Analytics Routes — fetchUmami helper", () => {
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining("/api/websites/test-website-id/stats"),
       expect.objectContaining({
-        headers: { "Content-Type": "application/json" },
+        headers: expect.objectContaining({ "Content-Type": "application/json" }),
       })
     );
     expect(result).toEqual(mockStats);
