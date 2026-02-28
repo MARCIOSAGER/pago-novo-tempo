@@ -9,6 +9,9 @@ import {
   files,
   InsertFileRecord,
   FileRecord,
+  downloads,
+  DownloadRecord,
+  InsertDownloadRecord,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -275,4 +278,67 @@ export async function deleteFileRecord(id: number): Promise<void> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(files).where(eq(files.id, id));
+}
+
+// ─── Download Management Helpers ──────────────────────────────────────
+
+export async function listDownloads(category?: string): Promise<DownloadRecord[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  if (category) {
+    return db
+      .select()
+      .from(downloads)
+      .where(and(eq(downloads.category, category), eq(downloads.active, "yes")))
+      .orderBy(downloads.sortOrder);
+  }
+  return db.select().from(downloads).orderBy(downloads.category, downloads.sortOrder);
+}
+
+export async function listAllDownloads(): Promise<DownloadRecord[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.select().from(downloads).orderBy(downloads.category, downloads.sortOrder);
+}
+
+export async function getDownloadBySlug(slug: string): Promise<DownloadRecord | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(downloads).where(eq(downloads.slug, slug)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getDownloadById(id: number): Promise<DownloadRecord | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(downloads).where(eq(downloads.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createDownload(data: InsertDownloadRecord): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(downloads).values(data);
+}
+
+export async function updateDownload(
+  id: number,
+  data: Partial<Omit<InsertDownloadRecord, "id">>
+): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(downloads).set(data).where(eq(downloads.id, id));
+}
+
+export async function deleteDownload(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(downloads).where(eq(downloads.id, id));
+}
+
+export async function getDownloadCount(): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.select({ total: count() }).from(downloads);
+  return result.total;
 }

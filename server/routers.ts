@@ -17,6 +17,14 @@ import {
   listFiles,
   getFileById,
   deleteFileRecord,
+  listDownloads,
+  listAllDownloads,
+  getDownloadBySlug,
+  getDownloadById,
+  createDownload,
+  updateDownload,
+  deleteDownload,
+  getDownloadCount,
 } from "./db";
 import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
@@ -332,21 +340,214 @@ export const appRouter = router({
       }),
   }),
 
-  // ─── Ebook Downloads ───────────────────────────────────────
+  // ─── Downloads Management ───────────────────────────────────
   downloads: router({
-    // Public: get download links for all ebook formats
-    getLinks: publicProcedure.query(() => {
-      return {
-        pdf: "/api/downloads/ebook-pdf",
-        pdfGrafica: "/api/downloads/ebook-pdf-grafica",
-        epub: "/api/downloads/ebook-epub",
-        mobi: "/api/downloads/ebook-mobi",
-        flipbook: "/api/downloads/ebook-flipbook",
-        html: "/api/downloads/ebook-html",
-        version: "2.0",
-        updatedAt: "2025-02-27",
-      };
+    // Public: list active downloads by category
+    listByCategory: publicProcedure
+      .input(z.object({ category: z.string().max(64).optional() }))
+      .query(async ({ input }) => {
+        return listDownloads(input.category);
+      }),
+
+    // Public: get single download by slug
+    getBySlug: publicProcedure
+      .input(z.object({ slug: z.string().max(128) }))
+      .query(async ({ input }) => {
+        const dl = await getDownloadBySlug(input.slug);
+        if (!dl) throw new TRPCError({ code: "NOT_FOUND", message: "Download não encontrado." });
+        return dl;
+      }),
+
+    // Admin: list all downloads (including inactive)
+    listAll: adminProcedure.query(async () => {
+      return listAllDownloads();
     }),
+
+    // Admin: get total count
+    count: adminProcedure.query(async () => {
+      return { total: await getDownloadCount() };
+    }),
+
+    // Admin: create a new download entry
+    create: adminProcedure
+      .input(
+        z.object({
+          slug: z.string().min(1).max(128).regex(/^[a-z0-9-]+$/, "Slug deve conter apenas letras minúsculas, números e hífens"),
+          title: z.string().min(1).max(255),
+          description: z.string().max(1000).optional().nullable(),
+          format: z.string().min(1).max(32),
+          fileSize: z.string().max(32).optional().nullable(),
+          url: z.string().url().max(2048),
+          filename: z.string().min(1).max(255),
+          category: z.string().min(1).max(64),
+          badge: z.string().max(64).optional().nullable(),
+          badgeVariant: z.string().max(32).optional().nullable(),
+          sortOrder: z.number().int().min(0).default(0),
+          active: z.enum(["yes", "no"]).default("yes"),
+        })
+      )
+      .mutation(async ({ input }) => {
+        // Check slug uniqueness
+        const existing = await getDownloadBySlug(input.slug);
+        if (existing) {
+          throw new TRPCError({ code: "CONFLICT", message: "Slug já existe. Escolha outro identificador." });
+        }
+        await createDownload(input);
+        return { success: true };
+      }),
+
+    // Admin: update a download entry
+    update: adminProcedure
+      .input(
+        z.object({
+          id: z.number().int().positive(),
+          slug: z.string().min(1).max(128).regex(/^[a-z0-9-]+$/).optional(),
+          title: z.string().min(1).max(255).optional(),
+          description: z.string().max(1000).optional().nullable(),
+          format: z.string().min(1).max(32).optional(),
+          fileSize: z.string().max(32).optional().nullable(),
+          url: z.string().url().max(2048).optional(),
+          filename: z.string().min(1).max(255).optional(),
+          category: z.string().min(1).max(64).optional(),
+          badge: z.string().max(64).optional().nullable(),
+          badgeVariant: z.string().max(32).optional().nullable(),
+          sortOrder: z.number().int().min(0).optional(),
+          active: z.enum(["yes", "no"]).optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        const existing = await getDownloadById(id);
+        if (!existing) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Download não encontrado." });
+        }
+        // Check slug uniqueness if changing slug
+        if (data.slug && data.slug !== existing.slug) {
+          const slugExists = await getDownloadBySlug(data.slug);
+          if (slugExists) {
+            throw new TRPCError({ code: "CONFLICT", message: "Slug já existe. Escolha outro identificador." });
+          }
+        }
+        await updateDownload(id, data);
+        return { success: true };
+      }),
+
+    // Admin: delete a download entry
+    delete: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input }) => {
+        const existing = await getDownloadById(input.id);
+        if (!existing) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Download não encontrado." });
+        }
+        await deleteDownload(input.id);
+        return { success: true };
+      }),
+
+    // Admin: upload file to S3 and create download entry
+    uploadAndCreate: adminProcedure
+      .input(
+        z.object({
+          slug: z.string().min(1).max(128).regex(/^[a-z0-9-]+$/, "Slug deve conter apenas letras minúsculas, números e hífens"),
+          title: z.string().min(1).max(255),
+          description: z.string().max(1000).optional().nullable(),
+          format: z.string().min(1).max(32),
+          category: z.string().min(1).max(64),
+          badge: z.string().max(64).optional().nullable(),
+          badgeVariant: z.string().max(32).optional().nullable(),
+          sortOrder: z.number().int().min(0).default(0),
+          // File data
+          filename: z.string().min(1).max(255),
+          mimeType: z.string().min(1).max(128),
+          size: z.number().int().positive().max(100 * 1024 * 1024), // 100MB max
+          data: z.string(), // base64 encoded
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        // Check slug uniqueness
+        const existing = await getDownloadBySlug(input.slug);
+        if (existing) {
+          throw new TRPCError({ code: "CONFLICT", message: "Slug já existe. Escolha outro identificador." });
+        }
+
+        // Validate file
+        const validation = validateFileUpload(input.filename, input.mimeType, input.size);
+        if (!validation.valid) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: validation.error || "Arquivo inválido." });
+        }
+
+        // Upload to S3
+        const suffix = nanoid(12);
+        const safeFilename = input.filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const fileKey = `pago-downloads/${input.category}/${suffix}-${safeFilename}`;
+        const buffer = Buffer.from(input.data, "base64");
+        const { url } = await storagePut(fileKey, buffer, input.mimeType);
+
+        // Format file size
+        const fileSizeStr = input.size >= 1024 * 1024
+          ? `${(input.size / (1024 * 1024)).toFixed(1)} MB`
+          : `${(input.size / 1024).toFixed(0)} KB`;
+
+        // Create download record
+        await createDownload({
+          slug: input.slug,
+          title: input.title,
+          description: input.description ?? null,
+          format: input.format,
+          fileSize: fileSizeStr,
+          url,
+          filename: input.filename,
+          category: input.category,
+          badge: input.badge ?? null,
+          badgeVariant: input.badgeVariant ?? null,
+          sortOrder: input.sortOrder,
+        });
+
+        return { success: true, url, fileKey };
+      }),
+
+    // Admin: replace file for existing download (upload new file to S3)
+    replaceFile: adminProcedure
+      .input(
+        z.object({
+          id: z.number().int().positive(),
+          filename: z.string().min(1).max(255),
+          mimeType: z.string().min(1).max(128),
+          size: z.number().int().positive().max(100 * 1024 * 1024),
+          data: z.string(), // base64 encoded
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const existing = await getDownloadById(input.id);
+        if (!existing) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Download não encontrado." });
+        }
+
+        const validation = validateFileUpload(input.filename, input.mimeType, input.size);
+        if (!validation.valid) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: validation.error || "Arquivo inválido." });
+        }
+
+        // Upload new file to S3
+        const suffix = nanoid(12);
+        const safeFilename = input.filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const fileKey = `pago-downloads/${existing.category}/${suffix}-${safeFilename}`;
+        const buffer = Buffer.from(input.data, "base64");
+        const { url } = await storagePut(fileKey, buffer, input.mimeType);
+
+        const fileSizeStr = input.size >= 1024 * 1024
+          ? `${(input.size / (1024 * 1024)).toFixed(1)} MB`
+          : `${(input.size / 1024).toFixed(0)} KB`;
+
+        // Update download record with new file
+        await updateDownload(input.id, {
+          url,
+          filename: input.filename,
+          fileSize: fileSizeStr,
+        });
+
+        return { success: true, url };
+      }),
   }),
 
 });

@@ -136,3 +136,11 @@
 - [x] Fix: Analytics 401 Unauthorized — página reescrita sem chamadas à API Umami, com link direto ao painel
 - [x] Atualizar página Analytics: removidas chamadas com erro 401, página informativa com link para painel Umami
 - [x] Remover página de Análises (Analytics) do admin — página, rota, link na sidebar e rotas backend removidos
+- [x] Substituir PDF do P.A.G.O. Kids pelo novo PDF enviado pelo usuário (P.A.G.O. Kids - Uma Aventura de Fé) — 14 MB, 12 págs
+- [x] Criar tabela 'downloads' no banco de dados (slug, título, descrição, formato, tamanho, URL S3, categoria, badge, ordem, ativo)
+- [x] Criar procedures tRPC para CRUD de downloads (listar, criar, editar, excluir, reordenar)
+- [x] Criar endpoint de upload de arquivos para S3 no backend (uploadAndCreate + replaceFile)
+- [x] Reescrever página AdminDownloads com gerenciamento completo: upload, edição, exclusão, reordenação
+- [x] Atualizar rota /api/downloads/:slug para buscar do banco ao invés de hardcoded
+- [x] KidsSection e KitSection já usam /api/downloads/:slug que agora busca do banco
+- [x] Migrar downloads hardcoded existentes para o banco de dados (7 ebooks + 1 kids)

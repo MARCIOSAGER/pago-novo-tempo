@@ -64,3 +64,39 @@ export const files = mysqlTable("files", {
 
 export type FileRecord = typeof files.$inferSelect;
 export type InsertFileRecord = typeof files.$inferInsert;
+
+/**
+ * Downloads — managed download links for ebooks and materials.
+ */
+export const downloads = mysqlTable("downloads", {
+  id: int("id").autoincrement().primaryKey(),
+  /** URL-friendly identifier (e.g., "ebook-pdf", "ebook-kids-pdf") */
+  slug: varchar("slug", { length: 128 }).notNull().unique(),
+  /** Display title */
+  title: varchar("title", { length: 255 }).notNull(),
+  /** Short description */
+  description: text("description"),
+  /** File format label (e.g., PDF, EPUB, MOBI, HTML5) */
+  format: varchar("format", { length: 32 }).notNull(),
+  /** Human-readable file size (e.g., "14 MB") */
+  fileSize: varchar("fileSize", { length: 32 }),
+  /** The actual download URL (S3 or CDN) */
+  url: text("url").notNull(),
+  /** Download filename sent to the browser */
+  filename: varchar("filename", { length: 255 }).notNull(),
+  /** Category grouping (e.g., "ebook", "kids", "material") */
+  category: varchar("category", { length: 64 }).notNull().default("ebook"),
+  /** Optional badge text (e.g., "Recomendado", "Novo") */
+  badge: varchar("badge", { length: 64 }),
+  /** Badge variant for styling */
+  badgeVariant: varchar("badgeVariant", { length: 32 }),
+  /** Sort order within category */
+  sortOrder: int("sortOrder").notNull().default(0),
+  /** Whether this download is active/visible */
+  active: mysqlEnum("active", ["yes", "no"]).default("yes").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DownloadRecord = typeof downloads.$inferSelect;
+export type InsertDownloadRecord = typeof downloads.$inferInsert;
