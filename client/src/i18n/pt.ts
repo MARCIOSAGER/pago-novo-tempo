@@ -198,6 +198,7 @@ const pt = {
     ],
     ctaDownload: "Baixar Ebook Grátis",
     ctaPreview: "Ver Prévia",
+    ctaCertificate: "Certificado",
     badge: "Novo",
     ageRange: "6 a 12 anos",
     pages: "39 páginas",

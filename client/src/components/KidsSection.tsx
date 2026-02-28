@@ -1,6 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { BookOpen, Palette, Calendar, Heart, Download, Eye, Star, Users } from "lucide-react";
+import { BookOpen, Palette, Calendar, Heart, Download, Eye, Star, Users, Award } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const KIDS_COVER_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-cover-YXFafqXyCNBnqLPKUrfJyB.png";
@@ -193,6 +193,15 @@ export default function KidsSection() {
                 >
                   <Eye className="w-4 h-4" />
                   {t.kids.ctaPreview}
+                </a>
+                <a
+                  href="/api/downloads/certificado-kids"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#FFD166]/20 text-[#E6A800] font-accent text-sm uppercase tracking-[0.15em] rounded-xl hover:bg-[#FFD166]/30 transition-all duration-300 border border-[#FFD166]/40"
+                >
+                  <Award className="w-4 h-4" />
+                  {t.kids.ctaCertificate}
                 </a>
               </div>
             </FadeIn>

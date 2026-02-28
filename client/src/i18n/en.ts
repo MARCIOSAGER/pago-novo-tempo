@@ -200,6 +200,7 @@ const en: Translations = {
     ],
     ctaDownload: "Download Free Ebook",
     ctaPreview: "Preview",
+    ctaCertificate: "Certificate",
     badge: "New",
     ageRange: "Ages 6 to 12",
     pages: "39 pages",
