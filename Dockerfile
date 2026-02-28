@@ -29,10 +29,11 @@ RUN corepack enable && corepack prepare pnpm@10.4.1 --activate
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
-COPY patches/ ./patches/
-
-RUN pnpm install --frozen-lockfile --prod
+# Copy ALL node_modules from deps stage (esbuild externalizes npm packages
+# but bundles relative imports like vite.config — so dev deps like vite,
+# @builder.io/vite-plugin-jsx-loc etc. must be available at runtime)
+COPY --from=deps /app/node_modules ./node_modules
+COPY package.json ./
 
 # Built frontend (Vite output)
 COPY --from=build /app/dist ./dist
