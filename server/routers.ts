@@ -91,17 +91,50 @@ const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
 
 // ─── Umami Analytics Helper ─────────────────────────────────────
 
+let umamiToken: string | null = null;
+
+async function getUmamiToken(): Promise<string> {
+  if (umamiToken) return umamiToken;
+  const endpoint = ENV.analyticsEndpoint;
+  if (!endpoint || !ENV.umamiUsername || !ENV.umamiPassword) {
+    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Analytics credentials not configured." });
+  }
+  const res = await fetch(`${endpoint}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: ENV.umamiUsername, password: ENV.umamiPassword }),
+  });
+  if (!res.ok) {
+    console.error(`[Analytics] Umami login failed: ${res.status}`);
+    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Falha na autenticação com Umami." });
+  }
+  const data = await res.json() as { token: string };
+  umamiToken = data.token;
+  return umamiToken;
+}
+
 async function fetchUmami(path: string) {
   const endpoint = ENV.analyticsEndpoint;
   if (!endpoint) {
     throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Analytics endpoint not configured." });
   }
+  const token = await getUmamiToken();
   const url = `${endpoint}${path}`;
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (ENV.umamiApiToken) {
-    headers["x-umami-api-key"] = ENV.umamiApiToken;
+  const res = await fetch(url, {
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+  });
+  if (res.status === 401) {
+    umamiToken = null;
+    const newToken = await getUmamiToken();
+    const retry = await fetch(url, {
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${newToken}` },
+    });
+    if (!retry.ok) {
+      console.error(`[Analytics] Umami API error: ${retry.status} ${retry.statusText}`);
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erro ao buscar dados de analytics." });
+    }
+    return retry.json();
   }
-  const res = await fetch(url, { headers });
   if (!res.ok) {
     console.error(`[Analytics] Umami API error: ${res.status} ${res.statusText}`);
     throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erro ao buscar dados de analytics." });
