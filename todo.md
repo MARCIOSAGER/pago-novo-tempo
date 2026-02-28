@@ -135,3 +135,4 @@
 - [x] Fix: Erros TypeScript em Markdown.tsx (plugins prop), AIChatBox.tsx (UIMessagePart generics, mode prop), ComponentShowcase.tsx (height prop) — 0 erros TS
 - [x] Fix: Analytics 401 Unauthorized — página reescrita sem chamadas à API Umami, com link direto ao painel
 - [x] Atualizar página Analytics: removidas chamadas com erro 401, página informativa com link para painel Umami
+- [x] Remover página de Análises (Analytics) do admin — página, rota, link na sidebar e rotas backend removidos
