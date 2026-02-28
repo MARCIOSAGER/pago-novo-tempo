@@ -12,6 +12,9 @@ import {
   downloads,
   DownloadRecord,
   InsertDownloadRecord,
+  downloadEvents,
+  InsertDownloadEvent,
+  DownloadEvent,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -341,4 +344,155 @@ export async function getDownloadCount(): Promise<number> {
   if (!db) throw new Error("Database not available");
   const [result] = await db.select({ total: count() }).from(downloads);
   return result.total;
+}
+
+// ─── Download Event Tracking ────────────────────────────────────────
+
+export async function recordDownloadEvent(data: {
+  downloadId: number;
+  ipHash?: string;
+  userAgent?: string;
+  referer?: string;
+  country?: string;
+}): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Insert event
+  await db.insert(downloadEvents).values({
+    downloadId: data.downloadId,
+    ipHash: data.ipHash ?? null,
+    userAgent: data.userAgent?.substring(0, 512) ?? null,
+    referer: data.referer?.substring(0, 512) ?? null,
+    country: data.country?.substring(0, 8) ?? null,
+  });
+
+  // Increment denormalized counter
+  await db
+    .update(downloads)
+    .set({ downloadCount: sql`${downloads.downloadCount} + 1` })
+    .where(eq(downloads.id, data.downloadId));
+}
+
+// ─── Download Statistics ────────────────────────────────────────────
+
+export async function getDownloadStats() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Total downloads across all files
+  const [totalResult] = await db
+    .select({ total: sql<number>`COALESCE(SUM(${downloads.downloadCount}), 0)` })
+    .from(downloads);
+
+  // Downloads per file (with title and slug)
+  const perFile = await db
+    .select({
+      id: downloads.id,
+      slug: downloads.slug,
+      title: downloads.title,
+      category: downloads.category,
+      format: downloads.format,
+      downloadCount: downloads.downloadCount,
+      active: downloads.active,
+    })
+    .from(downloads)
+    .orderBy(desc(downloads.downloadCount));
+
+  // Last 7 days total
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const [last7Result] = await db
+    .select({ total: count() })
+    .from(downloadEvents)
+    .where(sql`${downloadEvents.createdAt} >= ${sevenDaysAgo}`);
+
+  // Last 30 days total
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const [last30Result] = await db
+    .select({ total: count() })
+    .from(downloadEvents)
+    .where(sql`${downloadEvents.createdAt} >= ${thirtyDaysAgo}`);
+
+  // Today total
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const [todayResult] = await db
+    .select({ total: count() })
+    .from(downloadEvents)
+    .where(sql`${downloadEvents.createdAt} >= ${todayStart}`);
+
+  return {
+    totalDownloads: Number(totalResult.total) || 0,
+    today: todayResult.total,
+    last7Days: last7Result.total,
+    last30Days: last30Result.total,
+    perFile,
+  };
+}
+
+export async function getDownloadTimeline(days: number = 30) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  const timeline = await db
+    .select({
+      date: sql<string>`DATE(${downloadEvents.createdAt})`,
+      total: count(),
+    })
+    .from(downloadEvents)
+    .where(sql`${downloadEvents.createdAt} >= ${startDate}`)
+    .groupBy(sql`DATE(${downloadEvents.createdAt})`)
+    .orderBy(sql`DATE(${downloadEvents.createdAt})`);
+
+  return timeline;
+}
+
+export async function getDownloadTimelinePerFile(days: number = 30) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  const timeline = await db
+    .select({
+      date: sql<string>`DATE(${downloadEvents.createdAt})`,
+      downloadId: downloadEvents.downloadId,
+      total: count(),
+    })
+    .from(downloadEvents)
+    .where(sql`${downloadEvents.createdAt} >= ${startDate}`)
+    .groupBy(sql`DATE(${downloadEvents.createdAt})`, downloadEvents.downloadId)
+    .orderBy(sql`DATE(${downloadEvents.createdAt})`);
+
+  return timeline;
+}
+
+export async function getRecentDownloadEvents(limit: number = 50): Promise<Array<DownloadEvent & { downloadTitle?: string | null; downloadSlug?: string | null }>> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const events = await db
+    .select({
+      id: downloadEvents.id,
+      downloadId: downloadEvents.downloadId,
+      ipHash: downloadEvents.ipHash,
+      userAgent: downloadEvents.userAgent,
+      referer: downloadEvents.referer,
+      country: downloadEvents.country,
+      createdAt: downloadEvents.createdAt,
+      downloadTitle: downloads.title,
+      downloadSlug: downloads.slug,
+    })
+    .from(downloadEvents)
+    .leftJoin(downloads, eq(downloadEvents.downloadId, downloads.id))
+    .orderBy(desc(downloadEvents.createdAt))
+    .limit(limit);
+
+  return events;
 }

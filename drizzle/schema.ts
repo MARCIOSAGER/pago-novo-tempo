@@ -92,6 +92,8 @@ export const downloads = mysqlTable("downloads", {
   badgeVariant: varchar("badgeVariant", { length: 32 }),
   /** Sort order within category */
   sortOrder: int("sortOrder").notNull().default(0),
+  /** Total download count (denormalized for fast reads) */
+  downloadCount: int("downloadCount").notNull().default(0),
   /** Whether this download is active/visible */
   active: mysqlEnum("active", ["yes", "no"]).default("yes").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -100,3 +102,24 @@ export const downloads = mysqlTable("downloads", {
 
 export type DownloadRecord = typeof downloads.$inferSelect;
 export type InsertDownloadRecord = typeof downloads.$inferInsert;
+
+/**
+ * Download events — tracks each individual download for analytics.
+ */
+export const downloadEvents = mysqlTable("download_events", {
+  id: int("id").autoincrement().primaryKey(),
+  /** References downloads.id */
+  downloadId: int("downloadId").notNull(),
+  /** IP address (hashed for privacy) */
+  ipHash: varchar("ipHash", { length: 64 }),
+  /** User agent string (truncated) */
+  userAgent: varchar("userAgent", { length: 512 }),
+  /** Referer URL */
+  referer: varchar("referer", { length: 512 }),
+  /** Country code from headers if available */
+  country: varchar("country", { length: 8 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type DownloadEvent = typeof downloadEvents.$inferSelect;
+export type InsertDownloadEvent = typeof downloadEvents.$inferInsert;

@@ -148,3 +148,9 @@
 - [x] Adicionar link de download do certificado na seção Kids da landing page pública (com i18n PT/EN/ES)
 - [x] Substituir PDF do ebook Kids pelo novo PAGO-Kids-Ebook-Final.pdf (23 MB, 19 págs) e corrigir número de páginas na landing page (39→19 em PT/EN/ES)
 - [x] Integrar flipbook P.A.G.O. Kids no botão "Ver Prévia" da seção Kids — abre em nova aba com flipbook interativo (page-flip + 12 imagens CDN)
+- [x] Criar tabela download_events no banco para tracking de downloads (downloadId, timestamp, ip, userAgent, referer)
+- [x] Adicionar coluna downloadCount na tabela downloads para contagem rápida
+- [x] Implementar tracking na rota /api/downloads/:slug — registrar evento a cada download
+- [x] Criar procedures tRPC para estatísticas de downloads (totais, por período, por arquivo)
+- [x] Criar/atualizar painel admin com dashboard de downloads (KPIs, ranking por arquivo, eventos recentes)
+- [x] Escrever testes para as novas procedures de estatísticas (57 testes passando)

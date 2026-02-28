@@ -25,6 +25,9 @@ import {
   updateDownload,
   deleteDownload,
   getDownloadCount,
+  getDownloadStats,
+  getDownloadTimeline,
+  getRecentDownloadEvents,
 } from "./db";
 import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
@@ -442,6 +445,25 @@ export const appRouter = router({
         }
         await deleteDownload(input.id);
         return { success: true };
+      }),
+
+    // Admin: download statistics overview
+    stats: adminProcedure.query(async () => {
+      return getDownloadStats();
+    }),
+
+    // Admin: download timeline (for charts)
+    timeline: adminProcedure
+      .input(z.object({ days: z.number().int().min(1).max(365).default(30) }))
+      .query(async ({ input }) => {
+        return getDownloadTimeline(input.days);
+      }),
+
+    // Admin: recent download events
+    recentEvents: adminProcedure
+      .input(z.object({ limit: z.number().int().min(1).max(200).default(50) }))
+      .query(async ({ input }) => {
+        return getRecentDownloadEvents(input.limit);
       }),
 
     // Admin: upload file to S3 and create download entry

@@ -9,7 +9,8 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { applyAllSecurity } from "../security";
-import { getDownloadBySlug } from "../db";
+import { getDownloadBySlug, recordDownloadEvent } from "../db";
+import crypto from "crypto";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -61,13 +62,25 @@ async function startServer() {
     res.redirect(302, "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/JPckmwYvDWyIayHY.html?Expires=1803813522&Signature=uCPWn-QTA0pjZd5NRdSo3gdq6Li4MOt7kZz~ZIa9XyOL9GzFgqhlwgqN-s0SYmSrT3dYiWllu1z57OtiCBpsSNSGm6soZHhHxi5HH54EqXm8hj5R6U2sd0RABEBM3YXNNPatKJY7sMA9TN5JKLSae3VI7IwSydduFHG8RNSy74MsafLyXsf0sew1vii1jRZLyzWk7lhWk50jOAy0dlWYyPt9eEZ263euMU74e~855znEyZAVBonMZtiaz1R~FPuun4q-GKpG7kttBqsUWcoBG3iy3AxGsD5CiGUTCJkE9b2ir-ji-icPMdnTgN6CdVo4LsfAwRKSoS0feowvdT00bg__&Key-Pair-Id=K2HSFNDJXOU9YS");
   });
 
-  // ─── Download Routes (database-driven) ─────────────────
+  // ─── Download Routes (database-driven with tracking) ─────────────────
   app.get("/api/downloads/:slug", async (req, res) => {
     try {
       const download = await getDownloadBySlug(req.params.slug);
       if (!download || download.active !== "yes") {
         return res.status(404).json({ error: "Download não encontrado" });
       }
+
+      // Track download event asynchronously (non-blocking)
+      const ip = req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || req.socket.remoteAddress || "";
+      const ipHash = ip ? crypto.createHash("sha256").update(ip).digest("hex").substring(0, 16) : undefined;
+      recordDownloadEvent({
+        downloadId: download.id,
+        ipHash,
+        userAgent: req.headers["user-agent"],
+        referer: req.headers["referer"],
+        country: req.headers["cf-ipcountry"]?.toString() || req.headers["x-country"]?.toString(),
+      }).catch((err) => console.error("[Downloads] Tracking error:", err));
+
       res.redirect(302, download.url);
     } catch (error) {
       console.error("[Downloads] Error:", error);

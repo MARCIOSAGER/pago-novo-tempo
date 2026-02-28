@@ -36,6 +36,10 @@ import {
   Loader2,
   AlertCircle,
   CheckCircle2,
+  TrendingUp,
+  Calendar,
+  BarChart3,
+  Clock,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
@@ -108,6 +112,8 @@ export default function AdminDownloads() {
 
   // Queries
   const { data: allDownloads, isLoading } = trpc.downloads.listAll.useQuery();
+  const { data: stats } = trpc.downloads.stats.useQuery();
+  const { data: recentEvents } = trpc.downloads.recentEvents.useQuery({ limit: 10 });
 
   // Mutations
   const createMutation = trpc.downloads.create.useMutation({
@@ -338,6 +344,139 @@ export default function AdminDownloads() {
 
       <Separator />
 
+      {/* ─── Download Stats KPIs ──────────────────────────── */}
+      {stats && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <Card className="border-border/50">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <Download className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold font-display">{stats.totalDownloads}</p>
+                  <p className="text-[10px] text-muted-foreground font-accent uppercase tracking-wider">Total</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border-border/50">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-lg bg-green-500/10 flex items-center justify-center">
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold font-display">{stats.today}</p>
+                  <p className="text-[10px] text-muted-foreground font-accent uppercase tracking-wider">Hoje</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border-border/50">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                  <Calendar className="h-4 w-4 text-amber-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold font-display">{stats.last7Days}</p>
+                  <p className="text-[10px] text-muted-foreground font-accent uppercase tracking-wider">Últ. 7 dias</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border-border/50">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                  <BarChart3 className="h-4 w-4 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold font-display">{stats.last30Days}</p>
+                  <p className="text-[10px] text-muted-foreground font-accent uppercase tracking-wider">Últ. 30 dias</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* ─── Per-file download ranking ────────────────────── */}
+      {stats && stats.perFile.length > 0 && (
+        <Card className="border-border/50">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-display flex items-center gap-2">
+              <BarChart3 className="h-4 w-4 text-primary" />
+              Downloads por Arquivo
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {stats.perFile.map((file, idx) => {
+                const maxCount = stats.perFile[0]?.downloadCount || 1;
+                const pct = maxCount > 0 ? (file.downloadCount / maxCount) * 100 : 0;
+                return (
+                  <div key={file.id} className="flex items-center gap-3">
+                    <span className="text-xs font-mono text-muted-foreground w-5 text-right">{idx + 1}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-medium truncate">{file.title}</span>
+                        <span className="text-xs font-bold font-display ml-2 shrink-0">{file.downloadCount}</span>
+                      </div>
+                      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-primary/60 rounded-full transition-all"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-accent uppercase tracking-wider text-muted-foreground w-10 text-right">{file.format}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* ─── Recent download events ───────────────────────── */}
+      {recentEvents && recentEvents.length > 0 && (
+        <Card className="border-border/50">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-display flex items-center gap-2">
+              <Clock className="h-4 w-4 text-primary" />
+              Downloads Recentes
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1.5">
+              {recentEvents.map((evt) => (
+                <div key={evt.id} className="flex items-center justify-between text-xs py-1.5 border-b border-border/30 last:border-0">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Download className="h-3 w-3 text-muted-foreground shrink-0" />
+                    <span className="font-medium truncate">{evt.downloadTitle || `ID ${evt.downloadId}`}</span>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0 text-muted-foreground">
+                    {evt.country && <span className="text-[10px] uppercase">{evt.country}</span>}
+                    <span className="text-[10px]">
+                      {new Date(evt.createdAt).toLocaleString("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <Separator />
+
       {/* Actions bar */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
@@ -439,6 +578,12 @@ export default function AdminDownloads() {
                               <span className="text-[10px] text-muted-foreground">
                                 #{dl.sortOrder}
                               </span>
+                              {dl.downloadCount !== undefined && (
+                                <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                                  <Download className="h-2.5 w-2.5" />
+                                  {dl.downloadCount}
+                                </span>
+                              )}
                             </div>
                             <div className="flex items-center gap-1.5">
                               <Button
