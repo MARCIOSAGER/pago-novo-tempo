@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { notifyOwner } from "./notification";
+import { notifyOwner, sendTestEmail } from "./notification";
+import { ENV } from "./env";
 import { adminProcedure, publicProcedure, router } from "./trpc";
 
 export const systemRouter = router({
@@ -13,6 +14,17 @@ export const systemRouter = router({
       ok: true,
     })),
 
+  emailStatus: adminProcedure.query(() => {
+    const smtpConfigured = !!(ENV.smtpHost && ENV.smtpUser && ENV.smtpPass);
+    return {
+      smtpConfigured,
+      smtpHost: ENV.smtpHost || null,
+      smtpPort: ENV.smtpPort,
+      smtpUser: ENV.smtpUser || null,
+      ownerEmail: ENV.ownerEmail || null,
+    };
+  }),
+
   notifyOwner: adminProcedure
     .input(
       z.object({
@@ -25,5 +37,16 @@ export const systemRouter = router({
       return {
         success: delivered,
       } as const;
+    }),
+
+  sendTestEmail: adminProcedure
+    .input(
+      z.object({
+        to: z.string().email("Email inválido"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const delivered = await sendTestEmail(input.to);
+      return { success: delivered } as const;
     }),
 });

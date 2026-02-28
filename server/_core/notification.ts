@@ -110,6 +110,44 @@ export type InscriptionData = {
   message?: string | null;
 };
 
+/**
+ * Sends a test email to a specific address. Admin-only utility.
+ */
+export async function sendTestEmail(to: string): Promise<boolean> {
+  if (!isSmtpConfigured()) {
+    console.warn("[Notification] SMTP not configured, skipping test email.");
+    return false;
+  }
+
+  try {
+    await getTransporter().sendMail({
+      from: `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`,
+      to,
+      subject: "Teste de email — P.A.G.O.",
+      text: "Este é um email de teste do sistema P.A.G.O. Se você recebeu, o envio está funcionando!",
+      html: `<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+        <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+          <h1 style="color: #C8A951; margin: 0; font-size: 24px;">P.A.G.O.</h1>
+          <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">Novo Tempo</p>
+        </div>
+        <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none; border-radius: 0 0 8px 8px;">
+          <p style="font-size: 16px;">Este é um <strong>email de teste</strong> do sistema P.A.G.O.</p>
+          <div style="background: #E8F5E9; border-left: 4px solid #4CAF50; padding: 15px; margin: 20px 0; border-radius: 0 6px 6px 0;">
+            <p style="margin: 0; color: #2E7D32;">Se você recebeu este email, o envio está funcionando corretamente!</p>
+          </div>
+          <p style="color: #888; font-size: 13px;">Enviado de: ${ENV.smtpUser}<br>Enviado para: ${to}</p>
+        </div>
+      </div>`,
+    });
+
+    console.log(`[Notification] Test email sent to ${to}`);
+    return true;
+  } catch (error) {
+    console.warn("[Notification] Test email failed:", error);
+    return false;
+  }
+}
+
 export async function notifyInscription(data: InscriptionData): Promise<void> {
   if (!isSmtpConfigured()) {
     console.warn("[Notification] SMTP not configured, skipping inscription emails.");
