@@ -97,9 +97,11 @@ async function fetchUmami(path: string) {
     throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Analytics endpoint not configured." });
   }
   const url = `${endpoint}${path}`;
-  const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
-  });
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (ENV.umamiApiToken) {
+    headers["x-umami-api-key"] = ENV.umamiApiToken;
+  }
+  const res = await fetch(url, { headers });
   if (!res.ok) {
     console.error(`[Analytics] Umami API error: ${res.status} ${res.statusText}`);
     throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erro ao buscar dados de analytics." });

@@ -24,4 +24,5 @@ export const ENV = {
   // Analytics (Umami)
   analyticsEndpoint: process.env.VITE_ANALYTICS_ENDPOINT ?? "",
   analyticsWebsiteId: process.env.VITE_ANALYTICS_WEBSITE_ID ?? "",
+  umamiApiToken: process.env.UMAMI_API_TOKEN ?? "",
 };
