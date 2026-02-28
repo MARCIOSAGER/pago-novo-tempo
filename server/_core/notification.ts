@@ -140,7 +140,7 @@ export async function notifyInscription(data: InscriptionData): Promise<void> {
           <p>Abraço,<br><strong>Equipe P.A.G.O.</strong></p>
         </div>
         <p style="text-align: center; color: #999; font-size: 11px; margin-top: 15px;">
-          Este email foi enviado porque você se inscreveu em pago.life
+          Este email foi enviado porque você se inscreveu em metodopago.com
         </p>
       </div>`,
     });
@@ -176,7 +176,7 @@ export async function notifyInscription(data: InscriptionData): Promise<void> {
               ${data.message ? `<tr><td style="padding: 8px 0; color: #888; vertical-align: top;">Mensagem</td><td style="padding: 8px 0;">${data.message}</td></tr>` : ""}
             </table>
             <div style="margin-top: 20px; text-align: center;">
-              <a href="https://pago.life/admin" style="background: #1A2744; color: #C8A951; padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600;">Ver no Painel</a>
+              <a href="https://metodopago.com/admin" style="background: #1A2744; color: #C8A951; padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600;">Ver no Painel</a>
             </div>
           </div>
         </div>`,
