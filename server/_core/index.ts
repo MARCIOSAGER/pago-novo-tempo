@@ -67,7 +67,7 @@ async function startServer() {
     "ebook-mobi": { filepath: path.join(docsDir, "ebook-pago-v2.mobi"), filename: "PAGO-Ebook-v2.mobi" },
     "ebook-flipbook": { filepath: path.join(docsDir, "ebook-pago-flipbook.html"), filename: "PAGO-Ebook-Flipbook.html" },
     "ebook-html": { filepath: path.join(docsDir, "ebook-pago-v2.html"), filename: "PAGO-Ebook-v2.html" },
-    "ebook-kids-pdf": { filepath: path.join(docsDir, "ebook-pago-v2-print.pdf"), filename: "PAGO-Kids-Ebook.pdf" },
+    "ebook-kids-pdf": { filepath: path.join(docsDir, "ebook-pago-kids.pdf"), filename: "PAGO-Kids-Ebook-Final.pdf" },
     "ebook-kids-flipbook": { filepath: path.join(docsDir, "flipbook-kids.html"), filename: "PAGO-Kids-Flipbook.html" },
     "certificado-kids": { filepath: path.join(docsDir, "certificado-pago-kids.png"), filename: "Certificado-PAGO-Kids-Pequeno-Construtor-de-Deus.png" },
   };

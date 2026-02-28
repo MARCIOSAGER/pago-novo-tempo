@@ -26,7 +26,7 @@ export function applyHelmet(app: Express) {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+          scriptSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
           styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
           fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
           imgSrc: ["'self'", "data:", "blob:", "https:", "http:"],
@@ -264,6 +264,8 @@ export function getCorsOptions() {
       const allowedPatterns = [
         /^https?:\/\/localhost(:\d+)?$/,
         /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
+        /^https?:\/\/(www\.)?metodopago\.com(\.br)?$/,
+        /^https?:\/\/(www\.)?pago\.life$/,
       ];
       const isAllowed = allowedPatterns.some((p) => p.test(origin));
       callback(isAllowed ? null : new Error("Not allowed by CORS"), isAllowed);
