@@ -33,7 +33,7 @@ function FlipCard({
 
   return (
     <div
-      className="h-44 sm:h-48 cursor-pointer"
+      className="h-52 sm:h-56 cursor-pointer"
       style={{ perspective: "800px" }}
       onMouseEnter={() => setFlipped(true)}
       onMouseLeave={() => setFlipped(false)}

@@ -68,8 +68,12 @@ async function startServer() {
     "ebook-flipbook": { filepath: path.join(docsDir, "ebook-pago-flipbook.html"), filename: "PAGO-Ebook-Flipbook.html" },
     "ebook-html": { filepath: path.join(docsDir, "ebook-pago-v2.html"), filename: "PAGO-Ebook-v2.html" },
     "ebook-kids-pdf": { filepath: path.join(docsDir, "ebook-pago-v2-print.pdf"), filename: "PAGO-Kids-Ebook.pdf" },
-    "ebook-kids-flipbook": { filepath: path.join(docsDir, "ebook-pago-kids.html"), filename: "PAGO-Kids-Ebook-Flipbook.html" },
+    "ebook-kids-flipbook": { filepath: path.join(docsDir, "flipbook-kids.html"), filename: "PAGO-Kids-Flipbook.html" },
+    "certificado-kids": { filepath: path.join(docsDir, "certificado-pago-kids.png"), filename: "Certificado-PAGO-Kids-Pequeno-Construtor-de-Deus.png" },
   };
+
+  // Serve flipbook images statically
+  app.use("/api/flipbook-kids/images", express.static(path.join(docsDir, "flipbook-kids-images")));
 
   // Flipbook formats that should open in browser (sendFile) instead of download
   const inlineFormats = new Set(["ebook-flipbook", "ebook-kids-flipbook"]);
