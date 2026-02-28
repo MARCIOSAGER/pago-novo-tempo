@@ -7,14 +7,23 @@ global.fetch = mockFetch;
 // Mock ENV
 vi.mock("./_core/env", () => ({
   ENV: {
-    appId: "test",
     cookieSecret: "test-secret",
     databaseUrl: "mysql://test",
-    oAuthServerUrl: "https://test.oauth",
-    ownerOpenId: "owner-123",
     isProduction: false,
-    forgeApiUrl: "https://test.forge",
-    forgeApiKey: "test-forge-key",
+    googleClientId: "test-google-id",
+    googleClientSecret: "test-google-secret",
+    githubClientId: "test-github-id",
+    githubClientSecret: "test-github-secret",
+    openaiApiKey: "test-openai-key",
+    awsAccessKeyId: "test-aws-key",
+    awsSecretAccessKey: "test-aws-secret",
+    awsRegion: "us-east-1",
+    awsS3Bucket: "test-bucket",
+    smtpHost: "",
+    smtpPort: "587",
+    smtpUser: "",
+    smtpPass: "",
+    ownerEmail: "",
     analyticsEndpoint: "https://analytics.test.com",
     analyticsWebsiteId: "test-website-id",
   },
@@ -47,10 +56,6 @@ vi.mock("./security", () => ({
   validateFileUpload: vi.fn().mockReturnValue({ valid: true }),
 }));
 
-// Mock patchedFetch
-vi.mock("./_core/patchedFetch", () => ({
-  createPatchedFetch: vi.fn().mockReturnValue(vi.fn()),
-}));
 
 describe("Analytics Routes — fetchUmami helper", () => {
   beforeEach(() => {

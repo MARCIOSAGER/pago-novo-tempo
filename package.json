@@ -1,5 +1,5 @@
 {
-  "name": "pago_platform",
+  "name": "pago-novo-tempo",
   "version": "1.0.0",
   "type": "module",
   "license": "MIT",
@@ -51,7 +51,6 @@
     "@trpc/react-query": "^11.6.0",
     "@trpc/server": "^11.6.0",
     "ai": "^6.0.38",
-    "axios": "^1.12.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -67,6 +66,7 @@
     "hpp": "^0.2.3",
     "input-otp": "^1.4.2",
     "jose": "6.1.0",
+    "nodemailer": "^6.9.16",
     "lucide-react": "^0.453.0",
     "mysql2": "^3.15.0",
     "nanoid": "^5.1.5",
@@ -109,7 +109,7 @@
     "tw-animate-css": "^1.4.0",
     "typescript": "5.9.3",
     "vite": "^7.1.7",
-    "vite-plugin-manus-runtime": "^0.0.57",
+    "@types/nodemailer": "^6.4.17",
     "vitest": "^2.1.4"
   },
   "packageManager": "pnpm@10.4.1+sha512.c753b6c3ad7afa13af388fa6d808035a008e30ea9993f58c6663e2bc5ff21679aa834db094987129aa4d488b86df57f7b634981b2f827cdcacc698cc0cfb88af",

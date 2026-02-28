@@ -2,7 +2,7 @@
  * Chat API Handler
  *
  * Express endpoint for AI SDK streaming chat with tool calling support.
- * Uses patched fetch to fix OpenAI-compatible proxy issues.
+ * Uses OpenAI API directly.
  */
 
 import { streamText, stepCountIs } from "ai";
@@ -11,26 +11,13 @@ import { createOpenAI } from "@ai-sdk/openai";
 import type { Express } from "express";
 import { z } from "zod/v4";
 import { ENV } from "./env";
-import { createPatchedFetch } from "./patchedFetch";
 
-/**
- * Creates an OpenAI-compatible provider with patched fetch.
- */
 function createLLMProvider() {
-  const baseURL = ENV.forgeApiUrl.endsWith("/v1")
-    ? ENV.forgeApiUrl
-    : `${ENV.forgeApiUrl}/v1`;
-
   return createOpenAI({
-    baseURL,
-    apiKey: ENV.forgeApiKey,
-    fetch: createPatchedFetch(fetch),
+    apiKey: ENV.openaiApiKey,
   });
 }
 
-/**
- * Example tool registry - customize these for your app.
- */
 const tools = {
   getWeather: tool({
     description: "Get the current weather for a location",
@@ -41,7 +28,6 @@ const tools = {
       unit: z.enum(["celsius", "fahrenheit"]).optional().default("celsius"),
     }),
     execute: async ({ location, unit }) => {
-      // Simulate weather API call
       const temp = Math.floor(Math.random() * 30) + 5;
       const conditions = ["sunny", "cloudy", "rainy", "partly cloudy"][
         Math.floor(Math.random() * 4)
@@ -65,7 +51,6 @@ const tools = {
     }),
     execute: async ({ expression }) => {
       try {
-        // Simple safe eval for basic math
         const sanitized = expression.replace(/[^0-9+\-*/().%\s]/g, "");
         const result = Function(
           `"use strict"; return (${sanitized})`
@@ -78,17 +63,6 @@ const tools = {
   }),
 };
 
-/**
- * Registers the /api/chat endpoint for streaming AI responses.
- *
- * @example
- * ```ts
- * // In server/_core/index.ts
- * import { registerChatRoutes } from "./chat";
- *
- * registerChatRoutes(app);
- * ```
- */
 export function registerChatRoutes(app: Express) {
   const openai = createLLMProvider();
 

@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS `download_events` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `downloadId` int NOT NULL,\n  `ipHash` varchar(64),\n  `userAgent` varchar(512),\n  `referer` varchar(512),\n  `country` varchar(8),\n  `createdAt` timestamp NOT NULL DEFAULT (now()),\n  CONSTRAINT `download_events_id` PRIMARY KEY(`id`),\n  INDEX `idx_download_events_downloadId` (`downloadId`),\n  INDEX `idx_download_events_createdAt` (`createdAt`)\n);\n\nALTER TABLE `downloads` ADD COLUMN `downloadCount` int NOT NULL DEFAULT 0;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2iUFiogWAufmz3P.460041d33ebc --database FWKBucVCwodcLLRRkU5GKw --execute CREATE TABLE IF NOT EXISTS `download_events` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `downloadId` int NOT NULL,\n  `ipHash` varchar(64),\n  `userAgent` varchar(512),\n  `referer` varchar(512),\n  `country` varchar(8),\n  `createdAt` timestamp NOT NULL DEFAULT (now()),\n  CONSTRAINT `download_events_id` PRIMARY KEY(`id`),\n  INDEX `idx_download_events_downloadId` (`downloadId`),\n  INDEX `idx_download_events_createdAt` (`createdAt`)\n);\n\nALTER TABLE `downloads` ADD COLUMN `downloadCount` int NOT NULL DEFAULT 0;",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 579
-}

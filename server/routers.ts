@@ -22,7 +22,6 @@ import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
-import { createPatchedFetch } from "./_core/patchedFetch";
 
 // ─── Zod Schemas (strict input validation) ──────────────────────
 
@@ -239,17 +238,11 @@ export const appRouter = router({
       .input(z.object({ message: z.string().min(1).max(2000) }))
       .mutation(async ({ input }) => {
         try {
-          const baseURL = ENV.forgeApiUrl.endsWith("/v1")
-            ? ENV.forgeApiUrl
-            : `${ENV.forgeApiUrl}/v1`;
-
-          const patchedFetch = createPatchedFetch(fetch);
-
-          const response = await patchedFetch(`${baseURL}/chat/completions`, {
+          const response = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${ENV.forgeApiKey}`,
+              Authorization: `Bearer ${ENV.openaiApiKey}`,
             },
             body: JSON.stringify({
               model: "gpt-4o",
@@ -263,7 +256,7 @@ export const appRouter = router({
           });
 
           if (!response.ok) {
-            throw new Error(`LLM API error: ${response.status}`);
+            throw new Error(`OpenAI API error: ${response.status}`);
           }
 
           const data = await response.json() as { choices: Array<{ message: { content: string } }> };

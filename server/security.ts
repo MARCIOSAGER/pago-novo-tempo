@@ -260,11 +260,10 @@ export function getCorsOptions() {
         callback(null, true);
         return;
       }
-      // Allow same-origin and manus.space domains
+      // Allow same-origin and production domain
       const allowedPatterns = [
         /^https?:\/\/localhost(:\d+)?$/,
-        /^https?:\/\/.*\.manus\.space$/,
-        /^https?:\/\/.*\.manus\.computer$/,
+        /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
       ];
       const isAllowed = allowedPatterns.some((p) => p.test(origin));
       callback(isAllowed ? null : new Error("Not allowed by CORS"), isAllowed);

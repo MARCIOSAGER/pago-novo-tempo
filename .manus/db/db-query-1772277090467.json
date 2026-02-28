@@ -1,9 +1,0 @@
-{
-  "query": "UPDATE `downloads` SET `url` = 'https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/VijUjpjJDGoUTmaH.pdf?Expires=1803813080&Signature=raEKiwaAZqKbtNLC6oUp5k~fSsq1VZIOPUZ80ADaXBM7OY5-bXKQOH1AW7mEcDxp1LuU6lDU7quGOgtYRn~ClbHeZ3dJnpV0-jCqicH924caJl827fS9L4eKyoxP8yPcIF1YJimZJWWdKqtSSjA68t4JCjBYMX1OMn-pf~MLZ4q~rrghEPPF6Celoops-6rgfCY~8ttzVjK2nbJwfHS5NZZzfSCNAwVKaChRbY2my~C6DELVWN-iXwX~V7mtjSyT2fguy7-Wt0OE3tXmHUJmew4wD0wINbpjf6iNULvOSVnMI~kKFqTgsMYV2MP9ZhHDMUo1M5tKYRgtIKcXvmbTCQ__&Key-Pair-Id=K2HSFNDJXOU9YS', `filename` = 'PAGO-Kids-Ebook-Final.pdf', `fileSize` = '23 MB' WHERE `slug` = 'ebook-kids-pdf';",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2iUFiogWAufmz3P.460041d33ebc --database FWKBucVCwodcLLRRkU5GKw --execute UPDATE `downloads` SET `url` = 'https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/VijUjpjJDGoUTmaH.pdf?Expires=1803813080&Signature=raEKiwaAZqKbtNLC6oUp5k~fSsq1VZIOPUZ80ADaXBM7OY5-bXKQOH1AW7mEcDxp1LuU6lDU7quGOgtYRn~ClbHeZ3dJnpV0-jCqicH924caJl827fS9L4eKyoxP8yPcIF1YJimZJWWdKqtSSjA68t4JCjBYMX1OMn-pf~MLZ4q~rrghEPPF6Celoops-6rgfCY~8ttzVjK2nbJwfHS5NZZzfSCNAwVKaChRbY2my~C6DELVWN-iXwX~V7mtjSyT2fguy7-Wt0OE3tXmHUJmew4wD0wINbpjf6iNULvOSVnMI~kKFqTgsMYV2MP9ZhHDMUo1M5tKYRgtIKcXvmbTCQ__&Key-Pair-Id=K2HSFNDJXOU9YS', `filename` = 'PAGO-Kids-Ebook-Final.pdf', `fileSize` = '23 MB' WHERE `slug` = 'ebook-kids-pdf';",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 80
-}
