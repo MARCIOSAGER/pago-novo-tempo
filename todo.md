@@ -144,3 +144,4 @@
 - [x] Atualizar rota /api/downloads/:slug para buscar do banco ao invés de hardcoded
 - [x] KidsSection e KitSection já usam /api/downloads/:slug que agora busca do banco
 - [x] Migrar downloads hardcoded existentes para o banco de dados (7 ebooks + 1 kids)
+- [x] Adicionar certificado P.A.G.O. Kids (PNG) como download na categoria kids — "Pequeno Construtor de Deus" 174 KB
