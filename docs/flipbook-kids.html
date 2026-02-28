@@ -176,6 +176,13 @@
       background: rgba(200, 169, 81, 0.3);
     }
 
+    /* Fullscreen overrides */
+    :fullscreen body,
+    :-webkit-full-screen body,
+    :-ms-fullscreen body {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    }
+
     /* Loading */
     .loading {
       position: fixed;
@@ -313,9 +320,9 @@
 
       const container = document.getElementById('flipbook');
 
-      // Calculate optimal size
-      const maxW = Math.min(window.innerWidth * 0.7, 900);
-      const maxH = Math.min(window.innerHeight * 0.6, 500);
+      // Calculate optimal size — use generous proportions
+      const maxW = Math.min(window.innerWidth * 0.85, 1400);
+      const maxH = Math.min(window.innerHeight * 0.72, 750);
       const aspectRatio = 1376 / 768;
 
       let pageW, pageH;
@@ -343,11 +350,11 @@
       pageFlip = new St.PageFlip(container, {
         width: pageW,
         height: pageH,
-        size: 'fixed',
+        size: 'stretch',
         minWidth: 300,
-        maxWidth: 900,
+        maxWidth: 1400,
         minHeight: 200,
-        maxHeight: 600,
+        maxHeight: 900,
         maxShadowOpacity: 0.5,
         showCover: true,
         mobileScrollSupport: true,
@@ -413,13 +420,56 @@
       if (pageFlip) pageFlip.flipNext();
     }
 
+    function isFullscreen() {
+      return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+    }
+
     function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
+      const el = document.documentElement;
+      if (!isFullscreen()) {
+        if (el.requestFullscreen) {
+          el.requestFullscreen();
+        } else if (el.webkitRequestFullscreen) {
+          el.webkitRequestFullscreen();
+        } else if (el.msRequestFullscreen) {
+          el.msRequestFullscreen();
+        }
       } else {
-        document.exitFullscreen();
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
       }
     }
+
+    function updateFullscreenBtn() {
+      const btn = document.querySelector('.fullscreen-btn');
+      btn.textContent = isFullscreen() ? '✕ Sair Tela Cheia' : '⛶ Tela Cheia';
+    }
+
+    function handleResize() {
+      if (!pageFlip) return;
+      const maxW = Math.min(window.innerWidth * 0.85, 1400);
+      const maxH = Math.min(window.innerHeight * 0.72, 750);
+      const aspectRatio = 1376 / 768;
+      let pageW, pageH;
+      if (maxW / 2 / maxH > aspectRatio) {
+        pageH = maxH;
+        pageW = Math.floor(pageH * aspectRatio);
+      } else {
+        pageW = Math.floor(maxW / 2);
+        pageH = Math.floor(pageW / aspectRatio);
+      }
+      pageFlip.update({ width: pageW, height: pageH });
+    }
+
+    // Listen for fullscreen changes
+    document.addEventListener('fullscreenchange', () => { updateFullscreenBtn(); handleResize(); });
+    document.addEventListener('webkitfullscreenchange', () => { updateFullscreenBtn(); handleResize(); });
+    document.addEventListener('MSFullscreenChange', () => { updateFullscreenBtn(); handleResize(); });
 
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
@@ -435,11 +485,7 @@
     });
 
     // Handle resize
-    window.addEventListener('resize', () => {
-      if (pageFlip) {
-        // PageFlip handles resize automatically with autoSize
-      }
-    });
+    window.addEventListener('resize', handleResize);
 
     // Start
     init();
