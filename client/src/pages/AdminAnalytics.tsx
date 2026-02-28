@@ -52,8 +52,10 @@ function getRange(days: number) {
 }
 
 function pctChange(current: number, prev: number): number {
+  if (!Number.isFinite(current) || !Number.isFinite(prev)) return 0;
   if (prev === 0) return current > 0 ? 100 : 0;
-  return Math.round(((current - prev) / prev) * 100);
+  const result = Math.round(((current - prev) / prev) * 100);
+  return Number.isFinite(result) ? result : 0;
 }
 
 function formatDuration(ms: number): string {
