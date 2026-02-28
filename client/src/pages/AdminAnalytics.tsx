@@ -1,346 +1,71 @@
-import { useState, useMemo } from "react";
-import { trpc } from "@/lib/trpc";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  RefreshCw,
-  TrendingUp,
-  TrendingDown,
-  Users,
-  Eye,
-  Clock,
-  Monitor,
-  Smartphone,
+  BarChart3,
+  ExternalLink,
+  CheckCircle2,
   Globe,
+  Eye,
+  Users,
   FileText,
-  Link2,
-  Cpu,
-  Loader2,
-  AlertCircle,
+  Clock,
+  Smartphone,
+  Monitor,
+  Info,
 } from "lucide-react";
 
-// ─── Types ──────────────────────────────────────────────────────
-type MetricItem = { x: string; y: number };
-type PageviewItem = { x: string; y: number };
-type StatsData = {
-  pageviews: { value: number; prev: number };
-  visitors: { value: number; prev: number };
-  visits: { value: number; prev: number };
-  bounces: { value: number; prev: number };
-  totaltime: { value: number; prev: number };
-};
+const UMAMI_DASHBOARD_URL = "https://manus-analytics.com";
 
-// ─── Period helpers ─────────────────────────────────────────────
-const PERIODS: Record<string, { label: string; days: number }> = {
-  "24h": { label: "Últimas 24h", days: 1 },
-  "7d": { label: "Últimos 7 dias", days: 7 },
-  "30d": { label: "Últimos 30 dias", days: 30 },
-  "90d": { label: "Últimos 90 dias", days: 90 },
-};
-
-function getRange(days: number) {
-  const endAt = Date.now();
-  const startAt = endAt - days * 24 * 60 * 60 * 1000;
-  return { startAt, endAt };
-}
-
-function pctChange(current: number, prev: number): number {
-  if (prev === 0) return current > 0 ? 100 : 0;
-  return Math.round(((current - prev) / prev) * 100);
-}
-
-function formatDuration(ms: number): string {
-  const totalSeconds = Math.round(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  if (minutes > 0) return `${minutes}m ${seconds}s`;
-  return `${seconds}s`;
-}
-
-function getUnit(days: number): "hour" | "day" | "month" {
-  if (days <= 1) return "hour";
-  if (days <= 90) return "day";
-  return "month";
-}
-
-// ─── Reusable Components ────────────────────────────────────────
-
-function KpiCard({
-  label,
-  value,
-  change,
-  icon: Icon,
-}: {
-  label: string;
-  value: string;
-  change: number;
-  icon: React.ElementType;
-}) {
-  const isPositive = change >= 0;
-  return (
-    <Card className="p-4 flex flex-col gap-1">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-          {label}
-        </span>
-        <Icon className="h-4 w-4 text-muted-foreground" />
-      </div>
-      <div className="flex items-end gap-2">
-        <span className="text-2xl font-bold text-foreground">{value}</span>
-        <span
-          className={`text-xs font-medium flex items-center gap-0.5 ${
-            isPositive ? "text-emerald-600" : "text-red-500"
-          }`}
-        >
-          {isPositive ? (
-            <TrendingUp className="h-3 w-3" />
-          ) : (
-            <TrendingDown className="h-3 w-3" />
-          )}
-          {isPositive ? "+" : ""}
-          {change}%
-        </span>
-      </div>
-    </Card>
-  );
-}
-
-function BreakdownCard({
-  title,
-  icon: Icon,
-  items,
-  isLoading,
-}: {
-  title: string;
-  icon: React.ElementType;
-  items: MetricItem[];
-  isLoading: boolean;
-}) {
-  const maxValue = items.length > 0 ? Math.max(...items.map((i) => i.y)) : 1;
-
-  return (
-    <Card className="p-5 flex flex-col">
-      <div className="flex items-center gap-2 mb-4">
-        <Icon className="h-4 w-4 text-muted-foreground" />
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-      </div>
-      {isLoading ? (
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-        </div>
-      ) : items.length === 0 ? (
-        <div className="text-sm text-muted-foreground text-center py-8">
-          Sem dados no período
-        </div>
-      ) : (
-        <div className="space-y-2.5 max-h-[220px] overflow-y-auto">
-          {items.map((item, idx) => (
-            <div key={idx} className="relative">
-              <div
-                className="absolute inset-y-0 left-0 rounded-sm"
-                style={{
-                  width: `${Math.max((item.y / maxValue) * 100, 2)}%`,
-                  backgroundColor: "rgba(59, 130, 246, 0.1)",
-                }}
-              />
-              <div className="relative flex items-center justify-between px-2 py-1.5">
-                <span
-                  className="text-sm text-foreground truncate max-w-[75%]"
-                  title={item.x || "(direto)"}
-                >
-                  {item.x || "(direto)"}
-                </span>
-                <span className="text-sm font-medium text-foreground ml-2 shrink-0">
-                  {item.y.toLocaleString("pt-BR")}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </Card>
-  );
-}
-
-function SimpleLineChart({
-  data,
-  isLoading,
-}: {
-  data: PageviewItem[];
-  isLoading: boolean;
-}) {
-  if (isLoading) {
-    return (
-      <Card className="p-5 flex items-center justify-center h-[250px]">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </Card>
-    );
-  }
-
-  if (data.length === 0) {
-    return (
-      <Card className="p-5 flex items-center justify-center h-[250px]">
-        <span className="text-sm text-muted-foreground">
-          Sem dados no período
-        </span>
-      </Card>
-    );
-  }
-
-  const maxY = Math.max(...data.map((d) => d.y), 1);
-  const chartW = 900;
-  const chartH = 180;
-  const padL = 40;
-  const padR = 20;
-  const padT = 10;
-  const padB = 30;
-  const w = chartW - padL - padR;
-  const h = chartH - padT - padB;
-
-  const points = data.map((d, i) => {
-    const x = padL + (i / Math.max(data.length - 1, 1)) * w;
-    const y = padT + h - (d.y / maxY) * h;
-    return { x, y, label: d.x, value: d.y };
-  });
-
-  const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ");
-  const areaPath = `${linePath} L${points[points.length - 1].x},${padT + h} L${points[0].x},${padT + h} Z`;
-
-  // Y-axis ticks
-  const yTicks = [0, Math.round(maxY / 2), maxY];
-
-  return (
-    <Card className="p-5">
-      <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full h-auto">
-        {/* Grid lines */}
-        {yTicks.map((tick) => {
-          const y = padT + h - (tick / maxY) * h;
-          return (
-            <g key={tick}>
-              <line
-                x1={padL}
-                x2={chartW - padR}
-                y1={y}
-                y2={y}
-                stroke="#e5e7eb"
-                strokeWidth={0.5}
-              />
-              <text
-                x={padL - 6}
-                y={y + 3}
-                textAnchor="end"
-                className="fill-gray-400"
-                fontSize={9}
-              >
-                {tick}
-              </text>
-            </g>
-          );
-        })}
-
-        {/* Area fill */}
-        <path d={areaPath} fill="rgba(234, 88, 12, 0.08)" />
-
-        {/* Line */}
-        <path
-          d={linePath}
-          fill="none"
-          stroke="#ea580c"
-          strokeWidth={2}
-          strokeLinejoin="round"
-        />
-
-        {/* Dots */}
-        {points.map((p, i) => (
-          <circle key={i} cx={p.x} cy={p.y} r={2.5} fill="#ea580c" />
-        ))}
-
-        {/* X-axis labels (show ~5 labels max) */}
-        {points
-          .filter(
-            (_, i) =>
-              i === 0 ||
-              i === points.length - 1 ||
-              i % Math.max(1, Math.floor(points.length / 5)) === 0
-          )
-          .map((p, i) => {
-            const dateStr = new Date(p.label).toLocaleDateString("pt-BR", {
-              day: "2-digit",
-              month: "short",
-            });
-            return (
-              <text
-                key={i}
-                x={p.x}
-                y={padT + h + 18}
-                textAnchor="middle"
-                className="fill-gray-400"
-                fontSize={9}
-              >
-                {dateStr}
-              </text>
-            );
-          })}
-      </svg>
-    </Card>
-  );
-}
-
-// ─── Main Page ──────────────────────────────────────────────────
+const TRACKING_FEATURES = [
+  {
+    icon: Eye,
+    title: "Visitas e Pageviews",
+    description: "Total de visitas, pageviews e sessões únicas rastreadas automaticamente.",
+  },
+  {
+    icon: Users,
+    title: "Visitantes Únicos",
+    description: "Contagem de visitantes únicos por período, sem cookies invasivos.",
+  },
+  {
+    icon: Globe,
+    title: "Geolocalização",
+    description: "País e região de origem dos visitantes do site.",
+  },
+  {
+    icon: FileText,
+    title: "Páginas Populares",
+    description: "Ranking das páginas mais visitadas e tempo de permanência.",
+  },
+  {
+    icon: Smartphone,
+    title: "Dispositivos",
+    description: "Breakdown por tipo de dispositivo (desktop, mobile, tablet).",
+  },
+  {
+    icon: Monitor,
+    title: "Navegadores e OS",
+    description: "Distribuição por navegador e sistema operacional.",
+  },
+  {
+    icon: Clock,
+    title: "Duração da Sessão",
+    description: "Tempo médio de permanência e taxa de rejeição.",
+  },
+  {
+    icon: BarChart3,
+    title: "Referências",
+    description: "De onde vêm os visitantes — links diretos, redes sociais, buscadores.",
+  },
+];
 
 export default function AdminAnalytics() {
-  const [period, setPeriod] = useState("7d");
-  const range = useMemo(() => getRange(PERIODS[period].days), [period]);
-  const unit = getUnit(PERIODS[period].days);
-
-  const utils = trpc.useUtils();
-
-  const statsQ = trpc.analytics.stats.useQuery(range);
-  const activeQ = trpc.analytics.active.useQuery(undefined, {
-    refetchInterval: 30_000,
-  });
-  const pageviewsQ = trpc.analytics.pageviews.useQuery({
-    ...range,
-    unit,
-    timezone: "Africa/Luanda",
-  });
-
-  const pathQ = trpc.analytics.metrics.useQuery({ ...range, type: "path", limit: 10 });
-  const countryQ = trpc.analytics.metrics.useQuery({ ...range, type: "country", limit: 10 });
-  const osQ = trpc.analytics.metrics.useQuery({ ...range, type: "os", limit: 10 });
-  const referrerQ = trpc.analytics.metrics.useQuery({ ...range, type: "referrer", limit: 10 });
-  const deviceQ = trpc.analytics.metrics.useQuery({ ...range, type: "device", limit: 10 });
-  const browserQ = trpc.analytics.metrics.useQuery({ ...range, type: "browser", limit: 10 });
-
-  const stats = statsQ.data as StatsData | undefined;
-  const activeVisitors = (activeQ.data as { x: number } | undefined)?.x ?? 0;
-  const pageviewsData = (
-    pageviewsQ.data as { pageviews: PageviewItem[] } | undefined
-  )?.pageviews ?? [];
-
-  const isRefreshing = statsQ.isFetching || pageviewsQ.isFetching;
-
-  function handleRefresh() {
-    utils.analytics.stats.invalidate();
-    utils.analytics.active.invalidate();
-    utils.analytics.pageviews.invalidate();
-    utils.analytics.metrics.invalidate();
-  }
-
   const now = new Date().toLocaleString("pt-BR", {
     day: "2-digit",
     month: "short",
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-    timeZone: "Africa/Luanda",
   });
 
   return (
@@ -351,147 +76,137 @@ export default function AdminAnalytics() {
           <h1 className="text-2xl font-bold text-foreground">Análises</h1>
           <p className="text-sm text-muted-foreground">{now}</p>
         </div>
-        <div className="flex items-center gap-3">
-          {activeVisitors > 0 && (
-            <div className="flex items-center gap-1.5 text-sm">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              <span className="text-emerald-600 font-medium">
-                {activeVisitors} ao vivo
-              </span>
-            </div>
-          )}
-        </div>
       </div>
 
       <hr className="border-border" />
 
-      {/* Toolbar */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleRefresh}
-          disabled={isRefreshing}
-        >
-          <RefreshCw
-            className={`h-4 w-4 mr-1.5 ${isRefreshing ? "animate-spin" : ""}`}
-          />
-          Atualizar
-        </Button>
-        <Select value={period} onValueChange={setPeriod}>
-          <SelectTrigger className="w-[180px] h-9">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(PERIODS).map(([key, { label }]) => (
-              <SelectItem key={key} value={key}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      {/* Status Card — Tracking Active */}
+      <Card className="p-6 border-emerald-200 bg-emerald-50/50">
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+            <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-lg font-semibold text-emerald-900 mb-1">
+              Rastreamento Ativo
+            </h2>
+            <p className="text-sm text-emerald-700 leading-relaxed mb-4">
+              O script de analytics do Umami está instalado e coletando dados de tráfego do site
+              P.A.G.O. em tempo real. Todos os dados de visitas, pageviews, dispositivos e
+              geolocalização estão sendo registrados automaticamente.
+            </p>
+            <a
+              href={UMAMI_DASHBOARD_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Abrir Painel Umami
+              </Button>
+            </a>
+          </div>
+        </div>
+      </Card>
+
+      {/* Info Card — How to access */}
+      <Card className="p-6 border-blue-200 bg-blue-50/50">
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+            <Info className="h-5 w-5 text-blue-600" />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-base font-semibold text-blue-900 mb-1">
+              Como acessar os dados
+            </h2>
+            <p className="text-sm text-blue-700 leading-relaxed mb-3">
+              Os dados de analytics são acessados diretamente pelo painel do Umami. Você também
+              pode visualizar as métricas no <strong>Dashboard</strong> do Management UI
+              (painel lateral direito), que exibe dados de UV/PV do site publicado.
+            </p>
+            <div className="bg-blue-100/60 rounded-lg p-4 text-sm text-blue-800">
+              <p className="font-medium mb-2">Acesso rápido:</p>
+              <ol className="list-decimal list-inside space-y-1.5">
+                <li>
+                  Clique no botão <strong>"Abrir Painel Umami"</strong> acima para acessar o dashboard completo
+                </li>
+                <li>
+                  Ou acesse o <strong>Dashboard</strong> no Management UI (ícone no canto superior) para ver UV/PV
+                </li>
+                <li>
+                  O domínio monitorado é: <code className="bg-blue-200/60 px-1.5 py-0.5 rounded text-xs font-mono">pagoplatform.manus.space</code>
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Tracking Features Grid */}
+      <div>
+        <h2 className="text-lg font-semibold text-foreground mb-4">
+          Métricas Coletadas
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {TRACKING_FEATURES.map((feature) => {
+            const Icon = feature.icon;
+            return (
+              <Card key={feature.title} className="p-4 flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                    <Icon className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-foreground">
+                    {feature.title}
+                  </h3>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {feature.description}
+                </p>
+              </Card>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Error state */}
-      {statsQ.isError && (
-        <Card className="p-4 border-red-200 bg-red-50">
-          <div className="flex items-center gap-2 text-red-700">
-            <AlertCircle className="h-4 w-4" />
-            <span className="text-sm">
-              Erro ao carregar analytics. Verifique se o endpoint está configurado.
+      {/* Technical Details */}
+      <Card className="p-5 bg-muted/30">
+        <h3 className="text-sm font-semibold text-foreground mb-3">
+          Detalhes Técnicos
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Provedor</span>
+            <span className="font-medium text-foreground">Umami Analytics</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Endpoint</span>
+            <span className="font-medium text-foreground font-mono text-xs">manus-analytics.com</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Privacidade</span>
+            <span className="font-medium text-foreground">LGPD/GDPR Compliant</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Cookies</span>
+            <span className="font-medium text-foreground">Cookieless tracking</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Status</span>
+            <span className="font-medium text-emerald-600 flex items-center gap-1">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              Ativo
             </span>
           </div>
-        </Card>
-      )}
-
-      {/* KPI Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <KpiCard
-          label="Visitas"
-          value={stats?.visits?.value?.toLocaleString("pt-BR") ?? "—"}
-          change={stats ? pctChange(stats.visits.value, stats.visits.prev) : 0}
-          icon={Eye}
-        />
-        <KpiCard
-          label="Visitantes Únicos"
-          value={stats?.visitors?.value?.toLocaleString("pt-BR") ?? "—"}
-          change={
-            stats ? pctChange(stats.visitors.value, stats.visitors.prev) : 0
-          }
-          icon={Users}
-        />
-        <KpiCard
-          label="Pageviews"
-          value={stats?.pageviews?.value?.toLocaleString("pt-BR") ?? "—"}
-          change={
-            stats ? pctChange(stats.pageviews.value, stats.pageviews.prev) : 0
-          }
-          icon={FileText}
-        />
-        <KpiCard
-          label="Duração Média"
-          value={
-            stats
-              ? formatDuration(
-                  stats.totaltime.value /
-                    Math.max(stats.pageviews.value, 1)
-                )
-              : "—"
-          }
-          change={
-            stats
-              ? pctChange(stats.totaltime.value, stats.totaltime.prev)
-              : 0
-          }
-          icon={Clock}
-        />
-      </div>
-
-      {/* Chart */}
-      <SimpleLineChart data={pageviewsData} isLoading={pageviewsQ.isLoading} />
-
-      {/* Breakdown Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <BreakdownCard
-          title="Tráfego por Página"
-          icon={FileText}
-          items={(pathQ.data as MetricItem[]) ?? []}
-          isLoading={pathQ.isLoading}
-        />
-        <BreakdownCard
-          title="País"
-          icon={Globe}
-          items={(countryQ.data as MetricItem[]) ?? []}
-          isLoading={countryQ.isLoading}
-        />
-        <BreakdownCard
-          title="Sistema Operacional"
-          icon={Cpu}
-          items={(osQ.data as MetricItem[]) ?? []}
-          isLoading={osQ.isLoading}
-        />
-        <BreakdownCard
-          title="Referência"
-          icon={Link2}
-          items={(referrerQ.data as MetricItem[]) ?? []}
-          isLoading={referrerQ.isLoading}
-        />
-        <BreakdownCard
-          title="Dispositivos"
-          icon={Smartphone}
-          items={(deviceQ.data as MetricItem[]) ?? []}
-          isLoading={deviceQ.isLoading}
-        />
-        <BreakdownCard
-          title="Navegador"
-          icon={Monitor}
-          items={(browserQ.data as MetricItem[]) ?? []}
-          isLoading={browserQ.isLoading}
-        />
-      </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Domínio</span>
+            <span className="font-medium text-foreground font-mono text-xs">pagoplatform.manus.space</span>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }
