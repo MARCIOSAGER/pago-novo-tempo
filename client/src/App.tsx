@@ -15,6 +15,7 @@ import AdminLayout from "./components/AdminLayout";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminInscricoes from "./pages/AdminInscricoes";
 import AdminInscricaoDetalhe from "./pages/AdminInscricaoDetalhe";
+import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminDownloads from "./pages/AdminDownloads";
 import AdminMediaRepo from "./pages/AdminMediaRepo";
 import AdminKids from "./pages/AdminKids";
@@ -41,6 +42,11 @@ function Router() {
       <Route path="/admin/inscricoes/:id">
         <AdminLayout>
           <AdminInscricaoDetalhe />
+        </AdminLayout>
+      </Route>
+      <Route path="/admin/analytics">
+        <AdminLayout>
+          <AdminAnalytics />
         </AdminLayout>
       </Route>
       <Route path="/admin/downloads">

@@ -84,7 +84,7 @@ export default function CTASection() {
     <section id="inscricao" className="relative py-28 lg:py-36 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
-        <img src={HERO_BG} alt="P.A.G.O. - Fundo inspiracional para inscrição na mentoria" className="w-full h-full object-cover" />
+        <img src={HERO_BG} alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-navy/90" />
       </div>
 

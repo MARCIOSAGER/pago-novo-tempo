@@ -17,17 +17,6 @@ import {
   listFiles,
   getFileById,
   deleteFileRecord,
-  listDownloads,
-  listAllDownloads,
-  getDownloadBySlug,
-  getDownloadById,
-  createDownload,
-  updateDownload,
-  deleteDownload,
-  getDownloadCount,
-  getDownloadStats,
-  getDownloadTimeline,
-  getRecentDownloadEvents,
 } from "./db";
 import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
@@ -99,7 +88,24 @@ const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   }
   return next({ ctx });
 });
-// ─── Router ─────────────────────────────────────────────────────────────
+
+// ─── Umami Analytics Helper ─────────────────────────────────────
+
+async function fetchUmami(path: string) {
+  const endpoint = ENV.analyticsEndpoint;
+  if (!endpoint) {
+    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Analytics endpoint not configured." });
+  }
+  const url = `${endpoint}${path}`;
+  const res = await fetch(url, {
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!res.ok) {
+    console.error(`[Analytics] Umami API error: ${res.status} ${res.statusText}`);
+    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Erro ao buscar dados de analytics." });
+  }
+  return res.json();
+}// ─── Router ─────────────────────────────────────────────────────────────
 
 // ─── PAGO Chatbot System Prompt ───────────────────────────────
 
@@ -343,235 +349,105 @@ export const appRouter = router({
       }),
   }),
 
-  // ─── Downloads Management ───────────────────────────────────
+  // ─── Ebook Downloads ───────────────────────────────────────
   downloads: router({
-    // Public: list active downloads by category
-    listByCategory: publicProcedure
-      .input(z.object({ category: z.string().max(64).optional() }))
-      .query(async ({ input }) => {
-        return listDownloads(input.category);
-      }),
-
-    // Public: get single download by slug
-    getBySlug: publicProcedure
-      .input(z.object({ slug: z.string().max(128) }))
-      .query(async ({ input }) => {
-        const dl = await getDownloadBySlug(input.slug);
-        if (!dl) throw new TRPCError({ code: "NOT_FOUND", message: "Download não encontrado." });
-        return dl;
-      }),
-
-    // Admin: list all downloads (including inactive)
-    listAll: adminProcedure.query(async () => {
-      return listAllDownloads();
+    // Public: get download links for all ebook formats
+    getLinks: publicProcedure.query(() => {
+      return {
+        pdf: "/api/downloads/ebook-pdf",
+        pdfGrafica: "/api/downloads/ebook-pdf-grafica",
+        epub: "/api/downloads/ebook-epub",
+        mobi: "/api/downloads/ebook-mobi",
+        flipbook: "/api/downloads/ebook-flipbook",
+        html: "/api/downloads/ebook-html",
+        version: "2.0",
+        updatedAt: "2025-02-27",
+      };
     }),
-
-    // Admin: get total count
-    count: adminProcedure.query(async () => {
-      return { total: await getDownloadCount() };
-    }),
-
-    // Admin: create a new download entry
-    create: adminProcedure
-      .input(
-        z.object({
-          slug: z.string().min(1).max(128).regex(/^[a-z0-9-]+$/, "Slug deve conter apenas letras minúsculas, números e hífens"),
-          title: z.string().min(1).max(255),
-          description: z.string().max(1000).optional().nullable(),
-          format: z.string().min(1).max(32),
-          fileSize: z.string().max(32).optional().nullable(),
-          url: z.string().url().max(2048),
-          filename: z.string().min(1).max(255),
-          category: z.string().min(1).max(64),
-          badge: z.string().max(64).optional().nullable(),
-          badgeVariant: z.string().max(32).optional().nullable(),
-          sortOrder: z.number().int().min(0).default(0),
-          active: z.enum(["yes", "no"]).default("yes"),
-        })
-      )
-      .mutation(async ({ input }) => {
-        // Check slug uniqueness
-        const existing = await getDownloadBySlug(input.slug);
-        if (existing) {
-          throw new TRPCError({ code: "CONFLICT", message: "Slug já existe. Escolha outro identificador." });
-        }
-        await createDownload(input);
-        return { success: true };
-      }),
-
-    // Admin: update a download entry
-    update: adminProcedure
-      .input(
-        z.object({
-          id: z.number().int().positive(),
-          slug: z.string().min(1).max(128).regex(/^[a-z0-9-]+$/).optional(),
-          title: z.string().min(1).max(255).optional(),
-          description: z.string().max(1000).optional().nullable(),
-          format: z.string().min(1).max(32).optional(),
-          fileSize: z.string().max(32).optional().nullable(),
-          url: z.string().url().max(2048).optional(),
-          filename: z.string().min(1).max(255).optional(),
-          category: z.string().min(1).max(64).optional(),
-          badge: z.string().max(64).optional().nullable(),
-          badgeVariant: z.string().max(32).optional().nullable(),
-          sortOrder: z.number().int().min(0).optional(),
-          active: z.enum(["yes", "no"]).optional(),
-        })
-      )
-      .mutation(async ({ input }) => {
-        const { id, ...data } = input;
-        const existing = await getDownloadById(id);
-        if (!existing) {
-          throw new TRPCError({ code: "NOT_FOUND", message: "Download não encontrado." });
-        }
-        // Check slug uniqueness if changing slug
-        if (data.slug && data.slug !== existing.slug) {
-          const slugExists = await getDownloadBySlug(data.slug);
-          if (slugExists) {
-            throw new TRPCError({ code: "CONFLICT", message: "Slug já existe. Escolha outro identificador." });
-          }
-        }
-        await updateDownload(id, data);
-        return { success: true };
-      }),
-
-    // Admin: delete a download entry
-    delete: adminProcedure
-      .input(z.object({ id: z.number().int().positive() }))
-      .mutation(async ({ input }) => {
-        const existing = await getDownloadById(input.id);
-        if (!existing) {
-          throw new TRPCError({ code: "NOT_FOUND", message: "Download não encontrado." });
-        }
-        await deleteDownload(input.id);
-        return { success: true };
-      }),
-
-    // Admin: download statistics overview
-    stats: adminProcedure.query(async () => {
-      return getDownloadStats();
-    }),
-
-    // Admin: download timeline (for charts)
-    timeline: adminProcedure
-      .input(z.object({ days: z.number().int().min(1).max(365).default(30) }))
-      .query(async ({ input }) => {
-        return getDownloadTimeline(input.days);
-      }),
-
-    // Admin: recent download events
-    recentEvents: adminProcedure
-      .input(z.object({ limit: z.number().int().min(1).max(200).default(50) }))
-      .query(async ({ input }) => {
-        return getRecentDownloadEvents(input.limit);
-      }),
-
-    // Admin: upload file to S3 and create download entry
-    uploadAndCreate: adminProcedure
-      .input(
-        z.object({
-          slug: z.string().min(1).max(128).regex(/^[a-z0-9-]+$/, "Slug deve conter apenas letras minúsculas, números e hífens"),
-          title: z.string().min(1).max(255),
-          description: z.string().max(1000).optional().nullable(),
-          format: z.string().min(1).max(32),
-          category: z.string().min(1).max(64),
-          badge: z.string().max(64).optional().nullable(),
-          badgeVariant: z.string().max(32).optional().nullable(),
-          sortOrder: z.number().int().min(0).default(0),
-          // File data
-          filename: z.string().min(1).max(255),
-          mimeType: z.string().min(1).max(128),
-          size: z.number().int().positive().max(100 * 1024 * 1024), // 100MB max
-          data: z.string(), // base64 encoded
-        })
-      )
-      .mutation(async ({ input, ctx }) => {
-        // Check slug uniqueness
-        const existing = await getDownloadBySlug(input.slug);
-        if (existing) {
-          throw new TRPCError({ code: "CONFLICT", message: "Slug já existe. Escolha outro identificador." });
-        }
-
-        // Validate file
-        const validation = validateFileUpload(input.filename, input.mimeType, input.size);
-        if (!validation.valid) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: validation.error || "Arquivo inválido." });
-        }
-
-        // Upload to S3
-        const suffix = nanoid(12);
-        const safeFilename = input.filename.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const fileKey = `pago-downloads/${input.category}/${suffix}-${safeFilename}`;
-        const buffer = Buffer.from(input.data, "base64");
-        const { url } = await storagePut(fileKey, buffer, input.mimeType);
-
-        // Format file size
-        const fileSizeStr = input.size >= 1024 * 1024
-          ? `${(input.size / (1024 * 1024)).toFixed(1)} MB`
-          : `${(input.size / 1024).toFixed(0)} KB`;
-
-        // Create download record
-        await createDownload({
-          slug: input.slug,
-          title: input.title,
-          description: input.description ?? null,
-          format: input.format,
-          fileSize: fileSizeStr,
-          url,
-          filename: input.filename,
-          category: input.category,
-          badge: input.badge ?? null,
-          badgeVariant: input.badgeVariant ?? null,
-          sortOrder: input.sortOrder,
-        });
-
-        return { success: true, url, fileKey };
-      }),
-
-    // Admin: replace file for existing download (upload new file to S3)
-    replaceFile: adminProcedure
-      .input(
-        z.object({
-          id: z.number().int().positive(),
-          filename: z.string().min(1).max(255),
-          mimeType: z.string().min(1).max(128),
-          size: z.number().int().positive().max(100 * 1024 * 1024),
-          data: z.string(), // base64 encoded
-        })
-      )
-      .mutation(async ({ input, ctx }) => {
-        const existing = await getDownloadById(input.id);
-        if (!existing) {
-          throw new TRPCError({ code: "NOT_FOUND", message: "Download não encontrado." });
-        }
-
-        const validation = validateFileUpload(input.filename, input.mimeType, input.size);
-        if (!validation.valid) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: validation.error || "Arquivo inválido." });
-        }
-
-        // Upload new file to S3
-        const suffix = nanoid(12);
-        const safeFilename = input.filename.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const fileKey = `pago-downloads/${existing.category}/${suffix}-${safeFilename}`;
-        const buffer = Buffer.from(input.data, "base64");
-        const { url } = await storagePut(fileKey, buffer, input.mimeType);
-
-        const fileSizeStr = input.size >= 1024 * 1024
-          ? `${(input.size / (1024 * 1024)).toFixed(1)} MB`
-          : `${(input.size / 1024).toFixed(0)} KB`;
-
-        // Update download record with new file
-        await updateDownload(input.id, {
-          url,
-          filename: input.filename,
-          fileSize: fileSizeStr,
-        });
-
-        return { success: true, url };
-      }),
   }),
 
+  // ─── Analytics (Umami proxy) ────────────────────────────────
+  analytics: router({
+    // Admin: get active visitors
+    active: adminProcedure.query(async () => {
+      return fetchUmami(`/api/websites/${ENV.analyticsWebsiteId}/active`);
+    }),
+
+    // Admin: get website stats (pageviews, visitors, visits, bounces, totaltime)
+    stats: adminProcedure
+      .input(
+        z.object({
+          startAt: z.number(),
+          endAt: z.number(),
+        })
+      )
+      .query(async ({ input }) => {
+        const params = new URLSearchParams({
+          startAt: input.startAt.toString(),
+          endAt: input.endAt.toString(),
+        });
+        return fetchUmami(
+          `/api/websites/${ENV.analyticsWebsiteId}/stats?${params}`
+        );
+      }),
+
+    // Admin: get pageviews time series
+    pageviews: adminProcedure
+      .input(
+        z.object({
+          startAt: z.number(),
+          endAt: z.number(),
+          unit: z.enum(["minute", "hour", "day", "month", "year"]).default("day"),
+          timezone: z.string().default("Africa/Luanda"),
+        })
+      )
+      .query(async ({ input }) => {
+        const params = new URLSearchParams({
+          startAt: input.startAt.toString(),
+          endAt: input.endAt.toString(),
+          unit: input.unit,
+          timezone: input.timezone,
+        });
+        return fetchUmami(
+          `/api/websites/${ENV.analyticsWebsiteId}/pageviews?${params}`
+        );
+      }),
+
+    // Admin: get metrics by type (path, country, browser, os, device, referrer, etc.)
+    metrics: adminProcedure
+      .input(
+        z.object({
+          startAt: z.number(),
+          endAt: z.number(),
+          type: z.enum([
+            "path",
+            "referrer",
+            "browser",
+            "os",
+            "device",
+            "country",
+            "region",
+            "city",
+            "language",
+            "screen",
+            "event",
+            "hostname",
+          ]),
+          limit: z.number().int().min(1).max(100).default(10),
+        })
+      )
+      .query(async ({ input }) => {
+        const params = new URLSearchParams({
+          startAt: input.startAt.toString(),
+          endAt: input.endAt.toString(),
+          type: input.type,
+          limit: input.limit.toString(),
+        });
+        return fetchUmami(
+          `/api/websites/${ENV.analyticsWebsiteId}/metrics?${params}`
+        );
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

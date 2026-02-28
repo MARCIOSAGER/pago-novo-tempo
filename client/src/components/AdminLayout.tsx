@@ -24,6 +24,7 @@ import { useIsMobile } from "@/hooks/useMobile";
 import {
   LayoutDashboard,
   Users,
+  BarChart3,
   LogOut,
   PanelLeft,
   ArrowLeft,
@@ -39,6 +40,7 @@ import { Button } from "./ui/button";
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
   { icon: Users, label: "Inscrições", path: "/admin/inscricoes" },
+  { icon: BarChart3, label: "Análises", path: "/admin/analytics" },
   { icon: Download, label: "Downloads", path: "/admin/downloads" },
   { icon: ImageIcon, label: "Mídia", path: "/admin/media" },
   { icon: Heart, label: "P.A.G.O. Kids", path: "/admin/kids" },

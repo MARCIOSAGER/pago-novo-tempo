@@ -1,6 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { BookOpen, Palette, Calendar, Heart, Download, Eye, Star, Users, Award } from "lucide-react";
+import { BookOpen, Palette, Calendar, Heart, Download, Eye, Star, Users } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const KIDS_COVER_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-cover-YXFafqXyCNBnqLPKUrfJyB.png";
@@ -102,7 +102,7 @@ export default function KidsSection() {
               {/* Floating illustration — builders */}
               <motion.img
                 src={KIDS_BUILDERS_URL}
-                alt="P.A.G.O. Kids Capítulo 1 - Crianças construtoras aprendendo princípios bíblicos"
+                alt=""
                 className="absolute -left-4 top-8 w-28 h-28 rounded-xl shadow-lg object-cover border-4 border-white z-0 hidden lg:block"
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -111,7 +111,7 @@ export default function KidsSection() {
               {/* Floating illustration — house */}
               <motion.img
                 src={KIDS_HOUSE_URL}
-                alt="P.A.G.O. Kids Capítulo 6 - Casa construída sobre a rocha simbolizando obediência"
+                alt=""
                 className="absolute -right-4 bottom-8 w-24 h-24 rounded-xl shadow-lg object-cover border-4 border-white z-0 hidden lg:block"
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
@@ -186,22 +186,13 @@ export default function KidsSection() {
                   {t.kids.ctaDownload}
                 </a>
                 <a
-                  href="/flipbook-kids"
+                  href="/api/downloads/ebook-kids-flipbook"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/80 text-navy font-accent text-sm uppercase tracking-[0.15em] rounded-xl hover:bg-white transition-all duration-300 border border-navy/10"
                 >
                   <Eye className="w-4 h-4" />
                   {t.kids.ctaPreview}
-                </a>
-                <a
-                  href="/api/downloads/certificado-kids"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#FFD166]/20 text-[#E6A800] font-accent text-sm uppercase tracking-[0.15em] rounded-xl hover:bg-[#FFD166]/30 transition-all duration-300 border border-[#FFD166]/40"
-                >
-                  <Award className="w-4 h-4" />
-                  {t.kids.ctaCertificate}
                 </a>
               </div>
             </FadeIn>

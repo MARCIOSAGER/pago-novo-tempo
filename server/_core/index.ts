@@ -9,8 +9,6 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { applyAllSecurity } from "../security";
-import { getDownloadBySlug, recordDownloadEvent } from "../db";
-import crypto from "crypto";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -57,35 +55,45 @@ async function startServer() {
       createContext,
     })
   );
-  // ─── Flipbook Kids Route ─────────────────
-  app.get("/flipbook-kids", (_req, res) => {
-    res.redirect(302, "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/JPckmwYvDWyIayHY.html?Expires=1803813522&Signature=uCPWn-QTA0pjZd5NRdSo3gdq6Li4MOt7kZz~ZIa9XyOL9GzFgqhlwgqN-s0SYmSrT3dYiWllu1z57OtiCBpsSNSGm6soZHhHxi5HH54EqXm8hj5R6U2sd0RABEBM3YXNNPatKJY7sMA9TN5JKLSae3VI7IwSydduFHG8RNSy74MsafLyXsf0sew1vii1jRZLyzWk7lhWk50jOAy0dlWYyPt9eEZ263euMU74e~855znEyZAVBonMZtiaz1R~FPuun4q-GKpG7kttBqsUWcoBG3iy3AxGsD5CiGUTCJkE9b2ir-ji-icPMdnTgN6CdVo4LsfAwRKSoS0feowvdT00bg__&Key-Pair-Id=K2HSFNDJXOU9YS");
-  });
+  // ─── Ebook Download Routes ─────────────────────────────────
+  const ebookFiles: Record<string, { url: string; filename: string }> = {
+    "ebook-pdf": {
+      url: "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/eZxBBdeKPbrkcOtT.pdf?Expires=1803748610&Signature=eFAUQS0pT0XIcUouQfwdPu9S9dlfCIw1l3Cjz-jtzWCqek-M74gCdOy4gMri2lkBIxjJdSvrPbd-3BZCw2NFZNgzii31bp1Nsw4ne7V6vtbVGWVAtGEBxTmpNkjMfyziiso7OfcEbVwiI-euCjKCY28DZfQhJBzjhdlS6S2rnEnTTnqeyN5-hTk9l7V81i4WdimszFI0CYoFFQSNAHk0nfe4Atq~mzEeY7neYqqinz9F60iKDzRBYPXu4I8yAvWkgb2zApHLuSVrADpkoMtawP7QhMMhCriR2i~lDG57MX2PGJ2oQwaOYxg9-YmuDK9qMmDiBBxvBYRSxEWY0ux7Zw__&Key-Pair-Id=K2HSFNDJXOU9YS",
+      filename: "PAGO-Ebook-v2.pdf",
+    },
+    "ebook-pdf-grafica": {
+      url: "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/ZwjrbuQUWyVkjvEP.pdf?Expires=1803748611&Signature=sZ7rASliREeZBKw3LMMkAzESjBWCuvCXjZYtMS8xxBjVWm1F811h3pRl2bUOhewkT6AK6dpTGvSg0cs8UJgcCNWJKeellFgm9G3W4lFGdPyZXzjelQUXRjLppyuuH5hOMpmkYf0Sj0SJEgUKxGRAxeCZw5~1-BIl7Hzm35SgOKY24iv4WTivQOfTBfadO3RH9751YN1p2S9tkRM9~6sgp~-DSiV5pjcOkAOH0es5~-PitiVjbB6mjWXxxhRNebCS2HzcDS7xMaoQ-rcXyN06SXRwZlDjX1jeVss0U4Ob4WjerlOOZgc-lx4tXp-8B6catckHqLjnu7C7Cxbb4snP1w__&Key-Pair-Id=K2HSFNDJXOU9YS",
+      filename: "PAGO-Ebook-v1-Grafica.pdf",
+    },
+    "ebook-epub": {
+      url: "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/vSqZuzzhJInCGwlC.epub?Expires=1803748612&Signature=e27XQunrd8TABv~go4dh~-6YinzLBeuKXRm1Ler2eLRVN2UDVmL8HVOlXK52gdXZSXNf9bxRoqW-VRHjTIeh555dGoU~8ZKFn~Lm~1mW~FptdrDEQ7tkcXN1e9gu~-XtEmt-fOcOEC20zaGa-SOF5ipYxqWFhLJp0-0rX-2sJDxFM00NyMfKccxshEzcJIvFJIZwJwJqbPdk2JrPDTY~WdMalKTvTTl~ceOcW5~s1uuRe8-JigkxxL~iD-OGdJ3U6hBmGqGXuHuU3It7rvMjdbV-luesAwl~7w~AXFDqPioc5qlCkenA-6lal~hcZW1xW2qMsu3EfT2DEtBh-Y5hMw__&Key-Pair-Id=K2HSFNDJXOU9YS",
+      filename: "PAGO-Ebook-v2.epub",
+    },
+    "ebook-mobi": {
+      url: "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/MKtoPdresVJMbsAT.mobi?Expires=1803748613&Signature=rdqiXOw107OO8RTsEPTZPeSGyN7Eb5nFLhiLBP6drDHZnipM68TQ25D6DD6jHfmpQrmy8-NeFmlkcm9jhONkn6M7WJJfhI8YSKVMYlETeTSCN0PcxTMrv8XS76fT4tPClieM8dVFEiWu-vTxjxxV1SaOzlp~KPk29BEtMPfsjdJQZWbrRWyEXVNJ~z6FfX8BaEUrNQIRmgiZc7ooYxPc2hApAOSjRrxFynQiDlLE9XUrsBdeud83VJpSrq6kHT5hSP-mdcy75F~iA9VNRyCtqchhplLSbkiuU5l~Zd3~yD9JvoKZnQkVdFi-XVomDDseqItsqEZx~mOvJdJsuwDWcw__&Key-Pair-Id=K2HSFNDJXOU9YS",
+      filename: "PAGO-Ebook-v2.mobi",
+    },
+    "ebook-flipbook": {
+      url: "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/schRlLmgaEwceCwX.html?Expires=1803748723&Signature=kF6QTa9diYjSJpfSjYP0VcphrA1lah9HAVwQ-wKugDyla0bnAQ2otDPA3qcb0sntKmmkTdHbVfjAbezMWgu02gqeM5yWqY43p8fIi3K5yfN4~jgT8Ud8OlPxxM~uZ-AZ7lGbXeA8uK9uIVbLEMCDRIKBFF1eCbif3477hzhQKqInPNLGADtJa0zp3pQpBmgAgFduxsjJ5ySl15njZNWw2Os7xMsRdfQ0Uvgbb3OF2WJ5NR4iB0pV1OYQnA7nh1JADmXDbpfCZm7OFm3IharBFPLYXWbH-tXLJ9Jq9QeIZOigO9PlVhQwAdPd9Ltv3wtrdlM9AZY2jfZ-0zRJbAFgAA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+      filename: "PAGO-Ebook-Flipbook.html",
+    },
+    "ebook-html": {
+      url: "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/nsqXhRlGADHIgEiR.html?Expires=1803748787&Signature=ZL4IkPKQWy-ucDA2MmIrVgf-L39g8PfUmq4SsfDgvgmXd-2yucqHaG6y04BU4Z7jk1J1SNs0Yw50ueajOjthdd~TspeDO96NpekvTVcUa7FPzLrvIX7XwJiKXYQFy74Up5DCJGm6X0Xn8y~SnJwdqY2-Xz08mkrO8sPDRtBwnaYdui7BL3dIFKIW~vnMh0WaKguk0Mm~g0V8dfuSJb2nrg6nSQFAGsiZMiRB8CfFafCnKNNwJhECCjMlkXUo~8F-IO8JiIPTEDtxu2GvcD780FiTAZKHRc06HWDcanw9-XJzSfugbkdgtUt22uqWaBOM-5ctfnf6CjFv2TjocaI3zQ__&Key-Pair-Id=K2HSFNDJXOU9YS",
+      filename: "PAGO-Ebook-v2.html",
+    },
+    // P.A.G.O. Kids
+    "ebook-kids-pdf": {
+      url: "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/eCjhtkOqwFyWweSJ.pdf?Expires=1803760285&Signature=BAM8rL3yjWT~-N~LDTsS7jG1RbGqFwGD6f~Q280nClzIz8k7H-6cX-Y4kSM9TuIhQSl~5HI8hqmqywJ8GQagSEs7kylqjncQSKoKKjAIlOMhXWcrPZAw5rJp0PjKrdLJNZ0oJzUS568huO0EU82CCzQKzYXCeTC7VuckRWA4on6qeFB2mGrhPFOWJ4dbrU36nelS~lc6ACm1TjqqZJiiUde52ghySDCL8t-G38yWkC1JFqCcA1YdJbfnkv4zpNpfphYeYvoUPRvPnKqImXLe9pKKpjRr4un66AyD0Oxq9qy04gLj6yIw7N~T-bBNhnrkHQTAFdvZQMOJu20f26UVwA__&Key-Pair-Id=K2HSFNDJXOU9YS",
+      filename: "PAGO-Kids-Ebook.pdf",
+    },
+  };
 
-  // ─── Download Routes (database-driven with tracking) ─────────────────
-  app.get("/api/downloads/:slug", async (req, res) => {
-    try {
-      const download = await getDownloadBySlug(req.params.slug);
-      if (!download || download.active !== "yes") {
-        return res.status(404).json({ error: "Download não encontrado" });
-      }
-
-      // Track download event asynchronously (non-blocking)
-      const ip = req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || req.socket.remoteAddress || "";
-      const ipHash = ip ? crypto.createHash("sha256").update(ip).digest("hex").substring(0, 16) : undefined;
-      recordDownloadEvent({
-        downloadId: download.id,
-        ipHash,
-        userAgent: req.headers["user-agent"],
-        referer: req.headers["referer"],
-        country: req.headers["cf-ipcountry"]?.toString() || req.headers["x-country"]?.toString(),
-      }).catch((err) => console.error("[Downloads] Tracking error:", err));
-
-      res.redirect(302, download.url);
-    } catch (error) {
-      console.error("[Downloads] Error:", error);
-      return res.status(500).json({ error: "Erro interno" });
+  app.get("/api/downloads/:format", (req, res) => {
+    const file = ebookFiles[req.params.format];
+    if (!file) {
+      return res.status(404).json({ error: "Formato não encontrado" });
     }
+    res.redirect(302, file.url);
   });
 
   // development mode uses Vite, production mode uses static files

@@ -200,10 +200,9 @@ const es: Translations = {
     ],
     ctaDownload: "Descargar Ebook Gratis",
     ctaPreview: "Ver Vista Previa",
-    ctaCertificate: "Certificado",
     badge: "Nuevo",
     ageRange: "6 a 12 años",
-    pages: "19 páginas",
+    pages: "39 páginas",
     format: "PDF Ilustrado",
   },
 

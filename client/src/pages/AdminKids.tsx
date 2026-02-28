@@ -30,11 +30,11 @@ interface DownloadItem {
 
 const kidsDownloads: DownloadItem[] = [
   {
-    title: "PDF — Uma Aventura de Fé (PT)",
+    title: "PDF — Versão Ilustrada (PT)",
     description:
-      "Apresentação ilustrada com 7 capítulos sobre os 4 pilares P.A.G.O. para crianças. Ilustrações em aquarela. 12 páginas.",
+      "Ebook completo com 8 capítulos, 12 atividades, ilustrações coloridas e design infantil. 39 páginas.",
     format: "PDF",
-    size: "14 MB",
+    size: "56 MB",
     icon: FileText,
     url: "/api/downloads/ebook-kids-pdf",
     badge: "Principal",

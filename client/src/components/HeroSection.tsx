@@ -15,7 +15,7 @@ export default function HeroSection() {
           animate={{ scale: 1 }}
           transition={{ duration: 1.5, ease: "easeOut" }}
           src={HERO_BG}
-          alt="P.A.G.O. Novo Tempo - Farol ao pôr do sol simbolizando direção e propósito"
+          alt=""
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-navy/85 via-navy/60 to-transparent" />
