@@ -68,12 +68,23 @@ async function startServer() {
     "ebook-flipbook": { filepath: path.join(docsDir, "ebook-pago-flipbook.html"), filename: "PAGO-Ebook-Flipbook.html" },
     "ebook-html": { filepath: path.join(docsDir, "ebook-pago-v2.html"), filename: "PAGO-Ebook-v2.html" },
     "ebook-kids-pdf": { filepath: path.join(docsDir, "ebook-pago-v2-print.pdf"), filename: "PAGO-Kids-Ebook.pdf" },
+    "ebook-kids-flipbook": { filepath: path.join(docsDir, "ebook-pago-kids.html"), filename: "PAGO-Kids-Ebook-Flipbook.html" },
   };
+
+  // Flipbook formats that should open in browser (sendFile) instead of download
+  const inlineFormats = new Set(["ebook-flipbook", "ebook-kids-flipbook"]);
 
   app.get("/api/downloads/:format", (req, res) => {
     const file = ebookFiles[req.params.format];
     if (!file) {
       return res.status(404).json({ error: "Formato não encontrado" });
+    }
+    if (inlineFormats.has(req.params.format)) {
+      return res.sendFile(file.filepath, (err) => {
+        if (err && !res.headersSent) {
+          res.status(404).json({ error: "Arquivo não encontrado" });
+        }
+      });
     }
     res.download(file.filepath, file.filename, (err) => {
       if (err && !res.headersSent) {
