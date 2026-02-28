@@ -56,6 +56,11 @@ async function startServer() {
       createContext,
     })
   );
+  // ─── Flipbook Kids Route ─────────────────
+  app.get("/flipbook-kids", (_req, res) => {
+    res.redirect(302, "https://private-us-east-1.manuscdn.com/user_upload_by_module/session_file/310419663028643999/JPckmwYvDWyIayHY.html?Expires=1803813522&Signature=uCPWn-QTA0pjZd5NRdSo3gdq6Li4MOt7kZz~ZIa9XyOL9GzFgqhlwgqN-s0SYmSrT3dYiWllu1z57OtiCBpsSNSGm6soZHhHxi5HH54EqXm8hj5R6U2sd0RABEBM3YXNNPatKJY7sMA9TN5JKLSae3VI7IwSydduFHG8RNSy74MsafLyXsf0sew1vii1jRZLyzWk7lhWk50jOAy0dlWYyPt9eEZ263euMU74e~855znEyZAVBonMZtiaz1R~FPuun4q-GKpG7kttBqsUWcoBG3iy3AxGsD5CiGUTCJkE9b2ir-ji-icPMdnTgN6CdVo4LsfAwRKSoS0feowvdT00bg__&Key-Pair-Id=K2HSFNDJXOU9YS");
+  });
+
   // ─── Download Routes (database-driven) ─────────────────
   app.get("/api/downloads/:slug", async (req, res) => {
     try {

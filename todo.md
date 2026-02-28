@@ -147,3 +147,4 @@
 - [x] Adicionar certificado P.A.G.O. Kids (PNG) como download na categoria kids — "Pequeno Construtor de Deus" 174 KB
 - [x] Adicionar link de download do certificado na seção Kids da landing page pública (com i18n PT/EN/ES)
 - [x] Substituir PDF do ebook Kids pelo novo PAGO-Kids-Ebook-Final.pdf (23 MB, 19 págs) e corrigir número de páginas na landing page (39→19 em PT/EN/ES)
+- [x] Integrar flipbook P.A.G.O. Kids no botão "Ver Prévia" da seção Kids — abre em nova aba com flipbook interativo (page-flip + 12 imagens CDN)

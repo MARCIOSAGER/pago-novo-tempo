@@ -186,7 +186,7 @@ export default function KidsSection() {
                   {t.kids.ctaDownload}
                 </a>
                 <a
-                  href="/api/downloads/ebook-kids-flipbook"
+                  href="/flipbook-kids"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/80 text-navy font-accent text-sm uppercase tracking-[0.15em] rounded-xl hover:bg-white transition-all duration-300 border border-navy/10"
