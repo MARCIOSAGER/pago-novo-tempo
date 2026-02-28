@@ -25,14 +25,14 @@ interface MediaItem {
 
 const logos: MediaItem[] = [
   {
-    name: "Logo P.A.G.O. — Branco",
+    name: "Logo P.A.G.O — Branco",
     description: "Logo principal em fundo transparente, versão branca para fundos escuros.",
     url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo-white-5ULVBxzBhJzXMoTJVXNLbQ.webp",
     category: "logo",
     dimensions: "512×512",
   },
   {
-    name: "Logo P.A.G.O. — Circular",
+    name: "Logo P.A.G.O — Circular",
     description: "Logo circular para uso em avatares, perfis de redes sociais e favicon.",
     url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo-circle-hSRNNRjjkpHjSKMfuEKkpH.webp",
     category: "logo",
@@ -162,7 +162,7 @@ export default function AdminMediaRepo() {
           Repositório de Mídia
         </h1>
         <p className="text-sm text-muted-foreground font-accent mt-1">
-          Imagens, logos, cores e assets da marca P.A.G.O.
+          Imagens, logos, cores e assets da marca P.A.G.O
         </p>
       </div>
 

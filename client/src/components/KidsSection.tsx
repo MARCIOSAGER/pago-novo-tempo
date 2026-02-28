@@ -87,7 +87,7 @@ export default function KidsSection() {
                 <div className="relative">
                   <img
                     src={KIDS_COVER_URL}
-                    alt="P.A.G.O. Kids Ebook Cover"
+                    alt="P.A.G.O Kids Ebook Cover"
                     className="w-72 lg:w-80 rounded-2xl shadow-2xl"
                     style={{ boxShadow: "0 25px 60px rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.1)" }}
                   />

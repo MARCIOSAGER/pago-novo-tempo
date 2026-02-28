@@ -28,7 +28,7 @@ export default function PagoChatBot() {
   const chatMutation = trpc.chat.sendMessage.useMutation();
 
   const suggestedQuestions = [
-    t.faq.items[0]?.question || "P.A.G.O.?",
+    t.faq.items[0]?.question || "P.A.G.O?",
     t.faq.items[1]?.question || "Mentoria?",
     t.faq.items[2]?.question || "Kit?",
     t.faq.items[3]?.question || "Duration?",

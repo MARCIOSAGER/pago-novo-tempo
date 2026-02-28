@@ -152,7 +152,7 @@ export default function AdminDownloads() {
             Downloads
           </h1>
           <p className="text-sm text-muted-foreground font-accent mt-1">
-            Ebook P.A.G.O. — Edição Expandida 2025
+            Ebook P.A.G.O — Edição Expandida 2025
           </p>
         </div>
         <span className="text-xs text-muted-foreground font-accent">
@@ -169,7 +169,7 @@ export default function AdminDownloads() {
             <BookOpen className="h-5 w-5 text-primary" />
             <div>
               <p className="text-sm font-semibold font-display">
-                P.A.G.O. — Princípio · Alinhamento · Governo · Obediência
+                P.A.G.O — Princípio · Alinhamento · Governo · Obediência
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Versão 2.0 · 55 páginas · 4 capítulos · Exercícios práticos ·

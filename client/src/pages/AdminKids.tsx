@@ -75,7 +75,7 @@ interface Illustration {
 const illustrations: Illustration[] = [
   {
     title: "Capa — Crianças Construindo",
-    description: "Três crianças construindo uma casa com blocos P.A.G.O. sobre a rocha.",
+    description: "Três crianças construindo uma casa com blocos P.A.G.O sobre a rocha.",
     url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-cover-YXFafqXyCNBnqLPKUrfJyB.png",
     chapter: "Capa",
   },
@@ -98,7 +98,7 @@ const illustrations: Illustration[] = [
     chapter: "Cap. 3",
   },
   {
-    title: "Navio com Bandeiras P.A.G.O.",
+    title: "Navio com Bandeiras P.A.G.O",
     description: "Navio navegando com bandeiras dos 4 pilares — governo e direção.",
     url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-ch4-ship-8CZgvngTa28Tg79fAXBxZo.png",
     chapter: "Cap. 4",
@@ -111,7 +111,7 @@ const illustrations: Illustration[] = [
   },
   {
     title: "Casa Completa com 4 Pilares",
-    description: "Casa colorida com os 4 pilares P.A.G.O. — integração final.",
+    description: "Casa colorida com os 4 pilares P.A.G.O — integração final.",
     url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-ch6-house-jvqcdRzsdVKSQveo947cpe.png",
     chapter: "Cap. 6",
   },
@@ -197,7 +197,7 @@ export default function AdminKids() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight font-display">
-            P.A.G.O. Kids
+            P.A.G.O Kids
           </h1>
           <p className="text-sm text-muted-foreground font-accent mt-1">
             Ebook infantil — Edição Ilustrada 2025
@@ -217,7 +217,7 @@ export default function AdminKids() {
             <Heart className="h-5 w-5 text-[#EF476F]" />
             <div>
               <p className="text-sm font-semibold font-display">
-                P.A.G.O. Kids — Princípio · Alinhamento · Governo · Obediência para Crianças
+                P.A.G.O Kids — Princípio · Alinhamento · Governo · Obediência para Crianças
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Versão 1.0 · 39 páginas · 8 capítulos · 12 atividades · Desafio 7 dias · Glossário · Versículos

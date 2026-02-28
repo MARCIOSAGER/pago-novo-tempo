@@ -27,14 +27,14 @@ export default function TermsOfUse() {
           <section>
             <h2 className="font-display text-2xl font-semibold text-navy mb-4">1. Aceitação dos Termos</h2>
             <p>
-              Ao acessar e utilizar a plataforma <strong>P.A.G.O. — Novo Tempo</strong> ("Plataforma"), você declara que leu, compreendeu e concorda com estes Termos de Uso. Caso não concorde com qualquer disposição, solicitamos que não utilize a Plataforma.
+              Ao acessar e utilizar a plataforma <strong>P.A.G.O — Novo Tempo</strong> ("Plataforma"), você declara que leu, compreendeu e concorda com estes Termos de Uso. Caso não concorde com qualquer disposição, solicitamos que não utilize a Plataforma.
             </p>
           </section>
 
           <section>
             <h2 className="font-display text-2xl font-semibold text-navy mb-4">2. Descrição do Serviço</h2>
             <p>
-              A Plataforma P.A.G.O. é um sistema de mentoria e reorganização de vida fundamentado nos quatro pilares: <strong>Princípio, Alinhamento, Governo e Obediência</strong>. Os serviços incluem:
+              A Plataforma P.A.G.O é um sistema de mentoria e reorganização de vida fundamentado nos quatro pilares: <strong>Princípio, Alinhamento, Governo e Obediência</strong>. Os serviços incluem:
             </p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Programa de mentoria estruturado com acompanhamento personalizado.</li>
@@ -61,12 +61,12 @@ export default function TermsOfUse() {
           <section>
             <h2 className="font-display text-2xl font-semibold text-navy mb-4">4. Propriedade Intelectual</h2>
             <p>
-              Todo o conteúdo disponibilizado na Plataforma — incluindo, mas não se limitando a, textos, imagens, vídeos, metodologias, materiais didáticos, logotipos e design — é de propriedade exclusiva da <strong>P.A.G.O. — Novo Tempo</strong> e/ou de <strong>Jefferson Evangelista</strong>, protegido pelas leis de propriedade intelectual brasileiras e internacionais.
+              Todo o conteúdo disponibilizado na Plataforma — incluindo, mas não se limitando a, textos, imagens, vídeos, metodologias, materiais didáticos, logotipos e design — é de propriedade exclusiva da <strong>P.A.G.O — Novo Tempo</strong> e/ou de <strong>Jefferson Evangelista</strong>, protegido pelas leis de propriedade intelectual brasileiras e internacionais.
             </p>
             <p className="mt-4">É expressamente proibido:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Reproduzir, distribuir ou modificar qualquer conteúdo sem autorização prévia por escrito.</li>
-              <li>Utilizar a metodologia P.A.G.O. para fins comerciais sem licenciamento adequado.</li>
+              <li>Utilizar a metodologia P.A.G.O para fins comerciais sem licenciamento adequado.</li>
               <li>Remover ou alterar avisos de direitos autorais ou marcas registradas.</li>
             </ul>
           </section>
@@ -93,7 +93,7 @@ export default function TermsOfUse() {
           <section>
             <h2 className="font-display text-2xl font-semibold text-navy mb-4">7. Limitação de Responsabilidade</h2>
             <p>
-              A Plataforma P.A.G.O. é oferecida "como está" e "conforme disponível". Não garantimos que:
+              A Plataforma P.A.G.O é oferecida "como está" e "conforme disponível". Não garantimos que:
             </p>
             <ul className="list-disc pl-6 space-y-2">
               <li>A Plataforma estará disponível de forma ininterrupta ou livre de erros.</li>

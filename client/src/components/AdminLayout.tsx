@@ -43,7 +43,7 @@ const menuItems = [
   { icon: BarChart3, label: "Análises", path: "/admin/analytics" },
   { icon: Download, label: "Downloads", path: "/admin/downloads" },
   { icon: ImageIcon, label: "Mídia", path: "/admin/media" },
-  { icon: Heart, label: "P.A.G.O. Kids", path: "/admin/kids" },
+  { icon: Heart, label: "P.A.G.O Kids", path: "/admin/kids" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "admin-sidebar-width";
@@ -225,7 +225,7 @@ function AdminLayoutContent({
               {!isCollapsed ? (
                 <div className="flex items-center gap-2 min-w-0">
                   <span className="font-semibold tracking-tight truncate font-display text-lg">
-                    P.A.G.O.
+                    P.A.G.O
                   </span>
                   <span className="text-[10px] font-accent uppercase tracking-wider text-muted-foreground">
                     Admin

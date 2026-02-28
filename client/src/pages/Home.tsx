@@ -1,5 +1,5 @@
 /**
- * P.A.G.O. — Novo Tempo
+ * P.A.G.O — Novo Tempo
  * Design Philosophy: "Governo Silencioso" — Elegância Subliminar
  * Inspired by quiet luxury, editorial design, and spiritual depth.
  * Color palette: Navy (#1A2744), Warm White (#FAFAF8), Sand (#E8E0D4), Gold (#B8A88A)

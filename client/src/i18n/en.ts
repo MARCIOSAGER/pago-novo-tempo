@@ -28,16 +28,16 @@ const en: Translations = {
 
   // === ABOUT ===
   about: {
-    label: "About P.A.G.O.",
+    label: "About P.A.G.O",
     titleLine1: "A life",
     titleLine2: "reorganization",
     titleLine3: "system.",
-    description: "P.A.G.O. was not simply an idea that was created. It was a vision delivered by the Holy Spirit. Only organized, structured, and systematized to transform lives.",
+    description: "P.A.G.O was not simply an idea that was created. It was a vision delivered by the Holy Spirit. Especially organized, structured, and systematized to transform lives.",
     content: "Many people do not fail due to lack of ability, but due to lack of inner governance. They live with genuine faith, but without structure. They have a clear calling, but no strategic direction. They love God, but experience disorganization in their lives.",
     problemLabel: "The Problem",
     problemText: "Prosperity without governance leads to downfall. Growth without structure leads to collapse. Faith without alignment leads to confusion.",
     answerLabel: "The Answer",
-    answerText: "P.A.G.O. is a path to structure your spiritual, emotional, and practical life with maturity and direction.",
+    answerText: "P.A.G.O is a path to structure your spiritual, emotional, and practical life with maturity and direction.",
     quote: "\"Restored men build strong families. Strong families sustain solid businesses. Solid businesses impact territories.\"",
   },
 
@@ -84,7 +84,7 @@ const en: Translations = {
     role3: "Endurance Athlete",
     bio1: "Jefferson Evangelista is not just an entrepreneur. He is a builder of structures and an organizer of destinies. His story did not begin in business, but in the awareness that without spiritual, emotional, and strategic governance, any growth crumbles.",
     bio2: "At the helm of Interaja and multiple business fronts, Jefferson never sought only profit. He always sought structure, sustainability, and legacy. He thinks about governance before thinking about expansion. He thinks about foundation before thinking about visibility.",
-    quote: "\"P.A.G.O. was not an idea I simply created. It was a vision that the Holy Spirit delivered to me. I only organized, structured, and systematized what I received.\"",
+    quote: "\"P.A.G.O was not an idea I simply created. It was a vision that the Holy Spirit delivered to me. I only organized, structured, and systematized what I received.\"",
     quoteAuthor: "Jefferson Evangelista",
     bio3: "As an endurance athlete, Jefferson carries in his body what he believes in his soul: daily discipline, quiet consistency, and strategic advancement. It is not about speed. It is about permanence. He does not lead to be seen. He structures to endure.",
     flipHint: "Hover to reveal",
@@ -121,7 +121,7 @@ const en: Translations = {
     items: [
       {
         title: "KJV Bible",
-        description: "The King James translation — the foundation of all revelation and study. Each pillar of P.A.G.O. is grounded in verses and thematic tables from this translation.",
+        description: "The King James translation — the foundation of all revelation and study. Each pillar of P.A.G.O is grounded in verses and thematic tables from this translation.",
       },
       {
         title: "Study Notebook",
@@ -132,7 +132,7 @@ const en: Translations = {
         description: "The instrument that transforms thought into commitment. Writing is an act of governance — it is declaring in the visible what was revealed in secret.",
       },
       {
-        title: "P.A.G.O. Ebook",
+        title: "P.A.G.O Ebook",
         description: "The complete methodology manual with the 4 pillars, practical exercises, foundational verses, and space for personal notes.",
       },
     ],
@@ -144,8 +144,8 @@ const en: Translations = {
     titleLine1: "Are you ready to",
     titleLine2: "reorganize",
     titleLine3: "your life?",
-    description: "P.A.G.O. is for those who are tired of living in disorganization, of having faith but no structure, of having a calling but no direction. If you want to build a legacy that endures, this mentoring is for you.",
-    benefit1: "Personalized guidance with the P.A.G.O. methodology",
+    description: "P.A.G.O is for those who are tired of living in disorganization, of having faith but no structure, of having a calling but no direction. If you want to build a legacy that endures, this mentoring is for you.",
+    benefit1: "Personalized guidance with the P.A.G.O methodology",
     benefit2: "Complete kit: KJV Bible, Study Notebook, Pen, and Ebook",
     benefit3: "Practical exercises and biblical reflections for each pillar",
     benefit4: "Community of men and women in transformation",
@@ -165,7 +165,7 @@ const en: Translations = {
     submitButton: "I Want to Sign Up",
     submitting: "Sending...",
     lgpdFooter: "Your data is protected in accordance with data protection laws. You can request deletion at any time.",
-    successMessage: "Thank you for your interest in P.A.G.O.",
+    successMessage: "Thank you for your interest in P.A.G.O",
     errorMessage: "Error submitting registration",
     errorRetry: "Please try again later.",
     lgpdRequired: "You must accept the Privacy Policy to continue.",
@@ -176,10 +176,10 @@ const en: Translations = {
   // === KIDS ===
   kids: {
     label: "For the Whole Family",
-    titleLine1: "P.A.G.O.",
+    titleLine1: "P.A.G.O",
     titleLine2: "Kids",
     subtitle: "The same 4 pillars, now adapted for children ages 6 to 12. Bible stories, fun activities, and lessons that build character from an early age.",
-    description: "P.A.G.O. Kids is a special ebook for parents who want to pass on the principles of Principle, Alignment, Government, and Obedience to their children in a playful and accessible way.",
+    description: "P.A.G.O Kids is a special ebook for parents who want to pass on the principles of Principle, Alignment, Government, and Obedience to their children in a playful and accessible way.",
     features: [
       {
         title: "8 Illustrated Chapters",
@@ -213,28 +213,28 @@ const en: Translations = {
     titleLine2: "doubts.",
     items: [
       {
-        question: "What is P.A.G.O.?",
-        answer: "P.A.G.O. is a life reorganization system based on four biblical pillars: Principle (above results), Alignment (generates authority), Government (starts in secret), and Obedience (sustains the invisible). It is a mentoring methodology that helps people structure their spiritual, emotional, and practical life.",
+        question: "What is P.A.G.O?",
+        answer: "P.A.G.O is a life reorganization system based on four biblical pillars: Principle (above results), Alignment (generates authority), Government (starts in secret), and Obedience (sustains the invisible). It is a mentoring methodology that helps people structure their spiritual, emotional, and practical life.",
       },
       {
-        question: "Who is the P.A.G.O. mentoring for?",
+        question: "Who is the P.A.G.O mentoring for?",
         answer: "For men and women who love God but live in disorganization. For those with genuine faith who need structure. For leaders, entrepreneurs, and Christians who want to build a lasting legacy grounded in immutable biblical principles.",
       },
       {
         question: "What is included in the Mentoring Kit?",
-        answer: "The kit includes: KJV Bible (King James Version), a dedicated Study Notebook for reflections and exercises, a Pen for recording commitments, and the P.A.G.O. Ebook with the complete methodology, practical exercises, and foundational verses.",
+        answer: "The kit includes: KJV Bible (King James Version), a dedicated Study Notebook for reflections and exercises, a Pen for recording commitments, and the P.A.G.O Ebook with the complete methodology, practical exercises, and foundational verses.",
       },
       {
         question: "How long does the mentoring last?",
-        answer: "The mentoring is structured to accompany each participant on their transformation journey. The pace is personalized, respecting each person's individual process. P.A.G.O. is not about speed — it is about permanence and consistency.",
+        answer: "The mentoring is structured to accompany each participant on their transformation journey. The pace is personalized, respecting each person's individual process. P.A.G.O is not about speed — it is about permanence and consistency.",
       },
       {
         question: "Do I need prior biblical experience?",
-        answer: "No. P.A.G.O. was designed to be accessible to everyone who wants to reorganize their life based on biblical principles. The methodology guides the participant step by step, from the foundations to practical application.",
+        answer: "No. P.A.G.O was designed to be accessible to everyone who wants to reorganize their life based on biblical principles. The methodology guides the participant step by step, from the foundations to practical application.",
       },
       {
         question: "How does the White-Label model work?",
-        answer: "P.A.G.O. is developing a scalable platform that will allow churches, organizations, and mentors to apply the methodology under their own brand. If you are interested in bringing P.A.G.O. to your community, please contact us.",
+        answer: "P.A.G.O is developing a scalable platform that will allow churches, organizations, and mentors to apply the methodology under their own brand. If you are interested in bringing P.A.G.O to your community, please contact us.",
       },
     ],
   },
@@ -250,7 +250,7 @@ const en: Translations = {
     pillarO: "Obedience sustains the Invisible",
     contactLabel: "Contact",
     contactCta: "Sign Up for Mentoring",
-    copyright: "P.A.G.O. New Season. All rights reserved.",
+    copyright: "P.A.G.O New Season. All rights reserved.",
     privacy: "Privacy",
     terms: "Terms of Use",
     cookies: "Cookies",
@@ -259,10 +259,10 @@ const en: Translations = {
 
   // === CHATBOT ===
   chatbot: {
-    title: "P.A.G.O. Assistant",
+    title: "P.A.G.O Assistant",
     subtitle: "Ask about the 4 pillars",
     placeholder: "Ask about P.A.G.O...",
-    greeting: "Hello! I am the P.A.G.O. assistant — Principle, Alignment, Government, and Obedience. How can I help you today?",
+    greeting: "Hello! I am the P.A.G.O assistant — Principle, Alignment, Government, and Obedience. How can I help you today?",
     errorMessage: "Sorry, an error occurred. Please try again.",
   },
 

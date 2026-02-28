@@ -27,7 +27,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="font-display text-2xl font-semibold text-navy mb-4">1. Introdução</h2>
             <p>
-              A <strong>P.A.G.O. — Novo Tempo</strong> ("nós", "nosso" ou "plataforma") valoriza a privacidade e a proteção dos dados pessoais de seus usuários. Esta Política de Privacidade descreve como coletamos, usamos, armazenamos e protegemos suas informações pessoais, em conformidade com a <strong>Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018)</strong> e demais legislações aplicáveis.
+              A <strong>P.A.G.O — Novo Tempo</strong> ("nós", "nosso" ou "plataforma") valoriza a privacidade e a proteção dos dados pessoais de seus usuários. Esta Política de Privacidade descreve como coletamos, usamos, armazenamos e protegemos suas informações pessoais, em conformidade com a <strong>Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018)</strong> e demais legislações aplicáveis.
             </p>
           </section>
 
@@ -53,7 +53,7 @@ export default function PrivacyPolicy() {
             <h2 className="font-display text-2xl font-semibold text-navy mb-4">3. Finalidade do Tratamento</h2>
             <p>Utilizamos seus dados pessoais para as seguintes finalidades:</p>
             <ul className="list-disc pl-6 space-y-2">
-              <li>Processar e gerenciar sua inscrição na mentoria P.A.G.O.</li>
+              <li>Processar e gerenciar sua inscrição na mentoria P.A.G.O</li>
               <li>Enviar comunicações relacionadas à mentoria, incluindo materiais, atualizações e informações relevantes.</li>
               <li>Personalizar sua experiência na plataforma.</li>
               <li>Melhorar nossos serviços e conteúdos.</li>

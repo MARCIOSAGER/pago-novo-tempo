@@ -44,12 +44,12 @@ export default function Navbar() {
             <a href="#" className="flex items-center gap-3">
               <img
                 src={LOGO_URL}
-                alt="P.A.G.O. Novo Tempo"
+                alt="P.A.G.O Novo Tempo"
                 className="h-12 w-12 rounded-full object-cover"
               />
               <div className="hidden sm:block">
                 <span className="font-display text-xl font-semibold text-navy tracking-wide">
-                  P.A.G.O.
+                  P.A.G.O
                 </span>
                 <span className="block font-accent text-[10px] uppercase tracking-[0.3em] text-blue-muted">
                   {t.nav.tagline}

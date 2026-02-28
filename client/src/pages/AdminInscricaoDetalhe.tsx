@@ -47,7 +47,7 @@ const statusColors: Record<string, string> = {
 const statusDescriptions: Record<string, string> = {
   pending: "Aguardando primeiro contato da equipe.",
   contacted: "Contato realizado, aguardando confirmação.",
-  enrolled: "Inscrito confirmado na mentoria P.A.G.O.",
+  enrolled: "Inscrito confirmado na mentoria P.A.G.O",
   rejected: "Inscrição não aprovada.",
 };
 

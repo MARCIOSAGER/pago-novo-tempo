@@ -26,16 +26,16 @@ const pt = {
 
   // === ABOUT ===
   about: {
-    label: "Sobre o P.A.G.O.",
+    label: "Sobre o P.A.G.O",
     titleLine1: "Um sistema de",
     titleLine2: "reorganização",
     titleLine3: "de vida.",
-    description: "O P.A.G.O. não foi uma ideia simplesmente criada. Foi uma visão que o Espírito Santo entregou. Apenas organizada, estruturada e sistematizada para transformar vidas.",
+    description: "O P.A.G.O não foi uma ideia simplesmente criada. Foi uma visão que o Espírito Santo entregou. Especialmente organizada, estruturada e sistematizada para transformar vidas.",
     content: "Muitas pessoas não fracassam por falta de capacidade, mas por falta de governo interior. Vivem com fé genuína, mas sem estrutura. Possuem um chamado claro, mas sem direção estratégica. Amam a Deus, mas experimentam desorganização em suas vidas.",
     problemLabel: "O Problema",
     problemText: "Prosperidade sem governo gera queda. Crescimento sem estrutura gera colapso. Fé sem alinhamento gera confusão.",
     answerLabel: "A Resposta",
-    answerText: "O P.A.G.O. é um caminho para estruturar a vida espiritual, emocional e prática com maturidade e direção.",
+    answerText: "O P.A.G.O é um caminho para estruturar a vida espiritual, emocional e prática com maturidade e direção.",
     quote: "\"Homens restaurados constroem famílias fortes. Famílias fortes sustentam empresas sólidas. Empresas sólidas impactam territórios.\"",
   },
 
@@ -82,7 +82,7 @@ const pt = {
     role3: "Atleta de Resistência",
     bio1: "Jefferson Evangelista não é apenas um empreendedor. Ele é um construtor de estruturas e um organizador de destinos. Sua história não começou nos negócios, mas na consciência de que sem governo espiritual, emocional e estratégico, qualquer crescimento desmorona.",
     bio2: "À frente da Interaja e de múltiplas frentes empresariais, Jefferson nunca buscou apenas lucro. Sempre buscou estrutura, sustentabilidade e legado. Ele pensa em governança antes de pensar em expansão. Pensa em base antes de pensar em visibilidade.",
-    quote: "\"O P.A.G.O. não foi uma ideia que eu simplesmente criei. Foi uma visão que o Espírito Santo me entregou. Eu apenas organizei, estruturei e sistematizei aquilo que recebi.\"",
+    quote: "\"O P.A.G.O não foi uma ideia que eu simplesmente criei. Foi uma visão que o Espírito Santo me entregou. Eu apenas organizei, estruturei e sistematizei aquilo que recebi.\"",
     quoteAuthor: "Jefferson Evangelista",
     bio3: "Como atleta de resistência, Jefferson carrega no corpo o que acredita na alma: disciplina diária, constância silenciosa e avanço estratégico. Não é sobre velocidade. É sobre permanência. Ele não lidera para aparecer. Ele estrutura para permanecer.",
     flipHint: "Passe o mouse para revelar",
@@ -119,7 +119,7 @@ const pt = {
     items: [
       {
         title: "Bíblia BKJ",
-        description: "A tradução King James em português — a base de toda a revelação e estudo. Cada pilar do P.A.G.O. é fundamentado em versículos e tabelas temáticas desta tradução.",
+        description: "A tradução King James em português — a base de toda a revelação e estudo. Cada pilar do P.A.G.O é fundamentado em versículos e tabelas temáticas desta tradução.",
       },
       {
         title: "Caderno de Estudos",
@@ -130,7 +130,7 @@ const pt = {
         description: "O instrumento que transforma pensamento em compromisso. Escrever é um ato de governo — é declarar no visível o que foi revelado no secreto.",
       },
       {
-        title: "Ebook P.A.G.O.",
+        title: "Ebook P.A.G.O",
         description: "O manual completo da metodologia com os 4 pilares, exercícios práticos, versículos fundamentadores e espaço para anotações pessoais.",
       },
     ],
@@ -142,8 +142,8 @@ const pt = {
     titleLine1: "Está pronto para",
     titleLine2: "reorganizar",
     titleLine3: "sua vida?",
-    description: "O P.A.G.O. é para quem está cansado de viver desorganizado, de ter fé mas não ter estrutura, de ter chamado mas não ter direção. Se você deseja construir um legado que permaneça, esta mentoria é para você.",
-    benefit1: "Acompanhamento personalizado com a metodologia P.A.G.O.",
+    description: "O P.A.G.O é para quem está cansado de viver desorganizado, de ter fé mas não ter estrutura, de ter chamado mas não ter direção. Se você deseja construir um legado que permaneça, esta mentoria é para você.",
+    benefit1: "Acompanhamento personalizado com a metodologia P.A.G.O",
     benefit2: "Kit completo: Bíblia BKJ, Caderno de Estudos, Caneta e Ebook",
     benefit3: "Exercícios práticos e reflexões bíblicas para cada pilar",
     benefit4: "Comunidade de homens e mulheres em transformação",
@@ -163,7 +163,7 @@ const pt = {
     submitButton: "Quero me Inscrever",
     submitting: "Enviando...",
     lgpdFooter: "Seus dados estão protegidos conforme a LGPD. Você pode solicitar a exclusão a qualquer momento.",
-    successMessage: "Obrigado pelo seu interesse no P.A.G.O.",
+    successMessage: "Obrigado pelo seu interesse no P.A.G.O",
     errorMessage: "Erro ao enviar inscrição",
     errorRetry: "Tente novamente mais tarde.",
     lgpdRequired: "Você precisa aceitar a Política de Privacidade para continuar.",
@@ -174,10 +174,10 @@ const pt = {
   // === KIDS ===
   kids: {
     label: "Para Toda a Família",
-    titleLine1: "P.A.G.O.",
+    titleLine1: "P.A.G.O",
     titleLine2: "Kids",
     subtitle: "Os mesmos 4 pilares, agora adaptados para crianças de 6 a 12 anos. Histórias bíblicas, atividades divertidas e lições que formam caráter desde cedo.",
-    description: "O P.A.G.O. Kids é um ebook especial para pais que desejam transmitir os princípios de Princípio, Alinhamento, Governo e Obediência aos seus filhos de forma lúdica e acessível.",
+    description: "O P.A.G.O Kids é um ebook especial para pais que desejam transmitir os princípios de Princípio, Alinhamento, Governo e Obediência aos seus filhos de forma lúdica e acessível.",
     features: [
       {
         title: "8 Capítulos Ilustrados",
@@ -211,28 +211,28 @@ const pt = {
     titleLine2: "dúvidas.",
     items: [
       {
-        question: "O que é o P.A.G.O.?",
-        answer: "O P.A.G.O. é um sistema de reorganização de vida baseado em quatro pilares bíblicos: Princípio (acima de resultados), Alinhamento (gera autoridade), Governo (inicia no secreto) e Obediência (sustenta o invisível). É uma metodologia de mentoria que ajuda pessoas a estruturarem sua vida espiritual, emocional e prática.",
+        question: "O que é o P.A.G.O?",
+        answer: "O P.A.G.O é um sistema de reorganização de vida baseado em quatro pilares bíblicos: Princípio (acima de resultados), Alinhamento (gera autoridade), Governo (inicia no secreto) e Obediência (sustenta o invisível). É uma metodologia de mentoria que ajuda pessoas a estruturarem sua vida espiritual, emocional e prática.",
       },
       {
-        question: "Para quem é a mentoria P.A.G.O.?",
+        question: "Para quem é a mentoria P.A.G.O?",
         answer: "Para homens e mulheres que amam a Deus mas vivem desorganizados. Para quem tem fé genuína mas precisa de estrutura. Para líderes, empreendedores e cristãos que desejam construir um legado duradouro fundamentado em princípios bíblicos imutáveis.",
       },
       {
         question: "O que está incluído no Kit de Mentoria?",
-        answer: "O kit inclui: Bíblia BKJ (tradução King James em português), Caderno de Estudos dedicado para reflexões e exercícios, Caneta para registrar compromissos, e o Ebook P.A.G.O. com a metodologia completa, exercícios práticos e versículos fundamentadores.",
+        answer: "O kit inclui: Bíblia BKJ (tradução King James em português), Caderno de Estudos dedicado para reflexões e exercícios, Caneta para registrar compromissos, e o Ebook P.A.G.O com a metodologia completa, exercícios práticos e versículos fundamentadores.",
       },
       {
         question: "Quanto tempo dura a mentoria?",
-        answer: "A mentoria é estruturada para acompanhar cada participante em sua jornada de transformação. O ritmo é personalizado, respeitando o processo individual de cada pessoa. O P.A.G.O. não é sobre velocidade — é sobre permanência e constância.",
+        answer: "A mentoria é estruturada para acompanhar cada participante em sua jornada de transformação. O ritmo é personalizado, respeitando o processo individual de cada pessoa. O P.A.G.O não é sobre velocidade — é sobre permanência e constância.",
       },
       {
         question: "Preciso ter experiência bíblica prévia?",
-        answer: "Não. O P.A.G.O. foi desenhado para ser acessível a todos que desejam reorganizar sua vida com base em princípios bíblicos. A metodologia guia o participante passo a passo, desde os fundamentos até a aplicação prática.",
+        answer: "Não. O P.A.G.O foi desenhado para ser acessível a todos que desejam reorganizar sua vida com base em princípios bíblicos. A metodologia guia o participante passo a passo, desde os fundamentos até a aplicação prática.",
       },
       {
         question: "Como funciona o modelo White-Label?",
-        answer: "O P.A.G.O. está desenvolvendo uma plataforma escalável que permitirá que igrejas, organizações e mentores apliquem a metodologia com sua própria marca. Se você tem interesse em levar o P.A.G.O. para sua comunidade, entre em contato conosco.",
+        answer: "O P.A.G.O está desenvolvendo uma plataforma escalável que permitirá que igrejas, organizações e mentores apliquem a metodologia com sua própria marca. Se você tem interesse em levar o P.A.G.O para sua comunidade, entre em contato conosco.",
       },
     ],
   },
@@ -248,7 +248,7 @@ const pt = {
     pillarO: "Obediência sustenta o Invisível",
     contactLabel: "Contato",
     contactCta: "Inscreva-se na Mentoria",
-    copyright: "P.A.G.O. Novo Tempo. Todos os direitos reservados.",
+    copyright: "P.A.G.O Novo Tempo. Todos os direitos reservados.",
     privacy: "Privacidade",
     terms: "Termos de Uso",
     cookies: "Cookies",
@@ -257,10 +257,10 @@ const pt = {
 
   // === CHATBOT ===
   chatbot: {
-    title: "Assistente P.A.G.O.",
+    title: "Assistente P.A.G.O",
     subtitle: "Pergunte sobre os 4 pilares",
     placeholder: "Pergunte sobre o P.A.G.O...",
-    greeting: "Olá! Sou o assistente do P.A.G.O. — Princípio, Alinhamento, Governo e Obediência. Como posso ajudá-lo hoje?",
+    greeting: "Olá! Sou o assistente do P.A.G.O — Princípio, Alinhamento, Governo e Obediência. Como posso ajudá-lo hoje?",
     errorMessage: "Desculpe, ocorreu um erro. Tente novamente.",
   },
 
