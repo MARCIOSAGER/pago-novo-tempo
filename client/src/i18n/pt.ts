@@ -201,7 +201,7 @@ const pt = {
     ctaCertificate: "Certificado",
     badge: "Novo",
     ageRange: "6 a 12 anos",
-    pages: "39 páginas",
+    pages: "19 páginas",
     format: "PDF Ilustrado",
   },
 

@@ -203,7 +203,7 @@ const en: Translations = {
     ctaCertificate: "Certificate",
     badge: "New",
     ageRange: "Ages 6 to 12",
-    pages: "39 pages",
+    pages: "19 pages",
     format: "Illustrated PDF",
   },
 
