@@ -128,7 +128,7 @@ export default function TermsOfUse() {
           <section>
             <h2 className="font-display text-2xl font-semibold text-navy mb-4">11. Contato</h2>
             <div className="bg-sand/30 p-6 rounded-lg">
-              <p><strong>E-mail:</strong> contato@pago.com.br</p>
+              <p><strong>E-mail:</strong> contato@metodopago.com</p>
               <p><strong>Responsável:</strong> Jefferson Evangelista</p>
             </div>
           </section>

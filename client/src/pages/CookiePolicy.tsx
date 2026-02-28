@@ -135,7 +135,7 @@ export default function CookiePolicy() {
           <section>
             <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: "#1A2744" }}>7. Contato</h2>
             <div className="p-6 rounded-lg" style={{ backgroundColor: "rgba(232,224,212,0.3)" }}>
-              <p><strong>E-mail:</strong> privacidade@pago.com.br</p>
+              <p><strong>E-mail:</strong> contato@metodopago.com</p>
               <p><strong>Responsável:</strong> Jefferson Evangelista</p>
               <p className="mt-2 text-sm" style={{ color: "rgba(26,39,68,0.6)" }}>
                 Para mais informações sobre como tratamos seus dados, consulte nossa{" "}

@@ -116,7 +116,7 @@ export default function PrivacyPolicy() {
               <li><strong>Revogação do consentimento</strong> a qualquer momento.</li>
             </ul>
             <p className="mt-4">
-              Para exercer qualquer desses direitos, entre em contato conosco pelo e-mail: <strong>privacidade@pago.com.br</strong>
+              Para exercer qualquer desses direitos, entre em contato conosco pelo e-mail: <strong>contato@metodopago.com</strong>
             </p>
           </section>
 
@@ -140,7 +140,7 @@ export default function PrivacyPolicy() {
               Para dúvidas, solicitações ou reclamações relacionadas à proteção de dados pessoais, entre em contato com nosso Encarregado de Dados:
             </p>
             <div className="bg-sand/30 p-6 rounded-lg mt-4">
-              <p><strong>E-mail:</strong> privacidade@pago.com.br</p>
+              <p><strong>E-mail:</strong> contato@metodopago.com</p>
               <p><strong>Responsável:</strong> Jefferson Evangelista</p>
               <p className="mt-2 text-sm text-navy/60">
                 Você também pode registrar reclamação junto à Autoridade Nacional de Proteção de Dados (ANPD) em <a href="https://www.gov.br/anpd" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">www.gov.br/anpd</a>.

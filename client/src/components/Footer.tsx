@@ -92,7 +92,7 @@ export default function Footer() {
                 {t.footer.contactCta}
               </a>
               <p className="font-body text-sm text-warm-white/40">
-                contato@pago.com.br
+                contato@metodopago.com
               </p>
             </div>
           </div>
