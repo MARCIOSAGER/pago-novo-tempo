@@ -22,6 +22,7 @@ import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
+import { notifyInscription } from "./_core/notification";
 
 // ─── Zod Schemas (strict input validation) ──────────────────────
 
@@ -169,6 +170,14 @@ export const appRouter = router({
           phone: input.phone ?? null,
           message: input.message ?? null,
         });
+
+        // Fire-and-forget: send confirmation + admin notification emails
+        notifyInscription({
+          name: input.name,
+          email: input.email,
+          phone: input.phone,
+          message: input.message,
+        }).catch((err) => console.warn("[Notification] Inscription email error:", err));
 
         return { success: true, message: "Inscrição recebida com sucesso!" };
       }),

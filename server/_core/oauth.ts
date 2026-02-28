@@ -27,6 +27,7 @@ function getCallbackUrl(req: Request, provider: string): string {
 export function registerOAuthRoutes(app: Express) {
   // ─── Google: Redirect to Google ─────────────────────────────
   app.get("/api/oauth/google", (req: Request, res: Response) => {
+    const returnTo = (req.query.returnTo as string) || "/";
     const redirectUri = getCallbackUrl(req, "google");
     const params = new URLSearchParams({
       client_id: ENV.googleClientId,
@@ -35,6 +36,7 @@ export function registerOAuthRoutes(app: Express) {
       scope: "openid email profile",
       access_type: "offline",
       prompt: "consent",
+      state: returnTo,
     });
     res.redirect(`${GOOGLE_AUTH_URL}?${params}`);
   });
@@ -101,7 +103,9 @@ export function registerOAuthRoutes(app: Express) {
 
       const cookieOptions = getSessionCookieOptions(req);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
-      res.redirect(302, "/");
+      const returnTo = (req.query.state as string) || "/";
+      const safePath = returnTo.startsWith("/") ? returnTo : "/";
+      res.redirect(302, safePath);
     } catch (error) {
       console.error("[OAuth/Google] Callback failed:", error);
       res.status(500).json({ error: "OAuth callback failed" });
@@ -110,11 +114,13 @@ export function registerOAuthRoutes(app: Express) {
 
   // ─── GitHub: Redirect to GitHub ─────────────────────────────
   app.get("/api/oauth/github", (req: Request, res: Response) => {
+    const returnTo = (req.query.returnTo as string) || "/";
     const redirectUri = getCallbackUrl(req, "github");
     const params = new URLSearchParams({
       client_id: ENV.githubClientId,
       redirect_uri: redirectUri,
       scope: "read:user user:email",
+      state: returnTo,
     });
     res.redirect(`${GITHUB_AUTH_URL}?${params}`);
   });
@@ -197,7 +203,9 @@ export function registerOAuthRoutes(app: Express) {
 
       const cookieOptions = getSessionCookieOptions(req);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
-      res.redirect(302, "/");
+      const returnTo = (req.query.state as string) || "/";
+      const safePath = returnTo.startsWith("/") ? returnTo : "/";
+      res.redirect(302, safePath);
     } catch (error) {
       console.error("[OAuth/GitHub] Callback failed:", error);
       res.status(500).json({ error: "OAuth callback failed" });
