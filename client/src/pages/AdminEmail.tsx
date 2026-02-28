@@ -4,11 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mail, Server, Shield, Send, CheckCircle2, XCircle, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { Mail, Server, Shield, Send, CheckCircle2, XCircle, Loader2, Save, Pencil } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function AdminEmail() {
+  const utils = trpc.useUtils();
   const { data: status, isLoading } = trpc.system.emailStatus.useQuery();
   const sendTest = trpc.system.sendTestEmail.useMutation({
     onSuccess: (data) => {
@@ -25,8 +26,30 @@ export default function AdminEmail() {
     },
   });
 
+  const updateOwner = trpc.system.updateOwnerEmail.useMutation({
+    onSuccess: (data) => {
+      toast.success(`OWNER_EMAIL atualizado para ${data.ownerEmail}`);
+      setEditingOwner(false);
+      setSavingOwner(false);
+      utils.system.emailStatus.invalidate();
+    },
+    onError: (err) => {
+      toast.error(err.message || "Erro ao atualizar email.");
+      setSavingOwner(false);
+    },
+  });
+
   const [testEmail, setTestEmail] = useState("");
   const [sending, setSending] = useState(false);
+  const [editingOwner, setEditingOwner] = useState(false);
+  const [ownerEmailInput, setOwnerEmailInput] = useState("");
+  const [savingOwner, setSavingOwner] = useState(false);
+
+  useEffect(() => {
+    if (status?.ownerEmail) {
+      setOwnerEmailInput(status.ownerEmail);
+    }
+  }, [status?.ownerEmail]);
 
   const handleSendTest = () => {
     if (!testEmail.trim()) {
@@ -98,16 +121,60 @@ export default function AdminEmail() {
                   value={status.smtpUser}
                   icon={<Mail className="h-3.5 w-3.5" />}
                 />
-                <ConfigItem
-                  label="Destinatário Admin (OWNER_EMAIL)"
-                  value={status.ownerEmail}
-                  icon={<Mail className="h-3.5 w-3.5" />}
-                  warning={
-                    status.ownerEmail && status.smtpUser && status.ownerEmail.includes(status.smtpUser)
-                      ? "Mesmo email do remetente — pode não funcionar"
-                      : undefined
-                  }
-                />
+                <div className="p-3 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className="text-muted-foreground"><Mail className="h-3.5 w-3.5" /></span>
+                    <span className="text-xs font-semibold font-accent">Destinatário Admin (OWNER_EMAIL)</span>
+                  </div>
+                  {editingOwner ? (
+                    <div className="flex gap-2 mt-1">
+                      <Input
+                        type="email"
+                        value={ownerEmailInput}
+                        onChange={(e) => setOwnerEmailInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            setSavingOwner(true);
+                            updateOwner.mutate({ ownerEmail: ownerEmailInput.trim() });
+                          }
+                          if (e.key === "Escape") setEditingOwner(false);
+                        }}
+                        className="h-8 text-sm"
+                        autoFocus
+                      />
+                      <Button
+                        size="sm"
+                        className="h-8 gap-1 shrink-0"
+                        disabled={savingOwner || !ownerEmailInput.trim()}
+                        onClick={() => {
+                          setSavingOwner(true);
+                          updateOwner.mutate({ ownerEmail: ownerEmailInput.trim() });
+                        }}
+                      >
+                        {savingOwner ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                        Salvar
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-mono truncate flex-1">
+                        {status.ownerEmail || <span className="text-muted-foreground italic">Não configurado</span>}
+                      </p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 w-7 p-0 shrink-0"
+                        onClick={() => setEditingOwner(true)}
+                      >
+                        <Pencil className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
+                  {!editingOwner && status.ownerEmail && status.smtpUser && status.ownerEmail.includes(status.smtpUser) && (
+                    <p className="text-[11px] text-amber-600 mt-1">Mesmo email do remetente — pode não funcionar</p>
+                  )}
+                  <p className="text-[10px] text-muted-foreground mt-1">Alteração em tempo real. Para permanente, atualize no Coolify.</p>
+                </div>
               </div>
             </div>
           ) : null}

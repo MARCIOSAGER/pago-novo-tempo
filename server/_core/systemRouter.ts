@@ -49,4 +49,15 @@ export const systemRouter = router({
       const delivered = await sendTestEmail(input.to);
       return { success: delivered } as const;
     }),
+
+  updateOwnerEmail: adminProcedure
+    .input(
+      z.object({
+        ownerEmail: z.string().email("Email inválido"),
+      })
+    )
+    .mutation(({ input }) => {
+      ENV.ownerEmail = input.ownerEmail;
+      return { success: true, ownerEmail: input.ownerEmail } as const;
+    }),
 });
