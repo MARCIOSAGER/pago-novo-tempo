@@ -31,7 +31,7 @@ export function applyHelmet(app: Express) {
           fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
           imgSrc: ["'self'", "data:", "blob:", "https:", "http:"],
           connectSrc: ["'self'", "https:", "wss:", "https://analytics.pago.life"],
-          frameSrc: ["'none'"],
+          frameSrc: ["'self'", "https://analytics.pago.life"],
           objectSrc: ["'none'"],
           baseUri: ["'self'"],
           formAction: ["'self'"],

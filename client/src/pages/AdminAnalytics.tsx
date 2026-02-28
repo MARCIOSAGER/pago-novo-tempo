@@ -494,6 +494,27 @@ export default function AdminAnalytics() {
           isLoading={browserQ.isLoading}
         />
       </div>
+
+      {/* Umami Full Dashboard */}
+      <Card className="p-0 overflow-hidden">
+        <div className="px-5 pt-5 pb-3 flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-foreground">Dashboard Completo</h3>
+          <a
+            href="https://analytics.pago.life"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Abrir Umami ↗
+          </a>
+        </div>
+        <iframe
+          src="https://analytics.pago.life/share/bLh9eUbPB8OPoE6Y"
+          className="w-full border-0"
+          style={{ height: "1200px" }}
+          title="Umami Analytics Dashboard"
+        />
+      </Card>
     </div>
   );
 }
