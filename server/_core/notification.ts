@@ -84,12 +84,13 @@ export async function notifyOwner(
       to: ENV.ownerEmail,
       subject: title,
       text: content,
-      html: `<div style="font-family: 'Lora', serif; color: #1A2744;">
+      encoding: "utf-8",
+      html: `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><div style="font-family: 'Lora', serif; color: #1A2744;">
         <h2 style="color: #B8A88A;">${title}</h2>
         <p>${content.replace(/\n/g, "<br>")}</p>
         <hr style="border-color: #E8E0D4;" />
         <small style="color: #888;">P.A.G.O. — Novo Tempo</small>
-      </div>`,
+      </div></body></html>`,
     });
 
     return true;
@@ -125,7 +126,8 @@ export async function sendTestEmail(to: string): Promise<boolean> {
       to,
       subject: "Teste de email — P.A.G.O.",
       text: "Este é um email de teste do sistema P.A.G.O. Se você recebeu, o envio está funcionando!",
-      html: `<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+      encoding: "utf-8",
+      html: `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
         <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
           <h1 style="color: #C8A951; margin: 0; font-size: 24px;">P.A.G.O.</h1>
           <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">Novo Tempo</p>
@@ -137,7 +139,7 @@ export async function sendTestEmail(to: string): Promise<boolean> {
           </div>
           <p style="color: #888; font-size: 13px;">Enviado de: ${ENV.smtpUser}<br>Enviado para: ${to}</p>
         </div>
-      </div>`,
+      </div></body></html>`,
     });
 
     console.log(`[Notification] Test email sent to ${to}`);
@@ -164,7 +166,8 @@ export async function notifyInscription(data: InscriptionData): Promise<void> {
       to: data.email,
       subject: "Inscrição recebida — P.A.G.O. Novo Tempo",
       text: `Olá ${data.name},\n\nSua inscrição na mentoria P.A.G.O. foi recebida com sucesso!\n\nEm breve entraremos em contato.\n\nAbraço,\nEquipe P.A.G.O.`,
-      html: `<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+      encoding: "utf-8",
+      html: `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
         <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
           <h1 style="color: #C8A951; margin: 0; font-size: 24px;">P.A.G.O.</h1>
           <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">Novo Tempo</p>
@@ -180,7 +183,7 @@ export async function notifyInscription(data: InscriptionData): Promise<void> {
         <p style="text-align: center; color: #999; font-size: 11px; margin-top: 15px;">
           Este email foi enviado porque você se inscreveu em metodopago.com
         </p>
-      </div>`,
+      </div></body></html>`,
     });
     console.log(`[Notification] Confirmation email sent to ${data.email}`);
   } catch (error) {
@@ -202,7 +205,8 @@ export async function notifyInscription(data: InscriptionData): Promise<void> {
         to: ENV.ownerEmail,
         subject: `Nova inscrição — ${data.name}`,
         text: `Nova inscrição na mentoria P.A.G.O.:\n\n${details}`,
-        html: `<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+        encoding: "utf-8",
+      html: `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
           <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
             <h2 style="color: #C8A951; margin: 0;">Nova Inscrição</h2>
           </div>
@@ -217,7 +221,7 @@ export async function notifyInscription(data: InscriptionData): Promise<void> {
               <a href="https://metodopago.com/admin" style="background: #1A2744; color: #C8A951; padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600;">Ver no Painel</a>
             </div>
           </div>
-        </div>`,
+        </div></body></html>`,
       });
       console.log(`[Notification] Admin notification sent to ${ENV.ownerEmail}`);
     } catch (error) {
