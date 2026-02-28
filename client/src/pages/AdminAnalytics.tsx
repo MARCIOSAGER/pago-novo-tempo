@@ -29,12 +29,13 @@ import {
 // ─── Types ──────────────────────────────────────────────────────
 type MetricItem = { x: string; y: number };
 type PageviewItem = { x: string; y: number };
+type StatField = { value: number; prev: number; change?: number };
 type StatsData = {
-  pageviews: { value: number; prev: number };
-  visitors: { value: number; prev: number };
-  visits: { value: number; prev: number };
-  bounces: { value: number; prev: number };
-  totaltime: { value: number; prev: number };
+  pageviews: StatField;
+  visitors: StatField;
+  visits: StatField;
+  bounces: StatField;
+  totaltime: StatField;
 };
 
 // ─── Period helpers ─────────────────────────────────────────────
@@ -59,11 +60,24 @@ function pctChange(current: number, prev: number): number {
 }
 
 function formatDuration(ms: number): string {
+  if (!Number.isFinite(ms)) return "0s";
   const totalSeconds = Math.round(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   if (minutes > 0) return `${minutes}m ${seconds}s`;
   return `${seconds}s`;
+}
+
+function normalizeStat(raw: unknown): StatField {
+  if (raw && typeof raw === "object") {
+    const obj = raw as Record<string, unknown>;
+    return {
+      value: typeof obj.value === "number" ? obj.value : 0,
+      prev: typeof obj.prev === "number" ? obj.prev : 0,
+      change: typeof obj.change === "number" ? obj.change : undefined,
+    };
+  }
+  return { value: 0, prev: 0 };
 }
 
 function getUnit(days: number): "hour" | "day" | "month" {
@@ -321,7 +335,16 @@ export default function AdminAnalytics() {
   const deviceQ = trpc.analytics.metrics.useQuery({ ...range, type: "device", limit: 10 });
   const browserQ = trpc.analytics.metrics.useQuery({ ...range, type: "browser", limit: 10 });
 
-  const stats = statsQ.data as StatsData | undefined;
+  const rawStats = statsQ.data as Record<string, unknown> | undefined;
+  const stats: StatsData | undefined = rawStats
+    ? {
+        pageviews: normalizeStat(rawStats.pageviews),
+        visitors: normalizeStat(rawStats.visitors),
+        visits: normalizeStat(rawStats.visits),
+        bounces: normalizeStat(rawStats.bounces),
+        totaltime: normalizeStat(rawStats.totaltime),
+      }
+    : undefined;
   const activeVisitors = (activeQ.data as { x: number } | undefined)?.x ?? 0;
   const pageviewsData = (
     pageviewsQ.data as { pageviews: PageviewItem[] } | undefined
@@ -495,25 +518,31 @@ export default function AdminAnalytics() {
         />
       </div>
 
-      {/* Umami Full Dashboard */}
-      <Card className="p-0 overflow-hidden">
-        <div className="px-5 pt-5 pb-3 flex items-center justify-between">
+      {/* Umami Full Dashboard Link */}
+      <Card className="p-6 flex flex-col items-center gap-3 text-center">
+        <Globe className="h-8 w-8 text-muted-foreground" />
+        <div>
           <h3 className="text-sm font-semibold text-foreground">Dashboard Completo</h3>
+          <p className="text-xs text-muted-foreground mt-1">Mapa, heatmap, flags e mais detalhes no Umami</p>
+        </div>
+        <div className="flex gap-3">
+          <a
+            href="https://analytics.pago.life/share/LjFnyTlXkZ7TA0Ur"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition-colors"
+          >
+            Ver Dashboard Público ↗
+          </a>
           <a
             href="https://analytics.pago.life"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 border border-border text-sm font-medium rounded-md hover:bg-accent transition-colors"
           >
             Abrir Umami ↗
           </a>
         </div>
-        <iframe
-          src="https://analytics.pago.life/share/bLh9eUbPB8OPoE6Y"
-          className="w-full border-0"
-          style={{ height: "1200px" }}
-          title="Umami Analytics Dashboard"
-        />
       </Card>
     </div>
   );
