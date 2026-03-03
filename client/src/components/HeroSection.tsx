@@ -46,13 +46,12 @@ export default function HeroSection() {
             transition={{ delay: 0.5, duration: 0.8 }}
             className="font-display text-5xl sm:text-6xl lg:text-7xl font-semibold text-warm-white leading-[1.1] mb-6"
           >
-            <span className="text-gold">{t.hero.title1.charAt(0)}</span>{t.hero.title1.slice(1)}
-            <br />
-            <span className="text-gold">{t.hero.title2.charAt(0)}</span>{t.hero.title2.slice(1)}
-            <br />
-            <span className="text-gold">{t.hero.title3.charAt(0)}</span>{t.hero.title3.slice(1)}
-            <br />
-            <span className="text-gold">{t.hero.title4.charAt(0)}</span>{t.hero.title4.slice(1)}
+            {[t.hero.title1, t.hero.title2, t.hero.title3, t.hero.title4].map((word, i) => (
+              <span key={i} className="block">
+                <span className="text-gold inline-block w-[1.15em] text-center tracking-normal">{word.charAt(0)}.</span>
+                <span className="tracking-normal">{word.slice(1)}</span>
+              </span>
+            ))}
           </motion.h1>
 
           {/* Gold line */}

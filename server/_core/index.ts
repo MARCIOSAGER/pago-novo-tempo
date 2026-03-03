@@ -10,6 +10,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import fs from "fs";
 import { applyAllSecurity } from "../security";
+import { LOCAL_UPLOADS_DIR } from "../storage";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -43,6 +44,13 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   // (overrides the 1mb default from security for specific routes)
   app.use("/api/trpc/files.upload", express.json({ limit: "50mb" }));
+  app.use("/api/trpc/siteSettings.updateImage", express.json({ limit: "50mb" }));
+
+  // Serve local uploads (fallback when S3 is not configured)
+  if (!fs.existsSync(LOCAL_UPLOADS_DIR)) {
+    fs.mkdirSync(LOCAL_UPLOADS_DIR, { recursive: true });
+  }
+  app.use("/uploads", express.static(LOCAL_UPLOADS_DIR));
 
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);

@@ -101,6 +101,9 @@ jspm_packages/
 tmp/
 temp/
 
+# Local uploads (when S3 is not configured)
+data/uploads/
+
 # Database
 *.db
 *.sqlite
