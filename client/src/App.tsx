@@ -20,6 +20,7 @@ import AdminDownloads from "./pages/AdminDownloads";
 import AdminMediaRepo from "./pages/AdminMediaRepo";
 import AdminKids from "./pages/AdminKids";
 import AdminEmail from "./pages/AdminEmail";
+import Fundador from "./pages/Fundador";
 
 function Router() {
   return (
@@ -28,6 +29,7 @@ function Router() {
       <Route path={"/privacidade"} component={PrivacyPolicy} />
       <Route path={"/termos"} component={TermsOfUse} />
       <Route path={"/cookies"} component={CookiePolicy} />
+      <Route path={"/fundador"} component={Fundador} />
 
       {/* Admin routes — wrapped in AdminLayout with sidebar */}
       <Route path="/admin">

@@ -11,6 +11,7 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import PillarsSection from "@/components/PillarsSection";
+import PagoOverviewSection from "@/components/PagoOverviewSection";
 import JeffersonSection from "@/components/JeffersonSection";
 import KitSection from "@/components/KitSection";
 import KidsSection from "@/components/KidsSection";
@@ -27,6 +28,7 @@ export default function Home() {
       <HeroSection />
       <AboutSection />
       <PillarsSection />
+      <PagoOverviewSection />
       <JeffersonSection />
       <KitSection />
       <KidsSection />

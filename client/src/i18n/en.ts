@@ -74,6 +74,35 @@ const en: Translations = {
     ],
   },
 
+  // === PAGO OVERVIEW ===
+  overview: {
+    label: "The System",
+    title: "P.A.G.O",
+    flipHint: "Hover to reveal",
+    cards: [
+      {
+        title: "Principle",
+        subtitle: "Above Results",
+        description: "True prosperity is not measured by accumulation, but by faithfulness to immutable foundations. Biblical principles are eternal truths that govern life.",
+      },
+      {
+        title: "Alignment",
+        subtitle: "Generates Authority",
+        description: "When what we believe, feel, and do walk in the same direction, we emanate an authority that transcends human power.",
+      },
+      {
+        title: "Government",
+        subtitle: "Starts in Secret",
+        description: "What manifests publicly is a reflection of what was established in secret. A life of prayer is the foundation of all true governance.",
+      },
+      {
+        title: "Obedience",
+        subtitle: "Sustains the Invisible",
+        description: "Obedience is the key that unlocks the supernatural. Consistency defeats talent. Discipline defeats motivation.",
+      },
+    ],
+  },
+
   // === JEFFERSON ===
   jefferson: {
     label: "The Founder",
@@ -87,29 +116,14 @@ const en: Translations = {
     quote: "\"P.A.G.O was not an idea I simply created. It was a vision that the Holy Spirit delivered to me. I only organized, structured, and systematized what I received.\"",
     quoteAuthor: "Jefferson Evangelista",
     bio3: "Jefferson carries in his body what he believes in his soul: daily discipline, quiet consistency, and strategic advancement. It is not about speed. It is about permanence. He does not lead to be seen. He structures to endure as a Legendary and ambassador of the Legendaries, his conviction is clear and unshakable: spiritual governance precedes financial growth, alignment precedes expansion, obedience precedes authority. Every decision, every project, every relationship is filtered through these principles.",
-    flipHint: "Hover to reveal",
-    cards: [
-      {
-        title: "Principle",
-        subtitle: "Above\nresults",
-        description: "True prosperity is not measured by accumulation, but by faithfulness to immutable foundations. Biblical principles are eternal truths that govern life.",
-      },
-      {
-        title: "Alignment",
-        subtitle: "Generates\nauthority",
-        description: "When what we believe, feel, and do walk in the same direction, we emanate an authority that transcends human power.",
-      },
-      {
-        title: "Government",
-        subtitle: "Starts in\nsecret",
-        description: "What manifests publicly is a reflection of what was established in secret. A life of prayer is the foundation of all true governance.",
-      },
-      {
-        title: "Obedience",
-        subtitle: "Sustains the\ninvisible",
-        description: "Obedience is the key that unlocks the supernatural. Consistency defeats talent. Discipline defeats motivation.",
-      },
-    ],
+    ctaMore: "Learn More",
+    founderPage: {
+      visionLabel: "The Vision",
+      visionTitle: "The Vision of P.A.G.O",
+      visionText: "P.A.G.O was born from the conviction that restored men build strong families, strong families sustain solid businesses, and solid businesses impact territories. It is not a success method — it is a life reorganization system grounded in immutable biblical principles.",
+      visionText2: "The vision is simple and profound: to lead men and women to live with spiritual governance, emotional alignment, and strategic obedience. Not to be seen, but to endure. Not to grow fast, but to build a legacy that stands the test of time.",
+      backToHome: "Back to Home",
+    },
   },
 
   // === KIT ===

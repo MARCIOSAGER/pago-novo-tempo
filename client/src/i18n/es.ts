@@ -74,6 +74,35 @@ const es: Translations = {
     ],
   },
 
+  // === PAGO OVERVIEW ===
+  overview: {
+    label: "El Sistema",
+    title: "P.A.G.O",
+    flipHint: "Pasa el mouse para revelar",
+    cards: [
+      {
+        title: "Principio",
+        subtitle: "Por Encima de Resultados",
+        description: "La verdadera prosperidad no se mide por la acumulación, sino por la fidelidad a fundamentos inmutables. Los principios bíblicos son verdades eternas que rigen la vida.",
+      },
+      {
+        title: "Alineamiento",
+        subtitle: "Genera Autoridad",
+        description: "Cuando lo que creemos, sentimos y hacemos caminan en la misma dirección, emanamos una autoridad que trasciende el poder humano.",
+      },
+      {
+        title: "Gobierno",
+        subtitle: "Inicia en lo Secreto",
+        description: "Lo que se manifiesta públicamente es el reflejo de lo que fue establecido en lo secreto. La vida de oración es el fundamento de todo gobierno verdadero.",
+      },
+      {
+        title: "Obediencia",
+        subtitle: "Sostiene lo Invisible",
+        description: "La obediencia es la llave que desbloquea lo sobrenatural. La constancia vence al talento. La disciplina vence a la motivación.",
+      },
+    ],
+  },
+
   // === JEFFERSON ===
   jefferson: {
     label: "El Fundador",
@@ -87,29 +116,14 @@ const es: Translations = {
     quote: "\"El P.A.G.O no fue una idea que simplemente creé. Fue una visión que el Espíritu Santo me entregó. Yo solo organicé, estructuré y sistematicé aquello que recibí.\"",
     quoteAuthor: "Jefferson Evangelista",
     bio3: "Jefferson lleva en el cuerpo lo que cree en el alma: disciplina diaria, constancia silenciosa y avance estratégico. No se trata de velocidad. Se trata de permanencia. No lidera para aparecer. Estructura para permanecer siendo Legendario y embajador de los Legendarios, su convicción es clara e inquebrantable: el gobierno espiritual precede al crecimiento financiero, la alineación precede a la expansión, la obediencia precede a la autoridad. Cada decisión, cada proyecto, cada relación es filtrada por estos principios.",
-    flipHint: "Pasa el mouse para revelar",
-    cards: [
-      {
-        title: "Principio",
-        subtitle: "Por encima de\nresultados",
-        description: "La verdadera prosperidad no se mide por la acumulación, sino por la fidelidad a fundamentos inmutables. Los principios bíblicos son verdades eternas que rigen la vida.",
-      },
-      {
-        title: "Alineamiento",
-        subtitle: "Genera\nautoridad",
-        description: "Cuando lo que creemos, sentimos y hacemos caminan en la misma dirección, emanamos una autoridad que trasciende el poder humano.",
-      },
-      {
-        title: "Gobierno",
-        subtitle: "Inicia en lo\nsecreto",
-        description: "Lo que se manifiesta públicamente es el reflejo de lo que fue establecido en lo secreto. La vida de oración es el fundamento de todo gobierno verdadero.",
-      },
-      {
-        title: "Obediencia",
-        subtitle: "Sostiene lo\ninvisible",
-        description: "La obediencia es la llave que desbloquea lo sobrenatural. La constancia vence al talento. La disciplina vence a la motivación.",
-      },
-    ],
+    ctaMore: "Saber Más",
+    founderPage: {
+      visionLabel: "La Visión",
+      visionTitle: "La Visión del P.A.G.O",
+      visionText: "El P.A.G.O nació de la convicción de que hombres restaurados construyen familias fuertes, familias fuertes sostienen empresas sólidas y empresas sólidas impactan territorios. No es un método de éxito — es un sistema de reorganización de vida fundamentado en principios bíblicos inmutables.",
+      visionText2: "La visión es simple y profunda: llevar a hombres y mujeres a vivir con gobierno espiritual, alineamiento emocional y obediencia estratégica. No para aparecer, sino para permanecer. No para crecer rápido, sino para construir un legado que resista al tiempo.",
+      backToHome: "Volver al Inicio",
+    },
   },
 
   // === KIT ===
