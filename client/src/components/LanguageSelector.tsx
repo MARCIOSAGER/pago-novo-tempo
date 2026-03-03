@@ -11,9 +11,10 @@ const languages: { code: Language; label: string; flag: string }[] = [
 
 interface LanguageSelectorProps {
   variant?: "navbar" | "mobile";
+  scrolled?: boolean;
 }
 
-export default function LanguageSelector({ variant = "navbar" }: LanguageSelectorProps) {
+export default function LanguageSelector({ variant = "navbar", scrolled = false }: LanguageSelectorProps) {
   const { language, setLanguage } = useLanguage();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -56,7 +57,11 @@ export default function LanguageSelector({ variant = "navbar" }: LanguageSelecto
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 px-2 py-1.5 text-warm-white/60 hover:text-warm-white transition-colors duration-300 group"
+        className={`flex items-center gap-1.5 px-2 py-1.5 transition-colors duration-300 group ${
+          scrolled
+            ? "text-navy/60 hover:text-navy"
+            : "text-warm-white/60 hover:text-warm-white"
+        }`}
         aria-label="Select language"
       >
         <Globe className="w-3.5 h-3.5" strokeWidth={1.5} />

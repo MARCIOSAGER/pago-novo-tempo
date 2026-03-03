@@ -21,6 +21,11 @@ export default function HeroSection() {
         />
       </div>
 
+      {/* Subtle gradient for text readability — only left side */}
+      <div className="absolute inset-0 z-[1] bg-gradient-to-r from-navy/60 via-navy/30 to-transparent" />
+      {/* Top gradient for navbar readability */}
+      <div className="absolute top-0 left-0 right-0 h-32 z-[1] bg-gradient-to-b from-navy/40 to-transparent" />
+
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full py-32">
         <div className="max-w-2xl">
@@ -77,13 +82,13 @@ export default function HeroSection() {
           >
             <a
               href="#inscricao"
-              className="btn-shine font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy px-8 py-4 hover:bg-gold-light transition-all duration-300 text-center"
+              className="btn-shine font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy font-semibold px-8 py-4 hover:bg-gold-light transition-all duration-300 text-center shadow-lg"
             >
               {t.hero.ctaPrimary}
             </a>
             <a
               href="#pilares"
-              className="btn-shine btn-shine-delay font-accent text-xs uppercase tracking-[0.2em] border border-warm-white/30 text-warm-white px-8 py-4 hover:bg-warm-white/10 transition-all duration-300 text-center"
+              className="btn-shine btn-shine-delay font-accent text-xs uppercase tracking-[0.2em] border border-warm-white/50 text-warm-white px-8 py-4 hover:bg-warm-white/15 backdrop-blur-sm bg-warm-white/10 transition-all duration-300 text-center"
             >
               {t.hero.ctaSecondary}
             </a>

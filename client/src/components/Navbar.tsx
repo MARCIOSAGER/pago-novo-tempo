@@ -48,10 +48,14 @@ export default function Navbar() {
                 className="h-12 w-12 rounded-full object-cover"
               />
               <div className="hidden sm:block">
-                <span className="font-display text-xl font-semibold text-navy tracking-wide">
+                <span className={`font-display text-xl font-semibold tracking-wide transition-colors duration-500 ${
+                  scrolled ? "text-navy" : "text-warm-white"
+                }`}>
                   P.A.G.O
                 </span>
-                <span className="block font-accent text-[10px] uppercase tracking-[0.3em] text-blue-muted">
+                <span className={`block font-accent text-[10px] uppercase tracking-[0.3em] transition-colors duration-500 ${
+                  scrolled ? "text-blue-muted" : "text-warm-white/70"
+                }`}>
                   {t.nav.tagline}
                 </span>
               </div>
@@ -63,15 +67,23 @@ export default function Navbar() {
                 <a
                   key={link.href}
                   href={link.href}
-                  className="font-accent text-xs uppercase tracking-[0.2em] text-navy/70 hover:text-navy transition-colors duration-300"
+                  className={`font-accent text-xs uppercase tracking-[0.2em] transition-colors duration-300 ${
+                    scrolled
+                      ? "text-navy/70 hover:text-navy"
+                      : "text-warm-white/80 hover:text-warm-white"
+                  }`}
                 >
                   {link.label}
                 </a>
               ))}
-              <LanguageSelector />
+              <LanguageSelector scrolled={scrolled} />
               <a
                 href="#inscricao"
-                className="font-accent text-xs uppercase tracking-[0.2em] bg-navy text-warm-white px-6 py-3 hover:bg-navy-light transition-colors duration-300"
+                className={`font-accent text-xs uppercase tracking-[0.2em] px-6 py-3 transition-colors duration-300 ${
+                  scrolled
+                    ? "bg-navy text-warm-white hover:bg-navy-light"
+                    : "bg-warm-white/20 text-warm-white border border-warm-white/40 hover:bg-warm-white/30"
+                }`}
               >
                 {t.nav.subscribe}
               </a>
@@ -80,7 +92,9 @@ export default function Navbar() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden text-navy p-2"
+              className={`lg:hidden p-2 transition-colors duration-500 ${
+                scrolled ? "text-navy" : "text-warm-white"
+              }`}
               aria-label="Menu"
             >
               {mobileOpen ? <X size={24} /> : <Menu size={24} />}
