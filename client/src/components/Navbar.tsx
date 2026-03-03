@@ -12,12 +12,12 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
-    { label: t.nav.about, href: "#sobre" },
-    { label: t.nav.pillars, href: "#pilares" },
-    { label: t.nav.jefferson, href: "#jefferson" },
-    { label: t.nav.kit, href: "#kit" },
-    { label: t.nav.kids, href: "#kids" },
-    { label: t.nav.faq, href: "#faq" },
+    { label: t.nav.about, href: "/#sobre" },
+    { label: t.nav.pillars, href: "/#pilares" },
+    { label: t.nav.jefferson, href: "/#jefferson" },
+    { label: t.nav.kit, href: "/#kit" },
+    { label: t.nav.kids, href: "/#kids" },
+    { label: t.nav.faq, href: "/#faq" },
   ];
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <a href="#" className="flex items-center gap-3">
+            <a href="/" className="flex items-center gap-3">
               <img
                 src={LOGO_URL}
                 alt="P.A.G.O Novo Tempo"
@@ -78,7 +78,7 @@ export default function Navbar() {
               ))}
               <LanguageSelector scrolled={scrolled} />
               <a
-                href="#inscricao"
+                href="/#inscricao"
                 className={`font-accent text-xs uppercase tracking-[0.2em] px-6 py-3 transition-colors duration-300 ${
                   scrolled
                     ? "bg-navy text-warm-white hover:bg-navy-light"
@@ -130,7 +130,7 @@ export default function Navbar() {
                 <LanguageSelector variant="mobile" />
               </div>
               <a
-                href="#inscricao"
+                href="/#inscricao"
                 onClick={() => setMobileOpen(false)}
                 className="font-accent text-sm uppercase tracking-[0.2em] bg-navy text-warm-white px-8 py-4 text-center hover:bg-navy-light transition-colors"
               >
