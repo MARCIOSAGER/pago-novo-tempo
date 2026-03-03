@@ -13,8 +13,11 @@ import {
   BookOpen,
   Upload,
   Loader2,
+  Link as LinkIcon,
+  Save,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc";
 import type { SiteImageKey } from "@/hooks/useSiteImages";
 
@@ -90,6 +93,34 @@ const siteImages: MediaItem[] = [
     url: "/images/jefferson.png",
     category: "site",
     settingsKey: "image.founder.jefferson",
+  },
+];
+
+interface LinkItem {
+  name: string;
+  description: string;
+  settingsKey: string;
+  defaultUrl: string;
+}
+
+const editableLinks: LinkItem[] = [
+  {
+    name: "Kids — Ebook PDF",
+    description: "Link de download do ebook P.A.G.O Kids em PDF.",
+    settingsKey: "link.kids.pdf",
+    defaultUrl: "/api/downloads/ebook-kids-pdf",
+  },
+  {
+    name: "Kids — Flipbook (Prévia)",
+    description: "Link para visualizar o flipbook P.A.G.O Kids no navegador.",
+    settingsKey: "link.kids.flipbook",
+    defaultUrl: "/api/downloads/ebook-kids-flipbook",
+  },
+  {
+    name: "Kids — Certificado",
+    description: "Link de download do certificado P.A.G.O Kids.",
+    settingsKey: "link.kids.certificate",
+    defaultUrl: "/api/downloads/certificado-kids",
   },
 ];
 
@@ -220,8 +251,78 @@ function MediaCard({ item, dynamicUrl, onUploaded }: { item: MediaItem; dynamicU
   );
 }
 
+function LinkCard({ item, currentValue, onSaved }: { item: LinkItem; currentValue?: string; onSaved?: () => void }) {
+  const [value, setValue] = useState(currentValue || item.defaultUrl);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const updateLink = trpc.siteSettings.updateLink.useMutation();
+
+  useEffect(() => {
+    if (currentValue) setValue(currentValue);
+  }, [currentValue]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await updateLink.mutateAsync({ key: item.settingsKey, value });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+      onSaved?.();
+    } catch (err) {
+      console.error("Save failed:", err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Card className="border-border/50 hover:shadow-md transition-shadow">
+      <CardContent className="p-4 space-y-3">
+        <div>
+          <h3 className="font-semibold text-sm font-display mb-1">{item.name}</h3>
+          <p className="text-xs text-muted-foreground">{item.description}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            className="text-xs h-8 font-mono"
+            placeholder={item.defaultUrl}
+          />
+          <Button
+            size="sm"
+            className="h-8 gap-1.5 text-xs font-accent bg-gold text-navy hover:bg-gold-light shrink-0"
+            onClick={handleSave}
+            disabled={saving}
+          >
+            {saving ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : saved ? (
+              <Check className="h-3 w-3 text-emerald-600" />
+            ) : (
+              <Save className="h-3 w-3" />
+            )}
+            {saving ? "Salvando..." : saved ? "Salvo!" : "Salvar"}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 text-xs shrink-0"
+            onClick={() => window.open(value, "_blank")}
+          >
+            <ExternalLink className="h-3 w-3" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function AdminMediaRepo() {
   const { data: imageSettings, refetch } = trpc.siteSettings.getImages.useQuery(undefined, {
+    staleTime: 0,
+  });
+  const { data: linkSettings, refetch: refetchLinks } = trpc.siteSettings.getLinks.useQuery(undefined, {
     staleTime: 0,
   });
 
@@ -257,6 +358,10 @@ export default function AdminMediaRepo() {
           <TabsTrigger value="logos" className="gap-1.5 font-accent text-xs">
             <Star className="h-3.5 w-3.5" />
             Logos
+          </TabsTrigger>
+          <TabsTrigger value="links" className="gap-1.5 font-accent text-xs">
+            <LinkIcon className="h-3.5 w-3.5" />
+            Links
           </TabsTrigger>
           <TabsTrigger value="cores" className="gap-1.5 font-accent text-xs">
             <Palette className="h-3.5 w-3.5" />
@@ -294,6 +399,19 @@ export default function AdminMediaRepo() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {logos.map((item) => (
               <MediaCard key={item.name} item={item} />
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="links">
+          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
+            {editableLinks.map((item) => (
+              <LinkCard
+                key={item.settingsKey}
+                item={item}
+                currentValue={linkSettings?.[item.settingsKey]}
+                onSaved={refetchLinks}
+              />
             ))}
           </div>
         </TabsContent>

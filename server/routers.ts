@@ -432,6 +432,31 @@ export const appRouter = router({
 
         return { success: true, url };
       }),
+
+    // Public: get all site link URLs
+    getLinks: publicProcedure.query(async () => {
+      const settings = await getAllSiteSettings();
+      const linkMap: Record<string, string> = {};
+      for (const s of settings) {
+        if (s.key.startsWith("link.")) {
+          linkMap[s.key] = s.value;
+        }
+      }
+      return linkMap;
+    }),
+
+    // Admin: update a link URL
+    updateLink: adminProcedure
+      .input(
+        z.object({
+          key: z.string().min(1).max(128).regex(/^link\./),
+          value: z.string().min(1).max(2048),
+        })
+      )
+      .mutation(async ({ input }) => {
+        await upsertSiteSetting(input.key, input.value);
+        return { success: true };
+      }),
   }),
 
   // ─── Ebook Downloads ───────────────────────────────────────

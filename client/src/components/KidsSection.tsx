@@ -2,6 +2,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { BookOpen, Palette, Calendar, Heart, Download, Eye, Star, Users, Award } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSiteLinks } from "@/hooks/useSiteLinks";
 
 const KIDS_COVER_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-cover-YXFafqXyCNBnqLPKUrfJyB.png";
 const KIDS_HOUSE_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-ch6-house-jvqcdRzsdVKSQveo947cpe.png";
@@ -27,6 +28,7 @@ const featureIcons = [BookOpen, Palette, Calendar, Heart];
 
 export default function KidsSection() {
   const { t } = useLanguage();
+  const links = useSiteLinks();
 
   return (
     <section id="kids" className="relative py-28 lg:py-36 overflow-hidden" style={{ background: "linear-gradient(135deg, #FFF8E7 0%, #FFF0D4 30%, #FFE8C8 60%, #FFECD6 100%)" }}>
@@ -177,7 +179,7 @@ export default function KidsSection() {
             <FadeIn delay={0.6}>
               <div className="flex flex-col sm:flex-row gap-3">
                 <a
-                  href="/api/downloads/ebook-kids-pdf"
+                  href={links.kidsPdf}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#EF476F] text-white font-accent text-sm uppercase tracking-[0.15em] rounded-xl hover:bg-[#D63D63] transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -186,7 +188,7 @@ export default function KidsSection() {
                   {t.kids.ctaDownload}
                 </a>
                 <a
-                  href="/api/downloads/ebook-kids-flipbook"
+                  href={links.kidsFlipbook}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/80 text-navy font-accent text-sm uppercase tracking-[0.15em] rounded-xl hover:bg-white transition-all duration-300 border border-navy/10"
@@ -195,7 +197,7 @@ export default function KidsSection() {
                   {t.kids.ctaPreview}
                 </a>
                 <a
-                  href="/api/downloads/certificado-kids"
+                  href={links.kidsCertificate}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#FFD166]/20 text-[#E6A800] font-accent text-sm uppercase tracking-[0.15em] rounded-xl hover:bg-[#FFD166]/30 transition-all duration-300 border border-[#FFD166]/40"
