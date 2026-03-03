@@ -61,9 +61,6 @@ export default function JeffersonSection() {
                 <p className="font-accent text-[10px] uppercase tracking-[0.3em] text-blue-muted flex items-center gap-2">
                   <span className="text-gold">—</span> {t.jefferson.role2}
                 </p>
-                <p className="font-accent text-[10px] uppercase tracking-[0.3em] text-blue-muted flex items-center gap-2">
-                  <span className="text-gold">—</span> {t.jefferson.role3}
-                </p>
               </div>
             </FadeIn>
 

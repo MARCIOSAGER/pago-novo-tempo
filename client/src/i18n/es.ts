@@ -110,7 +110,6 @@ const es: Translations = {
     nameSurname: "Evangelista",
     role1: "Constructor de Estructuras",
     role2: "Organizador de Destinos",
-    role3: "Atleta de Resistencia",
     bio1: "Jefferson Evangelista no es solo un emprendedor. Es un constructor de estructuras y un organizador de destinos. Su historia no comenzó en los negocios, sino en la conciencia de que sin gobierno espiritual, emocional y estratégico, cualquier crecimiento se desmorona.",
     bio2: "Al frente de Interaja y de múltiples frentes empresariales, Jefferson nunca buscó solo ganancias. Siempre buscó estructura, sostenibilidad y legado. Piensa en gobernanza antes de pensar en expansión. Piensa en base antes de pensar en visibilidad.",
     quote: "\"El P.A.G.O no fue una idea que simplemente creé. Fue una visión que el Espíritu Santo me entregó. Yo solo organicé, estructuré y sistematicé aquello que recibí.\"",

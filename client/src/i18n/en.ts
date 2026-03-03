@@ -110,7 +110,6 @@ const en: Translations = {
     nameSurname: "Evangelista",
     role1: "Builder of Structures",
     role2: "Organizer of Destinies",
-    role3: "Endurance Athlete",
     bio1: "Jefferson Evangelista is not just an entrepreneur. He is a builder of structures and an organizer of destinies. His story did not begin in business, but in the awareness that without spiritual, emotional, and strategic governance, any growth crumbles.",
     bio2: "At the helm of Interaja and multiple business fronts, Jefferson never sought only profit. He always sought structure, sustainability, and legacy. He thinks about governance before thinking about expansion. He thinks about foundation before thinking about visibility.",
     quote: "\"P.A.G.O was not an idea I simply created. It was a vision that the Holy Spirit delivered to me. I only organized, structured, and systematized what I received.\"",
