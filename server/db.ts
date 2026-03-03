@@ -10,6 +10,8 @@ import {
   files,
   InsertFileRecord,
   FileRecord,
+  siteSettings,
+  SiteSetting,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -278,4 +280,28 @@ export async function deleteFileRecord(id: number): Promise<void> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(files).where(eq(files.id, id));
+}
+
+// ─── Site Settings Helpers ──────────────────────────────────────
+
+export async function getSiteSetting(key: string): Promise<string | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(siteSettings).where(eq(siteSettings.key, key)).limit(1);
+  return result.length > 0 ? result[0].value : null;
+}
+
+export async function getAllSiteSettings(): Promise<SiteSetting[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(siteSettings);
+}
+
+export async function upsertSiteSetting(key: string, value: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(siteSettings).values({ key, value }).onConflictDoUpdate({
+    target: siteSettings.key,
+    set: { value, updatedAt: new Date() },
+  });
 }

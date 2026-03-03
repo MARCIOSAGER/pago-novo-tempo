@@ -86,7 +86,7 @@ const en: Translations = {
     bio2: "At the helm of Interaja and multiple business fronts, Jefferson never sought only profit. He always sought structure, sustainability, and legacy. He thinks about governance before thinking about expansion. He thinks about foundation before thinking about visibility.",
     quote: "\"P.A.G.O was not an idea I simply created. It was a vision that the Holy Spirit delivered to me. I only organized, structured, and systematized what I received.\"",
     quoteAuthor: "Jefferson Evangelista",
-    bio3: "As an endurance athlete, Jefferson carries in his body what he believes in his soul: daily discipline, quiet consistency, and strategic advancement. It is not about speed. It is about permanence. He does not lead to be seen. He structures to endure.",
+    bio3: "Jefferson carries in his body what he believes in his soul: daily discipline, quiet consistency, and strategic advancement. It is not about speed. It is about permanence. He does not lead to be seen. He structures to endure as a Legendary and ambassador of the Legendaries, his conviction is clear and unshakable: spiritual governance precedes financial growth, alignment precedes expansion, obedience precedes authority. Every decision, every project, every relationship is filtered through these principles.",
     flipHint: "Hover to reveal",
     cards: [
       {

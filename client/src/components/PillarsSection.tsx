@@ -1,20 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-const IMAGES = {
-  principles: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-principles-HDhT4DKjE38mG8ZkecmGd4.webp",
-  alignment: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-alignment-8YXRToADNaAGsGXCjL5Bc7.webp",
-  government: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-governo-new-RzVSXAyWeKmPtBV6tXgtTv.webp",
-  obedience: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-obedience-f5zof3JxmnB8U7Po4wBCp3.webp",
-};
-
-const pillarMeta = [
-  { number: "I", letter: "P", image: IMAGES.principles },
-  { number: "II", letter: "A", image: IMAGES.alignment },
-  { number: "III", letter: "G", image: IMAGES.government },
-  { number: "IV", letter: "O", image: IMAGES.obedience },
-];
+import { useSiteImages } from "@/hooks/useSiteImages";
 
 function PillarCard({ pillar, index }: { pillar: { number: string; letter: string; image: string; title: string; subtitle: string; description: string; verse: string }; index: number }) {
   const ref = useRef(null);
@@ -78,8 +65,16 @@ function PillarCard({ pillar, index }: { pillar: { number: string; letter: strin
 
 export default function PillarsSection() {
   const { t } = useLanguage();
+  const images = useSiteImages();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+
+  const pillarMeta = [
+    { number: "I", letter: "P", image: images.principles },
+    { number: "II", letter: "A", image: images.alignment },
+    { number: "III", letter: "G", image: images.government },
+    { number: "IV", letter: "O", image: images.obedience },
+  ];
 
   const pillars = pillarMeta.map((meta, i) => ({
     ...meta,

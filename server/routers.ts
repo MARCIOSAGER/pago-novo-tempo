@@ -17,6 +17,8 @@ import {
   listFiles,
   getFileById,
   deleteFileRecord,
+  getAllSiteSettings,
+  upsertSiteSetting,
 } from "./db";
 import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
@@ -383,6 +385,52 @@ export const appRouter = router({
         }
         await deleteFileRecord(input.id);
         return { success: true };
+      }),
+  }),
+
+  // ─── Site Settings (dynamic images) ────────────────────────
+  siteSettings: router({
+    // Public: get all site image URLs
+    getImages: publicProcedure.query(async () => {
+      const settings = await getAllSiteSettings();
+      const imageMap: Record<string, string> = {};
+      for (const s of settings) {
+        if (s.key.startsWith("image.")) {
+          imageMap[s.key] = s.value;
+        }
+      }
+      return imageMap;
+    }),
+
+    // Admin: upload a new image and save its URL
+    updateImage: adminProcedure
+      .input(
+        z.object({
+          key: z.string().min(1).max(128).regex(/^image\./),
+          filename: z.string().min(1).max(255),
+          mimeType: z.string().min(1).max(128),
+          data: z.string(), // base64
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        // Validate it's an image
+        const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+        if (!allowedTypes.includes(input.mimeType)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Tipo de arquivo não permitido. Use JPEG, PNG, WebP ou GIF.",
+          });
+        }
+
+        const buffer = Buffer.from(input.data, "base64");
+        const suffix = nanoid(12);
+        const safeFilename = input.filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const fileKey = `pago-site/${input.key.replace(/\./g, "/")}/${suffix}-${safeFilename}`;
+
+        const { url } = await storagePut(fileKey, buffer, input.mimeType);
+        await upsertSiteSetting(input.key, url);
+
+        return { success: true, url };
       }),
   }),
 

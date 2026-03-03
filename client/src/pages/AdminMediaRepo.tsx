@@ -11,8 +11,12 @@ import {
   Palette,
   Star,
   BookOpen,
+  Upload,
+  Loader2,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { trpc } from "@/lib/trpc";
+import type { SiteImageKey } from "@/hooks/useSiteImages";
 
 interface MediaItem {
   name: string;
@@ -21,6 +25,7 @@ interface MediaItem {
   thumbnail?: string;
   category: string;
   dimensions?: string;
+  settingsKey?: SiteImageKey;
 }
 
 const logos: MediaItem[] = [
@@ -43,27 +48,31 @@ const logos: MediaItem[] = [
 const pillarImages: MediaItem[] = [
   {
     name: "Pilar — Princípio",
-    description: "Imagem do pilar Princípio: livro antigo aberto com luz dourada.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-principles-HDhT4DKjE38mG8ZkecmGd4.webp",
+    description: "Imagem do pilar Princípio na landing page.",
+    url: "/images/pillars/principles.png",
     category: "pilar",
+    settingsKey: "image.pillar.principles",
   },
   {
     name: "Pilar — Alinhamento",
-    description: "Imagem do pilar Alinhamento: bússola e mapa em mesa de madeira.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-alignment-8YXRToADNaAGsGXCjL5Bc7.webp",
+    description: "Imagem do pilar Alinhamento na landing page.",
+    url: "/images/pillars/alignment.png",
     category: "pilar",
+    settingsKey: "image.pillar.alignment",
   },
   {
     name: "Pilar — Governo",
-    description: "Imagem do pilar Governo: escritório executivo com Bíblia e livros clássicos.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-governo-new-RzVSXAyWeKmPtBV6tXgtTv.webp",
+    description: "Imagem do pilar Governo na landing page.",
+    url: "/images/pillars/government.png",
     category: "pilar",
+    settingsKey: "image.pillar.government",
   },
   {
     name: "Pilar — Obediência",
-    description: "Imagem do pilar Obediência: caminho de pedra em jardim de oliveiras ao nascer do sol.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-obediencia-new-kerqTpabe9CesvsDAfEFFS.webp",
+    description: "Imagem do pilar Obediência na landing page.",
+    url: "/images/pillars/obedience.png",
     category: "pilar",
+    settingsKey: "image.pillar.obedience",
   },
 ];
 
@@ -71,20 +80,9 @@ const siteImages: MediaItem[] = [
   {
     name: "Hero Background",
     description: "Imagem de fundo da seção hero da landing page.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/hero-bg-fyJtxWkcWj2UeE7kR85wJt.webp",
+    url: "/images/pillars/hero-bg.png",
     category: "site",
-  },
-  {
-    name: "Pilar Governo — Landing Page",
-    description: "Versão da imagem de Governo usada na seção de pilares da landing page.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-governo-new-RzVSXAyWeKmPtBV6tXgtTv.webp",
-    category: "site",
-  },
-  {
-    name: "Pilar Obediência — Landing Page",
-    description: "Versão da imagem de Obediência usada na seção de pilares da landing page.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pillar-obedience-f5zof3JxmnB8U7Po4wBCp3.webp",
-    category: "site",
+    settingsKey: "image.hero.background",
   },
 ];
 
@@ -96,24 +94,61 @@ const brandColors = [
   { name: "Gold Light", hex: "#D4C5A9", usage: "Textos de destaque em fundo escuro" },
 ];
 
-function MediaCard({ item }: { item: MediaItem }) {
+function MediaCard({ item, dynamicUrl, onUploaded }: { item: MediaItem; dynamicUrl?: string; onUploaded?: () => void }) {
   const [copied, setCopied] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const updateImage = trpc.siteSettings.updateImage.useMutation();
+
+  const displayUrl = dynamicUrl || item.url;
 
   const copyUrl = () => {
-    navigator.clipboard.writeText(item.url);
+    navigator.clipboard.writeText(displayUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !item.settingsKey) return;
+
+    setUploading(true);
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const base64 = btoa(
+        new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), "")
+      );
+
+      await updateImage.mutateAsync({
+        key: item.settingsKey,
+        filename: file.name,
+        mimeType: file.type,
+        data: base64,
+      });
+
+      onUploaded?.();
+    } catch (err) {
+      console.error("Upload failed:", err);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   };
 
   return (
     <Card className="border-border/50 overflow-hidden hover:shadow-md transition-shadow">
       <div className="aspect-video bg-muted relative overflow-hidden">
         <img
-          src={item.url}
+          src={displayUrl}
           alt={item.name}
           className="w-full h-full object-cover"
           loading="lazy"
         />
+        {uploading && (
+          <div className="absolute inset-0 bg-navy/60 flex items-center justify-center">
+            <Loader2 className="h-8 w-8 text-warm-white animate-spin" />
+          </div>
+        )}
       </div>
       <CardContent className="p-4">
         <h3 className="font-semibold text-sm font-display mb-1">{item.name}</h3>
@@ -126,6 +161,31 @@ function MediaCard({ item }: { item: MediaItem }) {
           </span>
         )}
         <div className="flex items-center gap-2 mt-2">
+          {item.settingsKey && (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                className="hidden"
+                onChange={handleFileSelect}
+              />
+              <Button
+                size="sm"
+                variant="default"
+                className="h-7 gap-1.5 text-xs font-accent flex-1 bg-gold text-navy hover:bg-gold-light"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+              >
+                {uploading ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Upload className="h-3 w-3" />
+                )}
+                {uploading ? "Enviando..." : "Alterar"}
+              </Button>
+            </>
+          )}
           <Button
             size="sm"
             variant="outline"
@@ -143,7 +203,7 @@ function MediaCard({ item }: { item: MediaItem }) {
             size="sm"
             variant="outline"
             className="h-7 gap-1.5 text-xs font-accent"
-            onClick={() => window.open(item.url, "_blank")}
+            onClick={() => window.open(displayUrl, "_blank")}
           >
             <ExternalLink className="h-3 w-3" />
           </Button>
@@ -154,6 +214,15 @@ function MediaCard({ item }: { item: MediaItem }) {
 }
 
 export default function AdminMediaRepo() {
+  const { data: imageSettings, refetch } = trpc.siteSettings.getImages.useQuery(undefined, {
+    staleTime: 0,
+  });
+
+  const getDynamicUrl = (key?: SiteImageKey) => {
+    if (!key || !imageSettings) return undefined;
+    return imageSettings[key] || undefined;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -168,12 +237,8 @@ export default function AdminMediaRepo() {
 
       <Separator />
 
-      <Tabs defaultValue="logos" className="w-full">
+      <Tabs defaultValue="pilares" className="w-full">
         <TabsList className="mb-4">
-          <TabsTrigger value="logos" className="gap-1.5 font-accent text-xs">
-            <Star className="h-3.5 w-3.5" />
-            Logos
-          </TabsTrigger>
           <TabsTrigger value="pilares" className="gap-1.5 font-accent text-xs">
             <BookOpen className="h-3.5 w-3.5" />
             Pilares
@@ -182,24 +247,25 @@ export default function AdminMediaRepo() {
             <ImageIcon className="h-3.5 w-3.5" />
             Site
           </TabsTrigger>
+          <TabsTrigger value="logos" className="gap-1.5 font-accent text-xs">
+            <Star className="h-3.5 w-3.5" />
+            Logos
+          </TabsTrigger>
           <TabsTrigger value="cores" className="gap-1.5 font-accent text-xs">
             <Palette className="h-3.5 w-3.5" />
             Cores
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="logos">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {logos.map((item) => (
-              <MediaCard key={item.name} item={item} />
-            ))}
-          </div>
-        </TabsContent>
-
         <TabsContent value="pilares">
           <div className="grid gap-4 md:grid-cols-2">
             {pillarImages.map((item) => (
-              <MediaCard key={item.name} item={item} />
+              <MediaCard
+                key={item.name}
+                item={item}
+                dynamicUrl={getDynamicUrl(item.settingsKey)}
+                onUploaded={refetch}
+              />
             ))}
           </div>
         </TabsContent>
@@ -207,6 +273,19 @@ export default function AdminMediaRepo() {
         <TabsContent value="site">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {siteImages.map((item) => (
+              <MediaCard
+                key={item.name}
+                item={item}
+                dynamicUrl={getDynamicUrl(item.settingsKey)}
+                onUploaded={refetch}
+              />
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="logos">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {logos.map((item) => (
               <MediaCard key={item.name} item={item} />
             ))}
           </div>

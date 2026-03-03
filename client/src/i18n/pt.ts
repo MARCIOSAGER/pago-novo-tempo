@@ -84,7 +84,7 @@ const pt = {
     bio2: "À frente da Interaja e de múltiplas frentes empresariais, Jefferson nunca buscou apenas lucro. Sempre buscou estrutura, sustentabilidade e legado. Ele pensa em governança antes de pensar em expansão. Pensa em base antes de pensar em visibilidade.",
     quote: "\"O P.A.G.O não foi uma ideia que eu simplesmente criei. Foi uma visão que o Espírito Santo me entregou. Eu apenas organizei, estruturei e sistematizei aquilo que recebi.\"",
     quoteAuthor: "Jefferson Evangelista",
-    bio3: "Como atleta de resistência, Jefferson carrega no corpo o que acredita na alma: disciplina diária, constância silenciosa e avanço estratégico. Não é sobre velocidade. É sobre permanência. Ele não lidera para aparecer. Ele estrutura para permanecer.",
+    bio3: "Jefferson carrega no corpo o que acredita na alma: disciplina diária, constância silenciosa e avanço estratégico. Não é sobre velocidade. É sobre permanência. Ele não lidera para aparecer. Ele estrutura para permanecer sendo Legendário e embaixador dos Legendários, sua convicção é clara e inabalável: governo espiritual precede crescimento financeiro, alinhamento precede expansão, obediência precede autoridade. Cada decisão, cada projeto, cada relacionamento é filtrado por esses princípios.",
     flipHint: "Passe o mouse para revelar",
     cards: [
       {

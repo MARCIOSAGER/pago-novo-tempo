@@ -71,3 +71,15 @@ export const files = pgTable("files", {
 
 export type FileRecord = typeof files.$inferSelect;
 export type InsertFileRecord = typeof files.$inferInsert;
+
+/**
+ * Site settings — key-value store for dynamic site configuration (e.g., image URLs).
+ */
+export const siteSettings = pgTable("site_settings", {
+  id: serial("id").primaryKey(),
+  key: varchar("key", { length: 128 }).notNull().unique(),
+  value: text("value").notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
+export type SiteSetting = typeof siteSettings.$inferSelect;

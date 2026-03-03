@@ -1,20 +1,21 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/hero-bg-fyJtxWkcWj2UeE7kR85wJt.webp";
+import { useSiteImages } from "@/hooks/useSiteImages";
 
 export default function HeroSection() {
   const { t } = useLanguage();
+  const images = useSiteImages();
 
   return (
     <section className="relative min-h-screen flex items-center justify-start overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
         <motion.img
-          initial={{ scale: 1.1 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-          src={HERO_BG}
+          initial={{ scale: 1 }}
+          animate={{ scale: 1.15 }}
+          transition={{ duration: 25, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
+          style={{ transformOrigin: "70% 40%" }}
+          src={images.hero}
           alt=""
           className="w-full h-full object-cover"
         />
@@ -78,13 +79,13 @@ export default function HeroSection() {
           >
             <a
               href="#inscricao"
-              className="font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy px-8 py-4 hover:bg-gold-light transition-all duration-300 text-center"
+              className="btn-shine font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy px-8 py-4 hover:bg-gold-light transition-all duration-300 text-center"
             >
               {t.hero.ctaPrimary}
             </a>
             <a
               href="#pilares"
-              className="font-accent text-xs uppercase tracking-[0.2em] border border-warm-white/30 text-warm-white px-8 py-4 hover:bg-warm-white/10 transition-all duration-300 text-center"
+              className="btn-shine btn-shine-delay font-accent text-xs uppercase tracking-[0.2em] border border-warm-white/30 text-warm-white px-8 py-4 hover:bg-warm-white/10 transition-all duration-300 text-center"
             >
               {t.hero.ctaSecondary}
             </a>
@@ -92,19 +93,6 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-          className="w-[1px] h-12 bg-gradient-to-b from-warm-white/60 to-transparent"
-        />
-      </motion.div>
     </section>
   );
 }
