@@ -17,10 +17,10 @@ const en: Translations = {
   // === HERO ===
   hero: {
     microLabel: "Life Reorganization System",
-    title1: "Principle.",
-    title2: "Alignment.",
-    title3: "Government.",
-    title4: "Obedience.",
+    title1: "Principle",
+    title2: "Alignment",
+    title3: "Government",
+    title4: "Obedience",
     subtitle: "An answer for people who love God but live in disorganization. A path to structure your spiritual, emotional, and practical life.",
     ctaPrimary: "Start Mentoring",
     ctaSecondary: "Discover the Pillars",

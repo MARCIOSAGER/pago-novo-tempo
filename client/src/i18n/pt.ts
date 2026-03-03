@@ -15,10 +15,10 @@ const pt = {
   // === HERO ===
   hero: {
     microLabel: "Sistema de Reorganização de Vida",
-    title1: "Princípio.",
-    title2: "Alinhamento.",
-    title3: "Governo.",
-    title4: "Obediência.",
+    title1: "Princípio",
+    title2: "Alinhamento",
+    title3: "Governo",
+    title4: "Obediência",
     subtitle: "Uma resposta para pessoas que amam a Deus, mas vivem desorganizadas. Um caminho para estruturar a vida espiritual, emocional e prática.",
     ctaPrimary: "Iniciar Mentoria",
     ctaSecondary: "Conhecer os Pilares",
