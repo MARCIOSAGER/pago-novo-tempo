@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 
 const DEFAULT_IMAGES = {
@@ -11,14 +12,36 @@ const DEFAULT_IMAGES = {
 
 export type SiteImageKey = keyof typeof DEFAULT_IMAGES;
 
+const CACHE_KEY = "pago:siteImages";
+
+function getCachedImages(): Record<string, string> | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 export function useSiteImages() {
   const { data } = trpc.siteSettings.getImages.useQuery(undefined, {
-    staleTime: 5 * 60 * 1000, // cache 5 min
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
 
+  useEffect(() => {
+    if (data && Object.keys(data).length > 0) {
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      } catch {}
+    }
+  }, [data]);
+
+  const cached = getCachedImages();
+
   const get = (key: SiteImageKey): string => {
-    return data?.[key] || DEFAULT_IMAGES[key];
+    if (data) return data[key] || DEFAULT_IMAGES[key];
+    return cached?.[key] || DEFAULT_IMAGES[key];
   };
 
   return {

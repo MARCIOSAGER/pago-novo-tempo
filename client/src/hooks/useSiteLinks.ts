@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 
 const DEFAULT_LINKS = {
@@ -8,14 +9,36 @@ const DEFAULT_LINKS = {
 
 export type SiteLinkKey = keyof typeof DEFAULT_LINKS;
 
+const CACHE_KEY = "pago:siteLinks";
+
+function getCachedLinks(): Record<string, string> | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 export function useSiteLinks() {
   const { data } = trpc.siteSettings.getLinks.useQuery(undefined, {
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
 
+  useEffect(() => {
+    if (data && Object.keys(data).length > 0) {
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      } catch {}
+    }
+  }, [data]);
+
+  const cached = getCachedLinks();
+
   const get = (key: SiteLinkKey): string => {
-    return data?.[key] || DEFAULT_LINKS[key];
+    if (data) return data[key] || DEFAULT_LINKS[key];
+    return cached?.[key] || DEFAULT_LINKS[key];
   };
 
   return {
