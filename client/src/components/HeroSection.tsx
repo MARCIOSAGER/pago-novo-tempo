@@ -12,9 +12,9 @@ export default function HeroSection() {
       <div className="absolute inset-0">
         <motion.img
           initial={{ scale: 1 }}
-          animate={{ scale: 1.15 }}
-          transition={{ duration: 25, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
-          style={{ transformOrigin: "70% 40%" }}
+          animate={{ scale: 1.3 }}
+          transition={{ duration: 20, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
+          style={{ transformOrigin: "62% 45%" }}
           src={images.hero}
           alt=""
           className="w-full h-full object-cover"

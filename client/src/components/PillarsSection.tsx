@@ -19,9 +19,10 @@ function PillarCard({ pillar, index }: { pillar: { number: string; letter: strin
       {/* Image */}
       <div className={`relative overflow-hidden aspect-[4/3] lg:aspect-auto ${isEven ? "lg:order-1" : "lg:order-2"}`}>
         <motion.img
-          initial={{ scale: 1.08 }}
-          animate={isInView ? { scale: 1 } : {}}
-          transition={{ duration: 1.2, ease: "easeOut" }}
+          initial={{ scale: 1 }}
+          animate={isInView ? { scale: 1.12 } : {}}
+          transition={{ duration: 15, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
+          style={{ transformOrigin: isEven ? "30% 50%" : "70% 50%" }}
           src={pillar.image}
           alt={pillar.title}
           className="w-full h-full object-cover"
