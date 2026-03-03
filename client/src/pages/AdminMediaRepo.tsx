@@ -84,6 +84,13 @@ const siteImages: MediaItem[] = [
     category: "site",
     settingsKey: "image.hero.background",
   },
+  {
+    name: "Jefferson Evangelista",
+    description: "Foto do fundador na landing page e página /fundador.",
+    url: "/images/jefferson.png",
+    category: "site",
+    settingsKey: "image.founder.jefferson",
+  },
 ];
 
 const brandColors = [

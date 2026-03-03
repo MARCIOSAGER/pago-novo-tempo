@@ -2,11 +2,13 @@ import { Link } from "wouter";
 import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSiteImages } from "@/hooks/useSiteImages";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export default function Fundador() {
   const { t } = useLanguage();
+  const images = useSiteImages();
 
   return (
     <div className="min-h-screen bg-warm-white">
@@ -29,7 +31,7 @@ export default function Fundador() {
               transition={{ duration: 0.8 }}
             >
               <img
-                src="/images/jefferson.png"
+                src={images.jefferson}
                 alt="Jefferson Evangelista"
                 className="w-full max-w-lg mx-auto lg:mx-0 object-cover"
               />

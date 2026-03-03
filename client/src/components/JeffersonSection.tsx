@@ -1,6 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSiteImages } from "@/hooks/useSiteImages";
 import { ArrowRight } from "lucide-react";
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
@@ -21,6 +22,7 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 
 export default function JeffersonSection() {
   const { t } = useLanguage();
+  const images = useSiteImages();
 
   return (
     <section id="jefferson" className="py-28 lg:py-36 bg-warm-white">
@@ -30,7 +32,7 @@ export default function JeffersonSection() {
           <FadeIn>
             <div className="relative">
               <img
-                src="/images/jefferson.png"
+                src={images.jefferson}
                 alt="Jefferson Evangelista"
                 className="w-full max-w-md mx-auto lg:mx-0 object-cover"
               />

@@ -6,6 +6,7 @@ const DEFAULT_IMAGES = {
   "image.pillar.government": "/images/pillars/government.png",
   "image.pillar.obedience": "/images/pillars/obedience.png",
   "image.hero.background": "/images/pillars/hero-bg.png",
+  "image.founder.jefferson": "/images/jefferson.png",
 } as const;
 
 export type SiteImageKey = keyof typeof DEFAULT_IMAGES;
@@ -26,5 +27,6 @@ export function useSiteImages() {
     government: get("image.pillar.government"),
     obedience: get("image.pillar.obedience"),
     hero: get("image.hero.background"),
+    jefferson: get("image.founder.jefferson"),
   };
 }
