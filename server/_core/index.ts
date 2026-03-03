@@ -38,13 +38,13 @@ async function startServer() {
   // Trust proxy for correct IP detection behind reverse proxy
   app.set('trust proxy', 1);
 
-  // ─── Apply Security Layers FIRST ──────────────────────────
-  applyAllSecurity(app);
-
   // Configure body parser with larger size limit for file uploads
-  // (overrides the 1mb default from security for specific routes)
+  // MUST be registered BEFORE applyAllSecurity (which sets 1mb global limit)
   app.use("/api/trpc/files.upload", express.json({ limit: "50mb" }));
   app.use("/api/trpc/siteSettings.updateImage", express.json({ limit: "50mb" }));
+
+  // ─── Apply Security Layers ──────────────────────────────
+  applyAllSecurity(app);
 
   // Serve local uploads (fallback when S3 is not configured)
   if (!fs.existsSync(LOCAL_UPLOADS_DIR)) {
