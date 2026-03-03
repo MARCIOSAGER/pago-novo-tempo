@@ -1,10 +1,10 @@
 import { trpc } from "@/lib/trpc";
 
 const DEFAULT_IMAGES = {
-  "image.pillar.principles": "/images/pillars/principles.png",
-  "image.pillar.alignment": "/images/pillars/alignment.png",
-  "image.pillar.government": "/images/pillars/government.png",
-  "image.pillar.obedience": "/images/pillars/obedience.png",
+  "image.pillar.principles": "/images/pillars/principles.webp",
+  "image.pillar.alignment": "/images/pillars/alignment.webp",
+  "image.pillar.government": "/images/pillars/government.webp",
+  "image.pillar.obedience": "/images/pillars/obedience.webp",
   "image.hero.background": "/images/pillars/hero-bg.png",
   "image.founder.jefferson": "/images/jefferson.png",
 } as const;
