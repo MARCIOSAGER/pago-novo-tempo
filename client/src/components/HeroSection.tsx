@@ -46,13 +46,13 @@ export default function HeroSection() {
             transition={{ delay: 0.5, duration: 0.8 }}
             className="font-display text-5xl sm:text-6xl lg:text-7xl font-semibold text-warm-white leading-[1.1] mb-6"
           >
-            {t.hero.title1}
+            <span className="text-gold">{t.hero.title1.charAt(0)}</span>{t.hero.title1.slice(1)}
             <br />
-            {t.hero.title2}
+            <span className="text-gold">{t.hero.title2.charAt(0)}</span>{t.hero.title2.slice(1)}
             <br />
-            {t.hero.title3}
+            <span className="text-gold">{t.hero.title3.charAt(0)}</span>{t.hero.title3.slice(1)}
             <br />
-            {t.hero.title4}
+            <span className="text-gold">{t.hero.title4.charAt(0)}</span>{t.hero.title4.slice(1)}
           </motion.h1>
 
           {/* Gold line */}
