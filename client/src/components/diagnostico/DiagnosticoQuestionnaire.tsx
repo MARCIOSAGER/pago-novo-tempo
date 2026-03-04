@@ -155,7 +155,7 @@ export default function DiagnosticoQuestionnaire() {
       </AnimatePresence>
 
       {/* Navigation buttons */}
-      <div className="py-8 bg-warm-white">
+      <div className="py-12 lg:py-16 bg-warm-white border-t border-navy/10">
         <div className="max-w-4xl mx-auto px-6 lg:px-12 flex items-center justify-between">
           <button
             type="button"

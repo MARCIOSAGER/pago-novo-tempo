@@ -14,8 +14,8 @@ interface DiagnosticoQuestionGroupProps {
 const PILLAR_IMAGES: Record<PillarKey, string> = {
   P: "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=2560&q=85",
   A: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=2560&q=85",
-  G: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=2560&q=85",
-  O: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=2560&q=85",
+  G: "https://images.unsplash.com/photo-1509786679719-3d066e68f607?auto=format&fit=crop&w=2560&q=85",
+  O: "https://images.unsplash.com/photo-1696709530510-f327c8e7e31f?auto=format&fit=crop&w=2560&q=85",
 };
 
 export default function DiagnosticoQuestionGroup({
@@ -90,16 +90,16 @@ export default function DiagnosticoQuestionGroup({
                 <div key={index}>
                   {subgroup && (
                     <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={isInView ? { opacity: 1 } : {}}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={isInView ? { opacity: 1, y: 0 } : {}}
                       transition={{ duration: 0.5, delay: 0.1 }}
-                      className={`flex items-center gap-4 pt-8 pb-4 ${index > 0 ? "mt-4" : ""}`}
+                      className={`pt-10 pb-6 ${index > 0 ? "mt-6 border-t border-navy/10" : ""}`}
                     >
-                      <div className="flex-1 h-[1px] bg-navy/15" />
-                      <span className="font-accent text-[10px] uppercase tracking-[0.3em] shrink-0 text-navy/60">
-                        {subgroup.label}
-                      </span>
-                      <div className="flex-1 h-[1px] bg-navy/15" />
+                      <div className="bg-navy/[0.04] border border-navy/10 rounded-sm px-6 py-3 text-center">
+                        <span className="font-accent text-[11px] uppercase tracking-[0.35em] text-navy/80 font-medium">
+                          {subgroup.label}
+                        </span>
+                      </div>
                     </motion.div>
                   )}
 
