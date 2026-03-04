@@ -45,7 +45,7 @@ export default function AboutSection() {
   const coverSrc = COVERS[language] || COVERS.pt;
 
   return (
-    <section id="sobre" className="py-16 lg:py-24 bg-warm-white">
+    <section id="sobre" className="pt-8 pb-16 lg:pt-12 lg:pb-24 bg-warm-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Section Label */}
         <FadeIn>
