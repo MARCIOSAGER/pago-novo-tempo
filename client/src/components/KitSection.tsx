@@ -57,15 +57,18 @@ export default function KitSection() {
             const Icon = kitIcons[i];
             return (
               <FadeIn key={item.title} delay={0.1 * i}>
-                <div className="group p-8 bg-gold border border-gold-light/30 hover:bg-gold-light transition-all duration-500 h-full">
-                  <Icon
-                    className="w-8 h-8 text-navy mb-6 group-hover:scale-110 transition-transform duration-300"
-                    strokeWidth={1.2}
-                  />
-                  <h3 className="font-display text-xl font-semibold text-navy mb-4">
+                <div className="group p-8 rounded-xl bg-gradient-to-br from-gold to-gold-light/80 shadow-lg shadow-black/20 hover:-translate-y-2 hover:shadow-2xl hover:shadow-gold/20 transition-all duration-500 h-full">
+                  <div className="w-14 h-14 rounded-full bg-navy/10 flex items-center justify-center mb-6 group-hover:bg-navy/15 group-hover:scale-110 transition-all duration-300">
+                    <Icon
+                      className="w-7 h-7 text-navy"
+                      strokeWidth={1.5}
+                    />
+                  </div>
+                  <h3 className="font-display text-xl font-semibold text-navy mb-3">
                     {item.title}
                   </h3>
-                  <p className="font-body text-sm text-navy/70 leading-relaxed">
+                  <div className="w-8 h-[2px] bg-navy/20 mb-4 group-hover:w-12 transition-all duration-500" />
+                  <p className="font-body text-sm text-navy/65 leading-relaxed">
                     {item.description}
                   </p>
                 </div>
