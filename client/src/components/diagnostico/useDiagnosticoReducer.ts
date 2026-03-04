@@ -11,7 +11,7 @@ const PILLAR_QUESTION_COUNTS: Record<PillarKey, number> = {
 
 const PILLAR_ORDER: PillarKey[] = ["P", "A", "G", "O"];
 
-const STORAGE_KEY = "pago-diagnostico-state";
+const STORAGE_KEY = "pago-diagnostico-state-v2";
 
 export interface DiagnosticoState {
   nome: string;
@@ -81,7 +81,7 @@ export interface StatusInfo {
 
 export function getStatusInfo(media: number): StatusInfo {
   if (media >= 8) return { label: "solid", color: "#2E5E3E", key: "solid" };
-  if (media >= 5) return { label: "building", color: "#B8A88A", key: "building" };
+  if (media >= 5.5) return { label: "building", color: "#B8A88A", key: "building" };
   if (media >= 3) return { label: "fragile", color: "#8B6914", key: "fragile" };
   return { label: "collapse", color: "#7A3030", key: "collapse" };
 }
@@ -118,10 +118,21 @@ export function useDiagnosticoReducer() {
       const answers = state.answers[pillar];
       const answered = answers.filter((a): a is number => a !== null);
       if (answered.length === 0) return 0;
-      return answered.reduce((sum, v) => sum + v, 0) / PILLAR_QUESTION_COUNTS[pillar];
+      const soma = answered.reduce((sum, v) => sum + v, 0);
+      // Normalize 1-4 scale to 0-10
+      return parseFloat(((soma / (PILLAR_QUESTION_COUNTS[pillar] * 4)) * 10).toFixed(1));
     },
     [state.answers]
   );
+
+  // Emotional subgroup average (G4-G7, indices 3-6)
+  const emotionalAverage = useCallback((): number => {
+    const gAnswers = state.answers.G;
+    const emotionalAnswers = gAnswers.slice(3, 7).filter((a): a is number => a !== null);
+    if (emotionalAnswers.length === 0) return 10;
+    const soma = emotionalAnswers.reduce((sum, v) => sum + v, 0);
+    return parseFloat(((soma / (4 * 4)) * 10).toFixed(1));
+  }, [state.answers]);
 
   const overallAverage = useCallback((): number => {
     const averages = PILLAR_ORDER.map((p) => pillarAverage(p));
@@ -183,6 +194,7 @@ export function useDiagnosticoReducer() {
     pillarAverage,
     overallAverage,
     weakestPillar,
+    emotionalAverage,
     isStepComplete,
     chartData,
     hasSavedState,

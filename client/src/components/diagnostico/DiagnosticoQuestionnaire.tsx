@@ -8,6 +8,7 @@ import DiagnosticoResults from "./DiagnosticoResults";
 import { useDiagnosticoReducer } from "./useDiagnosticoReducer";
 import type { PillarKey } from "./useDiagnosticoReducer";
 import DiagnosticoHeroSection from "./DiagnosticoHeroSection";
+import DiagnosticoIntro from "./DiagnosticoIntro";
 
 export default function DiagnosticoQuestionnaire() {
   const { t } = useLanguage();
@@ -17,6 +18,7 @@ export default function DiagnosticoQuestionnaire() {
     pillarAverage,
     overallAverage,
     weakestPillar,
+    emotionalAverage,
     isStepComplete,
     chartData,
     hasSavedState,
@@ -25,15 +27,22 @@ export default function DiagnosticoQuestionnaire() {
   } = useDiagnosticoReducer();
 
   const [showHighlights, setShowHighlights] = useState(false);
+  const [showIntro, setShowIntro] = useState(false);
 
   const handleStart = useCallback(
     (nome: string) => {
       dispatch({ type: "SET_NAME", nome });
-      dispatch({ type: "NEXT_STEP" });
+      setShowIntro(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
     [dispatch]
   );
+
+  const handleIntroComplete = useCallback(() => {
+    setShowIntro(false);
+    dispatch({ type: "NEXT_STEP" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [dispatch]);
 
   const handleContinue = useCallback(() => {
     // Keep existing state, just make sure we're on the right step
@@ -88,7 +97,7 @@ export default function DiagnosticoQuestionnaire() {
   );
 
   // Hero/start screen
-  if (state.currentStep === 0) {
+  if (state.currentStep === 0 && !showIntro) {
     return (
       <DiagnosticoHeroSection
         nome={state.nome}
@@ -97,6 +106,15 @@ export default function DiagnosticoQuestionnaire() {
         onContinue={handleContinue}
         onRestart={handleRestart}
       />
+    );
+  }
+
+  // Intro screen (between hero and questions)
+  if (state.currentStep === 0 && showIntro) {
+    return (
+      <div className="pt-20">
+        <DiagnosticoIntro onStart={handleIntroComplete} />
+      </div>
     );
   }
 
@@ -119,6 +137,7 @@ export default function DiagnosticoQuestionnaire() {
         chartData={chartData}
         answers={state.answers}
         onRestart={handleRestart}
+        emotionalAverage={emotionalAverage()}
       />
     );
   }

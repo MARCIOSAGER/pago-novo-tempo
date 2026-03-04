@@ -14,7 +14,7 @@ interface DiagnosticoQuestionGroupProps {
 const PILLAR_IMAGES: Record<PillarKey, string> = {
   P: "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=2560&q=85",
   A: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=2560&q=85",
-  G: "https://images.unsplash.com/photo-1772366088755-04aaab36c92b?auto=format&fit=crop&w=2560&q=85",
+  G: "https://images.unsplash.com/photo-1509786679719-3d066e68f607?auto=format&fit=crop&w=2560&q=85",
   O: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2560&q=85",
 };
 
@@ -121,6 +121,7 @@ export default function DiagnosticoQuestionGroup({
                       totalQuestions={pillarData.questions.length}
                       darkBackground={false}
                       highlight={showHighlights}
+                      anchorType={(pillarData as any).anchorTypes?.[index] ?? "F"}
                     />
                   </motion.div>
                 </div>

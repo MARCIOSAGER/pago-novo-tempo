@@ -16,6 +16,7 @@ interface DiagnosticoResultsProps {
   chartData: { pillar: string; value: number; fullMark: number }[];
   answers: Record<PillarKey, number[]>;
   onRestart: () => void;
+  emotionalAverage: number;
 }
 
 const PILLAR_ORDER: PillarKey[] = ["P", "A", "G", "O"];
@@ -28,6 +29,7 @@ export default function DiagnosticoResults({
   chartData,
   answers,
   onRestart,
+  emotionalAverage,
 }: DiagnosticoResultsProps) {
   const { t } = useLanguage();
   const ref = useRef(null);
@@ -196,6 +198,29 @@ export default function DiagnosticoResults({
           </motion.div>
         </div>
       </section>
+
+      {/* Section 4.5 — Emotional Alert (conditional) */}
+      {pillarAverages.G < 5.5 && emotionalAverage < 4.0 && (
+        <section className="bg-navy-dark py-16 lg:py-24">
+          <div className="max-w-3xl mx-auto px-6 lg:px-12 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+            >
+              <p className="font-accent text-[11px] uppercase tracking-[0.4em] text-gold mb-6">
+                {t.diagnostico.emotionalAlert.label}
+              </p>
+
+              <div className="w-12 h-[1px] bg-gold mx-auto mb-8" />
+
+              <p className="font-body text-base text-warm-white/70 leading-relaxed max-w-2xl mx-auto whitespace-pre-line">
+                {t.diagnostico.emotionalAlert.text}
+              </p>
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       {/* Section 5 — Email + CTA */}
       <section className="bg-navy-dark py-16 lg:py-24 no-print">
