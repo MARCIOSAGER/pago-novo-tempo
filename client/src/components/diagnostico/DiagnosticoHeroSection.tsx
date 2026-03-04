@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-const HERO_IMAGE = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80";
+const HERO_IMAGE = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2560&q=90";
 
 interface DiagnosticoHeroSectionProps {
   nome: string;
@@ -35,15 +35,18 @@ export default function DiagnosticoHeroSection({
 
   return (
     <section className="relative min-h-[70vh] flex items-end overflow-hidden">
-      {/* Background image */}
-      <div className="absolute inset-0">
-        <img
+      {/* Background image with slow zoom */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.img
           src={HERO_IMAGE}
           alt=""
           className="w-full h-full object-cover"
+          initial={{ scale: 1.1 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 20, ease: "linear" }}
         />
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/85 to-navy/60" />
+        {/* Dark overlay — lighter at top to show mountain peaks */}
+        <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/80 to-navy/40" />
       </div>
 
       {/* Content */}
@@ -118,7 +121,7 @@ export default function DiagnosticoHeroSection({
                   <button
                     type="button"
                     onClick={onContinue}
-                    className="font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy px-8 py-4 hover:bg-gold-light transition-all duration-300"
+                    className="btn-shine font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy px-8 py-4 hover:bg-gold-light transition-all duration-300"
                   >
                     {t.diagnostico.navigation.continueButton}
                   </button>
@@ -149,7 +152,7 @@ export default function DiagnosticoHeroSection({
                 <button
                   type="button"
                   onClick={handleStart}
-                  className="font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy px-8 py-4 hover:bg-gold-light transition-all duration-300 shrink-0"
+                  className="btn-shine font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy px-8 py-4 hover:bg-gold-light transition-all duration-300 shrink-0"
                 >
                   {t.diagnostico.hero.startButton}
                 </button>
