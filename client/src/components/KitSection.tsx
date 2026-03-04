@@ -68,7 +68,7 @@ export default function KitSection() {
                     {item.title}
                   </h3>
                   <div className="w-8 h-[2px] bg-navy/20 mb-4 group-hover:w-12 transition-all duration-500" />
-                  <p className="font-body text-sm text-navy/65 leading-relaxed">
+                  <p className="font-body text-sm text-navy/85 leading-relaxed">
                     {item.description}
                   </p>
                 </div>
