@@ -70,6 +70,9 @@ async function startServer() {
     : path.resolve(import.meta.dirname, "..", "docs");
   const ebookFiles: Record<string, { filepath: string; filename: string }> = {
     "ebook-pdf": { filepath: path.join(docsDir, "ebook-pago-v2.pdf"), filename: "PAGO-Ebook-v2.pdf" },
+    "ebook-pdf-pt": { filepath: path.join(docsDir, "PAGO-Ebook-Portugues.pdf"), filename: "PAGO-Ebook-Portugues.pdf" },
+    "ebook-pdf-en": { filepath: path.join(docsDir, "PAGO-Ebook-English.pdf"), filename: "PAGO-Ebook-English.pdf" },
+    "ebook-pdf-es": { filepath: path.join(docsDir, "PAGO-Ebook-Espanol.pdf"), filename: "PAGO-Ebook-Espanol.pdf" },
     "ebook-pdf-grafica": { filepath: path.join(docsDir, "ebook-pago-v2-grafica.pdf"), filename: "PAGO-Ebook-v1-Grafica.pdf" },
     "ebook-epub": { filepath: path.join(docsDir, "ebook-pago-v2.epub"), filename: "PAGO-Ebook-v2.epub" },
     "ebook-mobi": { filepath: path.join(docsDir, "ebook-pago-v2.mobi"), filename: "PAGO-Ebook-v2.mobi" },
