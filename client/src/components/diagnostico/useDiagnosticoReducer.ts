@@ -231,6 +231,26 @@ export function useDiagnosticoReducer() {
     return weakestKey;
   }, [weakestPillar, pillarSubgroups]);
 
+  const weakestSubgroupPerPillar = useMemo((): Record<PillarKey, string | null> => {
+    const findWeakest = (subs: Record<string, number>): string | null => {
+      let weakestKey: string | null = null;
+      let lowest = Infinity;
+      for (const [key, val] of Object.entries(subs)) {
+        if (val < lowest) {
+          lowest = val;
+          weakestKey = key;
+        }
+      }
+      return weakestKey;
+    };
+    return {
+      P: null,
+      A: findWeakest(pillarSubgroups.A as unknown as Record<string, number>),
+      G: findWeakest(pillarSubgroups.G as unknown as Record<string, number>),
+      O: findWeakest(pillarSubgroups.O as unknown as Record<string, number>),
+    };
+  }, [pillarSubgroups]);
+
   const isStepComplete = useCallback(
     (step: number): boolean => {
       if (step === 0) return state.nome.trim().length >= 2;
@@ -274,6 +294,7 @@ export function useDiagnosticoReducer() {
     overallAverage,
     weakestPillar,
     weakestSubgroup,
+    weakestSubgroupPerPillar,
     pillarSubgroups,
     isStepComplete,
     chartData,

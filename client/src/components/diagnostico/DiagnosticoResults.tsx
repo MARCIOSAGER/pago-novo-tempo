@@ -18,6 +18,7 @@ interface DiagnosticoResultsProps {
   onRestart: () => void;
   pillarSubgroups: PillarSubgroups;
   weakestSubgroup: string | null;
+  weakestSubgroupPerPillar: Record<PillarKey, string | null>;
 }
 
 const PILLAR_ORDER: PillarKey[] = ["P", "A", "G", "O"];
@@ -32,6 +33,7 @@ export default function DiagnosticoResults({
   onRestart,
   pillarSubgroups,
   weakestSubgroup,
+  weakestSubgroupPerPillar,
 }: DiagnosticoResultsProps) {
   const { t } = useLanguage();
   const ref = useRef(null);
@@ -157,6 +159,7 @@ export default function DiagnosticoResults({
                 average={pillarAverages[pillar]}
                 delay={i * 0.1}
                 pillarSubgroups={pillarSubgroups}
+                weakestSubgroup={weakestSubgroupPerPillar[pillar]}
               />
             ))}
           </div>
@@ -167,6 +170,65 @@ export default function DiagnosticoResults({
       <section className="bg-navy-dark py-16 lg:py-24">
         <div className="max-w-4xl mx-auto px-6 lg:px-12">
           <DiagnosticoRadarChart data={chartData} />
+        </div>
+      </section>
+
+      {/* Section 3.5 — Pillar Analysis (full text per pillar) */}
+      <section className="bg-navy py-16 lg:py-24">
+        <div className="max-w-3xl mx-auto px-6 lg:px-12">
+          <p className="font-accent text-[11px] uppercase tracking-[0.4em] text-gold text-center mb-12">
+            {(t.diagnostico.results as any).analysisSectionTitle ?? "Análise por Pilar"}
+          </p>
+
+          <div className="space-y-12">
+            {PILLAR_ORDER.map((pillar, i) => {
+              const pillarStatus = getStatusInfo(pillarAverages[pillar]);
+              const pillarI18n = t.diagnostico.pillars[pillar];
+              const weakSub = weakestSubgroupPerPillar[pillar];
+
+              // Lookup analysis text
+              const analysisBlock = (t.diagnostico.results as any).pillarAnalysis;
+              if (!analysisBlock) return null;
+              const pBlock = analysisBlock[pillar];
+              if (!pBlock) return null;
+              const sBlock = pBlock[pillarStatus.key];
+              if (!sBlock) return null;
+              const textData = pillar === "P" ? sBlock : (weakSub ? sBlock[weakSub] : null);
+              if (!textData?.analysis) return null;
+
+              return (
+                <motion.div
+                  key={pillar}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: i * 0.1 }}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="font-display text-3xl font-semibold text-gold">
+                      {pillarI18n.letter}
+                    </span>
+                    <div>
+                      <h3 className="font-display text-lg font-semibold text-warm-white">
+                        {pillarI18n.name}
+                      </h3>
+                      <span
+                        className="font-accent text-[9px] uppercase tracking-[0.2em]"
+                        style={{ color: pillarStatus.color }}
+                      >
+                        {t.diagnostico.results.status[pillarStatus.key]}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="w-8 h-[1px] bg-gold/30 mb-4" />
+
+                  <div className="font-body text-sm text-warm-white/60 leading-relaxed whitespace-pre-line">
+                    {textData.analysis}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </section>
 

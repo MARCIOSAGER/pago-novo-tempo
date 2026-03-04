@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getStatusInfo } from "./useDiagnosticoReducer";
 import type { PillarKey, PillarSubgroups } from "./useDiagnosticoReducer";
@@ -8,6 +9,7 @@ interface DiagnosticoPillarCardProps {
   average: number;
   delay?: number;
   pillarSubgroups?: PillarSubgroups;
+  weakestSubgroup?: string | null;
 }
 
 export default function DiagnosticoPillarCard({
@@ -15,8 +17,10 @@ export default function DiagnosticoPillarCard({
   average,
   delay = 0,
   pillarSubgroups,
+  weakestSubgroup,
 }: DiagnosticoPillarCardProps) {
   const { t } = useLanguage();
+  const [expanded, setExpanded] = useState(false);
   const pillarData = t.diagnostico.pillars[pillar];
   const status = getStatusInfo(average);
   const statusLabel = t.diagnostico.results.status[status.key];
@@ -27,6 +31,23 @@ export default function DiagnosticoPillarCard({
     ? pillarSubgroups[pillar as "A" | "G" | "O"]
     : null;
   const subLabels = (pillarData as any).subgroupLabels as Record<string, string> | undefined;
+
+  // Get summary text from pillarAnalysis
+  const getSummary = (): string | null => {
+    const analysis = (t.diagnostico.results as any).pillarAnalysis;
+    if (!analysis) return null;
+    const pillarBlock = analysis[pillar];
+    if (!pillarBlock) return null;
+    const statusBlock = pillarBlock[status.key];
+    if (!statusBlock) return null;
+    // P has no subgroups — summary is directly on statusBlock
+    if (pillar === "P") return statusBlock.summary ?? null;
+    // A, G, O — need the weakest subgroup key
+    if (!weakestSubgroup) return null;
+    return statusBlock[weakestSubgroup]?.summary ?? null;
+  };
+
+  const summary = getSummary();
 
   return (
     <motion.div
@@ -98,6 +119,34 @@ export default function DiagnosticoPillarCard({
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Collapsible summary */}
+      {summary && (
+        <div className="mt-4 pt-4 border-t border-navy/10">
+          <button
+            type="button"
+            onClick={() => setExpanded(!expanded)}
+            className="font-accent text-[10px] uppercase tracking-[0.2em] text-gold hover:text-gold-dark transition-colors"
+          >
+            {expanded
+              ? (t.diagnostico.results as any).analysisToggleClose ?? "Fechar análise"
+              : (t.diagnostico.results as any).analysisToggleOpen ?? "Ver análise"}
+          </button>
+          <AnimatePresence>
+            {expanded && (
+              <motion.p
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="font-body text-sm text-navy/60 mt-3 leading-relaxed overflow-hidden"
+              >
+                {summary}
+              </motion.p>
+            )}
+          </AnimatePresence>
         </div>
       )}
     </motion.div>
