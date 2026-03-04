@@ -5,13 +5,13 @@ export type PillarKey = "P" | "A" | "G" | "O";
 const PILLAR_QUESTION_COUNTS: Record<PillarKey, number> = {
   P: 8,
   A: 12,
-  G: 15,
-  O: 9,
+  G: 12,
+  O: 12,
 };
 
 const PILLAR_ORDER: PillarKey[] = ["P", "A", "G", "O"];
 
-const STORAGE_KEY = "pago-diagnostico-state-v2";
+const STORAGE_KEY = "pago-diagnostico-state-v3";
 
 export interface DiagnosticoState {
   nome: string;
@@ -37,8 +37,8 @@ function createInitialState(): DiagnosticoState {
     answers: {
       P: Array(8).fill(null),
       A: Array(12).fill(null),
-      G: Array(15).fill(null),
-      O: Array(9).fill(null),
+      G: Array(12).fill(null),
+      O: Array(12).fill(null),
     },
     completed: false,
   };
@@ -188,14 +188,14 @@ export function useDiagnosticoReducer() {
       },
       G: {
         spiritual: calcSubgroup(g, 0, 3),   // G1-G3
-        emotional: calcSubgroup(g, 3, 4),   // G4-G7
-        financial: calcSubgroup(g, 7, 4),   // G8-G11
-        temporal: calcSubgroup(g, 11, 4),   // G12-G15
+        emotional: calcSubgroup(g, 3, 3),   // G4-G6
+        financial: calcSubgroup(g, 6, 3),   // G7-G9
+        temporal: calcSubgroup(g, 9, 3),    // G10-G12
       },
       O: {
-        basic: calcSubgroup(o, 0, 3),       // O1-O3
-        radical: calcSubgroup(o, 3, 3),     // O4-O6
-        fruit: calcSubgroup(o, 6, 3),       // O7-O9
+        basic: calcSubgroup(o, 0, 4),       // O1-O4
+        radical: calcSubgroup(o, 4, 4),     // O5-O8
+        fruit: calcSubgroup(o, 8, 4),       // O9-O12
       },
     };
   }, [state.answers]);
