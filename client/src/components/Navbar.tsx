@@ -64,12 +64,12 @@ export default function Navbar() {
             </a>
 
             {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-4 xl:gap-6">
+            <div className="hidden lg:flex items-center gap-3 xl:gap-5">
               {navLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
-                  className={`font-accent text-xs uppercase tracking-[0.2em] transition-colors duration-300 ${
+                  className={`font-accent text-[10px] xl:text-xs uppercase tracking-[0.15em] xl:tracking-[0.2em] whitespace-nowrap transition-colors duration-300 ${
                     scrolled
                       ? "text-navy/70 hover:text-navy"
                       : "text-warm-white/80 hover:text-warm-white"
@@ -81,7 +81,7 @@ export default function Navbar() {
               <LanguageSelector scrolled={scrolled} />
               <a
                 href="/#inscricao"
-                className={`font-accent text-xs uppercase tracking-[0.2em] px-6 py-3 whitespace-nowrap transition-colors duration-300 ${
+                className={`font-accent text-[10px] xl:text-xs uppercase tracking-[0.15em] xl:tracking-[0.2em] px-4 xl:px-6 py-3 whitespace-nowrap transition-colors duration-300 ${
                   scrolled
                     ? "bg-navy text-warm-white hover:bg-navy-light"
                     : "bg-warm-white/20 text-warm-white border border-warm-white/40 hover:bg-warm-white/30"
