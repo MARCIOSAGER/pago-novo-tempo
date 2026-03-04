@@ -12,8 +12,8 @@ export default function HeroSection() {
       <div className="absolute inset-0">
         <motion.img
           initial={{ scale: 1 }}
-          animate={{ scale: 1.5 }}
-          transition={{ duration: 8, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
+          animate={{ scale: 1.8 }}
+          transition={{ duration: 18, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
           style={{ transformOrigin: "62% 45%" }}
           src={images.hero}
           alt=""
