@@ -79,28 +79,6 @@ const en: Translations = {
     label: "The System",
     title: "P.A.G.O",
     flipHint: "Hover to reveal",
-    cards: [
-      {
-        title: "Principle",
-        subtitle: "Above Results",
-        description: "True prosperity is not measured by accumulation, but by faithfulness to immutable foundations. Biblical principles are eternal truths that govern life.",
-      },
-      {
-        title: "Alignment",
-        subtitle: "Generates Authority",
-        description: "When what we believe, feel, and do walk in the same direction, we emanate an authority that transcends human power.",
-      },
-      {
-        title: "Government",
-        subtitle: "Starts in Secret",
-        description: "What manifests publicly is a reflection of what was established in secret. A life of prayer is the foundation of all true governance.",
-      },
-      {
-        title: "Obedience",
-        subtitle: "Sustains the Invisible",
-        description: "Obedience is the key that unlocks the supernatural. Consistency defeats talent. Discipline defeats motivation.",
-      },
-    ],
   },
 
   // === JEFFERSON ===

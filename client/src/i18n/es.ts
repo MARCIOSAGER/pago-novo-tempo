@@ -79,28 +79,6 @@ const es: Translations = {
     label: "El Sistema",
     title: "P.A.G.O",
     flipHint: "Pasa el mouse para revelar",
-    cards: [
-      {
-        title: "Principio",
-        subtitle: "Por Encima de Resultados",
-        description: "La verdadera prosperidad no se mide por la acumulación, sino por la fidelidad a fundamentos inmutables. Los principios bíblicos son verdades eternas que rigen la vida.",
-      },
-      {
-        title: "Alineamiento",
-        subtitle: "Genera Autoridad",
-        description: "Cuando lo que creemos, sentimos y hacemos caminan en la misma dirección, emanamos una autoridad que trasciende el poder humano.",
-      },
-      {
-        title: "Gobierno",
-        subtitle: "Inicia en lo Secreto",
-        description: "Lo que se manifiesta públicamente es el reflejo de lo que fue establecido en lo secreto. La vida de oración es el fundamento de todo gobierno verdadero.",
-      },
-      {
-        title: "Obediencia",
-        subtitle: "Sostiene lo Invisible",
-        description: "La obediencia es la llave que desbloquea lo sobrenatural. La constancia vence al talento. La disciplina vence a la motivación.",
-      },
-    ],
   },
 
   // === JEFFERSON ===
