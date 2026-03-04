@@ -137,9 +137,10 @@ export default function AboutSection() {
           <div className="text-center mt-8">
             <a
               href="/mentoria"
-              className="inline-flex items-center gap-2 font-accent text-xs uppercase tracking-[0.2em] bg-navy text-warm-white px-8 py-4 hover:bg-navy-light transition-all duration-300"
+              className="group relative inline-flex items-center gap-2 font-accent text-xs uppercase tracking-[0.2em] bg-navy text-warm-white px-8 py-4 overflow-hidden hover:bg-navy-light transition-colors duration-300"
             >
-              {t.nav.mentoria} →
+              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              <span className="relative">{t.nav.mentoria} →</span>
             </a>
           </div>
         </FadeIn>
