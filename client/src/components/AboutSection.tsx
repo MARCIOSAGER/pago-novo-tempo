@@ -123,8 +123,20 @@ export default function AboutSection() {
           </div>
         </FadeIn>
 
-        {/* Quote */}
+        {/* CTA Mentoria */}
         <FadeIn delay={0.5}>
+          <div className="text-center mb-10">
+            <a
+              href="/mentoria"
+              className="inline-flex items-center gap-2 font-accent text-xs uppercase tracking-[0.2em] bg-navy text-warm-white px-8 py-4 hover:bg-navy-light transition-all duration-300"
+            >
+              {t.nav.mentoria} →
+            </a>
+          </div>
+        </FadeIn>
+
+        {/* Quote */}
+        <FadeIn delay={0.6}>
           <blockquote className="text-center py-4">
             <p className="font-display text-lg lg:text-xl text-navy italic leading-relaxed max-w-3xl mx-auto">
               {t.about.quote}
