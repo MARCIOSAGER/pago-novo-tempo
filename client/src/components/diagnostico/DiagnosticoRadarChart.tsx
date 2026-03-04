@@ -32,7 +32,7 @@ export default function DiagnosticoRadarChart({ data }: DiagnosticoRadarChartPro
   return (
     <div className="w-full max-w-md mx-auto">
       <ChartContainer config={chartConfig} className="aspect-square">
-        <RadarChart data={chartData} cx="50%" cy="50%" outerRadius="70%">
+        <RadarChart data={chartData} cx="50%" cy="50%" outerRadius="80%">
           <PolarGrid
             stroke="#B8A88A"
             strokeOpacity={0.15}
@@ -42,7 +42,7 @@ export default function DiagnosticoRadarChart({ data }: DiagnosticoRadarChartPro
             dataKey="name"
             tick={{
               fill: "#FAFAF8",
-              fontSize: 13,
+              fontSize: 10,
               fontFamily: "Montserrat, sans-serif",
               fontWeight: 500,
             }}
