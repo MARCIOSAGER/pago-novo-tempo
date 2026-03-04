@@ -89,7 +89,7 @@ const siteImages: MediaItem[] = [
   },
   {
     name: "Jefferson Evangelista",
-    description: "Foto do fundador na landing page e página /fundador.",
+    description: "Foto do visionário na landing page e página /fundador.",
     url: "/images/jefferson.png",
     category: "site",
     settingsKey: "image.founder.jefferson",

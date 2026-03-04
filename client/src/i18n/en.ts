@@ -5,7 +5,7 @@ const en: Translations = {
   nav: {
     about: "About",
     pillars: "The 4 Pillars",
-    jefferson: "Founder",
+    jefferson: "Visionary",
     kit: "Mentoring Kit",
     faq: "FAQ",
     kids: "Kids",
@@ -99,7 +99,7 @@ const en: Translations = {
 
   // === JEFFERSON ===
   jefferson: {
-    label: "The Founder",
+    label: "The Visionary",
     name: "Jefferson",
     nameSurname: "Evangelista",
     role1: "Builder of Structures",

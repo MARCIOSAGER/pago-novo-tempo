@@ -3,7 +3,7 @@ const pt = {
   nav: {
     about: "Sobre",
     pillars: "Os 4 Pilares",
-    jefferson: "Fundador",
+    jefferson: "Visionário",
     kit: "Kit Mentoria",
     faq: "FAQ",
     kids: "Kids",
@@ -97,7 +97,7 @@ const pt = {
 
   // === JEFFERSON ===
   jefferson: {
-    label: "O Fundador",
+    label: "O Visionário",
     name: "Jefferson",
     nameSurname: "Evangelista",
     role1: "Construtor de Estruturas",
