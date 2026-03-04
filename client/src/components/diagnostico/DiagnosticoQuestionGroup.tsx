@@ -11,13 +11,6 @@ interface DiagnosticoQuestionGroupProps {
   showHighlights: boolean;
 }
 
-const ROMAN_NUMERALS: Record<PillarKey, string> = {
-  P: "I",
-  A: "II",
-  G: "III",
-  O: "IV",
-};
-
 export default function DiagnosticoQuestionGroup({
   pillar,
   answers,
@@ -44,15 +37,6 @@ export default function DiagnosticoQuestionGroup({
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-12 relative"
         >
-          {/* Large roman numeral as background ornament */}
-          <span
-            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-display text-[120px] lg:text-[180px] font-semibold select-none pointer-events-none ${
-              isDark ? "text-gold/5" : "text-gold/8"
-            }`}
-          >
-            {ROMAN_NUMERALS[pillar]}
-          </span>
-
           <div className="relative z-10">
             <span
               className={`font-display text-6xl lg:text-8xl font-semibold ${
