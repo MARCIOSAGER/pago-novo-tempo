@@ -64,7 +64,7 @@ export default function DiagnosticoQuestionGroup({
 
             <p
               className={`font-accent text-[11px] uppercase tracking-[0.4em] mt-2 ${
-                isDark ? "text-gold/60" : "text-gold"
+                isDark ? "text-gold/80" : "text-gold"
               }`}
             >
               {pillarData.subtitle}
@@ -82,7 +82,7 @@ export default function DiagnosticoQuestionGroup({
 
             <p
               className={`font-body text-sm leading-relaxed max-w-2xl mx-auto ${
-                isDark ? "text-warm-white/60" : "text-navy/60"
+                isDark ? "text-warm-white/75" : "text-navy/70"
               }`}
             >
               {pillarData.description}
@@ -92,7 +92,10 @@ export default function DiagnosticoQuestionGroup({
 
         {/* Questions */}
         <div className="space-y-2">
-          {pillarData.questions.map((question: string, index: number) => {
+          {pillarData.questions.map((question: { text: string; example: string } | string, index: number) => {
+            const questionText = typeof question === "string" ? question : question.text;
+            const questionExample = typeof question === "string" ? undefined : question.example;
+
             // Check if we need a subgroup separator
             const subgroups = "subgroups" in pillarData ? (pillarData as any).subgroups : undefined;
             const subgroup = subgroups?.find(
@@ -109,17 +112,17 @@ export default function DiagnosticoQuestionGroup({
                     className={`flex items-center gap-4 pt-8 pb-4 ${index > 0 ? "mt-4" : ""}`}
                   >
                     <div
-                      className={`flex-1 h-[1px] ${isDark ? "bg-gold/20" : "bg-gold/30"}`}
+                      className={`flex-1 h-[1px] ${isDark ? "bg-gold/30" : "bg-gold/40"}`}
                     />
                     <span
                       className={`font-accent text-[10px] uppercase tracking-[0.3em] shrink-0 ${
-                        isDark ? "text-gold/50" : "text-gold"
+                        isDark ? "text-gold/70" : "text-gold"
                       }`}
                     >
                       {subgroup.label}
                     </span>
                     <div
-                      className={`flex-1 h-[1px] ${isDark ? "bg-gold/20" : "bg-gold/30"}`}
+                      className={`flex-1 h-[1px] ${isDark ? "bg-gold/30" : "bg-gold/40"}`}
                     />
                   </motion.div>
                 )}
@@ -134,7 +137,8 @@ export default function DiagnosticoQuestionGroup({
                   }}
                 >
                   <DiagnosticoScaleInput
-                    question={question}
+                    question={questionText}
+                    example={questionExample}
                     value={answers[index]}
                     onSelect={(value) => onAnswer(index, value)}
                     questionNumber={index + 1}

@@ -81,7 +81,7 @@ export default function Navbar() {
               <LanguageSelector scrolled={scrolled} />
               <a
                 href="/#inscricao"
-                className={`font-accent text-xs uppercase tracking-[0.2em] px-6 py-3 transition-colors duration-300 ${
+                className={`font-accent text-xs uppercase tracking-[0.2em] px-6 py-3 whitespace-nowrap transition-colors duration-300 ${
                   scrolled
                     ? "bg-navy text-warm-white hover:bg-navy-light"
                     : "bg-warm-white/20 text-warm-white border border-warm-white/40 hover:bg-warm-white/30"
