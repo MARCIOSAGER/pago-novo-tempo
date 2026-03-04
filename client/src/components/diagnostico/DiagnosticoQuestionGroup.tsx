@@ -29,22 +29,21 @@ export default function DiagnosticoQuestionGroup({
   const isInView = useInView(ref, { once: true, margin: "-50px" });
 
   const pillarData = t.diagnostico.pillars[pillar];
-  const isDark = pillar === "P" || pillar === "G";
 
   return (
     <>
-      {/* Pillar hero with background image */}
-      <section className="relative min-h-[40vh] flex items-center justify-center overflow-hidden">
+      {/* Pillar hero — full-width background image */}
+      <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
           <motion.img
             src={PILLAR_IMAGES[pillar]}
             alt=""
             className="w-full h-full object-cover"
-            initial={{ scale: 1.05 }}
-            animate={isInView ? { scale: 1 } : { scale: 1.05 }}
-            transition={{ duration: 15, ease: "linear" }}
+            initial={{ scale: 1.08 }}
+            animate={isInView ? { scale: 1 } : { scale: 1.08 }}
+            transition={{ duration: 18, ease: "linear" }}
           />
-          <div className="absolute inset-0 bg-navy/70" />
+          <div className="absolute inset-0 bg-gradient-to-b from-navy/50 via-navy/60 to-navy/80" />
         </div>
 
         <motion.div
@@ -52,37 +51,36 @@ export default function DiagnosticoQuestionGroup({
           initial={{ opacity: 0, y: 25 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10 text-center py-16 lg:py-24 px-6"
+          className="relative z-10 text-center py-20 lg:py-28 px-6"
         >
-          <span className="font-display text-6xl lg:text-8xl font-semibold text-gold">
+          <span className="font-display text-7xl lg:text-9xl font-semibold text-gold drop-shadow-lg">
             {pillarData.letter}
           </span>
 
-          <p className="font-accent text-[11px] uppercase tracking-[0.4em] mt-2 text-gold/80">
+          <p className="font-accent text-[11px] uppercase tracking-[0.4em] mt-3 text-gold-light">
             {pillarData.subtitle}
           </p>
 
-          <h2 className="font-display text-3xl lg:text-4xl font-semibold mt-2 text-warm-white">
+          <h2 className="font-display text-3xl lg:text-5xl font-semibold mt-2 text-warm-white drop-shadow-md">
             {pillarData.name}
           </h2>
 
-          <div className="w-12 h-[1px] bg-gold mx-auto mt-4 mb-6" />
+          <div className="w-16 h-[1px] bg-gold mx-auto mt-5 mb-6" />
 
-          <p className="font-body text-sm leading-relaxed max-w-2xl mx-auto text-warm-white/75">
+          <p className="font-body text-base leading-relaxed max-w-2xl mx-auto text-warm-white/80">
             {pillarData.description}
           </p>
         </motion.div>
       </section>
 
-      {/* Questions */}
-      <section className={`py-16 lg:py-24 ${isDark ? "bg-navy" : "bg-sand/40"}`}>
+      {/* Questions — always light background for readability and life */}
+      <section className="py-16 lg:py-24 bg-warm-white">
         <div className="max-w-4xl mx-auto px-6 lg:px-12">
           <div className="space-y-2">
             {pillarData.questions.map((question: { text: string; example: string } | string, index: number) => {
               const questionText = typeof question === "string" ? question : question.text;
               const questionExample = typeof question === "string" ? undefined : question.example;
 
-              // Check if we need a subgroup separator
               const subgroups = "subgroups" in pillarData ? (pillarData as any).subgroups : undefined;
               const subgroup = subgroups?.find(
                 (sg: { label: string; startIndex: number }) => sg.startIndex === index
@@ -97,19 +95,11 @@ export default function DiagnosticoQuestionGroup({
                       transition={{ duration: 0.5, delay: 0.1 }}
                       className={`flex items-center gap-4 pt-8 pb-4 ${index > 0 ? "mt-4" : ""}`}
                     >
-                      <div
-                        className={`flex-1 h-[1px] ${isDark ? "bg-gold/30" : "bg-gold/40"}`}
-                      />
-                      <span
-                        className={`font-accent text-[10px] uppercase tracking-[0.3em] shrink-0 ${
-                          isDark ? "text-gold/70" : "text-gold"
-                        }`}
-                      >
+                      <div className="flex-1 h-[1px] bg-gold/40" />
+                      <span className="font-accent text-[10px] uppercase tracking-[0.3em] shrink-0 text-gold">
                         {subgroup.label}
                       </span>
-                      <div
-                        className={`flex-1 h-[1px] ${isDark ? "bg-gold/30" : "bg-gold/40"}`}
-                      />
+                      <div className="flex-1 h-[1px] bg-gold/40" />
                     </motion.div>
                   )}
 
@@ -129,7 +119,7 @@ export default function DiagnosticoQuestionGroup({
                       onSelect={(value) => onAnswer(index, value)}
                       questionNumber={index + 1}
                       totalQuestions={pillarData.questions.length}
-                      darkBackground={isDark}
+                      darkBackground={false}
                       highlight={showHighlights}
                     />
                   </motion.div>
