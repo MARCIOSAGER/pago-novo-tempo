@@ -49,7 +49,7 @@ export default function DiagnosticoIntro({ onStart }: DiagnosticoIntroProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
-              className="border border-warm-white/10 p-6 lg:p-8"
+              className="border border-gold/20 bg-navy/40 p-6 lg:p-8"
             >
               <span className="font-accent text-[10px] uppercase tracking-[0.3em] text-gold">
                 {card.tag}
