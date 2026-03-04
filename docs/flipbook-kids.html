@@ -351,18 +351,18 @@
       return Promise.all(promises);
     }
 
-    // Calculate page dimensions
+    // Calculate page dimensions — single page view (landscape pages)
     function calcSize() {
-      const maxW = Math.min(window.innerWidth * 0.88, 1600);
-      const maxH = Math.min(window.innerHeight * 0.78, 900);
+      const maxW = window.innerWidth * 0.72;
+      const maxH = window.innerHeight * 0.64;
       const aspectRatio = 1376 / 768;
 
       let pageW, pageH;
-      if (maxW / 2 / maxH > aspectRatio) {
-        pageH = maxH;
+      if (maxW / maxH > aspectRatio) {
+        pageH = Math.floor(maxH);
         pageW = Math.floor(pageH * aspectRatio);
       } else {
-        pageW = Math.floor(maxW / 2);
+        pageW = Math.floor(maxW);
         pageH = Math.floor(pageW / aspectRatio);
       }
       return { pageW, pageH };
@@ -391,11 +391,11 @@
       pageFlip = new St.PageFlip(container, {
         width: pageW,
         height: pageH,
-        size: 'stretch',
+        size: 'fixed',
         minWidth: 300,
-        maxWidth: 1600,
+        maxWidth: 1400,
         minHeight: 200,
-        maxHeight: 1000,
+        maxHeight: 800,
         maxShadowOpacity: 0.5,
         showCover: true,
         mobileScrollSupport: true,

@@ -13,7 +13,7 @@ export default function HeroSection() {
         <motion.img
           initial={{ scale: 1 }}
           animate={{ scale: 1.8 }}
-          transition={{ duration: 18, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
+          transition={{ duration: 25, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
           style={{ transformOrigin: "62% 45%" }}
           src={images.hero}
           alt=""
