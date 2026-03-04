@@ -49,7 +49,7 @@ export default function Navbar() {
                 alt="P.A.G.O Novo Tempo"
                 className="h-12 w-12 rounded-full object-cover"
               />
-              <div className="hidden sm:block">
+              <div className="hidden sm:block lg:hidden xl:block">
                 <span className={`font-display text-xl font-semibold tracking-wide transition-colors duration-500 ${
                   scrolled ? "text-navy" : "text-warm-white"
                 }`}>
