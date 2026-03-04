@@ -73,7 +73,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
         }}
       >
         {/* Section 1 — Greeting + Overall Score */}
-        <div style={{ textAlign: "center", padding: "40px 32px 32px" }}>
+        <div style={{ textAlign: "center", padding: "48px 40px 36px" }}>
           <p
             style={{
               fontFamily: "Montserrat, sans-serif",
@@ -164,8 +164,8 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
-            gap: "12px",
-            padding: "16px 32px",
+            gap: "16px",
+            padding: "20px 40px",
           }}
         >
           {PILLAR_ORDER.map((pillar) => {
@@ -188,8 +188,9 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
                 className="pdf-no-break"
                 style={{
                   backgroundColor: "#F9F8F6",
-                  padding: "20px",
+                  padding: "22px",
                   border: "1px solid #E8E4DE",
+                  borderRadius: "4px",
                 }}
               >
                 <div
@@ -361,7 +362,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
           style={{
             display: "flex",
             justifyContent: "center",
-            padding: "24px 32px",
+            padding: "32px 40px",
           }}
         >
           <RadarChart
@@ -410,7 +411,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
         </div>
 
         {/* Section 4 — Pillar Analysis */}
-        <div style={{ padding: "16px 32px", pageBreakBefore: "always" as const }}>
+        <div style={{ padding: "24px 40px", pageBreakBefore: "always" as const }}>
           <p
             style={{
               fontFamily: "Montserrat, sans-serif",
@@ -443,13 +444,13 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
             if (!textData?.analysis) return null;
 
             return (
-              <div key={pillar} style={{ marginBottom: "32px" }}>
+              <div key={pillar} style={{ marginBottom: "36px" }}>
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "10px",
-                    marginBottom: "12px",
+                    gap: "12px",
+                    marginBottom: "14px",
                   }}
                 >
                   <span
@@ -518,7 +519,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
           className="pdf-no-break"
           style={{
             textAlign: "center",
-            padding: "32px",
+            padding: "40px",
             borderTop: "1px solid #E8E4DE",
           }}
         >
@@ -599,7 +600,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
             className="pdf-no-break"
             style={{
               textAlign: "center",
-              padding: "32px",
+              padding: "40px",
               borderTop: "1px solid #E8E4DE",
             }}
           >
@@ -642,26 +643,8 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
           </div>
         )}
 
-        {/* Footer */}
-        <div
-          style={{
-            textAlign: "center",
-            padding: "24px 32px",
-            borderTop: "1px solid #E8E4DE",
-          }}
-        >
-          <p
-            style={{
-              fontFamily: "Montserrat, sans-serif",
-              fontSize: "9px",
-              color: "rgba(26,39,68,0.4)",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-            }}
-          >
-            pagonovotempo.com
-          </p>
-        </div>
+        {/* Footer spacing — actual footer is rendered by jsPDF on every page */}
+        <div style={{ height: "16px" }} />
       </div>
     );
   }
