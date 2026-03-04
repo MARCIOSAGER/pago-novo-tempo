@@ -2,6 +2,12 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+const COVERS: Record<string, string> = {
+  pt: "/images/covers/capa_pt.png",
+  en: "/images/covers/capa_en.png",
+  es: "/images/covers/capa_es.png",
+};
+
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
@@ -18,8 +24,25 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
   );
 }
 
+/** Renders text with **bold** markers as <strong> elements */
+function RichText({ text, className }: { text: string; className?: string }) {
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return (
+    <p className={className}>
+      {parts.map((part, i) =>
+        part.startsWith("**") && part.endsWith("**") ? (
+          <strong key={i}>{part.slice(2, -2)}</strong>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </p>
+  );
+}
+
 export default function AboutSection() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const coverSrc = COVERS[language] || COVERS.pt;
 
   return (
     <section id="sobre" className="py-16 lg:py-24 bg-warm-white">
@@ -31,70 +54,83 @@ export default function AboutSection() {
           </p>
         </FadeIn>
 
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-20">
-          {/* Left Column - Main Statement */}
-          <div className="lg:col-span-5">
+        {/* Main grid: text + book cover */}
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+          {/* Left — Title + description */}
+          <div className="lg:col-span-7">
             <FadeIn delay={0.1}>
               <h2 className="font-display text-4xl lg:text-5xl font-semibold text-navy leading-[1.15] mb-8">
                 {t.about.titleLine1}
                 <br />
-                {t.about.titleLine2}
-                <br />
+                {t.about.titleLine2}{" "}
                 <span className="text-gold">{t.about.titleLine3}</span>
               </h2>
             </FadeIn>
             <FadeIn delay={0.2}>
-              <div className="section-divider mb-8" />
+              <RichText
+                text={t.about.content}
+                className="font-body text-base text-navy/70 leading-relaxed mb-6"
+              />
             </FadeIn>
             <FadeIn delay={0.3}>
-              <p className="font-body text-base text-navy/70 leading-relaxed">
-                {t.about.description}
-              </p>
+              <RichText
+                text={t.about.description}
+                className="font-body text-base text-navy/80 leading-relaxed"
+              />
             </FadeIn>
           </div>
 
-          {/* Right Column - Expanded Content */}
-          <div className="lg:col-span-7 space-y-8">
-            <FadeIn delay={0.2}>
-              <p className="font-body text-lg text-navy/80 leading-relaxed">
-                {t.about.content}
-              </p>
-            </FadeIn>
-
+          {/* Right — Book cover */}
+          <div className="lg:col-span-5 flex justify-center">
             <FadeIn delay={0.3}>
-              <div className="gold-line" />
-            </FadeIn>
-
-            <FadeIn delay={0.4}>
-              <div className="grid sm:grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <p className="font-accent text-[11px] uppercase tracking-[0.3em] text-gold">
-                    {t.about.problemLabel}
-                  </p>
-                  <p className="font-body text-sm text-navy/70 leading-relaxed">
-                    {t.about.problemText}
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  <p className="font-accent text-[11px] uppercase tracking-[0.3em] text-gold">
-                    {t.about.answerLabel}
-                  </p>
-                  <p className="font-body text-sm text-navy/70 leading-relaxed">
-                    {t.about.answerText}
-                  </p>
-                </div>
-              </div>
-            </FadeIn>
-
-            <FadeIn delay={0.5}>
-              <blockquote className="border-l-2 border-gold pl-6 py-2">
-                <p className="font-display text-xl text-navy italic leading-relaxed">
-                  {t.about.quote}
-                </p>
-              </blockquote>
+              <motion.img
+                src={coverSrc}
+                alt="P.A.G.O Ebook"
+                className="w-64 lg:w-72 drop-shadow-2xl rounded-sm"
+                whileHover={{ scale: 1.03, rotateY: -3 }}
+                transition={{ duration: 0.4 }}
+              />
             </FadeIn>
           </div>
         </div>
+
+        {/* Divider */}
+        <FadeIn delay={0.4}>
+          <div className="gold-line my-10" />
+        </FadeIn>
+
+        {/* Problem / Answer grid */}
+        <FadeIn delay={0.4}>
+          <div className="grid sm:grid-cols-2 gap-8 mb-10">
+            <div className="space-y-3">
+              <p className="font-accent text-[11px] uppercase tracking-[0.3em] text-gold">
+                {t.about.problemLabel}
+              </p>
+              <RichText
+                text={t.about.problemText}
+                className="font-body text-sm text-navy/70 leading-relaxed"
+              />
+            </div>
+            <div className="space-y-3">
+              <p className="font-accent text-[11px] uppercase tracking-[0.3em] text-gold">
+                {t.about.answerLabel}
+              </p>
+              <RichText
+                text={t.about.answerText}
+                className="font-body text-sm text-navy/70 leading-relaxed"
+              />
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* Quote */}
+        <FadeIn delay={0.5}>
+          <blockquote className="text-center py-4">
+            <p className="font-display text-lg lg:text-xl text-navy italic leading-relaxed max-w-3xl mx-auto">
+              {t.about.quote}
+            </p>
+          </blockquote>
+        </FadeIn>
       </div>
     </section>
   );
