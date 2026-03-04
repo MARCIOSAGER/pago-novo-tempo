@@ -17,6 +17,7 @@ interface DiagnosticoResultsProps {
   answers: Record<PillarKey, number[]>;
   onRestart: () => void;
   pillarSubgroups: PillarSubgroups;
+  weakestSubgroup: string | null;
 }
 
 const PILLAR_ORDER: PillarKey[] = ["P", "A", "G", "O"];
@@ -30,6 +31,7 @@ export default function DiagnosticoResults({
   answers,
   onRestart,
   pillarSubgroups,
+  weakestSubgroup,
 }: DiagnosticoResultsProps) {
   const { t } = useLanguage();
   const ref = useRef(null);
@@ -270,24 +272,44 @@ export default function DiagnosticoResults({
           </p>
 
           <h2 className="font-display text-3xl lg:text-5xl font-semibold text-warm-white leading-[1.15] mb-2">
-            {t.diagnostico.results.cta.titleLine1}
+            {t.diagnostico.results.cta.title}
           </h2>
-          <h2 className="font-display text-3xl lg:text-5xl font-semibold text-gold italic leading-[1.15] mb-8">
-            {t.diagnostico.results.cta.titleLine2}
+          <h2 className="font-display text-3xl lg:text-5xl font-semibold text-gold italic leading-[1.15] mb-10">
+            {t.diagnostico.results.cta.titleItalic}
           </h2>
 
-          <p className="font-body text-base text-warm-white/60 leading-relaxed max-w-2xl mx-auto mb-8">
-            {t.diagnostico.results.cta.description}
-          </p>
+          {/* Personalized diagnosis line */}
+          <div className="max-w-2xl mx-auto mb-6">
+            <p className="font-body text-base text-warm-white/80 leading-relaxed">
+              {(() => {
+                const diagKey = weakestPillar === "P"
+                  ? "P"
+                  : `${weakestPillar}.${weakestSubgroup}`;
+                return (t.diagnostico.results.cta.diagnosis as Record<string, string>)[diagKey]
+                  ?? (t.diagnostico.results.cta.diagnosis as Record<string, string>)[weakestPillar];
+              })()}
+            </p>
+          </div>
+
+          {/* Tension line */}
+          <div className="max-w-2xl mx-auto mb-6">
+            <p className="font-body text-sm text-warm-white/50 leading-relaxed italic">
+              {(t.diagnostico.results.cta.tension as Record<string, string>)[weakestPillar]}
+            </p>
+          </div>
+
+          {/* Direction line */}
+          <div className="max-w-2xl mx-auto mb-10">
+            <p className="font-body text-base text-gold-light leading-relaxed">
+              {(t.diagnostico.results.cta.direction as Record<string, string>)[weakestPillar]}
+            </p>
+          </div>
+
+          <div className="w-12 h-[1px] bg-gold/20 mx-auto mb-10" />
 
           {/* Benefits checklist */}
           <div className="max-w-md mx-auto text-left mb-10 space-y-3">
-            {[
-              t.diagnostico.results.cta.benefit1,
-              t.diagnostico.results.cta.benefit2,
-              t.diagnostico.results.cta.benefit3,
-              t.diagnostico.results.cta.benefit4,
-            ].map((benefit, i) => (
+            {(t.diagnostico.results.cta.benefits as string[]).map((benefit: string, i: number) => (
               <div key={i} className="flex items-start gap-3">
                 <span className="text-gold shrink-0 mt-0.5">✓</span>
                 <p className="font-body text-sm text-warm-white/50">{benefit}</p>
@@ -298,7 +320,7 @@ export default function DiagnosticoResults({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="/mentoria"
-              className="inline-flex items-center gap-2 font-accent text-xs uppercase tracking-[0.2em] border border-warm-white/30 text-warm-white px-8 py-4 hover:border-warm-white/60 transition-all duration-300"
+              className="btn-shine inline-flex items-center gap-2 font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy px-8 py-4 hover:bg-gold-light transition-all duration-300"
             >
               {t.diagnostico.results.cta.button}
             </a>
@@ -307,7 +329,7 @@ export default function DiagnosticoResults({
               onClick={() => window.print()}
               className="font-accent text-xs uppercase tracking-[0.2em] text-warm-white/40 px-8 py-4 hover:text-warm-white/70 transition-colors"
             >
-              {t.diagnostico.results.cta.shareButton}
+              {t.diagnostico.results.cta.buttonSecondary}
             </button>
           </div>
 

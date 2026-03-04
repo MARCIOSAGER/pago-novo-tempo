@@ -218,6 +218,21 @@ export function useDiagnosticoReducer() {
     return weakest;
   }, [pillarAverage]);
 
+  const weakestSubgroup = useMemo((): string | null => {
+    const wp = weakestPillar();
+    if (wp === "P") return null;
+    const subs = pillarSubgroups[wp as "A" | "G" | "O"];
+    let weakestKey: string | null = null;
+    let lowest = Infinity;
+    for (const [key, val] of Object.entries(subs)) {
+      if ((val as number) < lowest) {
+        lowest = val as number;
+        weakestKey = key;
+      }
+    }
+    return weakestKey;
+  }, [weakestPillar, pillarSubgroups]);
+
   const isStepComplete = useCallback(
     (step: number): boolean => {
       if (step === 0) return state.nome.trim().length >= 2;
@@ -260,6 +275,7 @@ export function useDiagnosticoReducer() {
     pillarAverage,
     overallAverage,
     weakestPillar,
+    weakestSubgroup,
     pillarSubgroups,
     isStepComplete,
     chartData,

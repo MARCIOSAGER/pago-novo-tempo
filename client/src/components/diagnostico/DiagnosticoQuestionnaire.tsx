@@ -19,6 +19,7 @@ export default function DiagnosticoQuestionnaire() {
     overallAverage,
     weakestPillar,
     pillarSubgroups,
+    weakestSubgroup,
     isStepComplete,
     chartData,
     hasSavedState,
@@ -138,6 +139,7 @@ export default function DiagnosticoQuestionnaire() {
         answers={state.answers}
         onRestart={handleRestart}
         pillarSubgroups={pillarSubgroups}
+        weakestSubgroup={weakestSubgroup}
       />
     );
   }
