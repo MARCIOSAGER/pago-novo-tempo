@@ -81,7 +81,7 @@ const en: Translations = {
     flipHint: "Hover to reveal",
     cards: [
       {
-        description: "Integrity, stewardship, sowing, excellence, and faithfulness. Five non-negotiable foundations that sustain every decision and define the character of those who lead.",
+        description: "Integrity, management, sowing, excellence, and faithfulness. Five non-negotiable foundations that sustain every decision and define the character of those who lead.",
       },
       {
         description: "Coherence between what we believe, feel, and do. Vertical alignment with God, horizontal with people, and internal with yourself.",

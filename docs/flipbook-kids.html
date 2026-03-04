@@ -18,14 +18,64 @@
       overflow: hidden;
     }
 
+    /* Top bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      z-index: 100;
+    }
+
+    .back-btn {
+      background: rgba(200, 169, 81, 0.15);
+      border: 1px solid rgba(200, 169, 81, 0.3);
+      color: #C8A951;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .back-btn:hover {
+      background: rgba(200, 169, 81, 0.3);
+      color: #C8A951;
+    }
+
+    .fullscreen-btn {
+      background: rgba(200, 169, 81, 0.15);
+      border: 1px solid rgba(200, 169, 81, 0.3);
+      color: #C8A951;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .fullscreen-btn:hover {
+      background: rgba(200, 169, 81, 0.3);
+    }
+
     .header {
       text-align: center;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
     }
 
     .header h1 {
       color: #C8A951;
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 700;
       text-shadow: 0 2px 10px rgba(200, 169, 81, 0.3);
       letter-spacing: 2px;
@@ -33,8 +83,8 @@
 
     .header p {
       color: rgba(255, 255, 255, 0.6);
-      font-size: 13px;
-      margin-top: 4px;
+      font-size: 12px;
+      margin-top: 2px;
     }
 
     .flipbook-container {
@@ -42,7 +92,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 20px;
+      gap: 15px;
     }
 
     .flip-book {
@@ -77,6 +127,8 @@
 
     /* Navigation Buttons */
     .nav-btn {
+      position: relative;
+      z-index: 20;
       background: rgba(200, 169, 81, 0.15);
       border: 2px solid rgba(200, 169, 81, 0.3);
       color: #C8A951;
@@ -90,9 +142,10 @@
       transition: all 0.3s ease;
       font-size: 20px;
       backdrop-filter: blur(10px);
+      flex-shrink: 0;
     }
 
-    .nav-btn:hover {
+    .nav-btn:hover:not(:disabled) {
       background: rgba(200, 169, 81, 0.3);
       border-color: #C8A951;
       transform: scale(1.1);
@@ -108,7 +161,7 @@
     /* Page Counter */
     .page-counter {
       text-align: center;
-      margin-top: 15px;
+      margin-top: 10px;
       color: rgba(255, 255, 255, 0.7);
       font-size: 14px;
       letter-spacing: 1px;
@@ -123,7 +176,7 @@
     .thumbnails {
       display: flex;
       gap: 6px;
-      margin-top: 12px;
+      margin-top: 8px;
       padding: 8px 12px;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 8px;
@@ -153,27 +206,6 @@
       border-color: #C8A951;
       opacity: 1;
       box-shadow: 0 0 10px rgba(200, 169, 81, 0.4);
-    }
-
-    /* Fullscreen button */
-    .fullscreen-btn {
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      background: rgba(200, 169, 81, 0.15);
-      border: 1px solid rgba(200, 169, 81, 0.3);
-      color: #C8A951;
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-      z-index: 100;
-    }
-
-    .fullscreen-btn:hover {
-      background: rgba(200, 169, 81, 0.3);
     }
 
     /* Fullscreen overrides */
@@ -230,10 +262,12 @@
     }
 
     @media (max-width: 768px) {
-      .header h1 { font-size: 20px; }
-      .nav-btn { width: 36px; height: 36px; font-size: 16px; }
+      .header h1 { font-size: 18px; }
+      .header p { font-size: 11px; }
+      .nav-btn { width: 40px; height: 40px; font-size: 18px; }
       .thumbnails { display: none; }
       .hint { display: none; }
+      .back-btn span { display: none; }
     }
   </style>
 </head>
@@ -245,8 +279,11 @@
     <p>Carregando P.A.G.O Kids...</p>
   </div>
 
-  <!-- Fullscreen Button -->
-  <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Tela Cheia</button>
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <a href="/" class="back-btn">← <span>Voltar ao Site</span></a>
+    <button class="fullscreen-btn" id="fullscreenBtn">⛶ Tela Cheia</button>
+  </div>
 
   <!-- Header -->
   <div class="header">
@@ -256,11 +293,11 @@
 
   <!-- Flipbook -->
   <div class="flipbook-container">
-    <button class="nav-btn" id="prevBtn" onclick="flipPrev()">◀</button>
+    <button class="nav-btn" id="prevBtn">◀</button>
 
     <div id="flipbook" class="flip-book"></div>
 
-    <button class="nav-btn" id="nextBtn" onclick="flipNext()">▶</button>
+    <button class="nav-btn" id="nextBtn">▶</button>
   </div>
 
   <!-- Page Counter -->
@@ -314,15 +351,10 @@
       return Promise.all(promises);
     }
 
-    // Initialize flipbook
-    async function init() {
-      await preloadImages();
-
-      const container = document.getElementById('flipbook');
-
-      // Calculate optimal size — use generous proportions
-      const maxW = Math.min(window.innerWidth * 0.85, 1400);
-      const maxH = Math.min(window.innerHeight * 0.72, 750);
+    // Calculate page dimensions
+    function calcSize() {
+      const maxW = Math.min(window.innerWidth * 0.88, 1600);
+      const maxH = Math.min(window.innerHeight * 0.78, 900);
       const aspectRatio = 1376 / 768;
 
       let pageW, pageH;
@@ -333,6 +365,15 @@
         pageW = Math.floor(maxW / 2);
         pageH = Math.floor(pageW / aspectRatio);
       }
+      return { pageW, pageH };
+    }
+
+    // Initialize flipbook
+    async function init() {
+      await preloadImages();
+
+      const container = document.getElementById('flipbook');
+      const { pageW, pageH } = calcSize();
 
       // Create pages
       for (let i = 1; i <= totalPages; i++) {
@@ -352,14 +393,14 @@
         height: pageH,
         size: 'stretch',
         minWidth: 300,
-        maxWidth: 1400,
+        maxWidth: 1600,
         minHeight: 200,
-        maxHeight: 900,
+        maxHeight: 1000,
         maxShadowOpacity: 0.5,
         showCover: true,
         mobileScrollSupport: true,
         swipeDistance: 30,
-        clickEventForward: true,
+        clickEventForward: false,
         useMouseEvents: true,
         flippingTime: 800,
         usePortrait: true,
@@ -412,57 +453,60 @@
       });
     }
 
-    function flipPrev() {
+    // Navigation via event listeners (more reliable than onclick attributes)
+    document.getElementById('prevBtn').addEventListener('click', (e) => {
+      e.stopPropagation();
       if (pageFlip) pageFlip.flipPrev();
-    }
+    });
 
-    function flipNext() {
+    document.getElementById('nextBtn').addEventListener('click', (e) => {
+      e.stopPropagation();
       if (pageFlip) pageFlip.flipNext();
-    }
+    });
 
+    // Fullscreen
     function isFullscreen() {
       return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
     }
 
     function toggleFullscreen() {
       const el = document.documentElement;
-      if (!isFullscreen()) {
-        if (el.requestFullscreen) {
-          el.requestFullscreen();
-        } else if (el.webkitRequestFullscreen) {
-          el.webkitRequestFullscreen();
-        } else if (el.msRequestFullscreen) {
-          el.msRequestFullscreen();
+      try {
+        if (!isFullscreen()) {
+          if (el.requestFullscreen) {
+            el.requestFullscreen();
+          } else if (el.webkitRequestFullscreen) {
+            el.webkitRequestFullscreen();
+          } else if (el.msRequestFullscreen) {
+            el.msRequestFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
         }
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
+      } catch (err) {
+        console.warn('Fullscreen not supported:', err);
       }
     }
 
     function updateFullscreenBtn() {
-      const btn = document.querySelector('.fullscreen-btn');
-      btn.textContent = isFullscreen() ? '✕ Sair Tela Cheia' : '⛶ Tela Cheia';
+      const btn = document.getElementById('fullscreenBtn');
+      btn.textContent = isFullscreen() ? '✕ Sair' : '⛶ Tela Cheia';
     }
+
+    document.getElementById('fullscreenBtn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleFullscreen();
+    });
 
     function handleResize() {
       if (!pageFlip) return;
-      const maxW = Math.min(window.innerWidth * 0.85, 1400);
-      const maxH = Math.min(window.innerHeight * 0.72, 750);
-      const aspectRatio = 1376 / 768;
-      let pageW, pageH;
-      if (maxW / 2 / maxH > aspectRatio) {
-        pageH = maxH;
-        pageW = Math.floor(pageH * aspectRatio);
-      } else {
-        pageW = Math.floor(maxW / 2);
-        pageH = Math.floor(pageW / aspectRatio);
-      }
+      const { pageW, pageH } = calcSize();
       pageFlip.update({ width: pageW, height: pageH });
     }
 
@@ -475,12 +519,14 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight' || e.key === ' ') {
         e.preventDefault();
-        flipNext();
+        if (pageFlip) pageFlip.flipNext();
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        flipPrev();
+        if (pageFlip) pageFlip.flipPrev();
       } else if (e.key === 'f' || e.key === 'F') {
         toggleFullscreen();
+      } else if (e.key === 'Escape' && !isFullscreen()) {
+        window.location.href = '/';
       }
     });
 

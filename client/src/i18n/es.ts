@@ -81,7 +81,7 @@ const es: Translations = {
     flipHint: "Pasa el mouse para revelar",
     cards: [
       {
-        description: "Integridad, mayordomía, siembra, excelencia y fidelidad. Cinco fundamentos innegociables que sostienen cada decisión y definen el carácter de quien lidera.",
+        description: "Integridad, gestión, siembra, excelencia y fidelidad. Cinco fundamentos innegociables que sostienen cada decisión y definen el carácter de quien lidera.",
       },
       {
         description: "Coherencia entre lo que creemos, sentimos y hacemos. Alineamiento vertical con Dios, horizontal con las personas e interno consigo mismo.",
