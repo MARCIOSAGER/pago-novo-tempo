@@ -130,7 +130,7 @@ export default function DiagnosticoQuestionnaire() {
   const completedSteps = PILLAR_ORDER.map((_, i) => isStepComplete(i + 1));
 
   return (
-    <div>
+    <div className="pt-20">
       <DiagnosticoProgressBar
         currentStep={state.currentStep}
         completedSteps={completedSteps}
@@ -155,17 +155,13 @@ export default function DiagnosticoQuestionnaire() {
       </AnimatePresence>
 
       {/* Navigation buttons */}
-      <div className={`py-8 ${currentPillar === "P" || currentPillar === "G" ? "bg-navy" : "bg-warm-white"}`}>
+      <div className="py-8 bg-warm-white">
         <div className="max-w-4xl mx-auto px-6 lg:px-12 flex items-center justify-between">
           <button
             type="button"
             onClick={handlePrev}
             disabled={state.currentStep <= 1}
-            className={`font-accent text-xs uppercase tracking-[0.2em] px-8 py-4 border transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed ${
-              currentPillar === "P" || currentPillar === "G"
-                ? "border-warm-white/30 text-warm-white hover:border-warm-white/60"
-                : "border-navy/30 text-navy hover:border-navy/60"
-            }`}
+            className="font-accent text-xs uppercase tracking-[0.2em] px-8 py-4 border border-navy/30 text-navy hover:border-navy/60 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
           >
             {t.diagnostico.navigation.previous}
           </button>
@@ -173,7 +169,7 @@ export default function DiagnosticoQuestionnaire() {
           <button
             type="button"
             onClick={handleNext}
-            className="font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy px-8 py-4 hover:bg-gold-light transition-all duration-300"
+            className="btn-shine font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy px-8 py-4 hover:bg-gold-light transition-all duration-300"
           >
             {state.currentStep === 4
               ? t.diagnostico.navigation.seeResults
