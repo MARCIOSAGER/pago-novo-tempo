@@ -5,6 +5,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import DiagnosticoRadarChart from "./DiagnosticoRadarChart";
 import DiagnosticoPillarCard from "./DiagnosticoPillarCard";
+import DiagnosticoResultsPrintable from "./DiagnosticoResultsPrintable";
+import { useGeneratePdf } from "./useGeneratePdf";
 import { getStatusInfo } from "./useDiagnosticoReducer";
 import type { PillarKey, PillarSubgroups } from "./useDiagnosticoReducer";
 
@@ -41,6 +43,7 @@ export default function DiagnosticoResults({
   const [email, setEmail] = useState("");
   const [emailSent, setEmailSent] = useState(false);
   const submittedRef = useRef(false);
+  const { printRef, generating, generatePdf } = useGeneratePdf();
 
   const overallStatus = getStatusInfo(overallAverage);
   const overallStatusLabel = t.diagnostico.results.status[overallStatus.key];
@@ -388,10 +391,13 @@ export default function DiagnosticoResults({
             </a>
             <button
               type="button"
-              onClick={() => window.print()}
-              className="font-accent text-xs uppercase tracking-[0.2em] text-warm-white/40 px-8 py-4 hover:text-warm-white/70 transition-colors"
+              onClick={() => generatePdf(`diagnostico-${nome}.pdf`)}
+              disabled={generating}
+              className="font-accent text-xs uppercase tracking-[0.2em] text-warm-white/40 px-8 py-4 hover:text-warm-white/70 transition-colors disabled:opacity-50"
             >
-              {t.diagnostico.results.cta.buttonSecondary}
+              {generating
+                ? ((t.diagnostico.results as any).pdfGenerating ?? "Gerando PDF...")
+                : t.diagnostico.results.cta.buttonSecondary}
             </button>
           </div>
 
@@ -407,6 +413,20 @@ export default function DiagnosticoResults({
           </div>
         </div>
       </section>
+
+      {/* Hidden printable version for PDF generation */}
+      <div style={{ position: "absolute", left: "-9999px", top: 0 }}>
+        <DiagnosticoResultsPrintable
+          ref={printRef}
+          nome={nome}
+          pillarAverages={pillarAverages}
+          overallAverage={overallAverage}
+          weakestPillar={weakestPillar}
+          chartData={chartData}
+          pillarSubgroups={pillarSubgroups}
+          weakestSubgroupPerPillar={weakestSubgroupPerPillar}
+        />
+      </div>
     </div>
   );
 }
