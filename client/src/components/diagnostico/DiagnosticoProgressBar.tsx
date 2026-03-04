@@ -34,11 +34,11 @@ export default function DiagnosticoProgressBar({
   const progressPercent = currentStep === 5 ? 100 : ((currentStep - 1) / 4) * 100;
 
   return (
-    <div className="sticky top-20 z-30 bg-warm-white/95 backdrop-blur-md border-b border-sand/50 py-3 no-print">
+    <div className="sticky top-20 z-30 bg-navy border-b border-gold/20 py-3 no-print">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Step label */}
         <div className="flex items-center justify-between mb-2">
-          <span className="font-accent text-[10px] uppercase tracking-[0.3em] text-navy/50">
+          <span className="font-accent text-[10px] uppercase tracking-[0.3em] text-warm-white/70">
             {currentStep <= 4
               ? `${t.diagnostico.progress.step} ${currentStep} ${t.diagnostico.progress.of} 4 — ${getCurrentLabel()}`
               : t.diagnostico.progress.results}
@@ -49,7 +49,7 @@ export default function DiagnosticoProgressBar({
         </div>
 
         {/* Progress bar */}
-        <div className="relative h-[2px] bg-sand/60 mb-3">
+        <div className="relative h-[2px] bg-warm-white/15 mb-3">
           <div
             className="absolute top-0 left-0 h-full bg-gold transition-all duration-500 ease-out"
             style={{ width: `${progressPercent}%` }}
@@ -74,8 +74,8 @@ export default function DiagnosticoProgressBar({
                   isActive
                     ? "text-gold font-medium"
                     : isCompleted
-                      ? "text-navy cursor-pointer hover:text-gold"
-                      : "text-navy/30 cursor-default"
+                      ? "text-warm-white cursor-pointer hover:text-gold"
+                      : "text-warm-white/30 cursor-default"
                 }`}
               >
                 <span
@@ -83,8 +83,8 @@ export default function DiagnosticoProgressBar({
                     isActive
                       ? "bg-gold text-navy"
                       : isCompleted
-                        ? "bg-navy text-warm-white"
-                        : "border border-navy/20 text-navy/30"
+                        ? "bg-warm-white/20 text-warm-white"
+                        : "border border-warm-white/20 text-warm-white/30"
                   }`}
                 >
                   {step.label}
