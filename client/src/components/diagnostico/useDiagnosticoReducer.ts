@@ -205,17 +205,15 @@ export function useDiagnosticoReducer() {
     return averages.reduce((sum, v) => sum + v, 0) / 4;
   }, [pillarAverage]);
 
+  // Tiebreak order: G (most complex) > O > A > P (most abstract)
+  const TIEBREAK_ORDER: PillarKey[] = ["G", "O", "A", "P"];
+
   const weakestPillar = useCallback((): PillarKey => {
-    let weakest: PillarKey = "P";
-    let lowest = Infinity;
-    for (const p of PILLAR_ORDER) {
-      const avg = pillarAverage(p);
-      if (avg < lowest) {
-        lowest = avg;
-        weakest = p;
-      }
-    }
-    return weakest;
+    const averages = PILLAR_ORDER.map((p) => ({ p, avg: pillarAverage(p) }));
+    const lowest = Math.min(...averages.map((a) => a.avg));
+    const candidates = averages.filter((a) => a.avg === lowest).map((a) => a.p);
+    if (candidates.length === 1) return candidates[0];
+    return TIEBREAK_ORDER.find((p) => candidates.includes(p)) ?? candidates[0];
   }, [pillarAverage]);
 
   const weakestSubgroup = useMemo((): string | null => {
