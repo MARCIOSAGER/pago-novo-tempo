@@ -7,11 +7,11 @@ export default function Footer() {
   const { t } = useLanguage();
 
   const navLinks = [
-    { label: t.nav.about, href: "#sobre" },
-    { label: t.nav.pillars, href: "#pilares" },
-    { label: t.nav.jefferson, href: "#jefferson" },
-    { label: t.nav.kit, href: "#kit" },
-    { label: t.nav.faq, href: "#faq" },
+    { label: t.nav.about, href: "/#sobre" },
+    { label: t.nav.pillars, href: "/#pilares" },
+    { label: t.nav.jefferson, href: "/#jefferson" },
+    { label: t.nav.kit, href: "/#kit" },
+    { label: t.nav.faq, href: "/#faq" },
   ];
 
   return (
@@ -35,7 +35,7 @@ export default function Footer() {
                 </span>
               </div>
             </div>
-            <p className="font-body text-sm text-warm-white/40 leading-relaxed max-w-sm">
+            <p className="font-body text-sm text-warm-white/70 leading-relaxed max-w-sm">
               {t.footer.description}
             </p>
           </div>
@@ -50,7 +50,7 @@ export default function Footer() {
                 <a
                   key={link.href}
                   href={link.href}
-                  className="block font-body text-sm text-warm-white/40 hover:text-warm-white transition-colors duration-300"
+                  className="block font-body text-sm text-warm-white/70 hover:text-warm-white transition-colors duration-300"
                 >
                   {link.label}
                 </a>
@@ -64,16 +64,16 @@ export default function Footer() {
               {t.footer.pillarsLabel}
             </p>
             <div className="space-y-3">
-              <p className="font-body text-sm text-warm-white/40">
+              <p className="font-body text-sm text-warm-white/70">
                 <span className="text-gold font-semibold">P</span> — {t.footer.pillarP}
               </p>
-              <p className="font-body text-sm text-warm-white/40">
+              <p className="font-body text-sm text-warm-white/70">
                 <span className="text-gold font-semibold">A</span> — {t.footer.pillarA}
               </p>
-              <p className="font-body text-sm text-warm-white/40">
+              <p className="font-body text-sm text-warm-white/70">
                 <span className="text-gold font-semibold">G</span> — {t.footer.pillarG}
               </p>
-              <p className="font-body text-sm text-warm-white/40">
+              <p className="font-body text-sm text-warm-white/70">
                 <span className="text-gold font-semibold">O</span> — {t.footer.pillarO}
               </p>
             </div>
@@ -86,12 +86,12 @@ export default function Footer() {
             </p>
             <div className="space-y-3">
               <a
-                href="#inscricao"
-                className="block font-body text-sm text-warm-white/40 hover:text-warm-white transition-colors duration-300"
+                href="/#inscricao"
+                className="block font-body text-sm text-warm-white/70 hover:text-warm-white transition-colors duration-300"
               >
                 {t.footer.contactCta}
               </a>
-              <p className="font-body text-sm text-warm-white/40">
+              <p className="font-body text-sm text-warm-white/70">
                 contato@metodopago.com
               </p>
             </div>
@@ -103,7 +103,7 @@ export default function Footer() {
 
         {/* Legal Links Row */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
-          <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-warm-white/30">
+          <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-warm-white/50">
             &copy; {new Date().getFullYear()} {t.footer.copyright}
           </p>
           <div className="flex items-center gap-6">
@@ -121,7 +121,7 @@ export default function Footer() {
 
         {/* Quote */}
         <div className="text-center">
-          <p className="font-body text-[11px] text-warm-white/20 italic">
+          <p className="font-body text-[11px] text-warm-white/40 italic">
             {t.footer.quote}
           </p>
         </div>

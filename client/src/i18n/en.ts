@@ -79,6 +79,20 @@ const en: Translations = {
     label: "The System",
     title: "P.A.G.O",
     flipHint: "Hover to reveal",
+    cards: [
+      {
+        description: "Integrity, stewardship, sowing, excellence, and faithfulness. Five non-negotiable foundations that sustain every decision and define the character of those who lead.",
+      },
+      {
+        description: "Coherence between what we believe, feel, and do. Vertical alignment with God, horizontal with people, and internal with yourself.",
+      },
+      {
+        description: "Not power over others — it's mastery over yourself. Whoever doesn't govern the secret, cannot sustain the public. Spiritual, emotional, financial, and temporal.",
+      },
+      {
+        description: "Acting even when you don't understand, even when it hurts. What separates dreamers from achievers. Radical obedience unlocks the supernatural.",
+      },
+    ],
   },
 
   // === JEFFERSON ===

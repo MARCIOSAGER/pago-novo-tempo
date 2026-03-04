@@ -79,6 +79,20 @@ const es: Translations = {
     label: "El Sistema",
     title: "P.A.G.O",
     flipHint: "Pasa el mouse para revelar",
+    cards: [
+      {
+        description: "Integridad, mayordomía, siembra, excelencia y fidelidad. Cinco fundamentos innegociables que sostienen cada decisión y definen el carácter de quien lidera.",
+      },
+      {
+        description: "Coherencia entre lo que creemos, sentimos y hacemos. Alineamiento vertical con Dios, horizontal con las personas e interno consigo mismo.",
+      },
+      {
+        description: "No es poder sobre otros — es dominio sobre uno mismo. Quien no gobierna lo secreto, no sostiene lo público. Espiritual, emocional, financiero y temporal.",
+      },
+      {
+        description: "Actuar incluso cuando no entiendes, incluso cuando duele. Lo que separa a los que sueñan de los que realizan. La obediencia radical desbloquea lo sobrenatural.",
+      },
+    ],
   },
 
   // === JEFFERSON ===

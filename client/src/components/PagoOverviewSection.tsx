@@ -110,7 +110,7 @@ export default function PagoOverviewSection() {
           </h2>
         </motion.div>
 
-        {/* Cards Grid — reuses pillar texts to avoid duplication */}
+        {/* Cards Grid — uses unique overview descriptions */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -123,7 +123,7 @@ export default function PagoOverviewSection() {
                 letter={letters[i]}
                 title={pillar.title}
                 subtitle={pillar.subtitle}
-                description={pillar.description}
+                description={t.overview.cards[i].description}
               />
             ))}
           </div>

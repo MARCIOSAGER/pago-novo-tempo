@@ -77,6 +77,20 @@ const pt = {
     label: "O Sistema",
     title: "P.A.G.O",
     flipHint: "Passe o mouse para revelar",
+    cards: [
+      {
+        description: "Integridade, gestão, semeadura, excelência e fidelidade. Cinco fundamentos inegociáveis que sustentam toda decisão e definem o caráter de quem lidera.",
+      },
+      {
+        description: "Coerência entre o que cremos, sentimos e fazemos. Alinhamento vertical com Deus, horizontal com as pessoas e interno consigo mesmo.",
+      },
+      {
+        description: "Não é poder sobre outros — é domínio sobre si mesmo. Quem não governa o secreto, não sustenta o público. Espiritual, emocional, financeiro e temporal.",
+      },
+      {
+        description: "Agir mesmo quando não entende, mesmo quando dói. O que separa os que sonham dos que realizam. A obediência radical destrava o sobrenatural.",
+      },
+    ],
   },
 
   // === JEFFERSON ===
