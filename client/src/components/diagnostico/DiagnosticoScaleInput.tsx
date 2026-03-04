@@ -31,7 +31,7 @@ export default function DiagnosticoScaleInput({
       <div className="mb-4">
         <span
           className={`font-accent text-[10px] uppercase tracking-[0.3em] ${
-            darkBackground ? "text-gold/80" : "text-gold"
+            darkBackground ? "text-gold/80" : "text-navy/40"
           }`}
         >
           {questionNumber}/{totalQuestions}

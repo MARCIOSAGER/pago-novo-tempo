@@ -95,11 +95,11 @@ export default function DiagnosticoQuestionGroup({
                       transition={{ duration: 0.5, delay: 0.1 }}
                       className={`flex items-center gap-4 pt-8 pb-4 ${index > 0 ? "mt-4" : ""}`}
                     >
-                      <div className="flex-1 h-[1px] bg-gold/40" />
-                      <span className="font-accent text-[10px] uppercase tracking-[0.3em] shrink-0 text-gold">
+                      <div className="flex-1 h-[1px] bg-navy/15" />
+                      <span className="font-accent text-[10px] uppercase tracking-[0.3em] shrink-0 text-navy/60">
                         {subgroup.label}
                       </span>
-                      <div className="flex-1 h-[1px] bg-gold/40" />
+                      <div className="flex-1 h-[1px] bg-navy/15" />
                     </motion.div>
                   )}
 
