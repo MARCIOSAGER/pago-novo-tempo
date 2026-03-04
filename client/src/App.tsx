@@ -20,8 +20,11 @@ import AdminDownloads from "./pages/AdminDownloads";
 import AdminMediaRepo from "./pages/AdminMediaRepo";
 import AdminKids from "./pages/AdminKids";
 import AdminEmail from "./pages/AdminEmail";
+import AdminDiagnosticos from "./pages/AdminDiagnosticos";
+import AdminDiagnosticoDetalhe from "./pages/AdminDiagnosticoDetalhe";
 import Fundador from "./pages/Fundador";
 import Mentoria from "./pages/Mentoria";
+import Diagnostico from "./pages/Diagnostico";
 
 function Router() {
   return (
@@ -32,6 +35,7 @@ function Router() {
       <Route path={"/cookies"} component={CookiePolicy} />
       <Route path={"/fundador"} component={Fundador} />
       <Route path={"/mentoria"} component={Mentoria} />
+      <Route path={"/diagnostico"} component={Diagnostico} />
 
       {/* Admin routes — wrapped in AdminLayout with sidebar */}
       <Route path="/admin">
@@ -72,6 +76,16 @@ function Router() {
       <Route path="/admin/email">
         <AdminLayout>
           <AdminEmail />
+        </AdminLayout>
+      </Route>
+      <Route path="/admin/diagnosticos">
+        <AdminLayout>
+          <AdminDiagnosticos />
+        </AdminLayout>
+      </Route>
+      <Route path="/admin/diagnosticos/:id">
+        <AdminLayout>
+          <AdminDiagnosticoDetalhe />
         </AdminLayout>
       </Route>
 

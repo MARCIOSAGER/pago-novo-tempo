@@ -12,6 +12,9 @@ import {
   FileRecord,
   siteSettings,
   SiteSetting,
+  diagnosticoResults,
+  InsertDiagnosticoResult,
+  DiagnosticoResult,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -304,4 +307,133 @@ export async function upsertSiteSetting(key: string, value: string): Promise<voi
     target: siteSettings.key,
     set: { value, updatedAt: new Date() },
   });
+}
+
+// ─── Diagnostico P.A.G.O. Helpers ───────────────────────────────
+
+export async function createDiagnostico(data: InsertDiagnosticoResult): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(diagnosticoResults).values(data);
+}
+
+export async function listDiagnosticosFiltered(params: {
+  status?: string;
+  search?: string;
+  page: number;
+  pageSize: number;
+}): Promise<{ items: DiagnosticoResult[]; total: number }> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const conditions = [];
+
+  if (params.status && params.status !== "all") {
+    conditions.push(eq(diagnosticoResults.status, params.status as any));
+  }
+
+  if (params.search && params.search.trim().length > 0) {
+    const term = `%${params.search.trim()}%`;
+    conditions.push(
+      or(
+        like(diagnosticoResults.nome, term),
+        like(diagnosticoResults.email, term)
+      )!
+    );
+  }
+
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+  const [totalResult] = await db
+    .select({ total: count() })
+    .from(diagnosticoResults)
+    .where(whereClause);
+
+  const offset = (params.page - 1) * params.pageSize;
+  const items = await db
+    .select()
+    .from(diagnosticoResults)
+    .where(whereClause)
+    .orderBy(desc(diagnosticoResults.createdAt))
+    .limit(params.pageSize)
+    .offset(offset);
+
+  return { items, total: totalResult.total };
+}
+
+export async function getDiagnosticoById(id: number): Promise<DiagnosticoResult | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db
+    .select()
+    .from(diagnosticoResults)
+    .where(eq(diagnosticoResults.id, id))
+    .limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateDiagnosticoStatus(
+  id: number,
+  status: "new" | "reviewed" | "archived"
+): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(diagnosticoResults).set({ status }).where(eq(diagnosticoResults.id, id));
+}
+
+export async function deleteDiagnostico(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(diagnosticoResults).where(eq(diagnosticoResults.id, id));
+}
+
+export async function exportAllDiagnosticos(): Promise<DiagnosticoResult[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.select().from(diagnosticoResults).orderBy(desc(diagnosticoResults.createdAt));
+}
+
+export async function getDiagnosticoMetrics() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const [totalResult] = await db
+    .select({ total: count() })
+    .from(diagnosticoResults);
+
+  const statusCounts = await db
+    .select({
+      status: diagnosticoResults.status,
+      count: count(),
+    })
+    .from(diagnosticoResults)
+    .groupBy(diagnosticoResults.status);
+
+  const statusMap: Record<string, number> = { new: 0, reviewed: 0, archived: 0 };
+  for (const row of statusCounts) {
+    statusMap[row.status] = row.count;
+  }
+
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const [recentResult] = await db
+    .select({ count: count() })
+    .from(diagnosticoResults)
+    .where(sql`${diagnosticoResults.createdAt} >= ${sevenDaysAgo}`);
+
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const [monthResult] = await db
+    .select({ count: count() })
+    .from(diagnosticoResults)
+    .where(sql`${diagnosticoResults.createdAt} >= ${thirtyDaysAgo}`);
+
+  return {
+    total: totalResult.total,
+    new: statusMap.new,
+    reviewed: statusMap.reviewed,
+    archived: statusMap.archived,
+    last7Days: recentResult.count,
+    last30Days: monthResult.count,
+  };
 }

@@ -32,6 +32,7 @@ import {
   Image as ImageIcon,
   Heart,
   Mail,
+  ClipboardList,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation, Link } from "wouter";
@@ -41,6 +42,7 @@ import { Button } from "./ui/button";
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
   { icon: Users, label: "Inscrições", path: "/admin/inscricoes" },
+  { icon: ClipboardList, label: "Diagnósticos", path: "/admin/diagnosticos" },
   { icon: BarChart3, label: "Análises", path: "/admin/analytics" },
   { icon: Download, label: "Downloads", path: "/admin/downloads" },
   { icon: ImageIcon, label: "Mídia", path: "/admin/media" },

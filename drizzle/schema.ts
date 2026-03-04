@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, serial, varchar, text, timestamp, integer, bigint } from "drizzle-orm/pg-core";
+import { pgTable, pgEnum, serial, varchar, text, timestamp, integer, bigint, json, real } from "drizzle-orm/pg-core";
 
 // ─── Enums ───────────────────────────────────────────────────────
 export const roleEnum = pgEnum("role", ["user", "admin"]);
@@ -7,6 +7,11 @@ export const inscriptionStatusEnum = pgEnum("inscription_status", [
   "contacted",
   "enrolled",
   "rejected",
+]);
+export const diagnosticoStatusEnum = pgEnum("diagnostico_status", [
+  "new",
+  "reviewed",
+  "archived",
 ]);
 
 /**
@@ -83,3 +88,27 @@ export const siteSettings = pgTable("site_settings", {
 });
 
 export type SiteSetting = typeof siteSettings.$inferSelect;
+
+/**
+ * Diagnostico P.A.G.O. results — stores completed questionnaire submissions.
+ */
+export const diagnosticoResults = pgTable("diagnostico_results", {
+  id: serial("id").primaryKey(),
+  nome: varchar("nome", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }),
+  answersP: json("answersP").$type<number[]>().notNull(),
+  answersA: json("answersA").$type<number[]>().notNull(),
+  answersG: json("answersG").$type<number[]>().notNull(),
+  answersO: json("answersO").$type<number[]>().notNull(),
+  mediaP: real("mediaP").notNull(),
+  mediaA: real("mediaA").notNull(),
+  mediaG: real("mediaG").notNull(),
+  mediaO: real("mediaO").notNull(),
+  mediaGeral: real("mediaGeral").notNull(),
+  pilarMaisFraco: varchar("pilarMaisFraco", { length: 1 }).notNull(),
+  status: diagnosticoStatusEnum("status").default("new").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type DiagnosticoResult = typeof diagnosticoResults.$inferSelect;
+export type InsertDiagnosticoResult = typeof diagnosticoResults.$inferInsert;

@@ -132,14 +132,20 @@ export default function AboutSection() {
           </blockquote>
         </FadeIn>
 
-        {/* CTA Mentoria */}
+        {/* CTA Mentoria + Diagnóstico */}
         <FadeIn delay={0.6}>
-          <div className="text-center mt-8">
+          <div className="text-center mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="/mentoria"
               className="btn-shine btn-shine-delay inline-flex items-center gap-2 font-accent text-xs uppercase tracking-[0.2em] bg-navy text-warm-white px-8 py-4 hover:bg-navy-light transition-colors duration-300"
             >
               {t.nav.mentoria} →
+            </a>
+            <a
+              href="/diagnostico"
+              className="inline-flex items-center gap-2 font-accent text-xs uppercase tracking-[0.2em] border border-navy/30 text-navy px-8 py-4 hover:border-navy hover:bg-navy/5 transition-all duration-300"
+            >
+              {t.diagnostico.homeCta} →
             </a>
           </div>
         </FadeIn>

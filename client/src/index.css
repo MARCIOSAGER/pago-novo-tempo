@@ -225,3 +225,20 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #1A2744;
 }
+
+/* Print styles for Diagnostico results */
+@media print {
+  nav, footer, .no-print {
+    display: none !important;
+  }
+  .print-friendly {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .recharts-wrapper {
+    break-inside: avoid;
+  }
+  body {
+    background: white !important;
+  }
+}

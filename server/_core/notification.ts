@@ -150,6 +150,115 @@ export async function sendTestEmail(to: string): Promise<boolean> {
   }
 }
 
+// ─── Diagnostico P.A.G.O. Email ─────────────────────────────
+
+export type DiagnosticEmailData = {
+  nome: string;
+  email: string;
+  mediaP: number;
+  mediaA: number;
+  mediaG: number;
+  mediaO: number;
+  mediaGeral: number;
+  pilarMaisFraco: string;
+};
+
+function getStatusLabel(media: number): { label: string; color: string } {
+  if (media >= 8) return { label: "Pilar Sólido", color: "#2E5E3E" };
+  if (media >= 5) return { label: "Em Construção", color: "#B8A88A" };
+  if (media >= 3) return { label: "Pilar Frágil", color: "#8B6914" };
+  return { label: "Em Colapso", color: "#7A3030" };
+}
+
+const pillarNames: Record<string, string> = {
+  P: "Princípio",
+  A: "Alinhamento",
+  G: "Governo",
+  O: "Obediência",
+};
+
+export async function sendDiagnosticEmail(data: DiagnosticEmailData): Promise<void> {
+  if (!isSmtpConfigured()) {
+    console.warn("[Notification] SMTP not configured, skipping diagnostic email.");
+    return;
+  }
+
+  const transporter = getTransporter();
+  const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
+  const overallStatus = getStatusLabel(data.mediaGeral);
+
+  const pillarRows = (["P", "A", "G", "O"] as const).map((p) => {
+    const media = data[`media${p}` as keyof DiagnosticEmailData] as number;
+    const status = getStatusLabel(media);
+    const isWeakest = p === data.pilarMaisFraco;
+    return `<tr style="${isWeakest ? "background: #FFF8E1;" : ""}">
+      <td style="padding: 12px; border-bottom: 1px solid #E8E0D4; font-weight: 600;">${p}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #E8E0D4;">${pillarNames[p]}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #E8E0D4; text-align: center; font-weight: 600;">${media.toFixed(1)}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #E8E0D4; text-align: center;">
+        <span style="color: ${status.color}; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">${status.label}</span>
+      </td>
+    </tr>`;
+  }).join("");
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+  <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: #C8A951; margin: 0; font-size: 24px;">P.A.G.O.</h1>
+    <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">Diagnóstico — Resultado</p>
+  </div>
+  <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
+    <p style="font-size: 16px;">Olá <strong>${data.nome}</strong>,</p>
+    <p>Aqui está o resultado do seu Diagnóstico P.A.G.O.:</p>
+
+    <div style="text-align: center; margin: 25px 0; padding: 20px; background: #F5F0E8; border-radius: 8px;">
+      <p style="margin: 0 0 5px; color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">Média Geral</p>
+      <p style="margin: 0; font-size: 36px; font-weight: 700; color: #1A2744;">${data.mediaGeral.toFixed(1)}</p>
+      <p style="margin: 5px 0 0; font-size: 13px; font-weight: 600; color: ${overallStatus.color};">${overallStatus.label}</p>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+      <thead>
+        <tr style="background: #1A2744; color: #FAFAF8;">
+          <th style="padding: 10px; text-align: left; font-size: 12px;">Pilar</th>
+          <th style="padding: 10px; text-align: left; font-size: 12px;">Nome</th>
+          <th style="padding: 10px; text-align: center; font-size: 12px;">Média</th>
+          <th style="padding: 10px; text-align: center; font-size: 12px;">Status</th>
+        </tr>
+      </thead>
+      <tbody>${pillarRows}</tbody>
+    </table>
+
+    <div style="background: #F5F0E8; border-left: 4px solid #C8A951; padding: 15px; margin: 20px 0; border-radius: 0 6px 6px 0;">
+      <p style="margin: 0; font-size: 13px; color: #5A4E3A;">
+        <strong>Pilar que mais precisa de atenção:</strong> ${pillarNames[data.pilarMaisFraco]} (${data.pilarMaisFraco})
+      </p>
+    </div>
+
+    <div style="text-align: center; margin-top: 25px;">
+      <a href="https://metodopago.com/mentoria" style="display: inline-block; background: #1A2744; color: #C8A951; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">Conheça a Mentoria P.A.G.O.</a>
+    </div>
+  </div>
+  <p style="text-align: center; color: #999; font-size: 11px; margin-top: 15px;">
+    Este email foi enviado porque você completou o diagnóstico em metodopago.com
+  </p>
+</div></body></html>`;
+
+  try {
+    await transporter.sendMail({
+      from: fromAddress,
+      to: data.email,
+      subject: `Seu Diagnóstico P.A.G.O. — Média ${data.mediaGeral.toFixed(1)}`,
+      text: `Olá ${data.nome},\n\nSeu Diagnóstico P.A.G.O.:\nMédia Geral: ${data.mediaGeral.toFixed(1)}\nP (Princípio): ${data.mediaP.toFixed(1)}\nA (Alinhamento): ${data.mediaA.toFixed(1)}\nG (Governo): ${data.mediaG.toFixed(1)}\nO (Obediência): ${data.mediaO.toFixed(1)}\nPilar mais fraco: ${pillarNames[data.pilarMaisFraco]}\n\nConheça a Mentoria P.A.G.O.: https://metodopago.com/mentoria`,
+      encoding: "utf-8",
+      html,
+    });
+    console.log(`[Notification] Diagnostic email sent to ${data.email}`);
+  } catch (error) {
+    console.warn("[Notification] Diagnostic email failed:", error);
+  }
+}
+
 export async function notifyInscription(data: InscriptionData): Promise<void> {
   if (!isSmtpConfigured()) {
     console.warn("[Notification] SMTP not configured, skipping inscription emails.");

@@ -19,12 +19,19 @@ import {
   deleteFileRecord,
   getAllSiteSettings,
   upsertSiteSetting,
+  createDiagnostico,
+  listDiagnosticosFiltered,
+  getDiagnosticoById,
+  updateDiagnosticoStatus,
+  deleteDiagnostico,
+  exportAllDiagnosticos,
+  getDiagnosticoMetrics,
 } from "./db";
 import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
-import { notifyInscription } from "./_core/notification";
+import { notifyInscription, sendDiagnosticEmail } from "./_core/notification";
 
 // ─── Zod Schemas (strict input validation) ──────────────────────
 
@@ -73,6 +80,29 @@ const listFilesSchema = z.object({
 });
 
 const listInscriptionsFilteredSchema = z.object({
+  status: z.string().optional(),
+  search: z.string().max(200).optional(),
+  page: z.number().int().min(1).default(1),
+  pageSize: z.number().int().min(1).max(100).default(20),
+});
+
+const diagnosticoSubmitSchema = z.object({
+  nome: z.string().min(1).max(255),
+  email: z.string().email().max(320).toLowerCase().optional().nullable(),
+  answersP: z.array(z.number().min(1).max(10)).length(8),
+  answersA: z.array(z.number().min(1).max(10)).length(12),
+  answersG: z.array(z.number().min(1).max(10)).length(15),
+  answersO: z.array(z.number().min(1).max(10)).length(9),
+  mediaP: z.number().min(1).max(10),
+  mediaA: z.number().min(1).max(10),
+  mediaG: z.number().min(1).max(10),
+  mediaO: z.number().min(1).max(10),
+  mediaGeral: z.number().min(1).max(10),
+  pilarMaisFraco: z.enum(["P", "A", "G", "O"]),
+  sendEmail: z.boolean().default(false),
+});
+
+const listDiagnosticosFilteredSchema = z.object({
   status: z.string().optional(),
   search: z.string().max(200).optional(),
   page: z.number().int().min(1).default(1),
@@ -457,6 +487,101 @@ export const appRouter = router({
         await upsertSiteSetting(input.key, input.value);
         return { success: true };
       }),
+  }),
+
+  // ─── Diagnostico P.A.G.O. ─────────────────────────────────
+  diagnostico: router({
+    // Public: submit diagnostic results
+    submit: publicProcedure
+      .input(diagnosticoSubmitSchema)
+      .mutation(async ({ input }) => {
+        await createDiagnostico({
+          nome: input.nome,
+          email: input.email ?? null,
+          answersP: input.answersP,
+          answersA: input.answersA,
+          answersG: input.answersG,
+          answersO: input.answersO,
+          mediaP: input.mediaP,
+          mediaA: input.mediaA,
+          mediaG: input.mediaG,
+          mediaO: input.mediaO,
+          mediaGeral: input.mediaGeral,
+          pilarMaisFraco: input.pilarMaisFraco,
+        });
+
+        // Send email if requested and email provided
+        if (input.sendEmail && input.email) {
+          sendDiagnosticEmail({
+            nome: input.nome,
+            email: input.email,
+            mediaP: input.mediaP,
+            mediaA: input.mediaA,
+            mediaG: input.mediaG,
+            mediaO: input.mediaO,
+            mediaGeral: input.mediaGeral,
+            pilarMaisFraco: input.pilarMaisFraco,
+          }).catch((err) => console.warn("[Notification] Diagnostic email error:", err));
+        }
+
+        return { success: true };
+      }),
+
+    // Admin: filtered & paginated list
+    listFiltered: adminProcedure
+      .input(listDiagnosticosFilteredSchema)
+      .query(async ({ input }) => {
+        return listDiagnosticosFiltered({
+          status: input.status,
+          search: input.search,
+          page: input.page,
+          pageSize: input.pageSize,
+        });
+      }),
+
+    // Admin: get single diagnostic by ID
+    getById: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .query(async ({ input }) => {
+        const result = await getDiagnosticoById(input.id);
+        if (!result) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Diagnóstico não encontrado." });
+        }
+        return result;
+      }),
+
+    // Admin: update diagnostic status
+    updateStatus: adminProcedure
+      .input(z.object({
+        id: z.number().int().positive(),
+        status: z.enum(["new", "reviewed", "archived"]),
+      }))
+      .mutation(async ({ input }) => {
+        await updateDiagnosticoStatus(input.id, input.status);
+        return { success: true };
+      }),
+
+    // Admin: delete diagnostic
+    delete: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input }) => {
+        const result = await getDiagnosticoById(input.id);
+        if (!result) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Diagnóstico não encontrado." });
+        }
+        await deleteDiagnostico(input.id);
+        return { success: true };
+      }),
+
+    // Admin: export all diagnostics for CSV
+    export: adminProcedure.query(async () => {
+      return exportAllDiagnosticos();
+    }),
+
+    // Admin: dashboard metrics
+    metrics: adminProcedure.query(async () => {
+      return getDiagnosticoMetrics();
+    }),
   }),
 
   // ─── Ebook Downloads ───────────────────────────────────────

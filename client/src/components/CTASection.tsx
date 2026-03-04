@@ -124,6 +124,14 @@ export default function CTASection() {
                 ))}
               </div>
             </FadeIn>
+            <FadeIn delay={0.5}>
+              <a
+                href="/diagnostico"
+                className="inline-flex items-center gap-2 font-accent text-xs uppercase tracking-[0.2em] border border-gold/40 text-gold px-8 py-4 hover:border-gold hover:bg-gold/10 transition-all duration-300 mt-8"
+              >
+                {t.diagnostico.homeCta} →
+              </a>
+            </FadeIn>
           </div>
 
           {/* Right - Form */}
