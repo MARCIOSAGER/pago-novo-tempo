@@ -3,7 +3,7 @@ const pt = {
   nav: {
     about: "Sobre",
     pillars: "Os 4 Pilares",
-    jefferson: "Jefferson",
+    jefferson: "Fundador",
     kit: "Kit Mentoria",
     faq: "FAQ",
     kids: "Kids",

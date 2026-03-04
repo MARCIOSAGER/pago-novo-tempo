@@ -5,7 +5,7 @@ const es: Translations = {
   nav: {
     about: "Acerca de",
     pillars: "Los 4 Pilares",
-    jefferson: "Jefferson",
+    jefferson: "Fundador",
     kit: "Kit de Mentoría",
     faq: "FAQ",
     kids: "Kids",
