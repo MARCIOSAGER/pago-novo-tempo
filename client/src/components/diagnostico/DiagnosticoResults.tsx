@@ -222,7 +222,7 @@ export default function DiagnosticoResults({
 
                   <div className="w-8 h-[1px] bg-gold/30 mb-4" />
 
-                  <div className="font-body text-sm text-warm-white/60 leading-relaxed whitespace-pre-line">
+                  <div className="font-body text-sm text-warm-white/60 leading-relaxed whitespace-pre-line text-justify">
                     {textData.analysis}
                   </div>
                 </motion.div>
