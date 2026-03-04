@@ -58,7 +58,7 @@ function FlipCard({
 
         {/* Back — White */}
         <div
-          className="flex flex-col items-center justify-center p-6 bg-warm-white border border-sand-dark/30"
+          className="flex flex-col items-center justify-center p-6 bg-sand border border-sand-dark/30"
           style={{
             position: "absolute",
             inset: 0,
