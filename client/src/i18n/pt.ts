@@ -10,6 +10,7 @@ const pt = {
     subscribe: "Inscreva-se",
     subscribeMobile: "Inscreva-se na Mentoria",
     tagline: "Novo Tempo",
+    mentoria: "A Mentoria",
   },
 
   // === HERO ===
@@ -259,6 +260,129 @@ const pt = {
     terms: "Termos de Uso",
     cookies: "Cookies",
     quote: "\"Não estou construindo sucesso. Estou administrando uma visão.\"",
+  },
+
+  // === MENTORIA PAGE ===
+  mentoria: {
+    hero: {
+      backToHome: "Voltar ao Início",
+      label: "Como Funciona",
+      titleLine1: "A mentoria que reorganiza",
+      titleLine2: "sua vida de dentro para fora.",
+      subtitle: "Um processo estruturado que vai além da teoria. Quatro pilares, uma jornada — e a transformação que permanece.",
+    },
+    forWho: {
+      label: "Para Quem É",
+      titleLine1: "Esta mentoria é",
+      titleLine2: "para você?",
+      description: "O P.A.G.O foi criado para quem ama a Deus mas vive desorganizado. Para quem tem fé genuína mas precisa de estrutura. Se você se identifica com algum desses perfis, esta mentoria é para você.",
+      personas: [
+        {
+          title: "Empreendedores",
+          description: "Que crescem nos negócios mas sentem que a vida pessoal, espiritual e emocional ficou para trás. Que buscam sucesso com governo interior.",
+        },
+        {
+          title: "Líderes de Fé",
+          description: "Que amam a Deus e servem no ministério, mas vivem em desorganização pessoal. Que pregam família mas não têm estrutura em casa.",
+        },
+        {
+          title: "Pais e Mães",
+          description: "Que querem construir um legado familiar sólido, fundamentado em princípios bíblicos que seus filhos possam herdar e viver.",
+        },
+        {
+          title: "Pessoas em Transição",
+          description: "Que sabem que precisam mudar mas não sabem por onde começar. Que estão cansadas do ciclo de frustração e estagnação.",
+        },
+      ],
+    },
+    methodology: {
+      label: "A Metodologia",
+      titleLine1: "Quatro fases.",
+      titleLine2: "Uma jornada.",
+      description: "Como um arquiteto espiritual: primeiro o alicerce, depois a estrutura, em seguida o governo, e finalmente a manifestação. Cada etapa é inegociável. Cada pilar sustenta o próximo.",
+      steps: [
+        {
+          number: "01",
+          title: "Diagnóstico",
+          subtitle: "Onde você está hoje",
+          description: "Autoavaliação profunda em 5 áreas: vida espiritual, emocional, financeira, profissional e familiar. Identificar os pontos de desorganização e estabelecer a linha de partida.",
+        },
+        {
+          number: "02",
+          title: "Fundamentos",
+          subtitle: "Princípio + Alinhamento",
+          description: "Estabelecer princípios inegociáveis e alinhar o que crê, sente e faz. Identificar desalinhamentos entre valores e ações. Construir o alicerce da transformação.",
+        },
+        {
+          number: "03",
+          title: "Prática",
+          subtitle: "Governo + Obediência",
+          description: "Construir disciplinas diárias no secreto: rotina matinal, planejamento financeiro, domínio emocional. Transformar intenção em ação através da obediência radical.",
+        },
+        {
+          number: "04",
+          title: "Consolidação",
+          subtitle: "Sustentando a Transformação",
+          description: "Integrar os 4 pilares em um ciclo virtuoso ascendente. Cada volta produz mais maturidade, mais autoridade e mais impacto. Do governo pessoal ao legado familiar.",
+        },
+      ],
+    },
+    howItWorks: {
+      label: "Na Prática",
+      titleLine1: "O que você recebe",
+      titleLine2: "na mentoria.",
+      items: [
+        {
+          title: "Encontros Semanais",
+          description: "Sessões de mentoria com ensino, reflexão bíblica e aplicação prática dos 4 pilares. Acompanhamento personalizado da sua jornada.",
+        },
+        {
+          title: "Exercícios Práticos",
+          description: "Atividades diárias para cada pilar: autoavaliação, jejum, rotina matinal, planejamento financeiro e declarações de fé.",
+        },
+        {
+          title: "Kit Completo",
+          description: "Bíblia BKJ, Caderno de Estudos, Caneta e Ebook P.A.G.O — tudo o que você precisa para registrar e viver a transformação.",
+        },
+        {
+          title: "Comunidade",
+          description: "Uma rede de homens e mulheres em transformação. Prestação de contas, encorajamento e crescimento mútuo na jornada P.A.G.O.",
+        },
+      ],
+    },
+    results: {
+      label: "Resultados",
+      titleLine1: "A transformação que",
+      titleLine2: "você pode esperar.",
+      description: "Quando os quatro pilares operam juntos, criam um ciclo virtuoso ascendente. Princípios claros geram alinhamento natural. Alinhamento gera governo consistente. Governo gera capacidade de obediência. E a obediência fortalece os princípios.",
+      before: {
+        label: "Antes",
+        items: [
+          "Fé genuína mas sem estrutura",
+          "Chamado claro mas sem direção",
+          "Crescimento sem governo interior",
+          "Motivação que não se sustenta",
+          "Vida espiritual desconectada do prático",
+        ],
+      },
+      after: {
+        label: "Depois",
+        items: [
+          "Governo interior estabelecido e consistente",
+          "Alinhamento espiritual, emocional e estratégico",
+          "Disciplinas diárias que sustentam o público",
+          "Obediência que destrava o sobrenatural",
+          "Legado que permanece e impacta gerações",
+        ],
+      },
+    },
+    cta: {
+      titleLine1: "Pronto para",
+      titleLine2: "começar?",
+      description: "Inscreva-se na mentoria P.A.G.O e inicie sua jornada de reorganização de vida. Não é sobre velocidade — é sobre permanência.",
+      button: "Quero me Inscrever",
+      quote: "\"O P.A.G.O não é um programa. É um estilo de vida. Não é algo que você faz — é algo que você se torna.\"",
+    },
   },
 
   // === CHATBOT ===

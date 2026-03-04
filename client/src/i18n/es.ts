@@ -12,6 +12,7 @@ const es: Translations = {
     subscribe: "Inscríbete",
     subscribeMobile: "Inscríbete en la Mentoría",
     tagline: "Nuevo Tiempo",
+    mentoria: "La Mentoría",
   },
 
   // === HERO ===
@@ -261,6 +262,129 @@ const es: Translations = {
     terms: "Términos de Uso",
     cookies: "Cookies",
     quote: "\"No estoy construyendo éxito. Estoy administrando una visión.\"",
+  },
+
+  // === MENTORIA PAGE ===
+  mentoria: {
+    hero: {
+      backToHome: "Volver al Inicio",
+      label: "Cómo Funciona",
+      titleLine1: "La mentoría que reorganiza",
+      titleLine2: "tu vida de adentro hacia afuera.",
+      subtitle: "Un proceso estructurado que va más allá de la teoría. Cuatro pilares, un viaje — y la transformación que permanece.",
+    },
+    forWho: {
+      label: "¿Para Quién Es?",
+      titleLine1: "¿Esta mentoría es",
+      titleLine2: "para ti?",
+      description: "El P.A.G.O fue creado para quienes aman a Dios pero viven desorganizados. Para quienes tienen fe genuina pero necesitan estructura. Si te identificas con alguno de estos perfiles, esta mentoría es para ti.",
+      personas: [
+        {
+          title: "Emprendedores",
+          description: "Que crecen en los negocios pero sienten que su vida personal, espiritual y emocional quedó atrás. Que buscan éxito con gobierno interior.",
+        },
+        {
+          title: "Líderes de Fe",
+          description: "Que aman a Dios y sirven en el ministerio, pero viven en desorganización personal. Que predican sobre familia pero no tienen estructura en casa.",
+        },
+        {
+          title: "Padres y Madres",
+          description: "Que quieren construir un legado familiar sólido, fundamentado en principios bíblicos que sus hijos puedan heredar y vivir.",
+        },
+        {
+          title: "Personas en Transición",
+          description: "Que saben que necesitan cambiar pero no saben por dónde empezar. Que están cansadas del ciclo de frustración y estancamiento.",
+        },
+      ],
+    },
+    methodology: {
+      label: "La Metodología",
+      titleLine1: "Cuatro fases.",
+      titleLine2: "Un viaje.",
+      description: "Como un arquitecto espiritual: primero el cimiento, luego la estructura, después el gobierno, y finalmente la manifestación. Cada etapa es innegociable. Cada pilar sostiene al siguiente.",
+      steps: [
+        {
+          number: "01",
+          title: "Diagnóstico",
+          subtitle: "Dónde estás hoy",
+          description: "Autoevaluación profunda en 5 áreas: vida espiritual, emocional, financiera, profesional y familiar. Identificar los puntos de desorganización y establecer la línea de partida.",
+        },
+        {
+          number: "02",
+          title: "Fundamentos",
+          subtitle: "Principio + Alineamiento",
+          description: "Establecer principios innegociables y alinear lo que crees, sientes y haces. Identificar desalineamientos entre valores y acciones. Construir el cimiento de la transformación.",
+        },
+        {
+          number: "03",
+          title: "Práctica",
+          subtitle: "Gobierno + Obediencia",
+          description: "Construir disciplinas diarias en lo secreto: rutina matutina, planificación financiera, dominio emocional. Transformar la intención en acción a través de la obediencia radical.",
+        },
+        {
+          number: "04",
+          title: "Consolidación",
+          subtitle: "Sosteniendo la Transformación",
+          description: "Integrar los 4 pilares en un ciclo virtuoso ascendente. Cada vuelta produce más madurez, más autoridad y más impacto. Del gobierno personal al legado familiar.",
+        },
+      ],
+    },
+    howItWorks: {
+      label: "En la Práctica",
+      titleLine1: "Lo que recibes",
+      titleLine2: "en la mentoría.",
+      items: [
+        {
+          title: "Encuentros Semanales",
+          description: "Sesiones de mentoría con enseñanza, reflexión bíblica y aplicación práctica de los 4 pilares. Acompañamiento personalizado en tu jornada.",
+        },
+        {
+          title: "Ejercicios Prácticos",
+          description: "Actividades diarias para cada pilar: autoevaluación, ayuno, rutina matutina, planificación financiera y declaraciones de fe.",
+        },
+        {
+          title: "Kit Completo",
+          description: "Biblia RVR, Cuaderno de Estudios, Bolígrafo y Ebook P.A.G.O — todo lo que necesitas para registrar y vivir la transformación.",
+        },
+        {
+          title: "Comunidad",
+          description: "Una red de hombres y mujeres en transformación. Rendición de cuentas, ánimo y crecimiento mutuo en el camino P.A.G.O.",
+        },
+      ],
+    },
+    results: {
+      label: "Resultados",
+      titleLine1: "La transformación que",
+      titleLine2: "puedes esperar.",
+      description: "Cuando los cuatro pilares operan juntos, crean un ciclo virtuoso ascendente. Principios claros generan alineamiento natural. Alineamiento genera gobierno consistente. Gobierno genera capacidad de obediencia. Y la obediencia fortalece los principios.",
+      before: {
+        label: "Antes",
+        items: [
+          "Fe genuina pero sin estructura",
+          "Llamado claro pero sin dirección",
+          "Crecimiento sin gobierno interior",
+          "Motivación que no se sostiene",
+          "Vida espiritual desconectada de lo práctico",
+        ],
+      },
+      after: {
+        label: "Después",
+        items: [
+          "Gobierno interior establecido y consistente",
+          "Alineamiento espiritual, emocional y estratégico",
+          "Disciplinas diarias que sostienen lo público",
+          "Obediencia que desbloquea lo sobrenatural",
+          "Un legado que permanece e impacta generaciones",
+        ],
+      },
+    },
+    cta: {
+      titleLine1: "¿Listo para",
+      titleLine2: "comenzar?",
+      description: "Inscríbete en la mentoría P.A.G.O e inicia tu jornada de reorganización de vida. No se trata de velocidad — se trata de permanencia.",
+      button: "Quiero Inscribirme",
+      quote: "\"El P.A.G.O no es un programa. Es un estilo de vida. No es algo que haces — es algo en lo que te conviertes.\"",
+    },
   },
 
   // === CHATBOT ===

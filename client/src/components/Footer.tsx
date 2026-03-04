@@ -8,6 +8,7 @@ export default function Footer() {
 
   const navLinks = [
     { label: t.nav.about, href: "/#sobre" },
+    { label: t.nav.mentoria, href: "/mentoria" },
     { label: t.nav.pillars, href: "/#pilares" },
     { label: t.nav.jefferson, href: "/#jefferson" },
     { label: t.nav.kit, href: "/#kit" },

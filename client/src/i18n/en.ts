@@ -12,6 +12,7 @@ const en: Translations = {
     subscribe: "Sign Up",
     subscribeMobile: "Sign Up for Mentoring",
     tagline: "New Season",
+    mentoria: "The Mentoring",
   },
 
   // === HERO ===
@@ -261,6 +262,129 @@ const en: Translations = {
     terms: "Terms of Use",
     cookies: "Cookies",
     quote: "\"I am not building success. I am managing a vision.\"",
+  },
+
+  // === MENTORIA PAGE ===
+  mentoria: {
+    hero: {
+      backToHome: "Back to Home",
+      label: "How It Works",
+      titleLine1: "The mentoring that reorganizes",
+      titleLine2: "your life from the inside out.",
+      subtitle: "A structured process that goes beyond theory. Four pillars, one journey — and a transformation that endures.",
+    },
+    forWho: {
+      label: "Who Is It For",
+      titleLine1: "Is this mentoring",
+      titleLine2: "for you?",
+      description: "P.A.G.O was created for those who love God but live in disorganization. For those with genuine faith who need structure. If you identify with any of these profiles, this mentoring is for you.",
+      personas: [
+        {
+          title: "Entrepreneurs",
+          description: "Who grow in business but feel their personal, spiritual, and emotional life has fallen behind. Who seek success with inner governance.",
+        },
+        {
+          title: "Faith Leaders",
+          description: "Who love God and serve in ministry, but live in personal disorganization. Who preach about family but lack structure at home.",
+        },
+        {
+          title: "Parents",
+          description: "Who want to build a solid family legacy, grounded in biblical principles their children can inherit and live by.",
+        },
+        {
+          title: "People in Transition",
+          description: "Who know they need to change but don't know where to start. Who are tired of the cycle of frustration and stagnation.",
+        },
+      ],
+    },
+    methodology: {
+      label: "The Methodology",
+      titleLine1: "Four phases.",
+      titleLine2: "One journey.",
+      description: "Like a spiritual architect: first the foundation, then the structure, then governance, and finally the manifestation. Each step is non-negotiable. Each pillar supports the next.",
+      steps: [
+        {
+          number: "01",
+          title: "Diagnosis",
+          subtitle: "Where you are today",
+          description: "Deep self-assessment across 5 areas: spiritual, emotional, financial, professional, and family life. Identify points of disorganization and establish your starting line.",
+        },
+        {
+          number: "02",
+          title: "Foundations",
+          subtitle: "Principle + Alignment",
+          description: "Establish non-negotiable principles and align what you believe, feel, and do. Identify misalignments between values and actions. Build the foundation for transformation.",
+        },
+        {
+          number: "03",
+          title: "Practice",
+          subtitle: "Government + Obedience",
+          description: "Build daily disciplines in secret: morning routine, financial planning, emotional mastery. Transform intention into action through radical obedience.",
+        },
+        {
+          number: "04",
+          title: "Consolidation",
+          subtitle: "Sustaining Transformation",
+          description: "Integrate all 4 pillars into an ascending virtuous cycle. Each turn produces more maturity, more authority, and more impact. From personal governance to family legacy.",
+        },
+      ],
+    },
+    howItWorks: {
+      label: "In Practice",
+      titleLine1: "What you receive",
+      titleLine2: "in the mentoring.",
+      items: [
+        {
+          title: "Weekly Sessions",
+          description: "Mentoring sessions with teaching, biblical reflection, and practical application of the 4 pillars. Personalized guidance throughout your journey.",
+        },
+        {
+          title: "Practical Exercises",
+          description: "Daily activities for each pillar: self-assessment, fasting, morning routine, financial planning, and declarations of faith.",
+        },
+        {
+          title: "Complete Kit",
+          description: "KJV Bible, Study Notebook, Pen, and P.A.G.O Ebook — everything you need to record and live the transformation.",
+        },
+        {
+          title: "Community",
+          description: "A network of men and women in transformation. Accountability, encouragement, and mutual growth on the P.A.G.O journey.",
+        },
+      ],
+    },
+    results: {
+      label: "Results",
+      titleLine1: "The transformation",
+      titleLine2: "you can expect.",
+      description: "When all four pillars operate together, they create an ascending virtuous cycle. Clear principles generate natural alignment. Alignment generates consistent governance. Governance generates the capacity for obedience. And obedience strengthens the principles.",
+      before: {
+        label: "Before",
+        items: [
+          "Genuine faith but no structure",
+          "Clear calling but no direction",
+          "Growth without inner governance",
+          "Motivation that doesn't sustain",
+          "Spiritual life disconnected from the practical",
+        ],
+      },
+      after: {
+        label: "After",
+        items: [
+          "Inner governance established and consistent",
+          "Spiritual, emotional, and strategic alignment",
+          "Daily disciplines that sustain the public",
+          "Obedience that unlocks the supernatural",
+          "A legacy that endures and impacts generations",
+        ],
+      },
+    },
+    cta: {
+      titleLine1: "Ready to",
+      titleLine2: "begin?",
+      description: "Sign up for the P.A.G.O mentoring and start your life reorganization journey. It's not about speed — it's about permanence.",
+      button: "I Want to Sign Up",
+      quote: "\"P.A.G.O is not a program. It's a lifestyle. It's not something you do — it's something you become.\"",
+    },
   },
 
   // === CHATBOT ===

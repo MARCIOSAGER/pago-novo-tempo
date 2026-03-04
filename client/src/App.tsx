@@ -21,6 +21,7 @@ import AdminMediaRepo from "./pages/AdminMediaRepo";
 import AdminKids from "./pages/AdminKids";
 import AdminEmail from "./pages/AdminEmail";
 import Fundador from "./pages/Fundador";
+import Mentoria from "./pages/Mentoria";
 
 function Router() {
   return (
@@ -30,6 +31,7 @@ function Router() {
       <Route path={"/termos"} component={TermsOfUse} />
       <Route path={"/cookies"} component={CookiePolicy} />
       <Route path={"/fundador"} component={Fundador} />
+      <Route path={"/mentoria"} component={Mentoria} />
 
       {/* Admin routes — wrapped in AdminLayout with sidebar */}
       <Route path="/admin">
