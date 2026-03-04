@@ -58,7 +58,7 @@ export default function FAQSection() {
   const { t } = useLanguage();
 
   return (
-    <section id="faq" className="py-28 lg:py-36 bg-sand">
+    <section id="faq" className="py-16 lg:py-24 bg-sand">
       <div className="max-w-3xl mx-auto px-6 lg:px-12">
         <FadeIn>
           <div className="text-center mb-16">

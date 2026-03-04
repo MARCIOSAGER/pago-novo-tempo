@@ -81,7 +81,7 @@ export default function CTASection() {
   const benefits = [t.cta.benefit1, t.cta.benefit2, t.cta.benefit3, t.cta.benefit4];
 
   return (
-    <section id="inscricao" className="relative py-28 lg:py-36 overflow-hidden">
+    <section id="inscricao" className="relative py-16 lg:py-24 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
         <img src={HERO_BG} alt="" className="w-full h-full object-cover" />

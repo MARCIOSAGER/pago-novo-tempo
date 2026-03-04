@@ -25,7 +25,7 @@ export default function JeffersonSection() {
   const images = useSiteImages();
 
   return (
-    <section id="jefferson" className="py-28 lg:py-36 bg-warm-white">
+    <section id="jefferson" className="py-16 lg:py-24 bg-warm-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Left — Photo */}

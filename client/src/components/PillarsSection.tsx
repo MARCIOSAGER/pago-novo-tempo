@@ -21,7 +21,7 @@ function PillarCard({ pillar, index }: { pillar: { number: string; letter: strin
         <motion.img
           initial={{ scale: 1 }}
           animate={isInView ? { scale: 1.12 } : {}}
-          transition={{ duration: 15, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
+          transition={{ duration: 8, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
           style={{ transformOrigin: isEven ? "30% 50%" : "70% 50%" }}
           src={pillar.image}
           alt={pillar.title}
@@ -86,7 +86,7 @@ export default function PillarsSection() {
   }));
 
   return (
-    <section id="pilares" className="py-28 lg:py-36 bg-sand">
+    <section id="pilares" className="py-16 lg:py-24 bg-sand">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 mb-16">
         <motion.div
           ref={ref}

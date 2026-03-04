@@ -22,7 +22,7 @@ export default function AboutSection() {
   const { t } = useLanguage();
 
   return (
-    <section id="sobre" className="py-28 lg:py-36 bg-warm-white">
+    <section id="sobre" className="py-16 lg:py-24 bg-warm-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Section Label */}
         <FadeIn>

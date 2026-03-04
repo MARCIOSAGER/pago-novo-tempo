@@ -31,7 +31,7 @@ export default function KidsSection() {
   const links = useSiteLinks();
 
   return (
-    <section id="kids" className="relative py-28 lg:py-36 overflow-hidden" style={{ background: "linear-gradient(135deg, #FFF8E7 0%, #FFF0D4 30%, #FFE8C8 60%, #FFECD6 100%)" }}>
+    <section id="kids" className="relative py-16 lg:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #FFF8E7 0%, #FFF0D4 30%, #FFE8C8 60%, #FFECD6 100%)" }}>
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
         {/* Floating circles */}
