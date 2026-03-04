@@ -43,7 +43,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <a href="/" className="flex items-center gap-3">
+            <a href="/" className="flex items-center gap-3 shrink-0 mr-6 xl:mr-10">
               <img
                 src={LOGO_URL}
                 alt="P.A.G.O Novo Tempo"
