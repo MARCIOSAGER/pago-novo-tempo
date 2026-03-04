@@ -410,6 +410,10 @@ const en: Translations = {
       low: "Very distant",
       high: "Full realization",
     },
+    anchors: {
+      F: ["Never", "Sometimes", "Often", "Always"],
+      E: ["Not present", "Fragile", "Growing", "Solid"],
+    },
     navigation: {
       next: "Next",
       previous: "Previous",
@@ -437,6 +441,7 @@ const en: Translations = {
           { text: "My finances reflect the principle of faithful stewardship", example: "E.g.: I manage my money as someone accountable to God." },
           { text: "I sow (time, money, investment) before I reap", example: "E.g.: I invest first without expecting immediate returns." },
         ],
+        anchorTypes: ["F", "E", "F", "F", "E", "F", "E", "F"],
       },
       A: {
         letter: "A",
@@ -462,6 +467,12 @@ const en: Translations = {
           { text: "I feel at peace with the decisions I have made", example: "E.g.: I sleep peacefully knowing I did the right thing, even when difficult." },
           { text: "I am living the purpose for which I was created", example: "E.g.: I have clarity about my calling and walk in that direction." },
         ],
+        anchorTypes: ["F", "F", "E", "E", "E", "E", "F", "E", "E", "E", "E", "E"],
+        subgroupLabels: {
+          vertical: "With God",
+          horizontal: "With Others",
+          internal: "With Myself",
+        },
       },
       G: {
         letter: "G",
@@ -491,6 +502,13 @@ const en: Translations = {
           { text: "I sleep enough and rest intentionally", example: "E.g.: I sleep 7-8 hours a night and have planned leisure moments." },
           { text: "I can say \"no\" without guilt when necessary", example: "E.g.: I decline invitations and requests that don't align with my priorities." },
         ],
+        anchorTypes: ["F", "F", "F", "F", "E", "E", "F", "F", "E", "F", "E", "E", "E", "F", "F"],
+        subgroupLabels: {
+          spiritual: "Spiritual",
+          emotional: "Emotional",
+          financial: "Financial",
+          temporal: "Time",
+        },
       },
       O: {
         letter: "O",
@@ -513,6 +531,12 @@ const en: Translations = {
           { text: "My obedience is motivated by love — not by fear or performance", example: "E.g.: I obey because I love God, not to impress people." },
           { text: "I am consistently advancing in the purpose for which I was called", example: "E.g.: Each month I'm closer to what God planned for me." },
         ],
+        anchorTypes: ["F", "E", "F", "F", "E", "E", "E", "E", "E"],
+        subgroupLabels: {
+          basic: "Basic Obedience",
+          radical: "Radical Obedience",
+          fruit: "Fruit",
+        },
       },
     },
     results: {
@@ -568,6 +592,34 @@ const en: Translations = {
       },
     },
     homeCta: "Take the Free Diagnostic",
+    emotionalAlert: {
+      label: "An Important Note",
+      text: "A low score in Emotional Governance can have two distinct origins.\n\nThe first is lack of discipline — and governance is the answer.\n\nThe second is an unhealed wound that hijacks your reactions before you can govern them.\n\nIf you notice that you try but can't — that the reaction happens before the decision — this may be a sign that something needs to be processed, not just disciplined.\n\nThe mentoring will help you distinguish between the two.",
+    },
+    intro: {
+      label: "How This Diagnostic Was Built",
+      title: "A serious tool",
+      titleItalic: "for real change.",
+      subtitle: "This is not a personality test or a self-help quiz. It is a diagnostic instrument built on two pillars: methodological rigor and biblical foundation.",
+      cta: "Begin the Diagnostic",
+      cards: [
+        {
+          tag: "Validated Scale",
+          title: "Behavioral anchors",
+          text: "The 44 statements use concrete behavioral descriptions — not abstract numbers. This format, recommended since Likert (1932) and validated by decades of psychometric research, eliminates arbitrariness: you don't \"give a score\" — you recognize yourself in a reality.",
+        },
+        {
+          tag: "Four Domains",
+          title: "Integrated model",
+          text: "The P-A-G-O model maps the person across four dimensions that human development literature recognizes as interdependent: values and beliefs, inner coherence, self-discipline, and committed action. The diagnostic measures all four — and shows where the weakest link is.",
+        },
+        {
+          tag: "Biblical Foundation",
+          title: "Non-negotiable foundation",
+          text: "The method does not use the Bible as decoration — it is the epistemological foundation. Each pillar has a verifiable root: Principle (Prov 11:3), Alignment (Prov 3:5-6), Governance (Luke 16:10), Obedience (Isa 1:19). This diagnostic does not measure religiosity — it measures coherence between belief and life.",
+        },
+      ],
+    },
   },
 
   // === CHATBOT ===

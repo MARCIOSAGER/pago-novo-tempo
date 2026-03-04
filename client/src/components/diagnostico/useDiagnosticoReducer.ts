@@ -79,6 +79,50 @@ export interface StatusInfo {
   key: "solid" | "building" | "fragile" | "collapse";
 }
 
+export interface PillarSubgroups {
+  A: { vertical: number; horizontal: number; internal: number };
+  G: { spiritual: number; emotional: number; financial: number; temporal: number };
+  O: { basic: number; radical: number; fruit: number };
+}
+
+/**
+ * THRESHOLDS DO DIAGNÓSTICO P.A.G.O.
+ * Versão: 1.0 — baseado na escala de 4 pontos com âncoras comportamentais
+ *
+ * Escala base: respostas 1-4, normalizadas para 0-10
+ * Pontos de referência naturais da escala:
+ *   1.0 (Nunca/Não está presente)    → score normalizado: 2.5
+ *   2.0 (Às vezes/Está frágil)       → score normalizado: 5.0
+ *   3.0 (Frequentemente/Crescendo)   → score normalizado: 7.5
+ *   4.0 (Sempre/Está sólido)         → score normalizado: 10.0
+ *
+ * Thresholds escolhidos e sua justificativa:
+ *
+ * EM COLAPSO: < 3.0
+ *   Equivale a média < 1.2 na escala 1-4.
+ *   A pessoa respondeu quase tudo com "Nunca" ou "Não está presente".
+ *   O threshold em 3.0 (não 2.5) é deliberadamente generoso — algumas
+ *   respostas "Às vezes" ainda não configuram colapso.
+ *
+ * PILAR FRÁGIL: 3.0 a 5.5
+ *   Faixa de inconsistência — presença sem constância.
+ *   Score 5.0 é o ponto médio exato ("Às vezes" em tudo).
+ *   O threshold superior em 5.5 exige estar ALÉM da mediocridade central.
+ *   Filosoficamente coerente com o método: "às vezes" não é governo.
+ *
+ * EM CONSTRUÇÃO: 5.5 a 8.0
+ *   Crescimento real mas incompleto.
+ *   Score 7.5 seria "Frequentemente" em tudo — o threshold em 8.0
+ *   exige um pouco mais, reconhecendo que consistência real precisa
+ *   superar o "frequente com falhas".
+ *
+ * PILAR SÓLIDO: ≥ 8.0
+ *   Consistência em "Frequentemente" ou "Sempre" na maioria das questões.
+ *   Intencionalmente difícil de atingir.
+ *
+ * REVISÃO RECOMENDADA: após acumular 200+ respondentes, revisar com
+ * base nos percentis reais da distribuição (P25, P50, P75).
+ */
 export function getStatusInfo(media: number): StatusInfo {
   if (media >= 8) return { label: "solid", color: "#2E5E3E", key: "solid" };
   if (media >= 5.5) return { label: "building", color: "#B8A88A", key: "building" };
@@ -125,13 +169,35 @@ export function useDiagnosticoReducer() {
     [state.answers]
   );
 
-  // Emotional subgroup average (G4-G7, indices 3-6)
-  const emotionalAverage = useCallback((): number => {
-    const gAnswers = state.answers.G;
-    const emotionalAnswers = gAnswers.slice(3, 7).filter((a): a is number => a !== null);
-    if (emotionalAnswers.length === 0) return 10;
-    const soma = emotionalAnswers.reduce((sum, v) => sum + v, 0);
-    return parseFloat(((soma / (4 * 4)) * 10).toFixed(1));
+  // Pillar subgroups (A, G, O — P has no subgroups)
+  const pillarSubgroups = useMemo((): PillarSubgroups => {
+    const calcSubgroup = (pillarAnswers: (number | null)[], start: number, count: number): number => {
+      const slice = pillarAnswers.slice(start, start + count).filter((a): a is number => a !== null);
+      if (slice.length === 0) return 0;
+      const soma = slice.reduce((sum, v) => sum + v, 0);
+      return parseFloat(((soma / (count * 4)) * 10).toFixed(1));
+    };
+    const a = state.answers.A;
+    const g = state.answers.G;
+    const o = state.answers.O;
+    return {
+      A: {
+        vertical: calcSubgroup(a, 0, 4),    // A1-A4
+        horizontal: calcSubgroup(a, 4, 4),  // A5-A8
+        internal: calcSubgroup(a, 8, 4),    // A9-A12
+      },
+      G: {
+        spiritual: calcSubgroup(g, 0, 3),   // G1-G3
+        emotional: calcSubgroup(g, 3, 4),   // G4-G7
+        financial: calcSubgroup(g, 7, 4),   // G8-G11
+        temporal: calcSubgroup(g, 11, 4),   // G12-G15
+      },
+      O: {
+        basic: calcSubgroup(o, 0, 3),       // O1-O3
+        radical: calcSubgroup(o, 3, 3),     // O4-O6
+        fruit: calcSubgroup(o, 6, 3),       // O7-O9
+      },
+    };
   }, [state.answers]);
 
   const overallAverage = useCallback((): number => {
@@ -194,7 +260,7 @@ export function useDiagnosticoReducer() {
     pillarAverage,
     overallAverage,
     weakestPillar,
-    emotionalAverage,
+    pillarSubgroups,
     isStepComplete,
     chartData,
     hasSavedState,

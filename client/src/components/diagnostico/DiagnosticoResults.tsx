@@ -6,7 +6,7 @@ import { trpc } from "@/lib/trpc";
 import DiagnosticoRadarChart from "./DiagnosticoRadarChart";
 import DiagnosticoPillarCard from "./DiagnosticoPillarCard";
 import { getStatusInfo } from "./useDiagnosticoReducer";
-import type { PillarKey } from "./useDiagnosticoReducer";
+import type { PillarKey, PillarSubgroups } from "./useDiagnosticoReducer";
 
 interface DiagnosticoResultsProps {
   nome: string;
@@ -16,7 +16,7 @@ interface DiagnosticoResultsProps {
   chartData: { pillar: string; value: number; fullMark: number }[];
   answers: Record<PillarKey, number[]>;
   onRestart: () => void;
-  emotionalAverage: number;
+  pillarSubgroups: PillarSubgroups;
 }
 
 const PILLAR_ORDER: PillarKey[] = ["P", "A", "G", "O"];
@@ -29,7 +29,7 @@ export default function DiagnosticoResults({
   chartData,
   answers,
   onRestart,
-  emotionalAverage,
+  pillarSubgroups,
 }: DiagnosticoResultsProps) {
   const { t } = useLanguage();
   const ref = useRef(null);
@@ -154,6 +154,7 @@ export default function DiagnosticoResults({
                 pillar={pillar}
                 average={pillarAverages[pillar]}
                 delay={i * 0.1}
+                pillarSubgroups={pillarSubgroups}
               />
             ))}
           </div>
@@ -200,7 +201,7 @@ export default function DiagnosticoResults({
       </section>
 
       {/* Section 4.5 — Emotional Alert (conditional) */}
-      {pillarAverages.G < 5.5 && emotionalAverage < 4.0 && (
+      {pillarAverages.G < 5.5 && pillarSubgroups.G.emotional < 4.0 && (
         <section className="bg-navy-dark py-16 lg:py-24">
           <div className="max-w-3xl mx-auto px-6 lg:px-12 text-center">
             <motion.div

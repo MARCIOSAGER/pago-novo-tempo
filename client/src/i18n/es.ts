@@ -410,6 +410,10 @@ const es: Translations = {
       low: "Muy distante",
       high: "Plena realización",
     },
+    anchors: {
+      F: ["Nunca", "A veces", "Frecuentemente", "Siempre"],
+      E: ["No está presente", "Está frágil", "Está creciendo", "Está sólido"],
+    },
     navigation: {
       next: "Siguiente",
       previous: "Anterior",
@@ -437,6 +441,7 @@ const es: Translations = {
           { text: "Mis finanzas reflejan el principio de la mayordomía fiel", example: "Ej: Administro el dinero como si fuera el administrador de los recursos de Dios." },
           { text: "Siembro (tiempo, dinero, inversión) antes de cosechar", example: "Ej: Invierto primero (en relaciones, formación, reino) sin exigir retorno inmediato." },
         ],
+        anchorTypes: ["F", "E", "F", "F", "E", "F", "E", "F"],
       },
       A: {
         letter: "A",
@@ -462,6 +467,12 @@ const es: Translations = {
           { text: "Me siento en paz con las decisiones que he tomado", example: "Ej: No pierdo el sueño por arrepentimientos o dudas constantes." },
           { text: "Estoy viviendo el propósito para el cual fui creado", example: "Ej: Tengo claridad sobre mi llamado y estoy actuando en esa dirección." },
         ],
+        anchorTypes: ["F", "F", "E", "E", "E", "E", "F", "E", "E", "E", "E", "E"],
+        subgroupLabels: {
+          vertical: "Con Dios",
+          horizontal: "Con los Demás",
+          internal: "Conmigo Mismo",
+        },
       },
       G: {
         letter: "G",
@@ -491,6 +502,13 @@ const es: Translations = {
           { text: "Duermo lo suficiente y descanso intencionalmente", example: "Ej: Duermo 7-8 horas por noche y tengo momentos de ocio planificados." },
           { text: "Puedo decir \"no\" sin culpa cuando es necesario", example: "Ej: Rechazo invitaciones y pedidos que no se alinean con mis prioridades." },
         ],
+        anchorTypes: ["F", "F", "F", "F", "E", "E", "F", "F", "E", "F", "E", "E", "E", "F", "F"],
+        subgroupLabels: {
+          spiritual: "Espiritual",
+          emotional: "Emocional",
+          financial: "Financiero",
+          temporal: "Temporal",
+        },
       },
       O: {
         letter: "O",
@@ -513,6 +531,12 @@ const es: Translations = {
           { text: "Mi obediencia es motivada por el amor — no por el miedo o la performance", example: "Ej: Obedezco porque amo a Dios, no para impresionar a las personas." },
           { text: "Estoy avanzando consistentemente en el propósito para el cual fui llamado", example: "Ej: Cada mes estoy más cerca de lo que Dios planeó para mí." },
         ],
+        anchorTypes: ["F", "E", "F", "F", "E", "E", "E", "E", "E"],
+        subgroupLabels: {
+          basic: "Obediencia Básica",
+          radical: "Obediencia Radical",
+          fruit: "Fruto",
+        },
       },
     },
     results: {
@@ -568,6 +592,34 @@ const es: Translations = {
       },
     },
     homeCta: "Hacer el Diagnóstico Gratuito",
+    emotionalAlert: {
+      label: "Una Observación Importante",
+      text: "Una puntuación baja en el Gobierno Emocional puede tener dos orígenes distintos.\n\nEl primero es falta de disciplina — y el gobierno es la respuesta.\n\nEl segundo es una herida aún abierta que secuestra tus reacciones antes de que puedas gobernarlas.\n\nSi notas que lo intentas pero no puedes — que la reacción ocurre antes que la decisión — esto puede ser una señal de que algo necesita ser procesado, no solo disciplinado.\n\nLa mentoría te ayudará a distinguir los dos.",
+    },
+    intro: {
+      label: "Cómo Fue Construido Este Diagnóstico",
+      title: "Una herramienta seria",
+      titleItalic: "para un cambio real.",
+      subtitle: "Este no es un test de personalidad ni un quiz de autoayuda. Es un instrumento de diagnóstico construido sobre dos pilares: rigor metodológico y fundamento bíblico.",
+      cta: "Comenzar el Diagnóstico",
+      cards: [
+        {
+          tag: "Escala Validada",
+          title: "Anclas conductuales",
+          text: "Las 44 afirmaciones usan descripciones concretas de comportamiento — no números abstractos. Este formato, recomendado desde Likert (1932) y validado por décadas de investigación psicométrica, elimina la arbitrariedad: no \"das una nota\" — te reconoces en una realidad.",
+        },
+        {
+          tag: "Cuatro Dominios",
+          title: "Modelo integrado",
+          text: "El modelo P-A-G-O mapea a la persona en cuatro dimensiones que la literatura de desarrollo humano reconoce como interdependientes: valores y creencias, coherencia interna, autodisciplina y acción comprometida. El diagnóstico mide las cuatro — y muestra dónde está el eslabón más débil.",
+        },
+        {
+          tag: "Base Bíblica",
+          title: "Fundamento innegociable",
+          text: "El método no usa la Biblia como decoración — es el fundamento epistemológico. Cada pilar tiene raíz verificable: Principio (Prov 11:3), Alineamiento (Prov 3:5-6), Gobierno (Lc 16:10), Obediencia (Is 1:19). Este diagnóstico no mide religiosidad — mide coherencia entre creencia y vida.",
+        },
+      ],
+    },
   },
 
   // === CHATBOT ===

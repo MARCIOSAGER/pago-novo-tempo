@@ -14,7 +14,7 @@ export default function DiagnosticoIntro({ onStart }: DiagnosticoIntroProps) {
   const intro = t.diagnostico.intro;
 
   return (
-    <section className="bg-warm-white py-16 lg:py-24">
+    <section className="bg-navy-dark py-16 lg:py-24">
       <div className="max-w-4xl mx-auto px-6 lg:px-12">
         <motion.div
           ref={ref}
@@ -23,11 +23,11 @@ export default function DiagnosticoIntro({ onStart }: DiagnosticoIntroProps) {
           transition={{ duration: 0.7 }}
           className="text-center mb-14"
         >
-          <p className="font-accent text-[11px] uppercase tracking-[0.4em] text-navy/50 mb-6">
+          <p className="font-accent text-[11px] uppercase tracking-[0.4em] text-gold mb-6">
             {intro.label}
           </p>
 
-          <h2 className="font-display text-3xl lg:text-5xl font-semibold text-navy leading-[1.15] mb-2">
+          <h2 className="font-display text-3xl lg:text-5xl font-semibold text-warm-white leading-[1.15] mb-2">
             {intro.title}
           </h2>
           <h2 className="font-display text-3xl lg:text-5xl font-semibold text-gold italic leading-[1.15] mb-8">
@@ -36,7 +36,7 @@ export default function DiagnosticoIntro({ onStart }: DiagnosticoIntroProps) {
 
           <div className="w-16 h-[1px] bg-gold mx-auto mb-8" />
 
-          <p className="font-body text-base leading-relaxed max-w-2xl mx-auto text-navy/70">
+          <p className="font-body text-base leading-relaxed max-w-2xl mx-auto text-warm-white/70">
             {intro.subtitle}
           </p>
         </motion.div>
@@ -49,15 +49,15 @@ export default function DiagnosticoIntro({ onStart }: DiagnosticoIntroProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
-              className="border border-navy/10 p-6 lg:p-8"
+              className="border border-warm-white/10 p-6 lg:p-8"
             >
               <span className="font-accent text-[10px] uppercase tracking-[0.3em] text-gold">
                 {card.tag}
               </span>
-              <h3 className="font-display text-xl font-semibold text-navy mt-3 mb-4">
+              <h3 className="font-display text-xl font-semibold text-warm-white mt-3 mb-4">
                 {card.title}
               </h3>
-              <p className="font-body text-sm leading-relaxed text-navy/60">
+              <p className="font-body text-sm leading-relaxed text-warm-white/60">
                 {card.text}
               </p>
             </motion.div>

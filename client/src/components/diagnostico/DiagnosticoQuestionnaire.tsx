@@ -18,7 +18,7 @@ export default function DiagnosticoQuestionnaire() {
     pillarAverage,
     overallAverage,
     weakestPillar,
-    emotionalAverage,
+    pillarSubgroups,
     isStepComplete,
     chartData,
     hasSavedState,
@@ -137,7 +137,7 @@ export default function DiagnosticoQuestionnaire() {
         chartData={chartData}
         answers={state.answers}
         onRestart={handleRestart}
-        emotionalAverage={emotionalAverage()}
+        pillarSubgroups={pillarSubgroups}
       />
     );
   }
