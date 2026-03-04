@@ -66,14 +66,15 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
       <div
         ref={ref}
         style={{
-          width: "794px",
+          width: "680px",
+          overflow: "hidden",
           fontFamily: "Lora, serif",
           backgroundColor: "#FFFFFF",
           color: "#1A2744",
         }}
       >
         {/* Section 1 — Greeting + Overall Score */}
-        <div style={{ textAlign: "center", padding: "48px 40px 36px" }}>
+        <div style={{ textAlign: "center", padding: "40px 32px 32px" }}>
           <p
             style={{
               fontFamily: "Montserrat, sans-serif",
@@ -164,8 +165,8 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
-            gap: "16px",
-            padding: "20px 40px",
+            gap: "14px",
+            padding: "16px 32px",
           }}
         >
           {PILLAR_ORDER.map((pillar) => {
@@ -362,16 +363,16 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
           style={{
             display: "flex",
             justifyContent: "center",
-            padding: "32px 40px",
+            padding: "24px 32px",
           }}
         >
           <RadarChart
-            width={380}
-            height={380}
+            width={400}
+            height={340}
             data={radarData}
             cx="50%"
             cy="50%"
-            outerRadius="65%"
+            outerRadius="55%"
           >
             <PolarGrid
               stroke="#B8A88A"
@@ -411,7 +412,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
         </div>
 
         {/* Section 4 — Pillar Analysis */}
-        <div style={{ padding: "24px 40px", pageBreakBefore: "always" as const }}>
+        <div style={{ padding: "24px 32px", pageBreakBefore: "always" as const }}>
           <p
             style={{
               fontFamily: "Montserrat, sans-serif",
