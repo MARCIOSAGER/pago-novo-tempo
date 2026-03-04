@@ -32,7 +32,7 @@ export default function DiagnosticoHeroSection({
   };
 
   return (
-    <section className="bg-navy pt-32 pb-20 lg:pb-28">
+    <section className="bg-gradient-to-b from-navy-dark via-navy to-navy-light/90 pt-32 pb-20 lg:pb-28">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <Link href="/">
           <span className="inline-flex items-center gap-2 font-accent text-xs uppercase tracking-[0.2em] text-gold hover:text-gold-light transition-colors mb-10 cursor-pointer">
