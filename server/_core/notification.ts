@@ -239,7 +239,10 @@ export async function sendDiagnosticEmail(data: DiagnosticEmailData): Promise<vo
       <a href="https://metodopago.com/mentoria" style="display: inline-block; background: #1A2744; color: #C8A951; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">Conheça a Mentoria P.A.G.O.</a>
     </div>
   </div>
-  <p style="text-align: center; color: #999; font-size: 11px; margin-top: 15px;">
+  <p style="text-align: center; color: #999; font-size: 11px; font-style: italic; margin-top: 15px;">
+    Este diagnóstico é uma ferramenta de reflexão. Os resultados são um ponto de partida para conversa com um mentor.
+  </p>
+  <p style="text-align: center; color: #999; font-size: 10px; margin-top: 8px;">
     Este email foi enviado porque você completou o diagnóstico em metodopago.com
   </p>
 </div></body></html>`;
@@ -249,7 +252,7 @@ export async function sendDiagnosticEmail(data: DiagnosticEmailData): Promise<vo
       from: fromAddress,
       to: data.email,
       subject: `Seu Diagnóstico P.A.G.O. — Média ${data.mediaGeral.toFixed(1)}`,
-      text: `Olá ${data.nome},\n\nSeu Diagnóstico P.A.G.O.:\nMédia Geral: ${data.mediaGeral.toFixed(1)}\nP (Princípio): ${data.mediaP.toFixed(1)}\nA (Alinhamento): ${data.mediaA.toFixed(1)}\nG (Governo): ${data.mediaG.toFixed(1)}\nO (Obediência): ${data.mediaO.toFixed(1)}\nPilar mais fraco: ${pillarNames[data.pilarMaisFraco]}\n\nConheça a Mentoria P.A.G.O.: https://metodopago.com/mentoria`,
+      text: `Olá ${data.nome},\n\nSeu Diagnóstico P.A.G.O.:\nMédia Geral: ${data.mediaGeral.toFixed(1)}\nP (Princípio): ${data.mediaP.toFixed(1)}\nA (Alinhamento): ${data.mediaA.toFixed(1)}\nG (Governo): ${data.mediaG.toFixed(1)}\nO (Obediência): ${data.mediaO.toFixed(1)}\nPilar mais fraco: ${pillarNames[data.pilarMaisFraco]}\n\nConheça a Mentoria P.A.G.O.: https://metodopago.com/mentoria\n\nEste diagnóstico é uma ferramenta de reflexão. Os resultados são um ponto de partida para conversa com um mentor.`,
       encoding: "utf-8",
       html,
     });

@@ -644,6 +644,28 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
           </div>
         )}
 
+        {/* Disclaimer */}
+        <div
+          style={{
+            textAlign: "center",
+            padding: "24px 32px 0",
+            borderTop: "1px solid #E8E4DE",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "Lora, serif",
+              fontSize: "10px",
+              fontStyle: "italic",
+              color: "rgba(26,39,68,0.4)",
+              lineHeight: "1.6",
+            }}
+          >
+            {(t.diagnostico as any).intro?.disclaimer ??
+              "Este diagnóstico é uma ferramenta de reflexão. Os resultados são um ponto de partida para conversa com um mentor."}
+          </p>
+        </div>
+
         {/* Footer spacing — actual footer is rendered by jsPDF on every page */}
         <div style={{ height: "16px" }} />
       </div>
