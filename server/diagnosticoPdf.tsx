@@ -218,10 +218,11 @@ function PageHeader() {
   );
 }
 
-function PageFooter() {
+function PageFooter({ date }: { date: string }) {
   return (
     <View style={s.footer} fixed>
-      <Text style={s.footerText}>pagonovotempo.com</Text>
+      <Text style={s.footerText}>metodopago.com</Text>
+      <Text style={s.footerText}>{date}</Text>
       <Text style={s.footerPage} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} />
     </View>
   );
@@ -263,13 +264,15 @@ function DiagnosticoPdfDocument({
   const weakestData = t.diagnostico.pillars[weakestPillar];
   const weakestAdvice = t.diagnostico.results.pillarAdvice[weakestPillar];
   const pillarLabels = Object.fromEntries(PILLAR_ORDER.map((p) => [p, t.diagnostico.pillars[p].name])) as Record<PillarKey, string>;
+  const now = new Date();
+  const dateStr = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`;
 
   return (
     <Document>
       {/* Page 1 — Score + Cards + Chart */}
       <Page size="A4" style={s.page}>
         <PageHeader />
-        <PageFooter />
+        <PageFooter date={dateStr} />
 
         <View style={{ alignItems: "center", marginBottom: 20 }}>
           <Text style={s.label}>{t.diagnostico.results.label}</Text>
@@ -282,7 +285,7 @@ function DiagnosticoPdfDocument({
           <Text style={{ ...s.label, color: C.navy, opacity: 0.5, marginBottom: 6, marginTop: 4 }}>
             {t.diagnostico.results.overallLabel}
           </Text>
-          <Text style={{ ...s.badge, borderColor: overallStatus.color, color: overallStatus.color }}>
+          <Text style={{ ...s.badge, alignSelf: "center", borderColor: overallStatus.color, color: overallStatus.color }}>
             {overallStatusLabel}
           </Text>
         </View>
@@ -344,7 +347,7 @@ function DiagnosticoPdfDocument({
       {/* Page 2 — Pillar Analysis */}
       <Page size="A4" style={s.page}>
         <PageHeader />
-        <PageFooter />
+        <PageFooter date={dateStr} />
 
         <Text style={{ ...s.label, marginBottom: 20 }}>
           {t.diagnostico.results.analysisSectionTitle ?? "Analise por Pilar"}
@@ -378,7 +381,7 @@ function DiagnosticoPdfDocument({
       {/* Page 3 — Weakest Pillar + Alert + Disclaimer */}
       <Page size="A4" style={s.page}>
         <PageHeader />
-        <PageFooter />
+        <PageFooter date={dateStr} />
 
         <View style={{ alignItems: "center", marginBottom: 30 }}>
           <Text style={s.label}>{t.diagnostico.results.weakestLabel}</Text>
