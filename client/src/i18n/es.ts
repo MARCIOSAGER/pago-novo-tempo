@@ -843,7 +843,7 @@ const es: Translations = {
       titleItalic: "para un cambio real.",
       subtitle: "Este no es un test de personalidad ni un quiz de autoayuda. Es un instrumento de diagnóstico construido sobre dos pilares: rigor metodológico y fundamento bíblico.",
       cta: "Comenzar el Diagnóstico",
-      disclaimer: "Este diagnóstico es una herramienta de reflexión, no una evaluación psicológica. Los resultados son un punto de partida para conversar con un mentor — no un veredicto sobre quién eres.",
+      disclaimer: "Este diagnóstico es una herramienta de reflexión. Los resultados son un punto de partida para conversar con un mentor.",
       cards: [
         {
           tag: "Escala Validada",
