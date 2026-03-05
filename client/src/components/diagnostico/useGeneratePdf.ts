@@ -93,7 +93,7 @@ export function useGeneratePdf() {
       el.style.left = "0";
       el.style.top = "0";
       el.style.zIndex = "-9999";
-      el.style.opacity = "0";
+      el.style.pointerEvents = "none";
 
       try {
         await html2pdf()
