@@ -573,6 +573,40 @@ export const appRouter = router({
         return { success: true };
       }),
 
+    // Admin: send/resend diagnostic email
+    sendEmail: adminProcedure
+      .input(z.object({
+        id: z.number().int().positive(),
+        email: z.string().email().max(320).toLowerCase(),
+      }))
+      .mutation(async ({ input }) => {
+        const result = await getDiagnosticoById(input.id);
+        if (!result) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Diagnóstico não encontrado." });
+        }
+        await sendDiagnosticEmail({
+          nome: result.nome,
+          email: input.email,
+          mediaP: result.mediaP,
+          mediaA: result.mediaA,
+          mediaG: result.mediaG,
+          mediaO: result.mediaO,
+          mediaGeral: result.mediaGeral,
+          pilarMaisFraco: result.pilarMaisFraco,
+        });
+        return { success: true };
+      }),
+
+    // Admin: bulk delete diagnostics
+    bulkDelete: adminProcedure
+      .input(z.object({ ids: z.array(z.number().int().positive()).min(1).max(100) }))
+      .mutation(async ({ input }) => {
+        for (const id of input.ids) {
+          await deleteDiagnostico(id);
+        }
+        return { success: true, deleted: input.ids.length };
+      }),
+
     // Admin: export all diagnostics for CSV
     export: adminProcedure.query(async () => {
       return exportAllDiagnosticos();

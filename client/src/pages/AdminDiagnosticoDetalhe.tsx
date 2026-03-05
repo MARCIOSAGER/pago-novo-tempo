@@ -1,8 +1,10 @@
 import { trpc } from "@/lib/trpc";
 import { useRoute, useLocation } from "wouter";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -24,6 +26,8 @@ import {
   CheckCircle,
   Archive,
   RotateCcw,
+  Send,
+  Download,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -125,6 +129,58 @@ export default function AdminDiagnosticoDetalhe() {
       toast.error("Erro ao excluir diagnóstico.");
     },
   });
+
+  const [emailTo, setEmailTo] = useState("");
+  const sendEmail = trpc.diagnostico.sendEmail.useMutation({
+    onSuccess: () => {
+      toast.success("Email enviado com sucesso!");
+      setEmailTo("");
+    },
+    onError: () => {
+      toast.error("Erro ao enviar email.");
+    },
+  });
+
+  const handleSendEmail = () => {
+    if (!diag) return;
+    const target = emailTo || diag.email;
+    if (!target || !target.includes("@")) {
+      toast.error("Informe um email válido.");
+      return;
+    }
+    sendEmail.mutate({ id: diag.id, email: target });
+  };
+
+  const handleDownloadCSV = () => {
+    if (!diag) return;
+    const headers = ["Campo", "Valor"];
+    const rows = [
+      ["Nome", diag.nome],
+      ["Email", diag.email || "—"],
+      ["Média Geral", diag.mediaGeral.toFixed(1)],
+      ["P — Princípio", diag.mediaP.toFixed(1)],
+      ["A — Alinhamento", diag.mediaA.toFixed(1)],
+      ["G — Governo", diag.mediaG.toFixed(1)],
+      ["O — Obediência", diag.mediaO.toFixed(1)],
+      ["Pilar Mais Fraco", `${diag.pilarMaisFraco} — ${pillarNames[diag.pilarMaisFraco]}`],
+      ["Status", statusLabels[diag.status] || diag.status],
+      ["Data", formatDate(diag.createdAt)],
+      ["", ""],
+      ["Respostas P", (diag.answersP as number[]).join(", ")],
+      ["Respostas A", (diag.answersA as number[]).join(", ")],
+      ["Respostas G", (diag.answersG as number[]).join(", ")],
+      ["Respostas O", (diag.answersO as number[]).join(", ")],
+    ];
+    const csv = [headers.join(","), ...rows.map((r) => r.map((v) => `"${v}"`).join(","))].join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `diagnostico-${diag.nome.replace(/\s+/g, "-")}-${diag.id}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success("CSV baixado!");
+  };
 
   const handleStatusChange = (newStatus: "new" | "reviewed" | "archived") => {
     if (!diag) return;
@@ -311,6 +367,40 @@ export default function AdminDiagnosticoDetalhe() {
         </CardContent>
       </Card>
 
+      {/* Send Email */}
+      <Card className="border-border/50">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-accent uppercase tracking-wider text-muted-foreground">
+            Enviar Resultado por Email
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-2">
+            <Input
+              type="email"
+              placeholder={diag.email || "Digite o email do destinatário..."}
+              value={emailTo}
+              onChange={(e) => setEmailTo(e.target.value)}
+              className="font-accent text-sm"
+            />
+            <Button
+              size="sm"
+              className="gap-2 font-accent text-xs shrink-0"
+              onClick={handleSendEmail}
+              disabled={sendEmail.isPending}
+            >
+              <Send className="h-3.5 w-3.5" />
+              {sendEmail.isPending ? "Enviando..." : "Enviar"}
+            </Button>
+          </div>
+          {diag.email && !emailTo && (
+            <p className="text-xs text-muted-foreground mt-2">
+              Será enviado para <strong>{diag.email}</strong> (email do diagnóstico)
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Actions */}
       <Card className="border-border/50">
         <CardHeader className="pb-3">
@@ -320,6 +410,15 @@ export default function AdminDiagnosticoDetalhe() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 font-accent text-xs"
+              onClick={handleDownloadCSV}
+            >
+              <Download className="h-3.5 w-3.5" />
+              Baixar CSV
+            </Button>
             {diag.status !== "reviewed" && (
               <Button
                 variant="outline"

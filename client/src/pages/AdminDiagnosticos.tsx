@@ -22,12 +22,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
   Search,
   Download,
   ChevronLeft,
   ChevronRight,
   Filter,
   Eye,
+  Trash2,
 } from "lucide-react";
 import { Link } from "wouter";
 import { toast } from "sonner";
@@ -82,6 +95,7 @@ export default function AdminDiagnosticos() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
   const pageSize = 15;
 
   const searchTimeout = useMemo(() => ({ id: null as ReturnType<typeof setTimeout> | null }), []);
@@ -104,11 +118,52 @@ export default function AdminDiagnosticos() {
     pageSize,
   });
 
+  const utils = trpc.useUtils();
+
+  const bulkDelete = trpc.diagnostico.bulkDelete.useMutation({
+    onSuccess: (result) => {
+      toast.success(`${result.deleted} diagnóstico(s) excluído(s)!`);
+      setSelected(new Set());
+      utils.diagnostico.listFiltered.invalidate();
+      utils.diagnostico.metrics.invalidate();
+    },
+    onError: () => {
+      toast.error("Erro ao excluir diagnósticos.");
+    },
+  });
+
   const { refetch: fetchExport } = trpc.diagnostico.export.useQuery(undefined, {
     enabled: false,
   });
 
   const totalPages = data ? Math.ceil(data.total / pageSize) : 0;
+  const pageIds = data?.items.map((i) => i.id) ?? [];
+  const allPageSelected = pageIds.length > 0 && pageIds.every((id) => selected.has(id));
+
+  const toggleOne = (id: number) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleAll = () => {
+    if (allPageSelected) {
+      setSelected((prev) => {
+        const next = new Set(prev);
+        pageIds.forEach((id) => next.delete(id));
+        return next;
+      });
+    } else {
+      setSelected((prev) => {
+        const next = new Set(prev);
+        pageIds.forEach((id) => next.add(id));
+        return next;
+      });
+    }
+  };
 
   const handleExportCSV = async () => {
     try {
@@ -171,15 +226,49 @@ export default function AdminDiagnosticos() {
           </h1>
           <p className="text-sm text-muted-foreground capitalize">{timestamp}</p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleExportCSV}
-          className="font-accent text-xs gap-2"
-        >
-          <Download className="h-3.5 w-3.5" />
-          Exportar CSV
-        </Button>
+        <div className="flex items-center gap-2">
+          {selected.size > 0 && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="font-accent text-xs gap-2 text-destructive border-destructive/30 hover:bg-destructive/10"
+                  disabled={bulkDelete.isPending}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Excluir ({selected.size})
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Tem certeza que deseja excluir <strong>{selected.size} diagnóstico(s)</strong>? Esta ação não pode ser desfeita.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => bulkDelete.mutate({ ids: Array.from(selected) })}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Excluir
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportCSV}
+            className="font-accent text-xs gap-2"
+          >
+            <Download className="h-3.5 w-3.5" />
+            Exportar CSV
+          </Button>
+        </div>
       </div>
       <Separator />
 
@@ -249,6 +338,12 @@ export default function AdminDiagnosticos() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[40px]">
+                      <Checkbox
+                        checked={allPageSelected}
+                        onCheckedChange={toggleAll}
+                      />
+                    </TableHead>
                     <TableHead className="font-accent text-xs uppercase tracking-wider w-[50px]">
                       #
                     </TableHead>
@@ -275,6 +370,12 @@ export default function AdminDiagnosticos() {
                 <TableBody>
                   {data.items.map((item) => (
                     <TableRow key={item.id} className="group">
+                      <TableCell>
+                        <Checkbox
+                          checked={selected.has(item.id)}
+                          onCheckedChange={() => toggleOne(item.id)}
+                        />
+                      </TableCell>
                       <TableCell className="text-xs text-muted-foreground font-mono">
                         {item.id}
                       </TableCell>
