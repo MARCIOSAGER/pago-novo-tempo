@@ -396,6 +396,8 @@ const pt = {
       subtitle: "44 questões. Quatro pilares. Um diagnóstico honesto da sua vida espiritual, emocional e prática.",
       badge: "~10 minutos",
       namePlaceholder: "Seu nome",
+      emailPlaceholder: "Seu e-mail (opcional)",
+      emailHint: "Informe seu e-mail para receber o relatório automaticamente ao final.",
       startButton: "Iniciar Diagnóstico",
       nameRequired: "Digite seu nome para iniciar.",
     },

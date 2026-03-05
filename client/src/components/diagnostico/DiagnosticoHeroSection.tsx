@@ -9,7 +9,8 @@ const HERO_IMAGE = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b
 
 interface DiagnosticoHeroSectionProps {
   nome: string;
-  onStart: (nome: string) => void;
+  email: string;
+  onStart: (nome: string, email: string) => void;
   hasSavedState: boolean;
   onContinue: () => void;
   onRestart: () => void;
@@ -17,6 +18,7 @@ interface DiagnosticoHeroSectionProps {
 
 export default function DiagnosticoHeroSection({
   nome,
+  email,
   onStart,
   hasSavedState,
   onContinue,
@@ -24,13 +26,14 @@ export default function DiagnosticoHeroSection({
 }: DiagnosticoHeroSectionProps) {
   const { t } = useLanguage();
   const [inputNome, setInputNome] = useState(nome);
+  const [inputEmail, setInputEmail] = useState(email);
 
   const handleStart = () => {
     if (inputNome.trim().length < 2) {
       toast.error(t.diagnostico.hero.nameRequired);
       return;
     }
-    onStart(inputNome.trim());
+    onStart(inputNome.trim(), inputEmail.trim());
   };
 
   return (
@@ -139,20 +142,33 @@ export default function DiagnosticoHeroSection({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.6 }}
-                className="flex flex-col sm:flex-row gap-4 max-w-lg"
+                className="max-w-lg space-y-4"
               >
-                <input
-                  type="text"
-                  value={inputNome}
-                  onChange={(e) => setInputNome(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleStart()}
-                  placeholder={t.diagnostico.hero.namePlaceholder}
-                  className="flex-1 bg-transparent border-b border-warm-white/30 text-warm-white font-body text-base py-3 focus:border-gold outline-none transition-colors placeholder:text-warm-white/40"
-                />
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <input
+                    type="text"
+                    value={inputNome}
+                    onChange={(e) => setInputNome(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleStart()}
+                    placeholder={t.diagnostico.hero.namePlaceholder}
+                    className="flex-1 bg-transparent border-b border-warm-white/30 text-warm-white font-body text-base py-3 focus:border-gold outline-none transition-colors placeholder:text-warm-white/40"
+                  />
+                  <input
+                    type="email"
+                    value={inputEmail}
+                    onChange={(e) => setInputEmail(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleStart()}
+                    placeholder={t.diagnostico.hero.emailPlaceholder}
+                    className="flex-1 bg-transparent border-b border-warm-white/30 text-warm-white font-body text-base py-3 focus:border-gold outline-none transition-colors placeholder:text-warm-white/40"
+                  />
+                </div>
+                <p className="font-body text-[11px] text-warm-white/40">
+                  {t.diagnostico.hero.emailHint}
+                </p>
                 <button
                   type="button"
                   onClick={handleStart}
-                  className="btn-shine font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy px-8 py-4 hover:bg-gold-light transition-all duration-300 shrink-0"
+                  className="btn-shine font-accent text-xs uppercase tracking-[0.2em] bg-gold text-navy px-8 py-4 hover:bg-gold-light transition-all duration-300"
                 >
                   {t.diagnostico.hero.startButton}
                 </button>

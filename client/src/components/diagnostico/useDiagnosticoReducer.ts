@@ -18,6 +18,7 @@ const STORAGE_KEY = "pago-diagnostico-state-v3";
 
 export interface DiagnosticoState {
   nome: string;
+  email: string;
   currentStep: number; // 0=hero, 1=P, 2=A, 3=G, 4=O, 5=results
   answers: Record<PillarKey, (number | null)[]>;
   completed: boolean;
@@ -25,6 +26,7 @@ export interface DiagnosticoState {
 
 type DiagnosticoAction =
   | { type: "SET_NAME"; nome: string }
+  | { type: "SET_EMAIL"; email: string }
   | { type: "SET_ANSWER"; pillar: PillarKey; index: number; value: number }
   | { type: "NEXT_STEP" }
   | { type: "PREV_STEP" }
@@ -36,6 +38,7 @@ type DiagnosticoAction =
 function createInitialState(): DiagnosticoState {
   return {
     nome: "",
+    email: "",
     currentStep: 0,
     answers: {
       P: Array(8).fill(null),
@@ -51,6 +54,8 @@ function reducer(state: DiagnosticoState, action: DiagnosticoAction): Diagnostic
   switch (action.type) {
     case "SET_NAME":
       return { ...state, nome: action.nome };
+    case "SET_EMAIL":
+      return { ...state, email: action.email };
     case "SET_ANSWER": {
       const newAnswers = { ...state.answers };
       newAnswers[action.pillar] = [...newAnswers[action.pillar]];

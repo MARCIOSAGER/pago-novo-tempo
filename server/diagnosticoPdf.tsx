@@ -193,6 +193,7 @@ function RadarChartSvg({ averages, labels }: { averages: Record<PillarKey, numbe
             x={labelPt.x}
             y={labelPt.y + (i === 0 ? -2 : i === 2 ? 6 : 3)}
             fill={C.navy}
+            // @ts-expect-error — SVG text props work at runtime but types are incomplete
             fontSize={9}
             fontFamily="Montserrat"
             fontWeight={500}
@@ -412,6 +413,7 @@ function DiagnosticoPdfDocument({
 // ─── Server-side PDF generation ─────────────────────────────
 export async function generateDiagnosticoPdfBase64(input: PdfGenerateInput): Promise<string> {
   const doc = React.createElement(DiagnosticoPdfDocument, input);
+  // @ts-expect-error — @react-pdf/renderer types are overly strict for createElement output
   const blob = await pdf(doc).toBlob();
   const arrayBuffer = await blob.arrayBuffer();
   return Buffer.from(arrayBuffer).toString("base64");

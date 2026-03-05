@@ -11,11 +11,12 @@ import type { PillarKey, PillarSubgroups } from "./useDiagnosticoReducer";
 
 interface DiagnosticoResultsProps {
   nome: string;
+  email: string;
   pillarAverages: Record<PillarKey, number>;
   overallAverage: number;
   weakestPillar: PillarKey;
   chartData: { pillar: string; value: number; fullMark: number }[];
-  answers: Record<PillarKey, number[]>;
+  answers: Record<PillarKey, (number | null)[]>;
   onRestart: () => void;
   pillarSubgroups: PillarSubgroups;
   weakestSubgroup: string | null;
@@ -26,6 +27,7 @@ const PILLAR_ORDER: PillarKey[] = ["P", "A", "G", "O"];
 
 export default function DiagnosticoResults({
   nome,
+  email: prefilledEmail,
   pillarAverages,
   overallAverage,
   weakestPillar,
@@ -39,9 +41,10 @@ export default function DiagnosticoResults({
   const { t } = useLanguage();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(prefilledEmail);
   const [emailSent, setEmailSent] = useState(false);
   const submittedRef = useRef(false);
+  const autoEmailSentRef = useRef(false);
   const { generating, generatePdf, generatePdfBase64 } = useGeneratePdf();
   const [sendingEmail, setSendingEmail] = useState(false);
 
@@ -53,8 +56,9 @@ export default function DiagnosticoResults({
   const weakestAdvice = t.diagnostico.results.pillarAdvice[weakestPillar];
 
   const submitMutation = trpc.diagnostico.submit.useMutation();
+  const sendEmailWithPdfMutation = trpc.diagnostico.sendEmailWithPdf.useMutation();
 
-  // Auto-submit results to backend (fire-and-forget, no email)
+  // Auto-submit results to backend
   useEffect(() => {
     if (submittedRef.current) return;
     submittedRef.current = true;
@@ -62,10 +66,11 @@ export default function DiagnosticoResults({
     submitMutation.mutate(
       {
         nome,
-        answersP: answers.P,
-        answersA: answers.A,
-        answersG: answers.G,
-        answersO: answers.O,
+        email: prefilledEmail || undefined,
+        answersP: answers.P as number[],
+        answersA: answers.A as number[],
+        answersG: answers.G as number[],
+        answersO: answers.O as number[],
         mediaP: pillarAverages.P,
         mediaA: pillarAverages.A,
         mediaG: pillarAverages.G,
@@ -83,7 +88,37 @@ export default function DiagnosticoResults({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const sendEmailWithPdfMutation = trpc.diagnostico.sendEmailWithPdf.useMutation();
+  // Auto-send PDF email if email was provided at start
+  useEffect(() => {
+    if (autoEmailSentRef.current) return;
+    if (!prefilledEmail || !prefilledEmail.includes("@")) return;
+    autoEmailSentRef.current = true;
+
+    (async () => {
+      try {
+        const pdfBase64 = await generatePdfBase64(`diagnostico-${nome}.pdf`, pdfProps);
+        if (!pdfBase64) return;
+
+        await sendEmailWithPdfMutation.mutateAsync({
+          nome,
+          email: prefilledEmail,
+          mediaP: pillarAverages.P,
+          mediaA: pillarAverages.A,
+          mediaG: pillarAverages.G,
+          mediaO: pillarAverages.O,
+          mediaGeral: overallAverage,
+          pilarMaisFraco: weakestPillar,
+          pdfBase64,
+        });
+
+        setEmailSent(true);
+        toast.success(t.diagnostico.results.emailSent);
+      } catch {
+        // Silent fail for auto-send — user can still manually send
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSendEmail = async () => {
     if (!email || !email.includes("@")) {

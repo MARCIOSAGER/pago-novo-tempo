@@ -166,7 +166,7 @@ const components = {
 // MARKDOWN COMPONENT
 // ============================================================================
 
-type MarkdownProps = Omit<ComponentProps<typeof Streamdown>, "components" | "plugins"> & {
+type MarkdownProps = Omit<ComponentProps<typeof Streamdown>, "components" | "rehypePlugins"> & {
   /** Override specific element renderers */
   components?: Partial<typeof components>;
   /** Enable/disable code syntax highlighting (default: true) */
@@ -206,18 +206,18 @@ export const Markdown = memo(function Markdown({
   enableMermaid = true,
   ...props
 }: MarkdownProps) {
-  // Build plugins object based on what's enabled
+  // Build rehype plugins based on what's enabled
   // @see https://streamdown.ai/docs/code-blocks
   // @see https://streamdown.ai/docs/mermaid
-  const plugins: Record<string, unknown> = {};
-  if (enableCode) plugins.code = code;
-  if (enableMermaid) plugins.mermaid = mermaid;
+  const rehypePlugins: any[] = [];
+  if (enableCode) rehypePlugins.push(code);
+  if (enableMermaid) rehypePlugins.push(mermaid);
 
   return (
     <Streamdown
       className={cn("text-foreground leading-relaxed", className)}
       components={{ ...components, ...customComponents }}
-      plugins={plugins}
+      rehypePlugins={rehypePlugins}
       shikiTheme={shikiTheme}
       controls={controls}
       {...props}

@@ -398,6 +398,8 @@ const es: Translations = {
       subtitle: "44 preguntas. Cuatro pilares. Un diagnóstico honesto de tu vida espiritual, emocional y práctica.",
       badge: "~10 minutos",
       namePlaceholder: "Tu nombre",
+      emailPlaceholder: "Tu e-mail (opcional)",
+      emailHint: "Ingresa tu e-mail para recibir el informe automáticamente al final.",
       startButton: "Iniciar Diagnóstico",
       nameRequired: "Ingresa tu nombre para comenzar.",
     },

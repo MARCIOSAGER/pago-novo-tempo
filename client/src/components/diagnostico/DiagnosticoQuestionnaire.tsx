@@ -32,8 +32,9 @@ export default function DiagnosticoQuestionnaire() {
   const [showIntro, setShowIntro] = useState(false);
 
   const handleStart = useCallback(
-    (nome: string) => {
+    (nome: string, email: string) => {
       dispatch({ type: "SET_NAME", nome });
+      dispatch({ type: "SET_EMAIL", email });
       setShowIntro(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
@@ -103,6 +104,7 @@ export default function DiagnosticoQuestionnaire() {
     return (
       <DiagnosticoHeroSection
         nome={state.nome}
+        email={state.email}
         onStart={handleStart}
         hasSavedState={hasSavedState && state.nome !== ""}
         onContinue={handleContinue}
@@ -133,6 +135,7 @@ export default function DiagnosticoQuestionnaire() {
     return (
       <DiagnosticoResults
         nome={state.nome}
+        email={state.email}
         pillarAverages={pillarAverages}
         overallAverage={overallAverage()}
         weakestPillar={weakestPillar()}

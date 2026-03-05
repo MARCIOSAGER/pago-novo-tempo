@@ -398,6 +398,8 @@ const en: Translations = {
       subtitle: "44 questions. Four pillars. An honest diagnosis of your spiritual, emotional, and practical life.",
       badge: "~10 minutes",
       namePlaceholder: "Your name",
+      emailPlaceholder: "Your e-mail (optional)",
+      emailHint: "Enter your e-mail to receive the report automatically at the end.",
       startButton: "Start Diagnostic",
       nameRequired: "Enter your name to begin.",
     },

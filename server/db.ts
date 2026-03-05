@@ -365,6 +365,7 @@ export async function listDiagnosticosFiltered(params: {
       mediaO: diagnosticoResults.mediaO,
       mediaGeral: diagnosticoResults.mediaGeral,
       pilarMaisFraco: diagnosticoResults.pilarMaisFraco,
+      pdfBase64: diagnosticoResults.pdfBase64,
       status: diagnosticoResults.status,
       createdAt: diagnosticoResults.createdAt,
     })
