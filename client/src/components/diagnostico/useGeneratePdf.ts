@@ -100,9 +100,9 @@ export function useGeneratePdf() {
           .set({
             margin: [MARGIN_TOP, MARGIN_X, MARGIN_BOTTOM, MARGIN_X],
             filename,
-            image: { type: "jpeg", quality: 0.98 },
+            image: { type: "jpeg", quality: 0.75 },
             html2canvas: {
-              scale: 2,
+              scale: 1.5,
               useCORS: true,
               logging: false,
               backgroundColor: "#FFFFFF",
