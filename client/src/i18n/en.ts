@@ -843,6 +843,7 @@ const en: Translations = {
       titleItalic: "for real change.",
       subtitle: "This is not a personality test or a self-help quiz. It is a diagnostic instrument built on two pillars: methodological rigor and biblical foundation.",
       cta: "Begin the Diagnostic",
+      disclaimer: "This diagnostic is a reflection tool, not a psychological evaluation. The results are a starting point for conversation with a mentor — not a verdict on who you are.",
       cards: [
         {
           tag: "Validated Scale",

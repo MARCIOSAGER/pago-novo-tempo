@@ -71,6 +71,11 @@ export default function DiagnosticoIntro({ onStart }: DiagnosticoIntroProps) {
           transition={{ duration: 0.5, delay: 0.5 }}
           className="text-center"
         >
+          {(intro as any).disclaimer && (
+            <p className="text-sm italic text-warm-white/40 text-center max-w-md mx-auto mb-8">
+              {(intro as any).disclaimer}
+            </p>
+          )}
           <button
             type="button"
             onClick={onStart}
