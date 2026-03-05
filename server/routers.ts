@@ -35,6 +35,8 @@ import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
 import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf } from "./_core/notification";
 import { generateDiagnosticoPdfBase64 } from "./diagnosticoPdf";
+import { computePillarSubgroups, computeWeakestSubgroupPerPillar } from "../shared/diagnostico";
+import pt from "../client/src/i18n/pt";
 
 // ─── Zod Schemas (strict input validation) ──────────────────────
 
@@ -637,7 +639,7 @@ export const appRouter = router({
         return { success: true };
       }),
 
-    // Admin: send/resend diagnostic email (with PDF if available)
+    // Admin: send/resend diagnostic email (always generates PDF on-demand)
     sendEmail: adminProcedure
       .input(z.object({
         id: z.number().int().positive(),
@@ -658,11 +660,28 @@ export const appRouter = router({
           mediaGeral: result.mediaGeral,
           pilarMaisFraco: result.pilarMaisFraco,
         };
-        if (result.pdfBase64) {
-          await sendDiagnosticEmailWithPdf({ ...emailData, pdfBase64: result.pdfBase64 });
-        } else {
-          await sendDiagnosticEmail(emailData);
+
+        // Use saved PDF if available, otherwise generate on-demand
+        let pdfBase64 = result.pdfBase64;
+        if (!pdfBase64) {
+          const subgroups = computePillarSubgroups(
+            result.answersA as number[],
+            result.answersG as number[],
+            result.answersO as number[],
+          );
+          const weakestSubs = computeWeakestSubgroupPerPillar(subgroups);
+          pdfBase64 = await generateDiagnosticoPdfBase64({
+            nome: result.nome,
+            pillarAverages: { P: result.mediaP, A: result.mediaA, G: result.mediaG, O: result.mediaO },
+            overallAverage: result.mediaGeral,
+            weakestPillar: result.pilarMaisFraco as "P" | "A" | "G" | "O",
+            pillarSubgroups: subgroups,
+            weakestSubgroupPerPillar: weakestSubs,
+            t: { diagnostico: pt.diagnostico },
+          });
         }
+
+        await sendDiagnosticEmailWithPdf({ ...emailData, pdfBase64 });
         return { success: true };
       }),
 

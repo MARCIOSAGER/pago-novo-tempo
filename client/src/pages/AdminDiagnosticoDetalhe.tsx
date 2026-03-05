@@ -398,12 +398,8 @@ export default function AdminDiagnosticoDetalhe() {
               Será enviado para <strong>{diag.email}</strong> (email do diagnóstico)
             </p>
           )}
-          <p className="text-xs mt-2">
-            {(diag as any).hasPdf ? (
-              <span className="text-emerald-600">PDF do relatório será enviado em anexo</span>
-            ) : (
-              <span className="text-amber-600">PDF não disponível — será enviado apenas o resumo</span>
-            )}
+          <p className="text-xs text-emerald-600 mt-2">
+            PDF do relatório será gerado e enviado em anexo
           </p>
         </CardContent>
       </Card>
