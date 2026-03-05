@@ -43,7 +43,8 @@ export default function DiagnosticoResults({
   const [email, setEmail] = useState("");
   const [emailSent, setEmailSent] = useState(false);
   const submittedRef = useRef(false);
-  const { printRef, generating, generatePdf } = useGeneratePdf();
+  const { printRef, generating, generatePdf, generatePdfBase64 } = useGeneratePdf();
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   const overallStatus = getStatusInfo(overallAverage);
   const overallStatusLabel = t.diagnostico.results.status[overallStatus.key];
@@ -81,38 +82,41 @@ export default function DiagnosticoResults({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSendEmail = () => {
+  const sendEmailWithPdfMutation = trpc.diagnostico.sendEmailWithPdf.useMutation();
+
+  const handleSendEmail = async () => {
     if (!email || !email.includes("@")) {
       toast.error(t.diagnostico.results.emailInvalid);
       return;
     }
 
-    submitMutation.mutate(
-      {
+    setSendingEmail(true);
+    try {
+      const pdfBase64 = await generatePdfBase64(`diagnostico-${nome}.pdf`);
+      if (!pdfBase64) {
+        toast.error(t.diagnostico.results.emailError);
+        return;
+      }
+
+      await sendEmailWithPdfMutation.mutateAsync({
         nome,
         email,
-        answersP: answers.P,
-        answersA: answers.A,
-        answersG: answers.G,
-        answersO: answers.O,
         mediaP: pillarAverages.P,
         mediaA: pillarAverages.A,
         mediaG: pillarAverages.G,
         mediaO: pillarAverages.O,
         mediaGeral: overallAverage,
         pilarMaisFraco: weakestPillar,
-        sendEmail: true,
-      },
-      {
-        onSuccess: () => {
-          setEmailSent(true);
-          toast.success(t.diagnostico.results.emailSent);
-        },
-        onError: () => {
-          toast.error(t.diagnostico.results.emailError);
-        },
-      }
-    );
+        pdfBase64,
+      });
+
+      setEmailSent(true);
+      toast.success(t.diagnostico.results.emailSent);
+    } catch {
+      toast.error(t.diagnostico.results.emailError);
+    } finally {
+      setSendingEmail(false);
+    }
   };
 
   return (
@@ -320,10 +324,10 @@ export default function DiagnosticoResults({
                 <button
                   type="button"
                   onClick={handleSendEmail}
-                  disabled={submitMutation.isPending}
+                  disabled={sendingEmail}
                   className="font-accent text-xs uppercase tracking-[0.15em] bg-gold text-navy px-6 py-3 hover:bg-gold-light transition-all duration-300 disabled:opacity-50"
                 >
-                  {submitMutation.isPending
+                  {sendingEmail
                     ? t.diagnostico.results.emailSending
                     : t.diagnostico.results.emailButton}
                 </button>

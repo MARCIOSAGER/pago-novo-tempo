@@ -68,9 +68,51 @@ function addHeaderFooter(doc: any, logoBase64: string | null, filename: string) 
   }
 }
 
+function getPdfOptions(filename: string) {
+  return {
+    margin: [MARGIN_TOP, MARGIN_X, MARGIN_BOTTOM, MARGIN_X],
+    filename,
+    image: { type: "jpeg" as const, quality: 0.6 },
+    html2canvas: {
+      scale: 1.2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: "#FFFFFF",
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: 800,
+    },
+    jsPDF: {
+      unit: "mm" as const,
+      format: "a4" as const,
+      orientation: "portrait" as const,
+    },
+    pagebreak: {
+      mode: ["avoid-all", "css", "legacy"],
+      avoid: [".pdf-no-break"],
+    },
+  };
+}
+
 export function useGeneratePdf() {
   const printRef = useRef<HTMLDivElement>(null);
   const [generating, setGenerating] = useState(false);
+
+  /** Prepare the element for rendering and return cleanup function */
+  const prepareElement = (el: HTMLDivElement) => {
+    const wrapper = el.parentElement as HTMLElement | null;
+    const origWrapper = wrapper?.style.cssText ?? "";
+
+    // Move the wrapper into the viewport so html2canvas can capture it
+    if (wrapper) {
+      wrapper.style.cssText =
+        "position:fixed;left:0;top:0;z-index:-9999;pointer-events:none;";
+    }
+
+    return () => {
+      if (wrapper) wrapper.style.cssText = origWrapper;
+    };
+  };
 
   const generatePdf = useCallback(async (filename: string) => {
     if (!printRef.current) return;
@@ -86,40 +128,12 @@ export function useGeneratePdf() {
         // Logo won't appear if it fails to load
       }
 
-      // Temporarily move printable element into viewport for html2canvas compatibility (mobile)
       const el = printRef.current;
-      const originalStyle = el.style.cssText;
-      el.style.position = "fixed";
-      el.style.left = "0";
-      el.style.top = "0";
-      el.style.zIndex = "-9999";
-      el.style.pointerEvents = "none";
+      const restore = prepareElement(el);
 
       try {
         await html2pdf()
-          .set({
-            margin: [MARGIN_TOP, MARGIN_X, MARGIN_BOTTOM, MARGIN_X],
-            filename,
-            image: { type: "jpeg", quality: 0.75 },
-            html2canvas: {
-              scale: 1.5,
-              useCORS: true,
-              logging: false,
-              backgroundColor: "#FFFFFF",
-              scrollX: 0,
-              scrollY: 0,
-              windowWidth: 800,
-            },
-            jsPDF: {
-              unit: "mm",
-              format: "a4",
-              orientation: "portrait",
-            },
-            pagebreak: {
-              mode: ["avoid-all", "css", "legacy"],
-              avoid: [".pdf-no-break"],
-            },
-          })
+          .set(getPdfOptions(filename))
           .from(el)
           .toPdf()
           .get("pdf")
@@ -128,7 +142,7 @@ export function useGeneratePdf() {
           })
           .save();
       } finally {
-        el.style.cssText = originalStyle;
+        restore();
       }
     } catch (err) {
       console.error("[PDF] Generation failed:", err);
@@ -138,5 +152,42 @@ export function useGeneratePdf() {
     }
   }, []);
 
-  return { printRef, generating, generatePdf };
+  /** Generate PDF and return as base64 string (without data URI prefix) */
+  const generatePdfBase64 = useCallback(async (filename: string): Promise<string | null> => {
+    if (!printRef.current) return null;
+    setGenerating(true);
+
+    try {
+      const html2pdf = (await import("html2pdf.js")).default;
+
+      let logoBase64: string | null = null;
+      try {
+        logoBase64 = await loadImageAsBase64("/favicon.png");
+      } catch {
+        // Logo won't appear if it fails to load
+      }
+
+      const el = printRef.current;
+      const restore = prepareElement(el);
+
+      try {
+        const worker = html2pdf().set(getPdfOptions(filename)).from(el).toPdf();
+        const doc: any = await worker.get("pdf");
+        addHeaderFooter(doc, logoBase64, filename);
+        const base64 = doc.output("datauristring") as string;
+        // Strip the "data:application/pdf;filename=...;base64," prefix
+        return base64.split(",")[1];
+      } finally {
+        restore();
+      }
+    } catch (err) {
+      console.error("[PDF] Generation failed:", err);
+      toast.error("Não foi possível gerar o PDF. Tente novamente.");
+      return null;
+    } finally {
+      setGenerating(false);
+    }
+  }, []);
+
+  return { printRef, generating, generatePdf, generatePdfBase64 };
 }

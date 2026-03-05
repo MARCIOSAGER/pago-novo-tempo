@@ -31,7 +31,7 @@ import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
-import { notifyInscription, sendDiagnosticEmail } from "./_core/notification";
+import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf } from "./_core/notification";
 
 // ─── Zod Schemas (strict input validation) ──────────────────────
 
@@ -524,6 +524,34 @@ export const appRouter = router({
           }).catch((err) => console.warn("[Notification] Diagnostic email error:", err));
         }
 
+        return { success: true };
+      }),
+
+    // Public: send diagnostic email with PDF attachment
+    sendEmailWithPdf: publicProcedure
+      .input(z.object({
+        nome: z.string().min(1).max(255),
+        email: z.string().email().max(320).toLowerCase(),
+        mediaGeral: z.number().min(0).max(10),
+        pilarMaisFraco: z.enum(["P", "A", "G", "O"]),
+        mediaP: z.number().min(0).max(10),
+        mediaA: z.number().min(0).max(10),
+        mediaG: z.number().min(0).max(10),
+        mediaO: z.number().min(0).max(10),
+        pdfBase64: z.string().min(1).max(5_000_000), // ~3.7MB PDF max
+      }))
+      .mutation(async ({ input }) => {
+        await sendDiagnosticEmailWithPdf({
+          nome: input.nome,
+          email: input.email,
+          mediaP: input.mediaP,
+          mediaA: input.mediaA,
+          mediaG: input.mediaG,
+          mediaO: input.mediaO,
+          mediaGeral: input.mediaGeral,
+          pilarMaisFraco: input.pilarMaisFraco,
+          pdfBase64: input.pdfBase64,
+        });
         return { success: true };
       }),
 

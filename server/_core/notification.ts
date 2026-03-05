@@ -262,6 +262,75 @@ export async function sendDiagnosticEmail(data: DiagnosticEmailData): Promise<vo
   }
 }
 
+// ─── Diagnostico P.A.G.O. Email with PDF attachment ─────────
+
+export type DiagnosticEmailWithPdfData = DiagnosticEmailData & {
+  pdfBase64: string;
+};
+
+export async function sendDiagnosticEmailWithPdf(data: DiagnosticEmailWithPdfData): Promise<void> {
+  if (!isSmtpConfigured()) {
+    console.warn("[Notification] SMTP not configured, skipping diagnostic email with PDF.");
+    return;
+  }
+
+  const transporter = getTransporter();
+  const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
+  const overallStatus = getStatusLabel(data.mediaGeral);
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+  <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: #C8A951; margin: 0; font-size: 24px;">P.A.G.O.</h1>
+    <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">Diagnóstico — Resultado Completo</p>
+  </div>
+  <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
+    <p style="font-size: 16px;">Olá <strong>${data.nome}</strong>,</p>
+    <p>Seu relatório completo do Diagnóstico P.A.G.O. está em anexo (PDF).</p>
+
+    <div style="text-align: center; margin: 25px 0; padding: 20px; background: #F5F0E8; border-radius: 8px;">
+      <p style="margin: 0 0 5px; color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">Média Geral</p>
+      <p style="margin: 0; font-size: 36px; font-weight: 700; color: #1A2744;">${data.mediaGeral.toFixed(1)}</p>
+      <p style="margin: 5px 0 0; font-size: 13px; font-weight: 600; color: ${overallStatus.color};">${overallStatus.label}</p>
+    </div>
+
+    <p style="font-size: 13px; color: #666; text-align: center;">Abra o PDF anexo para ver a análise detalhada de cada pilar, o gráfico radar e as recomendações personalizadas.</p>
+
+    <div style="text-align: center; margin-top: 25px;">
+      <a href="https://metodopago.com/mentoria" style="display: inline-block; background: #1A2744; color: #C8A951; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">Conheça a Mentoria P.A.G.O.</a>
+    </div>
+  </div>
+  <p style="text-align: center; color: #999; font-size: 11px; font-style: italic; margin-top: 15px;">
+    Este diagnóstico é uma ferramenta de reflexão. Os resultados são um ponto de partida para conversa com um mentor.
+  </p>
+  <p style="text-align: center; color: #999; font-size: 10px; margin-top: 8px;">
+    Este email foi enviado porque você completou o diagnóstico em metodopago.com
+  </p>
+</div></body></html>`;
+
+  try {
+    await transporter.sendMail({
+      from: fromAddress,
+      to: data.email,
+      subject: `Seu Diagnóstico P.A.G.O. — Relatório Completo (${data.mediaGeral.toFixed(1)})`,
+      text: `Olá ${data.nome},\n\nSeu relatório completo do Diagnóstico P.A.G.O. está em anexo.\n\nMédia Geral: ${data.mediaGeral.toFixed(1)}\n\nConheça a Mentoria P.A.G.O.: https://metodopago.com/mentoria`,
+      encoding: "utf-8",
+      html,
+      attachments: [
+        {
+          filename: `diagnostico-${data.nome.replace(/\s+/g, "-")}.pdf`,
+          content: data.pdfBase64,
+          encoding: "base64",
+          contentType: "application/pdf",
+        },
+      ],
+    });
+    console.log(`[Notification] Diagnostic email with PDF sent to ${data.email}`);
+  } catch (error) {
+    console.warn("[Notification] Diagnostic email with PDF failed:", error);
+  }
+}
+
 export async function notifyInscription(data: InscriptionData): Promise<void> {
   if (!isSmtpConfigured()) {
     console.warn("[Notification] SMTP not configured, skipping inscription emails.");
