@@ -30,11 +30,22 @@ export function useGeneratePdf() {
     try {
       const blob = await renderPdfBlob(props);
       const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = filename;
-      link.click();
-      URL.revokeObjectURL(url);
+
+      // iOS Safari ignores the download attribute on <a> tags.
+      // Use window.open to show the PDF in a new tab (user can save from there).
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      if (isIOS) {
+        window.open(url, "_blank");
+      } else {
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
     } catch (err) {
       console.error("[PDF] Generation failed:", err);
       toast.error("Não foi possível gerar o PDF. Tente novamente.");
