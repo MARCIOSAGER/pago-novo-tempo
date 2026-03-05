@@ -17,21 +17,21 @@ import { pdf } from "@react-pdf/renderer";
 import { getStatusInfo } from "../shared/diagnostico";
 import type { PillarKey, PillarSubgroups } from "../shared/diagnostico";
 
-// ─── Font Registration ─────────────────────────────────────
+// ─── Font Registration (TTF required for server-side @react-pdf) ───
 Font.register({
   family: "Lora",
   fonts: [
-    { src: "https://fonts.gstatic.com/s/lora/v35/0QI6MX1D_JOuGQbT0gvTJPa787weuyJGmKxemMeZ.woff2", fontWeight: 400 },
-    { src: "https://fonts.gstatic.com/s/lora/v35/0QI6MX1D_JOuGQbT0gvTJPa787z5vCJGmKxemMeZ.woff2", fontWeight: 600 },
-    { src: "https://fonts.gstatic.com/s/lora/v35/0QI8MX1D_JOuMw_LIftLtfOm84LS1Qtih-yDBQ.woff2", fontStyle: "italic", fontWeight: 400 },
+    { src: "https://cdn.jsdelivr.net/fontsource/fonts/lora@latest/latin-400-normal.ttf", fontWeight: 400 },
+    { src: "https://cdn.jsdelivr.net/fontsource/fonts/lora@latest/latin-600-normal.ttf", fontWeight: 600 },
+    { src: "https://cdn.jsdelivr.net/fontsource/fonts/lora@latest/latin-400-italic.ttf", fontStyle: "italic", fontWeight: 400 },
   ],
 });
 
 Font.register({
   family: "Montserrat",
   fonts: [
-    { src: "https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Hw5aXo.woff2", fontWeight: 400 },
-    { src: "https://fonts.gstatic.com/s/montserrat/v29/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCu173w5aXo.woff2", fontWeight: 600 },
+    { src: "https://cdn.jsdelivr.net/fontsource/fonts/montserrat@latest/latin-400-normal.ttf", fontWeight: 400 },
+    { src: "https://cdn.jsdelivr.net/fontsource/fonts/montserrat@latest/latin-600-normal.ttf", fontWeight: 600 },
   ],
 });
 
