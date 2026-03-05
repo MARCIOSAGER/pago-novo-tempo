@@ -57,20 +57,27 @@ export default function DiagnosticoResults({
     if (submittedRef.current) return;
     submittedRef.current = true;
 
-    submitMutation.mutate({
-      nome,
-      answersP: answers.P,
-      answersA: answers.A,
-      answersG: answers.G,
-      answersO: answers.O,
-      mediaP: pillarAverages.P,
-      mediaA: pillarAverages.A,
-      mediaG: pillarAverages.G,
-      mediaO: pillarAverages.O,
-      mediaGeral: overallAverage,
-      pilarMaisFraco: weakestPillar,
-      sendEmail: false,
-    });
+    submitMutation.mutate(
+      {
+        nome,
+        answersP: answers.P,
+        answersA: answers.A,
+        answersG: answers.G,
+        answersO: answers.O,
+        mediaP: pillarAverages.P,
+        mediaA: pillarAverages.A,
+        mediaG: pillarAverages.G,
+        mediaO: pillarAverages.O,
+        mediaGeral: overallAverage,
+        pilarMaisFraco: weakestPillar,
+        sendEmail: false,
+      },
+      {
+        onError: () => {
+          toast.error((t.diagnostico.results as any).submitError ?? "Erro ao salvar seu diagnóstico. Verifique sua conexão.");
+        },
+      }
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -1,4 +1,5 @@
 import { useRef, useCallback, useState } from "react";
+import { toast } from "sonner";
 
 /** Convert an image URL to a base64 data-URL */
 function loadImageAsBase64(url: string): Promise<string> {
@@ -85,34 +86,53 @@ export function useGeneratePdf() {
         // Logo won't appear if it fails to load
       }
 
-      await html2pdf()
-        .set({
-          margin: [MARGIN_TOP, MARGIN_X, MARGIN_BOTTOM, MARGIN_X],
-          filename,
-          image: { type: "jpeg", quality: 0.98 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            backgroundColor: "#FFFFFF",
-          },
-          jsPDF: {
-            unit: "mm",
-            format: "a4",
-            orientation: "portrait",
-          },
-          pagebreak: {
-            mode: ["avoid-all", "css", "legacy"],
-            avoid: [".pdf-no-break"],
-          },
-        })
-        .from(printRef.current)
-        .toPdf()
-        .get("pdf")
-        .then((doc: any) => {
-          addHeaderFooter(doc, logoBase64, filename);
-        })
-        .save();
+      // Temporarily move printable element into viewport for html2canvas compatibility (mobile)
+      const el = printRef.current;
+      const originalStyle = el.style.cssText;
+      el.style.position = "fixed";
+      el.style.left = "0";
+      el.style.top = "0";
+      el.style.zIndex = "-9999";
+      el.style.opacity = "0";
+
+      try {
+        await html2pdf()
+          .set({
+            margin: [MARGIN_TOP, MARGIN_X, MARGIN_BOTTOM, MARGIN_X],
+            filename,
+            image: { type: "jpeg", quality: 0.98 },
+            html2canvas: {
+              scale: 2,
+              useCORS: true,
+              logging: false,
+              backgroundColor: "#FFFFFF",
+              scrollX: 0,
+              scrollY: 0,
+              windowWidth: 800,
+            },
+            jsPDF: {
+              unit: "mm",
+              format: "a4",
+              orientation: "portrait",
+            },
+            pagebreak: {
+              mode: ["avoid-all", "css", "legacy"],
+              avoid: [".pdf-no-break"],
+            },
+          })
+          .from(el)
+          .toPdf()
+          .get("pdf")
+          .then((doc: any) => {
+            addHeaderFooter(doc, logoBase64, filename);
+          })
+          .save();
+      } finally {
+        el.style.cssText = originalStyle;
+      }
+    } catch (err) {
+      console.error("[PDF] Generation failed:", err);
+      toast.error("Não foi possível gerar o PDF. Tente novamente.");
     } finally {
       setGenerating(false);
     }

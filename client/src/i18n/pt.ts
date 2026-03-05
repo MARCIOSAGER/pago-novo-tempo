@@ -790,6 +790,7 @@ const pt = {
       emailSentLabel: "Resultado enviado com sucesso!",
       emailInvalid: "Por favor, informe um email válido.",
       emailError: "Erro ao enviar email. Tente novamente.",
+      submitError: "Erro ao salvar seu diagnóstico. Verifique sua conexão.",
       cta: {
         label: "O Próximo Passo",
         title: "Está pronto para",

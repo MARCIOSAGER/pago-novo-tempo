@@ -792,6 +792,7 @@ const es: Translations = {
       emailSentLabel: "¡Resultado enviado con éxito!",
       emailInvalid: "Por favor, ingresa un email válido.",
       emailError: "Error al enviar email. Intenta nuevamente.",
+      submitError: "Error al guardar tu diagnóstico. Verifica tu conexión.",
       cta: {
         label: "El Próximo Paso",
         title: "¿Estás listo para",
