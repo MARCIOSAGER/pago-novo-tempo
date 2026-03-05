@@ -784,6 +784,8 @@ const es: Translations = {
       analysisToggleOpen: "Ver análisis",
       analysisToggleClose: "Cerrar análisis",
       analysisSectionTitle: "Análisis por Pilar",
+      evolutionLabel: "Historial de Evolución",
+      evolutionDescription: "Sigue tu progreso a lo largo del tiempo.",
       pdfGenerating: "Generando PDF...",
       emailLabel: "Recibir por Email",
       emailDescription: "Ingresa tu email para recibir una copia de tu resultado.",

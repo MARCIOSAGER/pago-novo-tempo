@@ -460,6 +460,26 @@ export async function deleteDiagnostico(id: number): Promise<void> {
   await db.delete(diagnosticoResults).where(eq(diagnosticoResults.id, id));
 }
 
+export async function listDiagnosticosByEmail(email: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db
+    .select({
+      id: diagnosticoResults.id,
+      nome: diagnosticoResults.nome,
+      mediaP: diagnosticoResults.mediaP,
+      mediaA: diagnosticoResults.mediaA,
+      mediaG: diagnosticoResults.mediaG,
+      mediaO: diagnosticoResults.mediaO,
+      mediaGeral: diagnosticoResults.mediaGeral,
+      pilarMaisFraco: diagnosticoResults.pilarMaisFraco,
+      createdAt: diagnosticoResults.createdAt,
+    })
+    .from(diagnosticoResults)
+    .where(eq(diagnosticoResults.email, email.toLowerCase()))
+    .orderBy(diagnosticoResults.createdAt);
+}
+
 export async function exportAllDiagnosticos() {
   const db = await getDb();
   if (!db) throw new Error("Database not available");

@@ -784,6 +784,8 @@ const en: Translations = {
       analysisToggleOpen: "View analysis",
       analysisToggleClose: "Close analysis",
       analysisSectionTitle: "Analysis by Pillar",
+      evolutionLabel: "Evolution History",
+      evolutionDescription: "Track your progress over time.",
       pdfGenerating: "Generating PDF...",
       emailLabel: "Receive by Email",
       emailDescription: "Enter your email to receive a copy of your results.",

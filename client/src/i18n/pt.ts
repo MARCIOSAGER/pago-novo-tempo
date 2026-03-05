@@ -782,6 +782,8 @@ const pt = {
       analysisToggleOpen: "Ver análise",
       analysisToggleClose: "Fechar análise",
       analysisSectionTitle: "Análise por Pilar",
+      evolutionLabel: "Histórico de Evolução",
+      evolutionDescription: "Acompanhe sua evolução ao longo do tempo.",
       pdfGenerating: "Gerando PDF...",
       emailLabel: "Receba por Email",
       emailDescription: "Informe seu email para receber uma cópia do seu resultado.",

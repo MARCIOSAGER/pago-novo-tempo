@@ -28,6 +28,7 @@ import {
   exportAllDiagnosticos,
   getDiagnosticoMetrics,
   saveDiagnosticoPdf,
+  listDiagnosticosByEmail,
 } from "./db";
 import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
@@ -591,6 +592,16 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         const pdfBase64 = await generateDiagnosticoPdfBase64(input);
         return { pdfBase64 };
+      }),
+
+    // Public: get evolution history by email
+    history: publicProcedure
+      .input(z.object({
+        email: z.string().email().max(320).toLowerCase(),
+      }))
+      .query(async ({ input }) => {
+        const items = await listDiagnosticosByEmail(input.email);
+        return { items };
       }),
 
     // Admin: filtered & paginated list

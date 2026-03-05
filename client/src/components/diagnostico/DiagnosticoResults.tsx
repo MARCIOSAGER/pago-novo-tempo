@@ -5,6 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import DiagnosticoRadarChart from "./DiagnosticoRadarChart";
 import DiagnosticoPillarCard from "./DiagnosticoPillarCard";
+import DiagnosticoEvolution from "./DiagnosticoEvolution";
 import { useGeneratePdf } from "./useGeneratePdf";
 import { getStatusInfo } from "./useDiagnosticoReducer";
 import type { PillarKey, PillarSubgroups } from "./useDiagnosticoReducer";
@@ -222,6 +223,9 @@ export default function DiagnosticoResults({
           <DiagnosticoRadarChart data={chartData} />
         </div>
       </section>
+
+      {/* Section 3.5 — Evolution History (only shows if 2+ entries) */}
+      {prefilledEmail && <DiagnosticoEvolution email={prefilledEmail} />}
 
       {/* Section 3.5 — Pillar Analysis (full text per pillar) */}
       <section className="bg-navy py-16 lg:py-24">
