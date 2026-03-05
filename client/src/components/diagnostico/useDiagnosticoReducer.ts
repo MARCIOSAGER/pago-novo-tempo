@@ -1,6 +1,9 @@
 import { useReducer, useEffect, useCallback, useMemo } from "react";
+import type { PillarKey, PillarSubgroups } from "@shared/diagnostico";
+import { getStatusInfo } from "@shared/diagnostico";
 
-export type PillarKey = "P" | "A" | "G" | "O";
+export type { PillarKey, PillarSubgroups, StatusInfo } from "@shared/diagnostico";
+export { getStatusInfo } from "@shared/diagnostico";
 
 const PILLAR_QUESTION_COUNTS: Record<PillarKey, number> = {
   P: 8,
@@ -71,63 +74,6 @@ function reducer(state: DiagnosticoState, action: DiagnosticoAction): Diagnostic
     default:
       return state;
   }
-}
-
-export interface StatusInfo {
-  label: string;
-  color: string;
-  key: "solid" | "building" | "fragile" | "collapse";
-}
-
-export interface PillarSubgroups {
-  A: { vertical: number; horizontal: number; internal: number };
-  G: { spiritual: number; emotional: number; financial: number; temporal: number };
-  O: { basic: number; radical: number; fruit: number };
-}
-
-/**
- * THRESHOLDS DO DIAGNÓSTICO P.A.G.O.
- * Versão: 1.0 — baseado na escala de 4 pontos com âncoras comportamentais
- *
- * Escala base: respostas 1-4, normalizadas para 0-10
- * Pontos de referência naturais da escala:
- *   1.0 (Nunca/Não está presente)    → score normalizado: 2.5
- *   2.0 (Às vezes/Está frágil)       → score normalizado: 5.0
- *   3.0 (Frequentemente/Crescendo)   → score normalizado: 7.5
- *   4.0 (Sempre/Está sólido)         → score normalizado: 10.0
- *
- * Thresholds escolhidos e sua justificativa:
- *
- * EM COLAPSO: < 3.0
- *   Equivale a média < 1.2 na escala 1-4.
- *   A pessoa respondeu quase tudo com "Nunca" ou "Não está presente".
- *   O threshold em 3.0 (não 2.5) é deliberadamente generoso — algumas
- *   respostas "Às vezes" ainda não configuram colapso.
- *
- * PILAR FRÁGIL: 3.0 a 5.5
- *   Faixa de inconsistência — presença sem constância.
- *   Score 5.0 é o ponto médio exato ("Às vezes" em tudo).
- *   O threshold superior em 5.5 exige estar ALÉM da mediocridade central.
- *   Filosoficamente coerente com o método: "às vezes" não é governo.
- *
- * EM CONSTRUÇÃO: 5.5 a 8.0
- *   Crescimento real mas incompleto.
- *   Score 7.5 seria "Frequentemente" em tudo — o threshold em 8.0
- *   exige um pouco mais, reconhecendo que consistência real precisa
- *   superar o "frequente com falhas".
- *
- * PILAR SÓLIDO: ≥ 8.0
- *   Consistência em "Frequentemente" ou "Sempre" na maioria das questões.
- *   Intencionalmente difícil de atingir.
- *
- * REVISÃO RECOMENDADA: após acumular 200+ respondentes, revisar com
- * base nos percentis reais da distribuição (P25, P50, P75).
- */
-export function getStatusInfo(media: number): StatusInfo {
-  if (media >= 8) return { label: "solid", color: "#2E5E3E", key: "solid" };
-  if (media >= 5.5) return { label: "building", color: "#B8A88A", key: "building" };
-  if (media >= 3) return { label: "fragile", color: "#8B6914", key: "fragile" };
-  return { label: "collapse", color: "#7A3030", key: "collapse" };
 }
 
 export function useDiagnosticoReducer() {

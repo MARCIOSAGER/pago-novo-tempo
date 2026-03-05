@@ -43,6 +43,7 @@ async function startServer() {
   app.use("/api/trpc/files.upload", express.json({ limit: "50mb" }));
   app.use("/api/trpc/siteSettings.updateImage", express.json({ limit: "50mb" }));
   app.use("/api/trpc/diagnostico.sendEmailWithPdf", express.json({ limit: "15mb" }));
+  app.use("/api/trpc/diagnostico.generatePdf", express.json({ limit: "5mb" }));
 
   // ─── Apply Security Layers ──────────────────────────────
   applyAllSecurity(app);

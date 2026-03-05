@@ -45,7 +45,7 @@ export default function DiagnosticoResults({
   const { generating, generatePdf, generatePdfBase64 } = useGeneratePdf();
   const [sendingEmail, setSendingEmail] = useState(false);
 
-  const pdfProps = { nome, pillarAverages, overallAverage, weakestPillar, pillarSubgroups, weakestSubgroupPerPillar, t };
+  const pdfProps = { nome, pillarAverages, overallAverage, weakestPillar, pillarSubgroups, weakestSubgroupPerPillar, t: { diagnostico: t.diagnostico } };
 
   const overallStatus = getStatusInfo(overallAverage);
   const overallStatusLabel = t.diagnostico.results.status[overallStatus.key];

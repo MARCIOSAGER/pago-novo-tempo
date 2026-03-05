@@ -34,6 +34,7 @@ import { honeypotCheck, validateFileUpload } from "./security";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
 import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf } from "./_core/notification";
+import { generateDiagnosticoPdfBase64 } from "./diagnosticoPdf";
 
 // ─── Zod Schemas (strict input validation) ──────────────────────
 
@@ -558,6 +559,36 @@ export const appRouter = router({
           pdfBase64: input.pdfBase64,
         });
         return { success: true };
+      }),
+
+    // Public: generate PDF on server and return base64
+    generatePdf: publicProcedure
+      .input(z.object({
+        nome: z.string().min(1).max(255),
+        pillarAverages: z.object({
+          P: z.number().min(0).max(10),
+          A: z.number().min(0).max(10),
+          G: z.number().min(0).max(10),
+          O: z.number().min(0).max(10),
+        }),
+        overallAverage: z.number().min(0).max(10),
+        weakestPillar: z.enum(["P", "A", "G", "O"]),
+        pillarSubgroups: z.object({
+          A: z.object({ vertical: z.number(), horizontal: z.number(), internal: z.number() }),
+          G: z.object({ spiritual: z.number(), emotional: z.number(), financial: z.number(), temporal: z.number() }),
+          O: z.object({ basic: z.number(), radical: z.number(), fruit: z.number() }),
+        }),
+        weakestSubgroupPerPillar: z.object({
+          P: z.string().nullable(),
+          A: z.string().nullable(),
+          G: z.string().nullable(),
+          O: z.string().nullable(),
+        }),
+        t: z.any(),
+      }))
+      .mutation(async ({ input }) => {
+        const pdfBase64 = await generateDiagnosticoPdfBase64(input);
+        return { pdfBase64 };
       }),
 
     // Admin: filtered & paginated list
