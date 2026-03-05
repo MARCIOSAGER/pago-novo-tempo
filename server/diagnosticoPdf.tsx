@@ -153,7 +153,7 @@ const s = StyleSheet.create({
 
 // ─── Radar Chart SVG ────────────────────────────────────────
 function RadarChartSvg({ averages, labels }: { averages: Record<PillarKey, number>; labels: Record<PillarKey, string> }) {
-  const cx = 150, cy = 130, R = 90;
+  const cx = 200, cy = 130, R = 80;
   const order: PillarKey[] = ["P", "A", "G", "O"];
   const angles = [-90, 0, 90, 180];
 
@@ -168,7 +168,7 @@ function RadarChartSvg({ averages, labels }: { averages: Record<PillarKey, numbe
   const dataStr = dataPoints.map((pt) => `${pt.x},${pt.y}`).join(" ");
 
   return (
-    <Svg width={300} height={260} viewBox="0 0 300 260">
+    <Svg width={400} height={270} viewBox="0 0 400 270">
       {gridLevels.map((level) => {
         const pts = order.map((_, i) => point(i, level));
         const str = pts.map((pt) => `${pt.x},${pt.y}`).join(" ");
@@ -185,7 +185,7 @@ function RadarChartSvg({ averages, labels }: { averages: Record<PillarKey, numbe
         </G>
       ))}
       {order.map((p, i) => {
-        const labelPt = point(i, 12.5);
+        const labelPt = point(i, 13);
         const anchor = i === 1 ? "start" : i === 3 ? "end" : "middle";
         return (
           <SvgText
