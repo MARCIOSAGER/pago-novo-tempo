@@ -351,6 +351,9 @@ export default function AdminDiagnosticos() {
                       Nome
                     </TableHead>
                     <TableHead className="font-accent text-xs uppercase tracking-wider hidden md:table-cell">
+                      Email
+                    </TableHead>
+                    <TableHead className="font-accent text-xs uppercase tracking-wider hidden md:table-cell">
                       Média
                     </TableHead>
                     <TableHead className="font-accent text-xs uppercase tracking-wider hidden lg:table-cell">
@@ -390,6 +393,11 @@ export default function AdminDiagnosticos() {
                             </p>
                           )}
                         </div>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <span className="text-xs text-muted-foreground truncate max-w-[200px] block">
+                          {item.email || "—"}
+                        </span>
                       </TableCell>
                       <TableCell className="hidden md:table-cell">
                         <span className={`text-sm font-semibold ${getScoreColor(item.mediaGeral)}`}>
