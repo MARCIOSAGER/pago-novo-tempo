@@ -72,7 +72,7 @@ function getPdfOptions(filename: string) {
   return {
     margin: [MARGIN_TOP, MARGIN_X, MARGIN_BOTTOM, MARGIN_X],
     filename,
-    image: { type: "jpeg" as const, quality: 0.35 },
+    image: { type: "jpeg" as const, quality: 0.7 },
     html2canvas: {
       scale: 2,
       useCORS: true,
