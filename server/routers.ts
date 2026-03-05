@@ -22,6 +22,7 @@ import {
   createDiagnostico,
   listDiagnosticosFiltered,
   getDiagnosticoById,
+  getDiagnosticoByIdLite,
   updateDiagnosticoStatus,
   deleteDiagnostico,
   exportAllDiagnosticos,
@@ -571,11 +572,11 @@ export const appRouter = router({
         });
       }),
 
-    // Admin: get single diagnostic by ID
+    // Admin: get single diagnostic by ID (without heavy pdfBase64)
     getById: adminProcedure
       .input(z.object({ id: z.number().int().positive() }))
       .query(async ({ input }) => {
-        const result = await getDiagnosticoById(input.id);
+        const result = await getDiagnosticoByIdLite(input.id);
         if (!result) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Diagnóstico não encontrado." });
         }
@@ -605,7 +606,7 @@ export const appRouter = router({
         return { success: true };
       }),
 
-    // Admin: send/resend diagnostic email
+    // Admin: send/resend diagnostic email (with PDF if available)
     sendEmail: adminProcedure
       .input(z.object({
         id: z.number().int().positive(),
@@ -616,7 +617,7 @@ export const appRouter = router({
         if (!result) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Diagnóstico não encontrado." });
         }
-        await sendDiagnosticEmail({
+        const emailData = {
           nome: result.nome,
           email: input.email,
           mediaP: result.mediaP,
@@ -625,7 +626,12 @@ export const appRouter = router({
           mediaO: result.mediaO,
           mediaGeral: result.mediaGeral,
           pilarMaisFraco: result.pilarMaisFraco,
-        });
+        };
+        if (result.pdfBase64) {
+          await sendDiagnosticEmailWithPdf({ ...emailData, pdfBase64: result.pdfBase64 });
+        } else {
+          await sendDiagnosticEmail(emailData);
+        }
         return { success: true };
       }),
 

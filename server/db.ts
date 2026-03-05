@@ -351,7 +351,23 @@ export async function listDiagnosticosFiltered(params: {
 
   const offset = (params.page - 1) * params.pageSize;
   const items = await db
-    .select()
+    .select({
+      id: diagnosticoResults.id,
+      nome: diagnosticoResults.nome,
+      email: diagnosticoResults.email,
+      answersP: diagnosticoResults.answersP,
+      answersA: diagnosticoResults.answersA,
+      answersG: diagnosticoResults.answersG,
+      answersO: diagnosticoResults.answersO,
+      mediaP: diagnosticoResults.mediaP,
+      mediaA: diagnosticoResults.mediaA,
+      mediaG: diagnosticoResults.mediaG,
+      mediaO: diagnosticoResults.mediaO,
+      mediaGeral: diagnosticoResults.mediaGeral,
+      pilarMaisFraco: diagnosticoResults.pilarMaisFraco,
+      status: diagnosticoResults.status,
+      createdAt: diagnosticoResults.createdAt,
+    })
     .from(diagnosticoResults)
     .where(whereClause)
     .orderBy(desc(diagnosticoResults.createdAt))
@@ -366,6 +382,34 @@ export async function getDiagnosticoById(id: number): Promise<DiagnosticoResult 
   if (!db) throw new Error("Database not available");
   const result = await db
     .select()
+    .from(diagnosticoResults)
+    .where(eq(diagnosticoResults.id, id))
+    .limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getDiagnosticoByIdLite(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db
+    .select({
+      id: diagnosticoResults.id,
+      nome: diagnosticoResults.nome,
+      email: diagnosticoResults.email,
+      answersP: diagnosticoResults.answersP,
+      answersA: diagnosticoResults.answersA,
+      answersG: diagnosticoResults.answersG,
+      answersO: diagnosticoResults.answersO,
+      mediaP: diagnosticoResults.mediaP,
+      mediaA: diagnosticoResults.mediaA,
+      mediaG: diagnosticoResults.mediaG,
+      mediaO: diagnosticoResults.mediaO,
+      mediaGeral: diagnosticoResults.mediaGeral,
+      pilarMaisFraco: diagnosticoResults.pilarMaisFraco,
+      hasPdf: sql<boolean>`"pdfBase64" IS NOT NULL`.as("hasPdf"),
+      status: diagnosticoResults.status,
+      createdAt: diagnosticoResults.createdAt,
+    })
     .from(diagnosticoResults)
     .where(eq(diagnosticoResults.id, id))
     .limit(1);
@@ -415,10 +459,26 @@ export async function deleteDiagnostico(id: number): Promise<void> {
   await db.delete(diagnosticoResults).where(eq(diagnosticoResults.id, id));
 }
 
-export async function exportAllDiagnosticos(): Promise<DiagnosticoResult[]> {
+export async function exportAllDiagnosticos() {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  return db.select().from(diagnosticoResults).orderBy(desc(diagnosticoResults.createdAt));
+  return db.select({
+    id: diagnosticoResults.id,
+    nome: diagnosticoResults.nome,
+    email: diagnosticoResults.email,
+    answersP: diagnosticoResults.answersP,
+    answersA: diagnosticoResults.answersA,
+    answersG: diagnosticoResults.answersG,
+    answersO: diagnosticoResults.answersO,
+    mediaP: diagnosticoResults.mediaP,
+    mediaA: diagnosticoResults.mediaA,
+    mediaG: diagnosticoResults.mediaG,
+    mediaO: diagnosticoResults.mediaO,
+    mediaGeral: diagnosticoResults.mediaGeral,
+    pilarMaisFraco: diagnosticoResults.pilarMaisFraco,
+    status: diagnosticoResults.status,
+    createdAt: diagnosticoResults.createdAt,
+  }).from(diagnosticoResults).orderBy(desc(diagnosticoResults.createdAt));
 }
 
 export async function getDiagnosticoMetrics() {
