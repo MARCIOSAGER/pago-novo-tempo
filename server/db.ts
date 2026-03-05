@@ -381,6 +381,34 @@ export async function updateDiagnosticoStatus(
   await db.update(diagnosticoResults).set({ status }).where(eq(diagnosticoResults.id, id));
 }
 
+export async function saveDiagnosticoPdf(
+  nome: string,
+  mediaGeral: number,
+  email: string,
+  pdfBase64: string
+): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  // Find the most recent matching record and update it
+  const [record] = await db
+    .select({ id: diagnosticoResults.id })
+    .from(diagnosticoResults)
+    .where(
+      and(
+        eq(diagnosticoResults.nome, nome),
+        eq(diagnosticoResults.mediaGeral, mediaGeral)
+      )
+    )
+    .orderBy(desc(diagnosticoResults.createdAt))
+    .limit(1);
+  if (record) {
+    await db
+      .update(diagnosticoResults)
+      .set({ pdfBase64, email })
+      .where(eq(diagnosticoResults.id, record.id));
+  }
+}
+
 export async function deleteDiagnostico(id: number): Promise<void> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");

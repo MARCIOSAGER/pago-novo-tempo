@@ -42,6 +42,7 @@ async function startServer() {
   // MUST be registered BEFORE applyAllSecurity (which sets 1mb global limit)
   app.use("/api/trpc/files.upload", express.json({ limit: "50mb" }));
   app.use("/api/trpc/siteSettings.updateImage", express.json({ limit: "50mb" }));
+  app.use("/api/trpc/diagnostico.sendEmailWithPdf", express.json({ limit: "15mb" }));
 
   // ─── Apply Security Layers ──────────────────────────────
   applyAllSecurity(app);

@@ -66,7 +66,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
       <div
         ref={ref}
         style={{
-          width: "680px",
+          width: "650px",
           overflow: "hidden",
           fontFamily: "Lora, serif",
           backgroundColor: "#FFFFFF",
@@ -78,7 +78,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
           <p
             style={{
               fontFamily: "Montserrat, sans-serif",
-              fontSize: "10px",
+              fontSize: "12px",
               textTransform: "uppercase",
               letterSpacing: "0.4em",
               color: "#B8A88A",
@@ -134,7 +134,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
           <p
             style={{
               fontFamily: "Montserrat, sans-serif",
-              fontSize: "10px",
+              fontSize: "12px",
               textTransform: "uppercase",
               letterSpacing: "0.4em",
               color: "#1A2744",
@@ -148,7 +148,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
             style={{
               display: "inline-block",
               fontFamily: "Montserrat, sans-serif",
-              fontSize: "10px",
+              fontSize: "12px",
               textTransform: "uppercase",
               letterSpacing: "0.2em",
               padding: "4px 12px",
@@ -259,10 +259,10 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
                   style={{
                     display: "inline-block",
                     fontFamily: "Montserrat, sans-serif",
-                    fontSize: "9px",
+                    fontSize: "11px",
                     textTransform: "uppercase",
-                    letterSpacing: "0.2em",
-                    padding: "2px 8px",
+                    letterSpacing: "0.15em",
+                    padding: "3px 10px",
                     border: `1px solid ${status.color}`,
                     color: status.color,
                   }}
@@ -282,30 +282,30 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
                     {Object.entries(subgroups).map(([key, valor]) => {
                       const subStatus = getStatusInfo(valor as number);
                       return (
-                        <div key={key} style={{ marginBottom: "6px" }}>
+                        <div key={key} style={{ marginBottom: "8px" }}>
                           <div
                             style={{
                               display: "flex",
                               justifyContent: "space-between",
-                              marginBottom: "2px",
+                              alignItems: "baseline",
+                              marginBottom: "3px",
                             }}
                           >
                             <span
                               style={{
-                                fontFamily: "Montserrat, sans-serif",
-                                fontSize: "8px",
-                                textTransform: "uppercase",
-                                letterSpacing: "0.2em",
-                                color: "rgba(26,39,68,0.5)",
+                                fontFamily: "Lora, serif",
+                                fontSize: "12px",
+                                color: "rgba(26,39,68,0.6)",
                               }}
                             >
                               {subLabels[key] ?? key}
                             </span>
                             <span
                               style={{
-                                fontFamily: "Montserrat, sans-serif",
-                                fontSize: "8px",
-                                color: "rgba(26,39,68,0.5)",
+                                fontFamily: "Lora, serif",
+                                fontSize: "11px",
+                                fontWeight: 600,
+                                color: "rgba(26,39,68,0.7)",
                               }}
                             >
                               {(valor as number).toFixed(1)}
@@ -313,8 +313,9 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
                           </div>
                           <div
                             style={{
-                              height: "3px",
+                              height: "4px",
                               backgroundColor: "rgba(232,228,222,0.6)",
+                              borderRadius: "2px",
                             }}
                           >
                             <div
@@ -322,6 +323,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
                                 height: "100%",
                                 width: `${((valor as number) / 10) * 100}%`,
                                 backgroundColor: subStatus.color,
+                                borderRadius: "2px",
                               }}
                             />
                           </div>
@@ -416,7 +418,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
           <p
             style={{
               fontFamily: "Montserrat, sans-serif",
-              fontSize: "10px",
+              fontSize: "12px",
               textTransform: "uppercase",
               letterSpacing: "0.4em",
               color: "#B8A88A",
@@ -478,9 +480,9 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
                     <span
                       style={{
                         fontFamily: "Montserrat, sans-serif",
-                        fontSize: "8px",
+                        fontSize: "11px",
                         textTransform: "uppercase",
-                        letterSpacing: "0.2em",
+                        letterSpacing: "0.15em",
                         color: pillarStatus.color,
                       }}
                     >
@@ -527,7 +529,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
           <p
             style={{
               fontFamily: "Montserrat, sans-serif",
-              fontSize: "10px",
+              fontSize: "12px",
               textTransform: "uppercase",
               letterSpacing: "0.4em",
               color: "#B8A88A",
@@ -608,7 +610,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
             <p
               style={{
                 fontFamily: "Montserrat, sans-serif",
-                fontSize: "10px",
+                fontSize: "12px",
                 textTransform: "uppercase",
                 letterSpacing: "0.4em",
                 color: "#B8A88A",
@@ -655,7 +657,7 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
           <p
             style={{
               fontFamily: "Lora, serif",
-              fontSize: "10px",
+              fontSize: "12px",
               fontStyle: "italic",
               color: "rgba(26,39,68,0.4)",
               lineHeight: "1.6",

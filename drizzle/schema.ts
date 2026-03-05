@@ -106,6 +106,7 @@ export const diagnosticoResults = pgTable("diagnostico_results", {
   mediaO: real("mediaO").notNull(),
   mediaGeral: real("mediaGeral").notNull(),
   pilarMaisFraco: varchar("pilarMaisFraco", { length: 1 }).notNull(),
+  pdfBase64: text("pdfBase64"),
   status: diagnosticoStatusEnum("status").default("new").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });

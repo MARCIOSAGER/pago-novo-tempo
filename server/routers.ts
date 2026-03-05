@@ -26,6 +26,7 @@ import {
   deleteDiagnostico,
   exportAllDiagnosticos,
   getDiagnosticoMetrics,
+  saveDiagnosticoPdf,
 } from "./db";
 import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
@@ -541,6 +542,9 @@ export const appRouter = router({
         pdfBase64: z.string().min(1).max(5_000_000), // ~3.7MB PDF max
       }))
       .mutation(async ({ input }) => {
+        // Save PDF to database for admin resend
+        await saveDiagnosticoPdf(input.nome, input.mediaGeral, input.email, input.pdfBase64);
+
         await sendDiagnosticEmailWithPdf({
           nome: input.nome,
           email: input.email,

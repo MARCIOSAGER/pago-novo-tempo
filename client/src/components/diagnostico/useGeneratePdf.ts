@@ -72,15 +72,15 @@ function getPdfOptions(filename: string) {
   return {
     margin: [MARGIN_TOP, MARGIN_X, MARGIN_BOTTOM, MARGIN_X],
     filename,
-    image: { type: "jpeg" as const, quality: 0.6 },
+    image: { type: "jpeg" as const, quality: 0.5 },
     html2canvas: {
-      scale: 1.2,
+      scale: 1,
       useCORS: true,
       logging: false,
       backgroundColor: "#FFFFFF",
       scrollX: 0,
       scrollY: 0,
-      windowWidth: 800,
+      windowWidth: 700,
     },
     jsPDF: {
       unit: "mm" as const,
