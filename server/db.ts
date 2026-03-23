@@ -15,6 +15,12 @@ import {
   diagnosticoResults,
   InsertDiagnosticoResult,
   DiagnosticoResult,
+  organizations,
+  InsertOrganization,
+  Organization,
+  orgMembers,
+  InsertOrgMember,
+  OrgMember,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -545,4 +551,119 @@ export async function getDiagnosticoMetrics() {
     last7Days: recentResult.count,
     last30Days: monthResult.count,
   };
+}
+
+// ─── Organization Helpers ────────────────────────────────────────
+
+export async function createOrganization(data: InsertOrganization): Promise<Organization> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [org] = await db.insert(organizations).values(data).returning();
+  return org;
+}
+
+export async function getOrganizationById(id: number): Promise<Organization | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const [org] = await db.select().from(organizations).where(eq(organizations.id, id)).limit(1);
+  return org;
+}
+
+export async function getOrganizationBySlug(slug: string): Promise<Organization | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const [org] = await db.select().from(organizations).where(eq(organizations.slug, slug)).limit(1);
+  return org;
+}
+
+export async function listOrganizations(params: { search?: string; page: number; pageSize: number }) {
+  const db = await getDb();
+  if (!db) return { items: [], total: 0 };
+  const { search, page, pageSize } = params;
+  const offset = (page - 1) * pageSize;
+
+  const where = search
+    ? or(like(organizations.name, `%${search}%`), like(organizations.slug, `%${search}%`))
+    : undefined;
+
+  const [items, [{ total }]] = await Promise.all([
+    db.select().from(organizations).where(where).orderBy(desc(organizations.createdAt)).limit(pageSize).offset(offset),
+    db.select({ total: count() }).from(organizations).where(where),
+  ]);
+  return { items, total };
+}
+
+export async function updateOrganization(id: number, data: Partial<InsertOrganization>): Promise<Organization | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const [org] = await db.update(organizations).set({ ...data, updatedAt: new Date() }).where(eq(organizations.id, id)).returning();
+  return org;
+}
+
+export async function deleteOrganization(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  // Delete members first (cascade)
+  await db.delete(orgMembers).where(eq(orgMembers.orgId, id));
+  await db.delete(organizations).where(eq(organizations.id, id));
+}
+
+// ─── Org Member Helpers ──────────────────────────────────────────
+
+export async function createOrgMember(data: InsertOrgMember): Promise<OrgMember> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [member] = await db.insert(orgMembers).values(data).returning();
+  return member;
+}
+
+export async function getOrgMemberByUserAndOrg(userId: number, orgId: number): Promise<OrgMember | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const [member] = await db.select().from(orgMembers)
+    .where(and(eq(orgMembers.userId, userId), eq(orgMembers.orgId, orgId)))
+    .limit(1);
+  return member;
+}
+
+export async function getOrgMemberByInviteToken(token: string): Promise<OrgMember | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const [member] = await db.select().from(orgMembers).where(eq(orgMembers.inviteToken, token)).limit(1);
+  return member;
+}
+
+export async function listOrgMembers(orgId: number, params: { status?: string; role?: string; search?: string; page: number; pageSize: number }) {
+  const db = await getDb();
+  if (!db) return { items: [], total: 0 };
+  const { status, role, search, page, pageSize } = params;
+  const offset = (page - 1) * pageSize;
+
+  const conditions = [eq(orgMembers.orgId, orgId)];
+  if (status) conditions.push(eq(orgMembers.status, status as any));
+  if (role) conditions.push(eq(orgMembers.role, role as any));
+  if (search) conditions.push(or(like(orgMembers.name, `%${search}%`), like(orgMembers.email, `%${search}%`))!);
+
+  const where = and(...conditions);
+
+  const [items, [{ total }]] = await Promise.all([
+    db.select().from(orgMembers).where(where).orderBy(desc(orgMembers.createdAt)).limit(pageSize).offset(offset),
+    db.select({ total: count() }).from(orgMembers).where(where),
+  ]);
+  return { items, total };
+}
+
+export async function updateOrgMember(id: number, data: Partial<InsertOrgMember>): Promise<OrgMember | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const [member] = await db.update(orgMembers).set({ ...data, updatedAt: new Date() }).where(eq(orgMembers.id, id)).returning();
+  return member;
+}
+
+export async function countActiveOrgMembers(orgId: number): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const [{ total }] = await db.select({ total: count() }).from(orgMembers)
+    .where(and(eq(orgMembers.orgId, orgId), eq(orgMembers.status, "active")));
+  return total;
 }

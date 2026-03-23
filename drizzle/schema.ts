@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, serial, varchar, text, timestamp, integer, bigint, json, real } from "drizzle-orm/pg-core";
+import { pgTable, pgEnum, serial, varchar, text, timestamp, integer, bigint, json, real, boolean } from "drizzle-orm/pg-core";
 
 // ─── Enums ───────────────────────────────────────────────────────
 export const roleEnum = pgEnum("role", ["user", "admin"]);
@@ -113,3 +113,90 @@ export const diagnosticoResults = pgTable("diagnostico_results", {
 
 export type DiagnosticoResult = typeof diagnosticoResults.$inferSelect;
 export type InsertDiagnosticoResult = typeof diagnosticoResults.$inferInsert;
+
+// ─── Corporate Module ─────────────────────────────────────────────
+
+export const orgStatusEnum = pgEnum("org_status", ["active", "suspended", "trial"]);
+export const orgMemberRoleEnum = pgEnum("org_member_role", ["owner", "hr_admin", "hr_viewer", "employee"]);
+export const orgMemberStatusEnum = pgEnum("org_member_status", ["invited", "active", "deactivated"]);
+export const questionnaireTypeEnum = pgEnum("questionnaire_type", ["individual", "corporate"]);
+
+/**
+ * Organizations — each company/tenant in the corporate module.
+ */
+export const organizations = pgTable("organizations", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  cnpj: varchar("cnpj", { length: 18 }),
+  logo: text("logo"),
+  status: orgStatusEnum("status").default("trial").notNull(),
+  maxMembers: integer("maxMembers").default(50).notNull(),
+  privacyMinResponses: integer("privacyMinResponses").default(5).notNull(),
+  privacyShowIndividual: boolean("privacyShowIndividual").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
+export type Organization = typeof organizations.$inferSelect;
+export type InsertOrganization = typeof organizations.$inferInsert;
+
+/**
+ * Organization members — join table between users and organizations.
+ */
+export const orgMembers = pgTable("org_members", {
+  id: serial("id").primaryKey(),
+  orgId: integer("orgId").notNull().references(() => organizations.id),
+  userId: integer("userId").references(() => users.id),
+  email: varchar("email", { length: 320 }).notNull(),
+  name: varchar("name", { length: 255 }),
+  role: orgMemberRoleEnum("role").default("employee").notNull(),
+  status: orgMemberStatusEnum("status").default("invited").notNull(),
+  inviteToken: varchar("inviteToken", { length: 64 }).unique(),
+  inviteExpiresAt: timestamp("inviteExpiresAt"),
+  consentGivenAt: timestamp("consentGivenAt"),
+  department: varchar("department", { length: 128 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
+export type OrgMember = typeof orgMembers.$inferSelect;
+export type InsertOrgMember = typeof orgMembers.$inferInsert;
+
+/**
+ * Questionnaires — configurable question sets (individual + corporate).
+ */
+export const questionnaires = pgTable("questionnaires", {
+  id: serial("id").primaryKey(),
+  type: questionnaireTypeEnum("type").notNull(),
+  version: integer("version").default(1).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  questions: json("questions").notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Questionnaire = typeof questionnaires.$inferSelect;
+export type InsertQuestionnaire = typeof questionnaires.$inferInsert;
+
+/**
+ * Corporate diagnostic results — stores completed corporate questionnaire submissions.
+ */
+export const corporateDiagnostics = pgTable("corporate_diagnostics", {
+  id: serial("id").primaryKey(),
+  orgId: integer("orgId").notNull().references(() => organizations.id),
+  memberId: integer("memberId").references(() => orgMembers.id),
+  questionnaireId: integer("questionnaireId").notNull().references(() => questionnaires.id),
+  answersP: json("answersP").$type<number[]>().notNull(),
+  answersA: json("answersA").$type<number[]>().notNull(),
+  answersG: json("answersG").$type<number[]>().notNull(),
+  answersO: json("answersO").$type<number[]>().notNull(),
+  mediaP: real("mediaP").notNull(),
+  mediaA: real("mediaA").notNull(),
+  mediaG: real("mediaG").notNull(),
+  mediaO: real("mediaO").notNull(),
+  mediaGeral: real("mediaGeral").notNull(),
+  pilarMaisFraco: varchar("pilarMaisFraco", { length: 1 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});

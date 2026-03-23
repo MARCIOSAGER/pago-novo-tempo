@@ -33,6 +33,7 @@ import {
   Heart,
   Mail,
   ClipboardList,
+  Building2,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation, Link } from "wouter";
@@ -48,6 +49,7 @@ const menuItems = [
   { icon: ImageIcon, label: "Mídia", path: "/admin/media" },
   { icon: Heart, label: "P.A.G.O Kids", path: "/admin/kids" },
   { icon: Mail, label: "Email", path: "/admin/email" },
+  { icon: Building2, label: "Organizações", path: "/admin/organizations" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "admin-sidebar-width";

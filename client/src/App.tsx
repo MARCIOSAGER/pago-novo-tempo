@@ -22,6 +22,7 @@ import AdminKids from "./pages/AdminKids";
 import AdminEmail from "./pages/AdminEmail";
 import AdminDiagnosticos from "./pages/AdminDiagnosticos";
 import AdminDiagnosticoDetalhe from "./pages/AdminDiagnosticoDetalhe";
+import AdminOrganizations from "./pages/AdminOrganizations";
 import Fundador from "./pages/Fundador";
 import Mentoria from "./pages/Mentoria";
 import Diagnostico from "./pages/Diagnostico";
@@ -86,6 +87,11 @@ function Router() {
       <Route path="/admin/diagnosticos/:id">
         <AdminLayout>
           <AdminDiagnosticoDetalhe />
+        </AdminLayout>
+      </Route>
+      <Route path="/admin/organizations">
+        <AdminLayout>
+          <AdminOrganizations />
         </AdminLayout>
       </Route>
 

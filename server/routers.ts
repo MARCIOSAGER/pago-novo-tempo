@@ -28,6 +28,14 @@ import {
   exportAllDiagnosticos,
   getDiagnosticoMetrics,
   saveDiagnosticoPdf,
+  createOrganization,
+  listOrganizations,
+  getOrganizationById,
+  getOrganizationBySlug,
+  updateOrganization,
+  deleteOrganization,
+  listOrgMembers,
+  countActiveOrgMembers,
   listDiagnosticosByEmail,
 } from "./db";
 import { storagePut } from "./storage";
@@ -814,6 +822,91 @@ export const appRouter = router({
         return fetchUmami(
           `/api/websites/${ENV.analyticsWebsiteId}/metrics?${params}`
         );
+      }),
+  }),
+
+  // ─── Corporate Module ───────────────────────────────────────────
+  corporate: router({
+    // Admin: CRUD for organizations (super admin only)
+    createOrg: adminProcedure
+      .input(z.object({
+        name: z.string().min(2).max(255),
+        slug: z.string().min(2).max(100).regex(/^[a-z0-9-]+$/, "Slug must be lowercase alphanumeric with hyphens"),
+        cnpj: z.string().max(18).optional(),
+        maxMembers: z.number().int().min(1).max(10000).default(50),
+      }))
+      .mutation(async ({ input }) => {
+        return createOrganization({
+          name: input.name,
+          slug: input.slug,
+          cnpj: input.cnpj,
+          maxMembers: input.maxMembers,
+        });
+      }),
+
+    listOrgs: adminProcedure
+      .input(z.object({
+        search: z.string().optional(),
+        page: z.number().int().min(1).default(1),
+        pageSize: z.number().int().min(1).max(100).default(20),
+      }))
+      .query(async ({ input }) => {
+        return listOrganizations(input);
+      }),
+
+    getOrg: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .query(async ({ input }) => {
+        const org = await getOrganizationById(input.id);
+        if (!org) throw new TRPCError({ code: "NOT_FOUND", message: "Organization not found" });
+        const memberCount = await countActiveOrgMembers(input.id);
+        return { ...org, memberCount };
+      }),
+
+    getOrgBySlug: publicProcedure
+      .input(z.object({ slug: z.string().min(1) }))
+      .query(async ({ input }) => {
+        const org = await getOrganizationBySlug(input.slug);
+        if (!org) throw new TRPCError({ code: "NOT_FOUND", message: "Organization not found" });
+        return { id: org.id, name: org.name, slug: org.slug, logo: org.logo };
+      }),
+
+    updateOrg: adminProcedure
+      .input(z.object({
+        id: z.number().int().positive(),
+        name: z.string().min(2).max(255).optional(),
+        status: z.enum(["active", "suspended", "trial"]).optional(),
+        maxMembers: z.number().int().min(1).max(10000).optional(),
+        cnpj: z.string().max(18).optional(),
+        privacyMinResponses: z.number().int().min(1).max(100).optional(),
+        privacyShowIndividual: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        const org = await updateOrganization(id, data);
+        if (!org) throw new TRPCError({ code: "NOT_FOUND", message: "Organization not found" });
+        return org;
+      }),
+
+    deleteOrg: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input }) => {
+        await deleteOrganization(input.id);
+        return { success: true };
+      }),
+
+    listMembers: adminProcedure
+      .input(z.object({
+        orgId: z.number().int().positive(),
+        status: z.string().optional(),
+        role: z.string().optional(),
+        search: z.string().optional(),
+        page: z.number().int().min(1).default(1),
+        pageSize: z.number().int().min(1).max(100).default(20),
+      }))
+      .query(async ({ input }) => {
+        const { orgId, ...params } = input;
+        return listOrgMembers(orgId, params);
       }),
   }),
 });
