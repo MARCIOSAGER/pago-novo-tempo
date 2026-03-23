@@ -130,12 +130,12 @@ export default function CorporateDiagnosticoFlow({ onComplete }: Props) {
               src={info.image}
               alt=""
               className="w-full h-full object-cover"
-              style={{ filter: "brightness(0.15) saturate(0.3)" }}
+              style={{ filter: "brightness(0.35) saturate(0.5)" }}
             />
           </motion.div>
         </AnimatePresence>
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0F1B2D]/60 via-[#0F1B2D]/80 to-[#0F1B2D]" />
+        {/* Gradient overlay — lighter to show more photo */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0F1B2D]/30 via-[#0F1B2D]/60 to-[#0F1B2D]/95" />
       </div>
 
       {/* Content */}

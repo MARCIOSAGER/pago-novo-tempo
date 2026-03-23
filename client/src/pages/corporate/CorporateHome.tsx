@@ -159,16 +159,15 @@ export default function CorporateHome() {
       <Navbar />
 
       {/* ─── HERO ─── */}
-      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#0F1B2D] via-[#142035] to-[#1A2744]">
-        {/* subtle grid overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(184,168,138,.4) 1px, transparent 1px), linear-gradient(90deg, rgba(184,168,138,.4) 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
-          }}
+      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden">
+        {/* Hero background image */}
+        <img
+          src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&h=1080&fit=crop&crop=center&q=80"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ filter: "brightness(0.3) saturate(0.4)" }}
         />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0F1B2D]/50 via-[#0F1B2D]/70 to-[#1A2744]" />
 
         <motion.div
           initial="hidden"
@@ -210,7 +209,7 @@ export default function CorporateHome() {
             mas por quem ela é."
           </motion.blockquote>
 
-          <motion.div variants={fadeUp} custom={4}>
+          <motion.div variants={fadeUp} custom={4} className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => setLocation("/mentoria")}
               className="group inline-flex items-center gap-3 bg-[#B8A88A] text-[#0F1B2D] font-[Montserrat] font-semibold text-sm uppercase tracking-wider px-8 py-4 rounded-lg hover:bg-[#D4C8A8] transition-colors duration-300"
@@ -218,6 +217,13 @@ export default function CorporateHome() {
               Solicitar Demonstração
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
+            <a
+              href="/api/oauth/google?returnTo=/corporate"
+              className="inline-flex items-center gap-2 text-[#FAFAF8]/50 font-[Montserrat] text-sm hover:text-[#B8A88A] transition-colors"
+            >
+              <LogIn className="w-4 h-4" />
+              Já tem convite? Acessar
+            </a>
           </motion.div>
         </motion.div>
 
@@ -590,19 +596,30 @@ export default function CorporateHome() {
         </section>
       )}
 
-      {/* Login prompt for non-authenticated users */}
+      {/* Login section for non-authenticated users */}
       {!user && !authLoading && (
-        <section className="bg-[#1A2744] py-16 px-6">
-          <div className="max-w-md mx-auto text-center">
-            <p className="font-[Montserrat] text-sm text-[#FAFAF8]/50 mb-6">
-              {c.loginPrompt}
+        <section className="relative bg-[#0F1B2D] py-20 px-6 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&h=600&fit=crop&crop=center&q=80"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ filter: "brightness(0.2) saturate(0.3)" }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0F1B2D]/80 via-[#0F1B2D]/60 to-[#0F1B2D]/80" />
+          <div className="relative z-10 max-w-lg mx-auto text-center">
+            <LogIn className="w-8 h-8 text-[#B8A88A] mx-auto mb-4" />
+            <h2 className="font-[Cormorant] text-2xl font-semibold text-[#FAFAF8] mb-3">
+              Já recebeu um convite?
+            </h2>
+            <p className="font-[Montserrat] text-sm text-[#FAFAF8]/40 mb-8 leading-relaxed">
+              Se a sua organização já utiliza o P.A.G.O. Corporativo, faça login para aceder ao seu diagnóstico.
             </p>
             <a
               href="/api/oauth/google?returnTo=/corporate"
-              className="inline-flex items-center gap-2 bg-[#B8A88A]/10 text-[#B8A88A] border border-[#B8A88A]/20 px-6 py-3 rounded-lg hover:bg-[#B8A88A]/20 transition-colors duration-300 font-[Montserrat] text-sm uppercase tracking-wider"
+              className="inline-flex items-center gap-3 bg-[#B8A88A] text-[#0F1B2D] font-[Montserrat] font-semibold text-sm uppercase tracking-wider px-8 py-4 rounded-lg hover:bg-[#D4C8A8] transition-colors duration-300"
             >
               <LogIn className="w-4 h-4" />
-              {c.loginButton}
+              Aceder com Google
             </a>
           </div>
         </section>
