@@ -128,7 +128,7 @@ function CrossSvg({ values, t, variant }: {
         {ic.top.toUpperCase()}
       </text>
       <text x="200" y="33" textAnchor="middle" fill="#B8A88A"
-        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="400" opacity={0.7}>
+        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="500" opacity={1}>
         {ic.topSub}
       </text>
 
@@ -138,7 +138,7 @@ function CrossSvg({ values, t, variant }: {
         {ic.bottom.toUpperCase()}
       </text>
       <text x="200" y="399" textAnchor="middle" fill="#B8A88A"
-        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="400" opacity={0.7}>
+        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="500" opacity={1}>
         {ic.bottomSub}
       </text>
 
@@ -148,7 +148,7 @@ function CrossSvg({ values, t, variant }: {
         {ic.left.toUpperCase()}
       </text>
       <text x="16" y="212" textAnchor="start" fill="#B8A88A"
-        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="400" opacity={0.7}>
+        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="500" opacity={1}>
         {ic.leftSub}
       </text>
 
@@ -158,7 +158,7 @@ function CrossSvg({ values, t, variant }: {
         {ic.right.toUpperCase()}
       </text>
       <text x="384" y="212" textAnchor="end" fill="#B8A88A"
-        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="400" opacity={0.7}>
+        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="500" opacity={1}>
         {ic.rightSub}
       </text>
 
