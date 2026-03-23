@@ -41,9 +41,15 @@ export default function CorporateLayout({ children }: { children: ReactNode }) {
   const [location, setLocation] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const { data: membership, isLoading } = trpc.corporate.getMyMembership.useQuery(
+  // Must check auth first — redirect before enabling query
+  if (!authLoading && !user) {
+    window.location.href = getLoginUrl(`/corporate/${slug}`);
+    return null;
+  }
+
+  const { data: membership, isLoading, error } = trpc.corporate.getMyMembership.useQuery(
     { orgSlug: slug },
-    { enabled: !!slug && !!user }
+    { enabled: !!slug && !!user, retry: false }
   );
 
   // Loading
@@ -59,20 +65,16 @@ export default function CorporateLayout({ children }: { children: ReactNode }) {
     );
   }
 
-  // Not logged in
-  if (!user) {
-    window.location.href = getLoginUrl(`/corporate/${slug}`);
-    return null;
-  }
-
-  // No membership data
+  // No membership data (error or not found)
   if (!membership) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <div className="text-center space-y-4">
           <Building2 className="h-12 w-12 text-muted-foreground mx-auto" />
           <h2 className="text-xl font-semibold">Acesso Negado</h2>
-          <p className="text-muted-foreground text-sm">Você não é membro desta organização.</p>
+          <p className="text-muted-foreground text-sm">
+            {error?.message || "Você não é membro desta organização."}
+          </p>
           <Button variant="outline" onClick={() => setLocation("/")}>Voltar ao Início</Button>
         </div>
       </div>
@@ -181,7 +183,7 @@ export default function CorporateLayout({ children }: { children: ReactNode }) {
             {/* Footer */}
             <div className="p-3 border-t">
               <div className="flex items-center justify-between px-3 py-2">
-                <span className="text-xs text-muted-foreground truncate">{user.name || user.email}</span>
+                <span className="text-xs text-muted-foreground truncate">{user?.name || user?.email}</span>
                 <button onClick={() => { logout(); setLocation("/"); }} className="text-muted-foreground hover:text-foreground">
                   <LogOut className="h-4 w-4" />
                 </button>
