@@ -1,5 +1,31 @@
 export type PillarKey = "P" | "A" | "G" | "O";
 
+// ─── Corporate Questionnaire Types ──────────────────────────────
+
+export interface QuestionDefinition {
+  text_pt: string;
+  text_en: string;
+  text_es: string;
+  example_pt: string;
+  example_en: string;
+  example_es: string;
+  anchorType: "F" | "E";
+}
+
+export interface SubgroupDefinition {
+  label_pt: string;
+  label_en: string;
+  label_es: string;
+  startIndex: number;
+}
+
+export interface PillarQuestionnaire {
+  questions: QuestionDefinition[];
+  subgroups?: SubgroupDefinition[];
+}
+
+export type QuestionnaireStructure = Record<PillarKey, PillarQuestionnaire>;
+
 export interface PillarSubgroups {
   A: { vertical: number; horizontal: number; internal: number };
   G: { spiritual: number; emotional: number; financial: number; temporal: number };

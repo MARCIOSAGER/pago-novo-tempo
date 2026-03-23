@@ -21,6 +21,9 @@ import {
   orgMembers,
   InsertOrgMember,
   OrgMember,
+  questionnaires,
+  corporateDiagnostics,
+  InsertOrgMember as _IOM,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -666,4 +669,52 @@ export async function countActiveOrgMembers(orgId: number): Promise<number> {
   const [{ total }] = await db.select({ total: count() }).from(orgMembers)
     .where(and(eq(orgMembers.orgId, orgId), eq(orgMembers.status, "active")));
   return total;
+}
+
+// ─── Questionnaire Helpers ───────────────────────────────────────
+
+export async function getActiveQuestionnaire(type: "individual" | "corporate") {
+  const db = await getDb();
+  if (!db) return undefined;
+  const [q] = await db.select().from(questionnaires)
+    .where(and(eq(questionnaires.type, type), eq(questionnaires.isActive, true)))
+    .orderBy(desc(questionnaires.version))
+    .limit(1);
+  return q;
+}
+
+// ─── Corporate Diagnostic Helpers ────────────────────────────────
+
+export async function createCorporateDiagnostic(data: {
+  orgId: number; memberId: number; questionnaireId: number;
+  answersP: number[]; answersA: number[]; answersG: number[]; answersO: number[];
+  mediaP: number; mediaA: number; mediaG: number; mediaO: number;
+  mediaGeral: number; pilarMaisFraco: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(corporateDiagnostics).values(data).returning();
+  return result;
+}
+
+export async function listCorporateDiagnosticsByMember(orgId: number, memberId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(corporateDiagnostics)
+    .where(and(eq(corporateDiagnostics.orgId, orgId), eq(corporateDiagnostics.memberId, memberId)))
+    .orderBy(desc(corporateDiagnostics.createdAt));
+}
+
+export async function getCompanyAverages(orgId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select({
+    count: count(),
+    avgP: sql<number>`AVG("mediaP")`,
+    avgA: sql<number>`AVG("mediaA")`,
+    avgG: sql<number>`AVG("mediaG")`,
+    avgO: sql<number>`AVG("mediaO")`,
+    avgGeral: sql<number>`AVG("mediaGeral")`,
+  }).from(corporateDiagnostics).where(eq(corporateDiagnostics.orgId, orgId));
+  return result[0];
 }

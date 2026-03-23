@@ -39,6 +39,10 @@ import {
   createOrgMember,
   getOrgMemberByInviteToken,
   updateOrgMember,
+  getActiveQuestionnaire,
+  createCorporateDiagnostic,
+  listCorporateDiagnosticsByMember,
+  getCompanyAverages,
   listDiagnosticosByEmail,
 } from "./db";
 import { storagePut } from "./storage";
@@ -1046,9 +1050,6 @@ export const appRouter = router({
     cancelInvite: adminProcedure
       .input(z.object({ memberId: z.number().int().positive() }))
       .mutation(async ({ input }) => {
-        // Only cancel if still invited
-        const member = await getOrgMemberByInviteToken("");
-        // Just delete the member record
         const db = await import("./db").then((m) => m.getDb());
         if (db) {
           const { orgMembers } = await import("../drizzle/schema");
@@ -1056,6 +1057,80 @@ export const appRouter = router({
           await db.delete(orgMembers).where(eq(orgMembers.id, input.memberId));
         }
         return { success: true };
+      }),
+
+    // ─── Corporate Diagnostic Endpoints ─────────────────────────
+    getQuestionnaire: protectedProcedure
+      .query(async () => {
+        const q = await getActiveQuestionnaire("corporate");
+        if (!q) return null;
+        return { id: q.id, name: q.name, version: q.version, questions: q.questions };
+      }),
+
+    submitDiagnostic: protectedProcedure
+      .input(z.object({
+        orgId: z.number().int().positive(),
+        questionnaireId: z.number().int().positive(),
+        answersP: z.array(z.number().min(1).max(4)),
+        answersA: z.array(z.number().min(1).max(4)),
+        answersG: z.array(z.number().min(1).max(4)),
+        answersO: z.array(z.number().min(1).max(4)),
+        mediaP: z.number(),
+        mediaA: z.number(),
+        mediaG: z.number(),
+        mediaO: z.number(),
+        mediaGeral: z.number(),
+        pilarMaisFraco: z.enum(["P", "A", "G", "O"]),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Resolve membership
+        const member = await import("./db").then((m) => m.getOrgMemberByUserAndOrg(ctx.user.id, input.orgId));
+        if (!member || member.status !== "active") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Not a member of this organization." });
+        }
+
+        return createCorporateDiagnostic({
+          orgId: input.orgId,
+          memberId: member.id,
+          questionnaireId: input.questionnaireId,
+          answersP: input.answersP,
+          answersA: input.answersA,
+          answersG: input.answersG,
+          answersO: input.answersO,
+          mediaP: input.mediaP,
+          mediaA: input.mediaA,
+          mediaG: input.mediaG,
+          mediaO: input.mediaO,
+          mediaGeral: input.mediaGeral,
+          pilarMaisFraco: input.pilarMaisFraco,
+        });
+      }),
+
+    myResults: protectedProcedure
+      .input(z.object({ orgId: z.number().int().positive() }))
+      .query(async ({ input, ctx }) => {
+        const member = await import("./db").then((m) => m.getOrgMemberByUserAndOrg(ctx.user.id, input.orgId));
+        if (!member) return [];
+        return listCorporateDiagnosticsByMember(input.orgId, member.id);
+      }),
+
+    companyAverage: protectedProcedure
+      .input(z.object({ orgId: z.number().int().positive() }))
+      .query(async ({ input }) => {
+        const org = await getOrganizationById(input.orgId);
+        if (!org) return null;
+
+        const avg = await getCompanyAverages(input.orgId);
+        if (!avg || avg.count < org.privacyMinResponses) return null;
+
+        return {
+          count: avg.count,
+          avgP: Number(avg.avgP?.toFixed(1) ?? 0),
+          avgA: Number(avg.avgA?.toFixed(1) ?? 0),
+          avgG: Number(avg.avgG?.toFixed(1) ?? 0),
+          avgO: Number(avg.avgO?.toFixed(1) ?? 0),
+          avgGeral: Number(avg.avgGeral?.toFixed(1) ?? 0),
+        };
       }),
   }),
 });
