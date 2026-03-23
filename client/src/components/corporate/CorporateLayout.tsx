@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { useRoute, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -36,11 +36,10 @@ const hrMenu = [
 ];
 
 export default function CorporateLayout({ children }: { children: ReactNode }) {
-  const [, paramsWithRest] = useRoute("/corporate/:slug/:rest*");
-  const [, paramsBase] = useRoute("/corporate/:slug");
-  const slug = paramsWithRest?.slug ?? paramsBase?.slug ?? "";
   const { user, loading: authLoading, logout } = useAuth();
   const [location, setLocation] = useLocation();
+  // Extract slug from path: /corporate/{slug}/...
+  const slug = location.split("/")[2] ?? "";
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // Must check auth first
