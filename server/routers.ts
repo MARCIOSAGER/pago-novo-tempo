@@ -932,6 +932,48 @@ export const appRouter = router({
         return { success: true };
       }),
 
+    hrMetrics: protectedProcedure
+      .input(z.object({ orgId: z.number().int().positive() }))
+      .query(async ({ input, ctx }) => {
+        if (ctx.user.role !== "admin") {
+          const member = await import("./db").then((m) => m.getOrgMemberByUserAndOrg(ctx.user.id, input.orgId));
+          if (!member || !["owner", "hr_admin", "hr_viewer"].includes(member.role)) {
+            throw new TRPCError({ code: "FORBIDDEN", message: "Sem permissão." });
+          }
+        }
+        const totalMembers = await countActiveOrgMembers(input.orgId);
+        const allMembers = await listOrgMembers(input.orgId, { page: 1, pageSize: 1000 });
+        const activeMembers = allMembers.items.filter((m: any) => m.status === "active").length;
+
+        const avg = await getCompanyAverages(input.orgId);
+        const diagnosticCount = avg?.count ?? 0;
+        const completionRate = activeMembers > 0 ? Math.round((diagnosticCount / activeMembers) * 100) : 0;
+
+        // Find weakest pillar across org
+        let weakestPillar = "—";
+        if (avg && avg.count > 0) {
+          const scores: Record<string, number> = {
+            P: Number(avg.avgP ?? 0), A: Number(avg.avgA ?? 0),
+            G: Number(avg.avgG ?? 0), O: Number(avg.avgO ?? 0),
+          };
+          const minScore = Math.min(...Object.values(scores));
+          weakestPillar = Object.keys(scores).find((k) => scores[k] === minScore) || "—";
+        }
+
+        return {
+          totalMembers,
+          activeMembers,
+          diagnosticCount,
+          completionRate,
+          weakestPillar,
+          avgGeral: avg ? Number(avg.avgGeral?.toFixed(1) ?? 0) : 0,
+          avgP: avg ? Number(avg.avgP?.toFixed(1) ?? 0) : 0,
+          avgA: avg ? Number(avg.avgA?.toFixed(1) ?? 0) : 0,
+          avgG: avg ? Number(avg.avgG?.toFixed(1) ?? 0) : 0,
+          avgO: avg ? Number(avg.avgO?.toFixed(1) ?? 0) : 0,
+        };
+      }),
+
     listMembers: protectedProcedure
       .input(z.object({
         orgId: z.number().int().positive(),
