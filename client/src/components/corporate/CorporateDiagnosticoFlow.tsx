@@ -1,9 +1,9 @@
 import { useState, useCallback } from "react";
-import { corporateQuestions, calcPillarScore, type Question } from "@/data/questions-corporate";
+import { corporateQuestions, anchorLabels, calcPillarScore, type Question } from "@/data/questions-corporate";
 import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-type Answers = Record<string, 1 | 2 | 3 | 4>;
+type Answers = Record<string, number>;
 
 interface Props {
   onComplete: (data: {
@@ -28,6 +28,8 @@ const pillarInfo: Record<string, { name: string; color: string }> = {
   O: { name: "Obediência", color: "#8B4C4C" },
 };
 
+const TIEBREAK_ORDER: ("P" | "A" | "G" | "O")[] = ["G", "O", "A", "P"];
+
 export default function CorporateDiagnosticoFlow({ onComplete }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
@@ -36,11 +38,11 @@ export default function CorporateDiagnosticoFlow({ onComplete }: Props) {
   const question = corporateQuestions[currentIndex];
   const total = corporateQuestions.length;
   const progress = (Object.keys(answers).length / total) * 100;
-  const isAnswered = answers[question.id] !== undefined;
+  const isAnswered = answers[question.id] != null;
   const isLast = currentIndex === total - 1;
   const allAnswered = Object.keys(answers).length === total;
 
-  const handleAnswer = useCallback((questionId: string, value: 1 | 2 | 3 | 4) => {
+  const handleAnswer = useCallback((questionId: string, value: number) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
   }, []);
 
@@ -75,11 +77,9 @@ export default function CorporateDiagnosticoFlow({ onComplete }: Props) {
     const mediaO = calcPillarScore(answers, "O");
     const mediaGeral = parseFloat(((mediaP + mediaA + mediaG + mediaO) / 4).toFixed(2));
 
-    const scores = { P: mediaP, A: mediaA, G: mediaG, O: mediaO };
-    const pilarMaisFraco = (Object.entries(scores) as [
-      "P" | "A" | "G" | "O",
-      number,
-    ][]).reduce((a, b) => (b[1] < a[1] ? b : a))[0];
+    const scores: Record<"P" | "A" | "G" | "O", number> = { P: mediaP, A: mediaA, G: mediaG, O: mediaO };
+    const minScore = Math.min(mediaP, mediaA, mediaG, mediaO);
+    const pilarMaisFraco = TIEBREAK_ORDER.find((p) => scores[p] === minScore) || "G";
 
     onComplete({
       answers,
@@ -96,7 +96,7 @@ export default function CorporateDiagnosticoFlow({ onComplete }: Props) {
     });
   };
 
-  const optionLabels = ["A", "B", "C", "D"];
+  const labels = anchorLabels[question.anchor];
   const info = pillarInfo[question.pillar];
 
   return (
@@ -118,11 +118,10 @@ export default function CorporateDiagnosticoFlow({ onComplete }: Props) {
           />
         </div>
         {/* Pillar indicator dots */}
-        <div className="flex gap-1 mt-3">
+        <div className="flex gap-0.5 mt-3">
           {corporateQuestions.map((q, i) => {
-            const isCurrentPillar = q.pillar === question.pillar;
             const isCurrent = i === currentIndex;
-            const isComplete = answers[q.id] !== undefined;
+            const isComplete = answers[q.id] != null;
             return (
               <button
                 key={q.id}
@@ -132,8 +131,6 @@ export default function CorporateDiagnosticoFlow({ onComplete }: Props) {
                     ? "bg-[#B8A88A]"
                     : isComplete
                     ? "bg-[#B8A88A]/40"
-                    : isCurrentPillar
-                    ? "bg-[#FAFAF8]/10"
                     : "bg-[#FAFAF8]/5"
                 }`}
               />
@@ -154,7 +151,7 @@ export default function CorporateDiagnosticoFlow({ onComplete }: Props) {
         >
           <div className="rounded-xl bg-[#1A2744] border border-[#B8A88A]/10 p-6 lg:p-8">
             {/* Pillar tag */}
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-5">
               <span
                 className="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border"
                 style={{
@@ -170,37 +167,41 @@ export default function CorporateDiagnosticoFlow({ onComplete }: Props) {
                   {question.subgroup}
                 </span>
               )}
+              <span className="text-[10px] text-[#FAFAF8]/15 ml-auto">
+                {question.anchor === "F" ? "Frequência" : "Estado"}
+              </span>
             </div>
 
             {/* Question text */}
-            <h2 className="text-lg lg:text-xl font-[Cormorant] text-[#FAFAF8] leading-relaxed mb-6">
+            <h2 className="text-lg lg:text-xl font-[Cormorant] text-[#FAFAF8] leading-relaxed mb-8">
               {question.text}
             </h2>
 
-            {/* Options */}
+            {/* Scale options (1-4) */}
             <div className="space-y-3">
-              {question.options.map((opt, i) => {
-                const isSelected = answers[question.id] === opt.value;
+              {[1, 2, 3, 4].map((value) => {
+                const isSelected = answers[question.id] === value;
+                const label = labels[value - 1];
                 return (
                   <button
-                    key={opt.value}
-                    onClick={() => handleAnswer(question.id, opt.value)}
-                    className={`w-full text-left p-4 rounded-lg border transition-all duration-200 flex items-start gap-3 ${
+                    key={value}
+                    onClick={() => handleAnswer(question.id, value)}
+                    className={`w-full text-left p-4 rounded-lg border transition-all duration-200 flex items-center gap-4 ${
                       isSelected
                         ? "bg-[#B8A88A]/10 border-[#B8A88A]/40 text-[#FAFAF8]"
                         : "bg-[#0F1B2D]/50 border-[#B8A88A]/5 text-[#FAFAF8]/60 hover:border-[#B8A88A]/20 hover:text-[#FAFAF8]/80"
                     }`}
                   >
                     <span
-                      className={`shrink-0 h-7 w-7 rounded-full flex items-center justify-center text-xs font-semibold border ${
+                      className={`shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all ${
                         isSelected
                           ? "bg-[#B8A88A] text-[#1A2744] border-[#B8A88A]"
-                          : "border-[#B8A88A]/20 text-[#B8A88A]/50"
+                          : "border-[#B8A88A]/20 text-[#B8A88A]/40"
                       }`}
                     >
-                      {optionLabels[i]}
+                      {value}
                     </span>
-                    <span className="text-sm leading-relaxed pt-0.5">{opt.label}</span>
+                    <span className="text-sm leading-relaxed">{label}</span>
                   </button>
                 );
               })}
