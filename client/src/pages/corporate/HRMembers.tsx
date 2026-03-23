@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { useCorporate } from "@/contexts/CorporateContext";
 import { trpc } from "@/lib/trpc";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import { Search, Users } from "lucide-react";
 
 const statusLabels: Record<string, string> = {
@@ -15,9 +10,9 @@ const statusLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  invited: "bg-amber-500",
-  active: "bg-emerald-500",
-  deactivated: "bg-red-500",
+  invited: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+  active: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+  deactivated: "bg-red-500/20 text-red-300 border-red-500/30",
 };
 
 const roleLabels: Record<string, string> = {
@@ -44,54 +39,59 @@ export default function HRMembers() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Membros</h1>
-        <p className="text-muted-foreground text-sm">{orgName} — {data?.total ?? 0} membros</p>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-[#B8A88A]/60 font-[Montserrat] mb-1">
+          Recursos Humanos
+        </p>
+        <h1 className="text-3xl font-[Cormorant] font-semibold text-[#FAFAF8] tracking-tight">
+          Membros
+        </h1>
+        <p className="text-sm text-[#FAFAF8]/40 mt-1">{orgName} — {data?.total ?? 0} membros</p>
       </div>
 
       <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#B8A88A]/40" />
+        <input
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           placeholder="Buscar por nome ou email..."
-          className="pl-9"
+          className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-[#1A2744] border border-[#B8A88A]/15 text-[#FAFAF8] text-sm placeholder:text-[#FAFAF8]/25 focus:outline-none focus:border-[#B8A88A]/40 transition-colors"
         />
       </div>
 
       {isLoading ? (
         <div className="space-y-2">
-          {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-14 w-full" />)}
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-14 rounded-lg bg-[#1A2744] animate-pulse" />
+          ))}
         </div>
       ) : !data?.items.length ? (
-        <Card>
-          <CardContent className="flex flex-col items-center py-12">
-            <Users className="h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">Nenhum membro encontrado</p>
-          </CardContent>
-        </Card>
+        <div className="rounded-xl bg-[#1A2744] border border-[#B8A88A]/10 p-12 text-center">
+          <Users className="h-12 w-12 text-[#B8A88A]/30 mx-auto mb-4" />
+          <p className="text-[#FAFAF8]/40">Nenhum membro encontrado</p>
+        </div>
       ) : (
-        <div className="border rounded-lg overflow-hidden">
+        <div className="rounded-xl border border-[#B8A88A]/10 overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-muted/50">
-              <tr>
-                <th className="text-left p-3 font-medium">Nome</th>
-                <th className="text-left p-3 font-medium">Email</th>
-                <th className="text-left p-3 font-medium">Função</th>
-                <th className="text-left p-3 font-medium">Departamento</th>
-                <th className="text-left p-3 font-medium">Status</th>
+            <thead>
+              <tr className="bg-[#1A2744] border-b border-[#B8A88A]/10">
+                <th className="text-left p-3 font-medium text-[#B8A88A]/60 text-xs uppercase tracking-wider">Nome</th>
+                <th className="text-left p-3 font-medium text-[#B8A88A]/60 text-xs uppercase tracking-wider">Email</th>
+                <th className="text-left p-3 font-medium text-[#B8A88A]/60 text-xs uppercase tracking-wider">Função</th>
+                <th className="text-left p-3 font-medium text-[#B8A88A]/60 text-xs uppercase tracking-wider">Departamento</th>
+                <th className="text-left p-3 font-medium text-[#B8A88A]/60 text-xs uppercase tracking-wider">Status</th>
               </tr>
             </thead>
             <tbody>
               {data.items.map((member) => (
-                <tr key={member.id} className="border-t">
-                  <td className="p-3 font-medium">{member.name || "—"}</td>
-                  <td className="p-3 text-muted-foreground">{member.email}</td>
-                  <td className="p-3">{roleLabels[member.role] ?? member.role}</td>
-                  <td className="p-3 text-muted-foreground">{member.department || "—"}</td>
+                <tr key={member.id} className="border-t border-[#B8A88A]/5 bg-[#1A2744]/50 hover:bg-[#1A2744] transition-colors">
+                  <td className="p-3 font-medium text-[#FAFAF8]">{member.name || "—"}</td>
+                  <td className="p-3 text-[#FAFAF8]/50">{member.email}</td>
+                  <td className="p-3 text-[#FAFAF8]/70">{roleLabels[member.role] ?? member.role}</td>
+                  <td className="p-3 text-[#FAFAF8]/40">{member.department || "—"}</td>
                   <td className="p-3">
-                    <Badge className={statusColors[member.status] ?? "bg-gray-500"}>
+                    <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusColors[member.status] ?? "bg-gray-500/20 text-gray-300 border-gray-500/30"}`}>
                       {statusLabels[member.status] ?? member.status}
-                    </Badge>
+                    </span>
                   </td>
                 </tr>
               ))}
@@ -99,10 +99,22 @@ export default function HRMembers() {
           </table>
 
           {totalPages > 1 && (
-            <div className="flex justify-center gap-2 p-3 border-t">
-              <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>Anterior</Button>
-              <span className="text-sm text-muted-foreground self-center">{page} / {totalPages}</span>
-              <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>Próxima</Button>
+            <div className="flex justify-center items-center gap-3 p-3 border-t border-[#B8A88A]/10 bg-[#1A2744]/50">
+              <button
+                disabled={page <= 1}
+                onClick={() => setPage(page - 1)}
+                className="px-3 py-1.5 rounded-md text-xs border border-[#B8A88A]/20 text-[#B8A88A] hover:bg-[#B8A88A]/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                Anterior
+              </button>
+              <span className="text-xs text-[#FAFAF8]/40">{page} / {totalPages}</span>
+              <button
+                disabled={page >= totalPages}
+                onClick={() => setPage(page + 1)}
+                className="px-3 py-1.5 rounded-md text-xs border border-[#B8A88A]/20 text-[#B8A88A] hover:bg-[#B8A88A]/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                Próxima
+              </button>
             </div>
           )}
         </div>

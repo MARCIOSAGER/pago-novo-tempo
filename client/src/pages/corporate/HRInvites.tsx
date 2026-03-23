@@ -1,18 +1,7 @@
 import { useState } from "react";
 import { useCorporate } from "@/contexts/CorporateContext";
 import { trpc } from "@/lib/trpc";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Mail, Plus, Send } from "lucide-react";
+import { Mail, Plus, Send, X } from "lucide-react";
 import { toast } from "sonner";
 
 export default function HRInvites() {
@@ -61,89 +50,111 @@ export default function HRInvites() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Convites</h1>
-          <p className="text-muted-foreground text-sm">{orgName}</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-[#B8A88A]/60 font-[Montserrat] mb-1">
+            Recursos Humanos
+          </p>
+          <h1 className="text-3xl font-[Cormorant] font-semibold text-[#FAFAF8]">Convites</h1>
+          <p className="text-sm text-[#FAFAF8]/40 mt-1">{orgName}</p>
         </div>
-        <Card>
-          <CardContent className="py-8 text-center text-muted-foreground text-sm">
+        <div className="rounded-xl bg-[#1A2744] border border-[#B8A88A]/10 p-8 text-center">
+          <Mail className="h-12 w-12 text-[#B8A88A]/30 mx-auto mb-4" />
+          <p className="text-[#FAFAF8]/40 text-sm">
             Você não tem permissão para enviar convites. Contate o administrador RH.
-          </CardContent>
-        </Card>
+          </p>
+        </div>
       </div>
     );
   }
 
+  const inputClass = "w-full px-3 py-2.5 rounded-lg bg-[#0F1B2D] border border-[#B8A88A]/15 text-[#FAFAF8] text-sm placeholder:text-[#FAFAF8]/25 focus:outline-none focus:border-[#B8A88A]/40 transition-colors";
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Enviar Convites</h1>
-        <p className="text-muted-foreground text-sm">{orgName}</p>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-[#B8A88A]/60 font-[Montserrat] mb-1">
+          Recursos Humanos
+        </p>
+        <h1 className="text-3xl font-[Cormorant] font-semibold text-[#FAFAF8]">Enviar Convites</h1>
+        <p className="text-sm text-[#FAFAF8]/40 mt-1">{orgName}</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Convidar Membros</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="rounded-xl bg-[#1A2744] border border-[#B8A88A]/10 p-6">
+        <h2 className="text-base font-semibold text-[#FAFAF8] mb-5">Convidar Membros</h2>
+
+        <div className="space-y-4">
           {invites.map((inv, i) => (
-            <div key={i} className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+            <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_140px_1fr_36px] gap-3 items-end">
               <div>
-                <Label className="text-xs">Email *</Label>
-                <Input
+                <label className="text-[10px] uppercase tracking-wider text-[#B8A88A]/50 mb-1.5 block">Email *</label>
+                <input
                   type="email"
                   value={inv.email}
                   onChange={(e) => updateRow(i, "email", e.target.value)}
                   placeholder="email@empresa.com"
+                  className={inputClass}
                 />
               </div>
               <div>
-                <Label className="text-xs">Nome</Label>
-                <Input
+                <label className="text-[10px] uppercase tracking-wider text-[#B8A88A]/50 mb-1.5 block">Nome</label>
+                <input
                   value={inv.name}
                   onChange={(e) => updateRow(i, "name", e.target.value)}
                   placeholder="Nome completo"
+                  className={inputClass}
                 />
               </div>
               <div>
-                <Label className="text-xs">Função</Label>
-                <Select value={inv.role} onValueChange={(v) => updateRow(i, "role", v)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="employee">Colaborador</SelectItem>
-                    <SelectItem value="hr_viewer">Visualizador RH</SelectItem>
-                    <SelectItem value="hr_admin">Admin RH</SelectItem>
-                  </SelectContent>
-                </Select>
+                <label className="text-[10px] uppercase tracking-wider text-[#B8A88A]/50 mb-1.5 block">Função</label>
+                <select
+                  value={inv.role}
+                  onChange={(e) => updateRow(i, "role", e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="employee">Colaborador</option>
+                  <option value="hr_viewer">Visualizador RH</option>
+                  <option value="hr_admin">Admin RH</option>
+                </select>
               </div>
-              <div className="flex gap-2">
-                <div className="flex-1">
-                  <Label className="text-xs">Departamento</Label>
-                  <Input
-                    value={inv.department}
-                    onChange={(e) => updateRow(i, "department", e.target.value)}
-                    placeholder="Ex: TI"
-                  />
-                </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-wider text-[#B8A88A]/50 mb-1.5 block">Departamento</label>
+                <input
+                  value={inv.department}
+                  onChange={(e) => updateRow(i, "department", e.target.value)}
+                  placeholder="Ex: TI"
+                  className={inputClass}
+                />
+              </div>
+              <div className="flex items-end">
                 {invites.length > 1 && (
-                  <Button variant="ghost" size="icon" className="mt-5" onClick={() => removeRow(i)}>
-                    ×
-                  </Button>
+                  <button
+                    onClick={() => removeRow(i)}
+                    className="h-[42px] w-[36px] flex items-center justify-center rounded-lg text-[#FAFAF8]/30 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
                 )}
               </div>
             </div>
           ))}
+        </div>
 
-          <div className="flex gap-3 pt-2">
-            <Button variant="outline" size="sm" onClick={addRow}>
-              <Plus className="h-4 w-4 mr-1" /> Adicionar Linha
-            </Button>
-            <Button size="sm" onClick={handleSend} disabled={sendMutation.isPending}>
-              <Send className="h-4 w-4 mr-1" />
-              {sendMutation.isPending ? "Enviando..." : "Enviar Convites"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        <div className="flex gap-3 pt-5 mt-5 border-t border-[#B8A88A]/10">
+          <button
+            onClick={addRow}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm border border-[#B8A88A]/20 text-[#B8A88A] hover:bg-[#B8A88A]/10 transition-colors"
+          >
+            <Plus className="h-4 w-4" /> Adicionar Linha
+          </button>
+          <button
+            onClick={handleSend}
+            disabled={sendMutation.isPending}
+            className="flex items-center gap-1.5 px-5 py-2 rounded-lg text-sm bg-[#B8A88A] text-[#1A2744] font-medium hover:bg-[#D4C8A8] disabled:opacity-50 transition-colors"
+          >
+            <Send className="h-4 w-4" />
+            {sendMutation.isPending ? "Enviando..." : "Enviar Convites"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
