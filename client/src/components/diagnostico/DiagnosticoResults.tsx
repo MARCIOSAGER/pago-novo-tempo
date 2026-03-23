@@ -60,10 +60,19 @@ export default function DiagnosticoResults({
   const submitMutation = trpc.diagnostico.submit.useMutation();
   const sendEmailWithPdfMutation = trpc.diagnostico.sendEmailWithPdf.useMutation();
 
-  // Auto-submit results to backend
+  // Auto-submit results to backend (only once per diagnostic session)
   useEffect(() => {
     if (submittedRef.current) return;
+
+    // Use sessionStorage to prevent duplicate submissions on page refresh
+    const submitKey = `pago-diag-submitted-${nome}-${overallAverage.toFixed(1)}`;
+    if (sessionStorage.getItem(submitKey)) {
+      submittedRef.current = true;
+      return;
+    }
+
     submittedRef.current = true;
+    sessionStorage.setItem(submitKey, "1");
 
     submitMutation.mutate(
       {
@@ -90,11 +99,19 @@ export default function DiagnosticoResults({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Auto-send PDF email if email was provided at start
+  // Auto-send PDF email if email was provided at start (only once per session)
   useEffect(() => {
     if (autoEmailSentRef.current) return;
     if (!prefilledEmail || !prefilledEmail.includes("@")) return;
+
+    const emailKey = `pago-diag-emailed-${nome}-${overallAverage.toFixed(1)}`;
+    if (sessionStorage.getItem(emailKey)) {
+      autoEmailSentRef.current = true;
+      return;
+    }
+
     autoEmailSentRef.current = true;
+    sessionStorage.setItem(emailKey, "1");
 
     (async () => {
       try {
