@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { useRoute, useLocation, Link } from "wouter";
+import { useRoute, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -109,20 +109,24 @@ export default function CorporateLayout({ children }: { children: ReactNode }) {
       ? location === basePath || location === `${basePath}/`
       : location.startsWith(fullPath);
     return (
-      <Link key={item.path} href={fullPath}>
-        <button
-          onClick={() => setMobileOpen(false)}
-          className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-all duration-200 ${
-            isActive
-              ? "bg-[#B8A88A]/15 text-[#D4C8A8] font-medium border border-[#B8A88A]/20"
-              : "text-[#FAFAF8]/60 hover:text-[#FAFAF8] hover:bg-white/5"
-          }`}
-        >
-          <item.icon className={`h-4 w-4 shrink-0 ${isActive ? "text-[#B8A88A]" : ""}`} />
-          {item.label}
-          {isActive && <ChevronRight className="h-3 w-3 ml-auto text-[#B8A88A]/50" />}
-        </button>
-      </Link>
+      <a
+        key={item.path}
+        href={fullPath}
+        onClick={(e) => {
+          e.preventDefault();
+          setLocation(fullPath);
+          setMobileOpen(false);
+        }}
+        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-all duration-200 no-underline ${
+          isActive
+            ? "bg-[#B8A88A]/15 text-[#D4C8A8] font-medium border border-[#B8A88A]/20"
+            : "text-[#FAFAF8]/60 hover:text-[#FAFAF8] hover:bg-white/5 border border-transparent"
+        }`}
+      >
+        <item.icon className={`h-4 w-4 shrink-0 ${isActive ? "text-[#B8A88A]" : ""}`} />
+        {item.label}
+        {isActive && <ChevronRight className="h-3 w-3 ml-auto text-[#B8A88A]/50" />}
+      </a>
     );
   };
 
