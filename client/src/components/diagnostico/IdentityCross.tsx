@@ -58,7 +58,7 @@ function CrossSvg({ values, t, variant }: {
   const dotRight = dotPosition(values.right, "right");
 
   return (
-    <svg viewBox="0 0 400 400" className="w-full max-w-sm mx-auto" role="img" aria-label={ic.sectionLabel}>
+    <svg viewBox="0 0 400 400" className="w-full max-w-md mx-auto" role="img" aria-label={ic.sectionLabel}>
       <defs>
         {/* Gold metallic gradient - vertical */}
         <linearGradient id="icGoldV" x1="0" y1="0" x2="0" y2="1">
@@ -111,83 +111,83 @@ function CrossSvg({ values, t, variant }: {
       <circle cx="200" cy="200" r="32" fill="none" stroke="#D4AF37" strokeWidth="0.5" strokeOpacity={0.3} />
 
       {/* Center text: "Eu Sou" */}
-      <text x="200" y="195" textAnchor="middle" fill="#D4C8A8"
-        fontFamily="Cormorant, serif" fontSize="13" fontWeight="600">
+      <text x="200" y="194" textAnchor="middle" fill="#D4C8A8"
+        fontFamily="Cormorant, serif" fontSize="18" fontWeight="600">
         {ic.center}
       </text>
       {/* Center score */}
-      <text x="200" y="212" textAnchor="middle" fill="#D4C8A8"
-        fontFamily="Montserrat, sans-serif" fontSize="10" fontWeight="500" opacity={0.7}>
+      <text x="200" y="214" textAnchor="middle" fill="#D4C8A8"
+        fontFamily="Montserrat, sans-serif" fontSize="13" fontWeight="500" opacity={0.7}>
         {values.center.toFixed(1)}
       </text>
 
       {/* Arm labels */}
       {/* Top: "Ser" */}
-      <text x="200" y="18" textAnchor="middle" fill="#FAFAF8"
-        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" letterSpacing="0.1em">
+      <text x="200" y="16" textAnchor="middle" fill="#FAFAF8"
+        fontFamily="Montserrat, sans-serif" fontSize="16" fontWeight="600" letterSpacing="0.15em">
         {ic.top.toUpperCase()}
       </text>
-      <text x="200" y="32" textAnchor="middle" fill="#B8A88A"
-        fontFamily="Montserrat, sans-serif" fontSize="8" fontWeight="400" opacity={0.6}>
+      <text x="200" y="33" textAnchor="middle" fill="#B8A88A"
+        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="400" opacity={0.7}>
         {ic.topSub}
       </text>
 
       {/* Bottom: "Manifestar" */}
-      <text x="200" y="385" textAnchor="middle" fill="#FAFAF8"
-        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" letterSpacing="0.1em">
+      <text x="200" y="383" textAnchor="middle" fill="#FAFAF8"
+        fontFamily="Montserrat, sans-serif" fontSize="16" fontWeight="600" letterSpacing="0.15em">
         {ic.bottom.toUpperCase()}
       </text>
-      <text x="200" y="397" textAnchor="middle" fill="#B8A88A"
-        fontFamily="Montserrat, sans-serif" fontSize="8" fontWeight="400" opacity={0.6}>
+      <text x="200" y="399" textAnchor="middle" fill="#B8A88A"
+        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="400" opacity={0.7}>
         {ic.bottomSub}
       </text>
 
       {/* Left: "Ter" */}
-      <text x="18" y="197" textAnchor="start" fill="#FAFAF8"
-        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" letterSpacing="0.1em">
+      <text x="16" y="195" textAnchor="start" fill="#FAFAF8"
+        fontFamily="Montserrat, sans-serif" fontSize="16" fontWeight="600" letterSpacing="0.15em">
         {ic.left.toUpperCase()}
       </text>
-      <text x="18" y="210" textAnchor="start" fill="#B8A88A"
-        fontFamily="Montserrat, sans-serif" fontSize="8" fontWeight="400" opacity={0.6}>
+      <text x="16" y="212" textAnchor="start" fill="#B8A88A"
+        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="400" opacity={0.7}>
         {ic.leftSub}
       </text>
 
       {/* Right: "Fazer" */}
-      <text x="382" y="197" textAnchor="end" fill="#FAFAF8"
-        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="600" letterSpacing="0.1em">
+      <text x="384" y="195" textAnchor="end" fill="#FAFAF8"
+        fontFamily="Montserrat, sans-serif" fontSize="16" fontWeight="600" letterSpacing="0.15em">
         {ic.right.toUpperCase()}
       </text>
-      <text x="382" y="210" textAnchor="end" fill="#B8A88A"
-        fontFamily="Montserrat, sans-serif" fontSize="8" fontWeight="400" opacity={0.6}>
+      <text x="384" y="212" textAnchor="end" fill="#B8A88A"
+        fontFamily="Montserrat, sans-serif" fontSize="11" fontWeight="400" opacity={0.7}>
         {ic.rightSub}
       </text>
 
       {/* Score dots on arms */}
       {/* Top dot */}
-      <circle {...dotTop} r="5" fill="#1A2744" stroke="#D4C8A8" strokeWidth="1.5" />
-      <text x={dotTop.cx} y={dotTop.cy + 3.5} textAnchor="middle" fill="#D4C8A8"
-        fontFamily="Montserrat, sans-serif" fontSize="6" fontWeight="600">
+      <circle {...dotTop} r="8" fill="#1A2744" stroke="#D4C8A8" strokeWidth="1.5" />
+      <text x={dotTop.cx} y={dotTop.cy + 4} textAnchor="middle" fill="#D4C8A8"
+        fontFamily="Montserrat, sans-serif" fontSize="9" fontWeight="600">
         {values.top.toFixed(1)}
       </text>
 
       {/* Bottom dot */}
-      <circle {...dotBottom} r="5" fill="#1A2744" stroke="#D4C8A8" strokeWidth="1.5" />
-      <text x={dotBottom.cx} y={dotBottom.cy + 3.5} textAnchor="middle" fill="#D4C8A8"
-        fontFamily="Montserrat, sans-serif" fontSize="6" fontWeight="600">
+      <circle {...dotBottom} r="8" fill="#1A2744" stroke="#D4C8A8" strokeWidth="1.5" />
+      <text x={dotBottom.cx} y={dotBottom.cy + 4} textAnchor="middle" fill="#D4C8A8"
+        fontFamily="Montserrat, sans-serif" fontSize="9" fontWeight="600">
         {values.bottom.toFixed(1)}
       </text>
 
       {/* Left dot */}
-      <circle {...dotLeft} r="5" fill="#1A2744" stroke="#D4C8A8" strokeWidth="1.5" />
-      <text x={dotLeft.cx} y={dotLeft.cy + 3.5} textAnchor="middle" fill="#D4C8A8"
-        fontFamily="Montserrat, sans-serif" fontSize="6" fontWeight="600">
+      <circle {...dotLeft} r="8" fill="#1A2744" stroke="#D4C8A8" strokeWidth="1.5" />
+      <text x={dotLeft.cx} y={dotLeft.cy + 4} textAnchor="middle" fill="#D4C8A8"
+        fontFamily="Montserrat, sans-serif" fontSize="9" fontWeight="600">
         {values.left.toFixed(1)}
       </text>
 
       {/* Right dot */}
-      <circle {...dotRight} r="5" fill="#1A2744" stroke="#D4C8A8" strokeWidth="1.5" />
-      <text x={dotRight.cx} y={dotRight.cy + 3.5} textAnchor="middle" fill="#D4C8A8"
-        fontFamily="Montserrat, sans-serif" fontSize="6" fontWeight="600">
+      <circle {...dotRight} r="8" fill="#1A2744" stroke="#D4C8A8" strokeWidth="1.5" />
+      <text x={dotRight.cx} y={dotRight.cy + 4} textAnchor="middle" fill="#D4C8A8"
+        fontFamily="Montserrat, sans-serif" fontSize="9" fontWeight="600">
         {values.right.toFixed(1)}
       </text>
     </svg>
@@ -213,7 +213,7 @@ export default function IdentityCross(props: IdentityCrossProps) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="max-w-sm mx-auto"
+      className="max-w-md mx-auto"
     >
       <CrossSvg values={values} t={t} variant="interactive" />
 
