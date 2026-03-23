@@ -24,6 +24,15 @@ import AdminDiagnosticos from "./pages/AdminDiagnosticos";
 import AdminDiagnosticoDetalhe from "./pages/AdminDiagnosticoDetalhe";
 import AdminOrganizations from "./pages/AdminOrganizations";
 import InviteAccept from "./pages/corporate/InviteAccept";
+import CorporateLayout from "./components/corporate/CorporateLayout";
+import EmployeeDashboard from "./pages/corporate/EmployeeDashboard";
+import EmployeeDiagnostico from "./pages/corporate/EmployeeDiagnostico";
+import EmployeeResults from "./pages/corporate/EmployeeResults";
+import EmployeeHistory from "./pages/corporate/EmployeeHistory";
+import HRDashboard from "./pages/corporate/HRDashboard";
+import HRMembers from "./pages/corporate/HRMembers";
+import HRReports from "./pages/corporate/HRReports";
+import HRInvites from "./pages/corporate/HRInvites";
 import Fundador from "./pages/Fundador";
 import Mentoria from "./pages/Mentoria";
 import Diagnostico from "./pages/Diagnostico";
@@ -98,6 +107,30 @@ function Router() {
 
       {/* Corporate routes */}
       <Route path="/corporate/invite/:token" component={InviteAccept} />
+      <Route path="/corporate/:slug/hr/convites">
+        <CorporateLayout><HRInvites /></CorporateLayout>
+      </Route>
+      <Route path="/corporate/:slug/hr/membros">
+        <CorporateLayout><HRMembers /></CorporateLayout>
+      </Route>
+      <Route path="/corporate/:slug/hr/relatorios">
+        <CorporateLayout><HRReports /></CorporateLayout>
+      </Route>
+      <Route path="/corporate/:slug/hr">
+        <CorporateLayout><HRDashboard /></CorporateLayout>
+      </Route>
+      <Route path="/corporate/:slug/diagnostico">
+        <CorporateLayout><EmployeeDiagnostico /></CorporateLayout>
+      </Route>
+      <Route path="/corporate/:slug/resultados">
+        <CorporateLayout><EmployeeResults /></CorporateLayout>
+      </Route>
+      <Route path="/corporate/:slug/historico">
+        <CorporateLayout><EmployeeHistory /></CorporateLayout>
+      </Route>
+      <Route path="/corporate/:slug">
+        <CorporateLayout><EmployeeDashboard /></CorporateLayout>
+      </Route>
 
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

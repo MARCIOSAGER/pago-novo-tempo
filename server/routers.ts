@@ -874,6 +874,25 @@ export const appRouter = router({
         return { id: org.id, name: org.name, slug: org.slug, logo: org.logo };
       }),
 
+    getMyMembership: protectedProcedure
+      .input(z.object({ orgSlug: z.string().min(1) }))
+      .query(async ({ input, ctx }) => {
+        const org = await getOrganizationBySlug(input.orgSlug);
+        if (!org) throw new TRPCError({ code: "NOT_FOUND", message: "Organization not found" });
+
+        // Super admin gets virtual owner access
+        if (ctx.user.role === "admin") {
+          return { orgId: org.id, orgName: org.name, orgSlug: org.slug, orgLogo: org.logo, memberRole: "owner" as const, memberId: 0 };
+        }
+
+        const member = await import("./db").then((m) => m.getOrgMemberByUserAndOrg(ctx.user.id, org.id));
+        if (!member || member.status !== "active") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Você não é membro desta organização." });
+        }
+
+        return { orgId: org.id, orgName: org.name, orgSlug: org.slug, orgLogo: org.logo, memberRole: member.role, memberId: member.id };
+      }),
+
     updateOrg: adminProcedure
       .input(z.object({
         id: z.number().int().positive(),
