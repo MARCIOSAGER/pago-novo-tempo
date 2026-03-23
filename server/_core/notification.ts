@@ -331,6 +331,75 @@ export async function sendDiagnosticEmailWithPdf(data: DiagnosticEmailWithPdfDat
   }
 }
 
+// ─── Corporate Invite Email ──────────────────────────────────
+
+export type InviteEmailData = {
+  recipientEmail: string;
+  recipientName?: string;
+  orgName: string;
+  inviterName: string;
+  inviteToken: string;
+  role: string;
+};
+
+export async function sendInviteEmail(data: InviteEmailData): Promise<boolean> {
+  if (!isSmtpConfigured()) {
+    console.warn("[Notification] SMTP not configured, skipping invite email.");
+    return false;
+  }
+
+  const roleLabels: Record<string, string> = {
+    owner: "Proprietário",
+    hr_admin: "Administrador RH",
+    hr_viewer: "Visualizador RH",
+    employee: "Colaborador",
+  };
+  const roleLabel = roleLabels[data.role] || data.role;
+  const acceptUrl = `https://metodopago.com/corporate/invite/${data.inviteToken}`;
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+  <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: #C8A951; margin: 0; font-size: 24px;">P.A.G.O.</h1>
+    <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">Diagnóstico Corporativo</p>
+  </div>
+  <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
+    <p style="font-size: 16px;">Olá${data.recipientName ? ` <strong>${data.recipientName}</strong>` : ""},</p>
+    <p>Você foi convidado(a) por <strong>${data.inviterName}</strong> para participar do Diagnóstico Corporativo P.A.G.O. na organização <strong>${data.orgName}</strong>.</p>
+
+    <div style="background: #F5F0E8; border-left: 4px solid #C8A951; padding: 15px; margin: 20px 0; border-radius: 0 6px 6px 0;">
+      <p style="margin: 0 0 5px; font-size: 13px; color: #888;">Sua função:</p>
+      <p style="margin: 0; font-weight: 600; color: #5A4E3A;">${roleLabel}</p>
+    </div>
+
+    <div style="text-align: center; margin: 25px 0;">
+      <a href="${acceptUrl}" style="display: inline-block; background: #1A2744; color: #C8A951; padding: 14px 35px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 15px;">Aceitar Convite</a>
+    </div>
+
+    <p style="font-size: 12px; color: #999; text-align: center;">Este convite expira em 7 dias.</p>
+  </div>
+  <p style="text-align: center; color: #999; font-size: 10px; margin-top: 15px;">
+    Ao aceitar, você autoriza o tratamento dos seus dados para fins de diagnóstico organizacional, conforme a LGPD (Lei 13.709/2018).
+  </p>
+</div></body></html>`;
+
+  try {
+    await getTransporter().sendMail({
+      from: `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`,
+      to: data.recipientEmail,
+      subject: `Convite — Diagnóstico Corporativo P.A.G.O. | ${data.orgName}`,
+      text: `Olá${data.recipientName ? ` ${data.recipientName}` : ""},\n\nVocê foi convidado(a) para participar do Diagnóstico Corporativo P.A.G.O. na organização ${data.orgName}.\n\nAceite o convite: ${acceptUrl}\n\nEste convite expira em 7 dias.`,
+      encoding: "utf-8",
+      html,
+    });
+    console.log(`[Notification] Invite email sent to ${data.recipientEmail}`);
+    return true;
+  } catch (error) {
+    console.warn("[Notification] Invite email failed:", error);
+    return false;
+  }
+}
+
 export async function notifyInscription(data: InscriptionData): Promise<void> {
   if (!isSmtpConfigured()) {
     console.warn("[Notification] SMTP not configured, skipping inscription emails.");

@@ -23,6 +23,7 @@ import AdminEmail from "./pages/AdminEmail";
 import AdminDiagnosticos from "./pages/AdminDiagnosticos";
 import AdminDiagnosticoDetalhe from "./pages/AdminDiagnosticoDetalhe";
 import AdminOrganizations from "./pages/AdminOrganizations";
+import InviteAccept from "./pages/corporate/InviteAccept";
 import Fundador from "./pages/Fundador";
 import Mentoria from "./pages/Mentoria";
 import Diagnostico from "./pages/Diagnostico";
@@ -94,6 +95,9 @@ function Router() {
           <AdminOrganizations />
         </AdminLayout>
       </Route>
+
+      {/* Corporate routes */}
+      <Route path="/corporate/invite/:token" component={InviteAccept} />
 
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

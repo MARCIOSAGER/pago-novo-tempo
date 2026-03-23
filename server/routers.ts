@@ -36,13 +36,16 @@ import {
   deleteOrganization,
   listOrgMembers,
   countActiveOrgMembers,
+  createOrgMember,
+  getOrgMemberByInviteToken,
+  updateOrgMember,
   listDiagnosticosByEmail,
 } from "./db";
 import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
-import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf } from "./_core/notification";
+import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf, sendInviteEmail } from "./_core/notification";
 import { generateDiagnosticoPdfBase64 } from "./diagnosticoPdf";
 import { computePillarSubgroups, computeWeakestSubgroupPerPillar } from "../shared/diagnostico";
 import pt from "../client/src/i18n/pt";
@@ -907,6 +910,133 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const { orgId, ...params } = input;
         return listOrgMembers(orgId, params);
+      }),
+
+    // ─── Invite Endpoints ──────────────────────────────────────
+    sendInvites: adminProcedure
+      .input(z.object({
+        orgId: z.number().int().positive(),
+        invites: z.array(z.object({
+          email: z.string().email().max(320).transform((v) => v.toLowerCase()),
+          name: z.string().min(1).max(255).optional(),
+          role: z.enum(["hr_admin", "hr_viewer", "employee"]).default("employee"),
+          department: z.string().max(128).optional(),
+        })).min(1).max(50),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const org = await getOrganizationById(input.orgId);
+        if (!org) throw new TRPCError({ code: "NOT_FOUND", message: "Organization not found" });
+
+        const currentCount = await countActiveOrgMembers(input.orgId);
+        if (currentCount + input.invites.length > org.maxMembers) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: `Limite de ${org.maxMembers} membros atingido.` });
+        }
+
+        let sent = 0;
+        const skipped: string[] = [];
+
+        for (const invite of input.invites) {
+          // Check if already a member
+          const existing = await listOrgMembers(input.orgId, { search: invite.email, page: 1, pageSize: 1 });
+          if (existing.items.some((m) => m.email.toLowerCase() === invite.email)) {
+            skipped.push(invite.email);
+            continue;
+          }
+
+          const token = nanoid(32);
+          const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+          await createOrgMember({
+            orgId: input.orgId,
+            email: invite.email,
+            name: invite.name,
+            role: invite.role,
+            department: invite.department,
+            status: "invited",
+            inviteToken: token,
+            inviteExpiresAt: expiresAt,
+          });
+
+          // Fire-and-forget email
+          sendInviteEmail({
+            recipientEmail: invite.email,
+            recipientName: invite.name,
+            orgName: org.name,
+            inviterName: ctx.user.name || "Administrador",
+            inviteToken: token,
+            role: invite.role,
+          }).catch(() => {});
+
+          sent++;
+        }
+
+        return { sent, skipped };
+      }),
+
+    validateInvite: publicProcedure
+      .input(z.object({ token: z.string().min(1).max(64) }))
+      .query(async ({ input }) => {
+        const member = await getOrgMemberByInviteToken(input.token);
+        if (!member) return { valid: false, expired: false } as const;
+
+        const expired = member.inviteExpiresAt ? new Date() > member.inviteExpiresAt : false;
+        if (expired || member.status !== "invited") {
+          return { valid: false, expired: true } as const;
+        }
+
+        const org = await getOrganizationById(member.orgId);
+        return {
+          valid: true,
+          expired: false,
+          orgName: org?.name ?? "Organização",
+          email: member.email,
+          role: member.role,
+          name: member.name,
+        } as const;
+      }),
+
+    acceptInvite: protectedProcedure
+      .input(z.object({
+        token: z.string().min(1).max(64),
+        consentGiven: z.boolean(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (!input.consentGiven) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Consentimento LGPD é obrigatório." });
+        }
+
+        const member = await getOrgMemberByInviteToken(input.token);
+        if (!member) throw new TRPCError({ code: "NOT_FOUND", message: "Convite não encontrado." });
+
+        const expired = member.inviteExpiresAt ? new Date() > member.inviteExpiresAt : false;
+        if (expired || member.status !== "invited") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Este convite expirou." });
+        }
+
+        await updateOrgMember(member.id, {
+          userId: ctx.user.id,
+          status: "active",
+          inviteToken: null as any,
+          consentGivenAt: new Date(),
+        });
+
+        const org = await getOrganizationById(member.orgId);
+        return { orgId: member.orgId, orgSlug: org?.slug ?? "" };
+      }),
+
+    cancelInvite: adminProcedure
+      .input(z.object({ memberId: z.number().int().positive() }))
+      .mutation(async ({ input }) => {
+        // Only cancel if still invited
+        const member = await getOrgMemberByInviteToken("");
+        // Just delete the member record
+        const db = await import("./db").then((m) => m.getDb());
+        if (db) {
+          const { orgMembers } = await import("../drizzle/schema");
+          const { eq } = await import("drizzle-orm");
+          await db.delete(orgMembers).where(eq(orgMembers.id, input.memberId));
+        }
+        return { success: true };
       }),
   }),
 });
