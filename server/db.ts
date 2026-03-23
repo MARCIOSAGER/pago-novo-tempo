@@ -629,6 +629,21 @@ export async function getOrgMemberByUserAndOrg(userId: number, orgId: number): P
   return member;
 }
 
+export async function getOrgsByUserId(userId: number): Promise<{ orgId: number; orgName: string; orgSlug: string; orgLogo: string | null; memberRole: string }[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db.select({
+    orgId: organizations.id,
+    orgName: organizations.name,
+    orgSlug: organizations.slug,
+    orgLogo: organizations.logo,
+    memberRole: orgMembers.role,
+  }).from(orgMembers)
+    .innerJoin(organizations, eq(orgMembers.orgId, organizations.id))
+    .where(and(eq(orgMembers.userId, userId), eq(orgMembers.status, "active")));
+  return rows;
+}
+
 export async function getOrgMemberByInviteToken(token: string): Promise<OrgMember | undefined> {
   const db = await getDb();
   if (!db) return undefined;

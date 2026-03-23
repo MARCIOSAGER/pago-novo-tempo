@@ -870,6 +870,17 @@ export const appRouter = router({
         return { ...org, memberCount };
       }),
 
+    myOrgs: protectedProcedure
+      .query(async ({ ctx }) => {
+        // Super admin sees all orgs
+        if (ctx.user.role === "admin") {
+          const all = await listOrganizations({ page: 1, pageSize: 100 });
+          return all.items.map((o) => ({ orgId: o.id, orgName: o.name, orgSlug: o.slug, orgLogo: o.logo, memberRole: "owner" as const }));
+        }
+        const { getOrgsByUserId } = await import("./db");
+        return getOrgsByUserId(ctx.user.id);
+      }),
+
     getOrgBySlug: publicProcedure
       .input(z.object({ slug: z.string().min(1) }))
       .query(async ({ input }) => {

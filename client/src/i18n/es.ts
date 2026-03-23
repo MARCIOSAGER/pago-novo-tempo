@@ -14,6 +14,7 @@ const es: Translations = {
     tagline: "Nuevo Tiempo",
     mentoria: "La Mentoría",
     diagnostico: "Diagnóstico",
+    corporate: "Corporativo",
   },
 
   // === HERO ===
@@ -904,6 +905,17 @@ const es: Translations = {
     pt: "Português",
     en: "English",
     es: "Español",
+  },
+
+  // === CORPORATE ===
+  corporate: {
+    home: {
+      title: "P.A.G.O. Corporativo",
+      subtitle: "Diagnóstico organizacional basado en los 4 pilares",
+      loginPrompt: "Inicia sesión para acceder a tu organización",
+      loginButton: "Entrar con Google",
+      noOrgs: "Aún no formas parte de ninguna organización. Revisa tu correo para invitaciones pendientes.",
+    },
   },
 };
 

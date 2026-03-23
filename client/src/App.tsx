@@ -23,6 +23,7 @@ import AdminEmail from "./pages/AdminEmail";
 import AdminDiagnosticos from "./pages/AdminDiagnosticos";
 import AdminDiagnosticoDetalhe from "./pages/AdminDiagnosticoDetalhe";
 import AdminOrganizations from "./pages/AdminOrganizations";
+import CorporateHome from "./pages/corporate/CorporateHome";
 import InviteAccept from "./pages/corporate/InviteAccept";
 import CorporateLayout from "./components/corporate/CorporateLayout";
 import EmployeeDashboard from "./pages/corporate/EmployeeDashboard";
@@ -106,6 +107,7 @@ function Router() {
       </Route>
 
       {/* Corporate routes */}
+      <Route path="/corporate" component={CorporateHome} />
       <Route path="/corporate/invite/:token" component={InviteAccept} />
       <Route path="/corporate/:slug/hr/convites">
         <CorporateLayout><HRInvites /></CorporateLayout>

@@ -12,6 +12,7 @@ const pt = {
     tagline: "Novo Tempo",
     mentoria: "A Mentoria",
     diagnostico: "Diagnóstico",
+    corporate: "Corporativo",
   },
 
   // === HERO ===
@@ -902,6 +903,17 @@ const pt = {
     pt: "Português",
     en: "English",
     es: "Español",
+  },
+
+  // === CORPORATE ===
+  corporate: {
+    home: {
+      title: "P.A.G.O. Corporativo",
+      subtitle: "Diagnóstico organizacional baseado nos 4 pilares",
+      loginPrompt: "Faça login para acessar sua organização",
+      loginButton: "Entrar com Google",
+      noOrgs: "Você ainda não faz parte de nenhuma organização. Verifique seu email para convites pendentes.",
+    },
   },
 } as const;
 

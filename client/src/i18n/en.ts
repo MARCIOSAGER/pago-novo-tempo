@@ -14,6 +14,7 @@ const en: Translations = {
     tagline: "New Season",
     mentoria: "The Mentoring",
     diagnostico: "Diagnostic",
+    corporate: "Corporate",
   },
 
   // === HERO ===
@@ -904,6 +905,17 @@ const en: Translations = {
     pt: "Português",
     en: "English",
     es: "Español",
+  },
+
+  // === CORPORATE ===
+  corporate: {
+    home: {
+      title: "P.A.G.O. Corporate",
+      subtitle: "Organizational diagnostic based on the 4 pillars",
+      loginPrompt: "Log in to access your organization",
+      loginButton: "Sign in with Google",
+      noOrgs: "You are not part of any organization yet. Check your email for pending invitations.",
+    },
   },
 };
 
