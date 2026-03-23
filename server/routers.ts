@@ -1201,6 +1201,78 @@ export const appRouter = router({
         };
       }),
 
+    downloadPdf: protectedProcedure
+      .input(z.object({
+        orgId: z.number().int().positive(),
+        diagnosticId: z.number().int().positive(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const member = await import("./db").then((m) => m.getOrgMemberByUserAndOrg(ctx.user.id, input.orgId));
+        if (!member || member.status !== "active") {
+          // Allow admin bypass
+          if (ctx.user.role !== "admin") {
+            throw new TRPCError({ code: "FORBIDDEN", message: "Not a member." });
+          }
+        }
+        const results = await listCorporateDiagnosticsByMember(input.orgId, member?.id ?? 0);
+        const diagnostic = results.find((r: any) => r.id === input.diagnosticId);
+        if (!diagnostic) throw new TRPCError({ code: "NOT_FOUND", message: "Diagnostic not found." });
+
+        const org = await getOrganizationById(input.orgId);
+        if (!org) throw new TRPCError({ code: "NOT_FOUND" });
+
+        const answersMap: Record<string, number> = {};
+        const pillars = ["P", "A", "G", "O"] as const;
+        const arrays = [diagnostic.answersP, diagnostic.answersA, diagnostic.answersG, diagnostic.answersO];
+        pillars.forEach((p, pi) => {
+          (arrays[pi] as number[]).forEach((v: number, qi: number) => { answersMap[`${p}${qi + 1}`] = v; });
+        });
+
+        const calcSub = (ids: string[]) => {
+          const sum = ids.reduce((acc, id) => acc + (answersMap[id] ?? 0), 0);
+          return parseFloat(((sum / (ids.length * 4)) * 10).toFixed(2));
+        };
+        const subgroups = {
+          A: { vertical: calcSub(["A1","A2","A3","A4"]), horizontal: calcSub(["A5","A6","A7","A8"]), internal: calcSub(["A9","A10","A11","A12"]) },
+          G: { disciplinar: calcSub(["G1","G2","G3"]), emocional: calcSub(["G4","G5","G6"]), financeiro: calcSub(["G7","G8","G9"]), temporal: calcSub(["G10","G11","G12"]) },
+          O: { basica: calcSub(["O1","O2","O3","O4"]), radical: calcSub(["O5","O6","O7","O8"]), fruto: calcSub(["O9","O10","O11","O12"]) },
+        };
+        const cruz = {
+          ser: diagnostic.mediaP,
+          fazer: parseFloat((diagnostic.mediaG * 0.40 + subgroups.O.basica * 0.30 + subgroups.O.radical * 0.30).toFixed(2)),
+          ter: parseFloat((10 - ((subgroups.A.internal + diagnostic.mediaP) / 2)).toFixed(2)),
+          manifestar: parseFloat((subgroups.O.fruto * 0.60 + subgroups.A.horizontal * 0.40).toFixed(2)),
+        };
+
+        const { getDiagnosticText } = await import("../client/src/data/diagnostics-corporate");
+        const findWeakest = (scores: Record<string, number>) => {
+          let w = Object.keys(scores)[0];
+          for (const [k, v] of Object.entries(scores)) { if (v < (scores[w] ?? Infinity)) w = k; }
+          return w;
+        };
+        const diagnostics = {
+          P: getDiagnosticText("P", diagnostic.mediaP, null),
+          A: getDiagnosticText("A", diagnostic.mediaA, findWeakest(subgroups.A as unknown as Record<string, number>)),
+          G: getDiagnosticText("G", diagnostic.mediaG, findWeakest(subgroups.G as unknown as Record<string, number>)),
+          O: getDiagnosticText("O", diagnostic.mediaO, findWeakest(subgroups.O as unknown as Record<string, number>)),
+        };
+
+        const { generateCorporatePdfBase64 } = await import("./corporatePdf");
+        const pdfBase64 = await generateCorporatePdfBase64({
+          nome: member?.name || ctx.user.name || "Colaborador",
+          departamento: member?.department || undefined,
+          orgName: org.name,
+          date: new Date(diagnostic.createdAt).toLocaleDateString("pt-BR"),
+          mediaP: diagnostic.mediaP, mediaA: diagnostic.mediaA,
+          mediaG: diagnostic.mediaG, mediaO: diagnostic.mediaO,
+          mediaGeral: diagnostic.mediaGeral,
+          pilarMaisFraco: diagnostic.pilarMaisFraco as any,
+          subgroups, cruz, diagnostics,
+        });
+
+        return { pdfBase64, filename: `pago-corporativo-${(member?.name || "resultado").replace(/\s+/g, "-")}.pdf` };
+      }),
+
     sendPdfEmail: protectedProcedure
       .input(z.object({
         orgId: z.number().int().positive(),

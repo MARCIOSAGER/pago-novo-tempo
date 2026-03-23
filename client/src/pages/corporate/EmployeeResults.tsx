@@ -49,6 +49,23 @@ export default function EmployeeResults() {
     onError: (err) => toast.error(err.message || "Erro ao enviar PDF."),
   });
 
+  const downloadPdfMutation = trpc.corporate.downloadPdf.useMutation({
+    onSuccess: (data) => {
+      const binary = atob(data.pdfBase64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      const blob = new Blob([bytes], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = data.filename;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("PDF baixado com sucesso!");
+    },
+    onError: (err) => toast.error(err.message || "Erro ao gerar PDF."),
+  });
+
   const latest = results?.[0];
 
   if (isLoading) {
@@ -132,7 +149,15 @@ export default function EmployeeResults() {
             className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#B8A88A]/20 text-[#B8A88A] text-xs font-medium hover:bg-[#B8A88A]/10 disabled:opacity-50 transition-colors"
           >
             <Mail className="h-3.5 w-3.5" />
-            {sendPdfMutation.isPending ? "Enviando..." : "Enviar PDF por Email"}
+            {sendPdfMutation.isPending ? "Enviando..." : "Email PDF"}
+          </button>
+          <button
+            onClick={() => downloadPdfMutation.mutate({ orgId, diagnosticId: latest.id })}
+            disabled={downloadPdfMutation.isPending}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#B8A88A]/20 text-[#B8A88A] text-xs font-medium hover:bg-[#B8A88A]/10 disabled:opacity-50 transition-colors"
+          >
+            <Download className="h-3.5 w-3.5" />
+            {downloadPdfMutation.isPending ? "Gerando..." : "Download PDF"}
           </button>
         </div>
       </motion.div>
@@ -335,12 +360,20 @@ export default function EmployeeResults() {
 
         <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t border-[#B8A88A]/10">
           <button
-            onClick={() => sendPdfMutation.mutate({ orgId, diagnosticId: latest.id })}
-            disabled={sendPdfMutation.isPending}
+            onClick={() => downloadPdfMutation.mutate({ orgId, diagnosticId: latest.id })}
+            disabled={downloadPdfMutation.isPending}
             className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#B8A88A] text-[#1A2744] text-sm font-semibold hover:bg-[#D4C8A8] disabled:opacity-50 transition-colors"
           >
+            <Download className="h-4 w-4" />
+            {downloadPdfMutation.isPending ? "Gerando..." : "Download Relatório PDF"}
+          </button>
+          <button
+            onClick={() => sendPdfMutation.mutate({ orgId, diagnosticId: latest.id })}
+            disabled={sendPdfMutation.isPending}
+            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border border-[#B8A88A]/20 text-[#B8A88A] text-sm hover:bg-[#B8A88A]/10 disabled:opacity-50 transition-colors"
+          >
             <Mail className="h-4 w-4" />
-            {sendPdfMutation.isPending ? "Enviando..." : "Receber Relatório por Email"}
+            {sendPdfMutation.isPending ? "Enviando..." : "Enviar por Email"}
           </button>
           <Link href={`/corporate/${orgSlug}/historico`}>
             <button className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border border-[#B8A88A]/20 text-[#B8A88A] text-sm hover:bg-[#B8A88A]/10 transition-colors">
