@@ -932,7 +932,7 @@ export const appRouter = router({
         return { success: true };
       }),
 
-    listMembers: adminProcedure
+    listMembers: protectedProcedure
       .input(z.object({
         orgId: z.number().int().positive(),
         status: z.string().optional(),
@@ -941,13 +941,20 @@ export const appRouter = router({
         page: z.number().int().min(1).default(1),
         pageSize: z.number().int().min(1).max(100).default(20),
       }))
-      .query(async ({ input }) => {
+      .query(async ({ input, ctx }) => {
+        // Allow super admin or HR members of the org
+        if (ctx.user.role !== "admin") {
+          const member = await import("./db").then((m) => m.getOrgMemberByUserAndOrg(ctx.user.id, input.orgId));
+          if (!member || !["owner", "hr_admin", "hr_viewer"].includes(member.role)) {
+            throw new TRPCError({ code: "FORBIDDEN", message: "Sem permissão para ver membros." });
+          }
+        }
         const { orgId, ...params } = input;
         return listOrgMembers(orgId, params);
       }),
 
     // ─── Invite Endpoints ──────────────────────────────────────
-    sendInvites: adminProcedure
+    sendInvites: protectedProcedure
       .input(z.object({
         orgId: z.number().int().positive(),
         invites: z.array(z.object({
@@ -958,6 +965,14 @@ export const appRouter = router({
         })).min(1).max(50),
       }))
       .mutation(async ({ input, ctx }) => {
+        // Allow super admin or HR writers of the org
+        if (ctx.user.role !== "admin") {
+          const member = await import("./db").then((m) => m.getOrgMemberByUserAndOrg(ctx.user.id, input.orgId));
+          if (!member || !["owner", "hr_admin"].includes(member.role)) {
+            throw new TRPCError({ code: "FORBIDDEN", message: "Sem permissão para enviar convites." });
+          }
+        }
+
         const org = await getOrganizationById(input.orgId);
         if (!org) throw new TRPCError({ code: "NOT_FOUND", message: "Organization not found" });
 
