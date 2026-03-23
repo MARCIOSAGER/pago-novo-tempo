@@ -12,6 +12,10 @@ import {
   Circle,
   G,
   Text as SvgText,
+  Rect,
+  Defs,
+  LinearGradient,
+  Stop,
 } from "@react-pdf/renderer";
 import { pdf } from "@react-pdf/renderer";
 import { getStatusInfo } from "../shared/diagnostico";
@@ -207,6 +211,149 @@ function RadarChartSvg({ averages, labels }: { averages: Record<PillarKey, numbe
   );
 }
 
+// ─── Identity Cross SVG ─────────────────────────────────────
+function IdentityCrossSvg({
+  pillarAverages,
+  pillarSubgroups,
+  t,
+}: {
+  pillarAverages: Record<PillarKey, number>;
+  pillarSubgroups: PillarSubgroups;
+  t: any;
+}) {
+  const ic = t.diagnostico.identityCross;
+  if (!ic) return null;
+
+  const p = pillarAverages.P;
+  const a1 = pillarSubgroups.A.vertical;
+  const a3 = pillarSubgroups.A.internal;
+  const g = pillarAverages.G;
+  const o = pillarAverages.O;
+  const o3 = pillarSubgroups.O.fruit;
+
+  const center = p;
+  const top = a1;
+  const bottom = o3;
+  const left = Math.max(0, 10 - a3);
+  const right = Math.max(0, Math.min(10, ((g + o) / 2) - p + 5));
+
+  // Dot position helper
+  const dotPos = (value: number, axis: "top" | "bottom" | "left" | "right") => {
+    const maxLen = 80;
+    const dist = 15 + (value / 10) * maxLen;
+    const cx = 150, cy = 130;
+    switch (axis) {
+      case "top": return { x: cx, y: cy - dist };
+      case "bottom": return { x: cx, y: cy + dist };
+      case "left": return { x: cx - dist, y: cy };
+      case "right": return { x: cx + dist, y: cy };
+    }
+  };
+
+  const dTop = dotPos(top, "top");
+  const dBottom = dotPos(bottom, "bottom");
+  const dLeft = dotPos(left, "left");
+  const dRight = dotPos(right, "right");
+
+  return (
+    <Svg width={300} height={280} viewBox="0 0 300 280">
+      <Defs>
+        <LinearGradient id="icGoldV2" x1="0" y1="0" x2="0" y2="1">
+          <Stop offset="0%" stopColor="#D4C8A8" stopOpacity={0} />
+          <Stop offset="20%" stopColor="#B8A88A" stopOpacity={0.5} />
+          <Stop offset="50%" stopColor="#D4C8A8" stopOpacity={0.7} />
+          <Stop offset="80%" stopColor="#B8A88A" stopOpacity={0.5} />
+          <Stop offset="100%" stopColor="#D4C8A8" stopOpacity={0} />
+        </LinearGradient>
+        <LinearGradient id="icGoldH2" x1="0" y1="0" x2="1" y2="0">
+          <Stop offset="0%" stopColor="#D4C8A8" stopOpacity={0} />
+          <Stop offset="20%" stopColor="#B8A88A" stopOpacity={0.5} />
+          <Stop offset="50%" stopColor="#D4C8A8" stopOpacity={0.7} />
+          <Stop offset="80%" stopColor="#B8A88A" stopOpacity={0.5} />
+          <Stop offset="100%" stopColor="#D4C8A8" stopOpacity={0} />
+        </LinearGradient>
+      </Defs>
+
+      {/* Vertical bar */}
+      <Rect x={145} y={15} width={10} height={230} rx={5} fill="url(#icGoldV2)" />
+      {/* Horizontal bar */}
+      <Rect x={20} y={125} width={260} height={10} rx={5} fill="url(#icGoldH2)" />
+
+      {/* Center circle */}
+      <Circle cx={150} cy={130} r={22} fill={C.navy} stroke="#D4C8A8" strokeWidth={1} />
+      {/* @ts-expect-error — SVG text props */}
+      <SvgText x={150} y={127} fill="#D4C8A8" fontSize={9} fontFamily="Lora" fontWeight={600} textAnchor="middle">
+        {ic.center}
+      </SvgText>
+      {/* @ts-expect-error */}
+      <SvgText x={150} y={139} fill="#D4C8A8" fontSize={7} fontFamily="Montserrat" fontWeight={400} textAnchor="middle">
+        {center.toFixed(1)}
+      </SvgText>
+
+      {/* Top label */}
+      {/* @ts-expect-error */}
+      <SvgText x={150} y={10} fill={C.navy} fontSize={8} fontFamily="Montserrat" fontWeight={600} textAnchor="middle">
+        {ic.top.toUpperCase()}
+      </SvgText>
+
+      {/* Bottom label */}
+      {/* @ts-expect-error */}
+      <SvgText x={150} y={260} fill={C.navy} fontSize={8} fontFamily="Montserrat" fontWeight={600} textAnchor="middle">
+        {ic.bottom.toUpperCase()}
+      </SvgText>
+      {/* @ts-expect-error */}
+      <SvgText x={150} y={272} fill={C.textMuted} fontSize={6} fontFamily="Montserrat" fontWeight={400} textAnchor="middle">
+        {ic.bottomSub}
+      </SvgText>
+
+      {/* Left label */}
+      {/* @ts-expect-error */}
+      <SvgText x={12} y={128} fill={C.navy} fontSize={8} fontFamily="Montserrat" fontWeight={600} textAnchor="start">
+        {ic.left.toUpperCase()}
+      </SvgText>
+      {/* @ts-expect-error */}
+      <SvgText x={12} y={139} fill={C.textMuted} fontSize={6} fontFamily="Montserrat" fontWeight={400} textAnchor="start">
+        {ic.leftSub}
+      </SvgText>
+
+      {/* Right label */}
+      {/* @ts-expect-error */}
+      <SvgText x={288} y={128} fill={C.navy} fontSize={8} fontFamily="Montserrat" fontWeight={600} textAnchor="end">
+        {ic.right.toUpperCase()}
+      </SvgText>
+      {/* @ts-expect-error */}
+      <SvgText x={288} y={139} fill={C.textMuted} fontSize={6} fontFamily="Montserrat" fontWeight={400} textAnchor="end">
+        {ic.rightSub}
+      </SvgText>
+
+      {/* Score dots */}
+      <Circle cx={dTop.x} cy={dTop.y} r={4} fill={C.bg} stroke={C.gold} strokeWidth={1} />
+      {/* @ts-expect-error */}
+      <SvgText x={dTop.x} y={dTop.y + 2.5} fill={C.navy} fontSize={5} fontFamily="Montserrat" fontWeight={600} textAnchor="middle">
+        {top.toFixed(1)}
+      </SvgText>
+
+      <Circle cx={dBottom.x} cy={dBottom.y} r={4} fill={C.bg} stroke={C.gold} strokeWidth={1} />
+      {/* @ts-expect-error */}
+      <SvgText x={dBottom.x} y={dBottom.y + 2.5} fill={C.navy} fontSize={5} fontFamily="Montserrat" fontWeight={600} textAnchor="middle">
+        {bottom.toFixed(1)}
+      </SvgText>
+
+      <Circle cx={dLeft.x} cy={dLeft.y} r={4} fill={C.bg} stroke={C.gold} strokeWidth={1} />
+      {/* @ts-expect-error */}
+      <SvgText x={dLeft.x} y={dLeft.y + 2.5} fill={C.navy} fontSize={5} fontFamily="Montserrat" fontWeight={600} textAnchor="middle">
+        {left.toFixed(1)}
+      </SvgText>
+
+      <Circle cx={dRight.x} cy={dRight.y} r={4} fill={C.bg} stroke={C.gold} strokeWidth={1} />
+      {/* @ts-expect-error */}
+      <SvgText x={dRight.x} y={dRight.y + 2.5} fill={C.navy} fontSize={5} fontFamily="Montserrat" fontWeight={600} textAnchor="middle">
+        {right.toFixed(1)}
+      </SvgText>
+    </Svg>
+  );
+}
+
 // ─── Header / Footer ────────────────────────────────────────
 function PageHeader() {
   return (
@@ -345,10 +492,20 @@ function DiagnosticoPdfDocument({
         </View>
       </Page>
 
-      {/* Page 2 — Pillar Analysis */}
+      {/* Page 2 — Identity Cross + Pillar Analysis */}
       <Page size="A4" style={s.page}>
         <PageHeader />
         <PageFooter date={dateStr} />
+
+        {t.diagnostico.identityCross && (
+          <View style={{ alignItems: "center", marginBottom: 20 }}>
+            <Text style={s.label}>{t.diagnostico.identityCross.sectionLabel}</Text>
+            <IdentityCrossSvg pillarAverages={pillarAverages} pillarSubgroups={pillarSubgroups} t={t} />
+            <Text style={{ fontFamily: "Lora", fontSize: 8, color: C.textMuted, textAlign: "center", maxWidth: 300, lineHeight: 1.5 }}>
+              {t.diagnostico.identityCross.description}
+            </Text>
+          </View>
+        )}
 
         <Text style={{ ...s.label, marginBottom: 20 }}>
           {t.diagnostico.results.analysisSectionTitle ?? "Analise por Pilar"}

@@ -6,6 +6,7 @@ import { trpc } from "@/lib/trpc";
 import DiagnosticoRadarChart from "./DiagnosticoRadarChart";
 import DiagnosticoPillarCard from "./DiagnosticoPillarCard";
 import DiagnosticoEvolution from "./DiagnosticoEvolution";
+import IdentityCross from "./IdentityCross";
 import { useGeneratePdf } from "./useGeneratePdf";
 import { getStatusInfo } from "./useDiagnosticoReducer";
 import type { PillarKey, PillarSubgroups } from "./useDiagnosticoReducer";
@@ -221,6 +222,29 @@ export default function DiagnosticoResults({
       <section className="bg-navy-dark py-16 lg:py-24">
         <div className="max-w-4xl mx-auto px-6 lg:px-12">
           <DiagnosticoRadarChart data={chartData} />
+        </div>
+      </section>
+
+      {/* Section 3.1 — Identity Cross */}
+      <section className="bg-navy py-16 lg:py-24">
+        <div className="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+          >
+            <p className="font-accent text-[11px] uppercase tracking-[0.4em] text-gold mb-10">
+              {t.diagnostico.identityCross.sectionLabel}
+            </p>
+            <IdentityCross
+              p={pillarAverages.P}
+              a1={pillarSubgroups.A.vertical}
+              a3={pillarSubgroups.A.internal}
+              g={pillarAverages.G}
+              o={pillarAverages.O}
+              o3={pillarSubgroups.O.fruit}
+            />
+          </motion.div>
         </div>
       </section>
 

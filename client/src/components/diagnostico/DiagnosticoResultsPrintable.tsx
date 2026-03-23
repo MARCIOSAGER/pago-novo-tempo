@@ -9,6 +9,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getStatusInfo } from "./useDiagnosticoReducer";
 import type { PillarKey, PillarSubgroups } from "./useDiagnosticoReducer";
+import { IdentityCrossStatic } from "./IdentityCross";
 
 interface PrintableProps {
   nome: string;
@@ -21,6 +22,7 @@ interface PrintableProps {
 }
 
 const PILLAR_ORDER: PillarKey[] = ["P", "A", "G", "O"];
+
 
 const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
   (
@@ -411,6 +413,48 @@ const DiagnosticoResultsPrintable = forwardRef<HTMLDivElement, PrintableProps>(
               }}
             />
           </RadarChart>
+        </div>
+
+        {/* Section 3.1 — Identity Cross */}
+        <div
+          className="pdf-no-break"
+          style={{
+            padding: "24px 32px",
+            textAlign: "center",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "Montserrat, sans-serif",
+              fontSize: "12px",
+              textTransform: "uppercase",
+              letterSpacing: "0.4em",
+              color: "#B8A88A",
+              marginBottom: "16px",
+            }}
+          >
+            {t.diagnostico.identityCross.sectionLabel}
+          </p>
+          <IdentityCrossStatic
+            p={pillarAverages.P}
+            a1={pillarSubgroups.A.vertical}
+            a3={pillarSubgroups.A.internal}
+            g={pillarAverages.G}
+            o={pillarAverages.O}
+            o3={pillarSubgroups.O.fruit}
+          />
+          <p
+            style={{
+              fontFamily: "Lora, serif",
+              fontSize: "11px",
+              color: "#6B7A96",
+              lineHeight: 1.6,
+              maxWidth: "400px",
+              margin: "12px auto 0",
+            }}
+          >
+            {t.diagnostico.identityCross.description}
+          </p>
         </div>
 
         {/* Section 4 — Pillar Analysis */}
