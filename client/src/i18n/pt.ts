@@ -914,6 +914,123 @@ const pt = {
       loginButton: "Entrar com Google",
       noOrgs: "Você ainda não faz parte de nenhuma organização. Verifique seu email para convites pendentes.",
     },
+
+    // Layout & Navigation
+    label: "Corporativo",
+    dashboard: "Dashboard",
+    diagnostico: "Diagnóstico",
+    resultados: "Resultados",
+    historico: "Histórico",
+    painelRH: "Painel RH",
+    membros: "Membros",
+    relatorios: "Relatórios",
+    convites: "Convites",
+    meuDiagnostico: "Meu Diagnóstico",
+    recursosHumanos: "Recursos Humanos",
+
+    // Dashboard
+    bemVindo: "Bem-vindo ao Diagnóstico Corporativo",
+    iniciarDiagnostico: "Iniciar Diagnóstico",
+    sobreDiagnostico: "Sobre o Diagnóstico",
+    descricaoDiagnostico: "O diagnóstico P.A.G.O. Corporativo avalia 4 dimensões fundamentais da sua atuação profissional:",
+    tempoEstimado: "40 perguntas de escala — tempo estimado: 15-20 minutos",
+    respostasConfidenciais: "Suas respostas são confidenciais — a empresa vê apenas dados agregados",
+    semRespostasCertas: "Não há respostas certas ou erradas — responda com honestidade",
+    disclaimer: "Este diagnóstico é uma ferramenta de reflexão. Os resultados são um ponto de partida para conversa com um mentor.",
+
+    // Pillars
+    pilares: {
+      P: { letter: "P", name: "Princípio", desc: "Base de confiabilidade e consistência ética" },
+      A: { letter: "A", name: "Alinhamento", desc: "Aderência estratégica, relacional e interna" },
+      G: { letter: "G", name: "Governo", desc: "Capacidade de gestão multidimensional" },
+      O: { letter: "O", name: "Obediência", desc: "Execução, disciplina e geração de resultados" },
+    },
+
+    // Subgroups
+    subgrupos: {
+      vertical: "Com a liderança",
+      horizontal: "Com os pares",
+      internal: "Consigo mesmo",
+      disciplinar: "Disciplinar",
+      emocional: "Emocional",
+      financeiro: "Financeiro",
+      temporal: "Temporal",
+      basica: "Obediência Básica",
+      radical: "Obediência Radical",
+      fruto: "Fruto",
+    },
+
+    // Status
+    status: {
+      solid: "Pilar Sólido",
+      building: "Em Construção",
+      fragile: "Pilar Frágil",
+      collapse: "Em Colapso",
+    },
+
+    // Questionnaire
+    pergunta: "Pergunta",
+    de: "de",
+    respondidas: "respondidas",
+    anterior: "Anterior",
+    proxima: "Próxima",
+    finalizar: "Finalizar Diagnóstico",
+    salvando: "Salvando diagnóstico...",
+
+    // Scale labels
+    escalaF: ["Nunca", "Às vezes", "Frequentemente", "Sempre"],
+    escalaE: ["Não está presente", "Está frágil", "Está crescendo", "Está sólido"],
+
+    // Results
+    meusResultados: "Meus Resultados",
+    mediaGeral: "Média Geral",
+    perfilPAGO: "Perfil P.A.G.O.",
+    voceVsEmpresa: "Você vs Empresa",
+    voce: "Você",
+    empresa: "Empresa",
+    respostas: "respostas",
+    foco: "Foco",
+    nenhumResultado: "Nenhum resultado disponível. Complete o diagnóstico primeiro.",
+
+    // Cruz Profissional
+    cruzProfissional: "Cruz Profissional",
+    ser: "Ser",
+    fazer: "Fazer",
+    ter: "Ter",
+    manifestar: "Manifestar",
+
+    // HR
+    convidarMembros: "Convidar Membros",
+    enviarConvites: "Enviar Convites",
+    adicionarLinha: "Adicionar Linha",
+    enviando: "Enviando...",
+    email: "Email",
+    nome: "Nome",
+    funcao: "Função",
+    departamento: "Departamento",
+    colaborador: "Colaborador",
+    adminRH: "Admin RH",
+    visualizador: "Visualizador",
+    proprietario: "Proprietário",
+    convidado: "Convidado",
+    ativo: "Ativo",
+    desativado: "Desativado",
+    buscarMembro: "Buscar por nome ou email...",
+    nenhumMembro: "Nenhum membro encontrado",
+    emConstrucao: "Em Construção",
+    relatoriosDesc: "Os relatórios por departamento e exportação CSV estarão disponíveis quando houver dados de diagnósticos corporativos.",
+    membrosAtivos: "Membros Ativos",
+    diagnosticos: "Diagnósticos",
+    taxaConclusao: "Taxa de Conclusão",
+    pilarMaisFraco: "Pilar Mais Fraco",
+    dadosDashboard: "Os dados do dashboard serão populados conforme os membros completarem seus diagnósticos.",
+    semPermissaoConvites: "Você não tem permissão para enviar convites. Contate o administrador RH.",
+
+    // Sinalização emocional
+    sinalizacaoEmocional: {
+      title: "Sinalização Importante",
+      message: "O seu resultado em Governo Emocional sugere que pode haver uma ferida emocional que vai além do desenvolvimento profissional. Recomendamos considerar acompanhamento especializado antes de intervenções de coaching.",
+    },
   },
 } as const;
 

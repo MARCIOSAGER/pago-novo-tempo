@@ -916,6 +916,123 @@ const en: Translations = {
       loginButton: "Sign in with Google",
       noOrgs: "You are not part of any organization yet. Check your email for pending invitations.",
     },
+
+    // Layout & Navigation
+    label: "Corporate",
+    dashboard: "Dashboard",
+    diagnostico: "Diagnostic",
+    resultados: "Results",
+    historico: "History",
+    painelRH: "HR Panel",
+    membros: "Members",
+    relatorios: "Reports",
+    convites: "Invites",
+    meuDiagnostico: "My Diagnostic",
+    recursosHumanos: "Human Resources",
+
+    // Dashboard
+    bemVindo: "Welcome to Corporate Diagnostic",
+    iniciarDiagnostico: "Start Diagnostic",
+    sobreDiagnostico: "About the Diagnostic",
+    descricaoDiagnostico: "The P.A.G.O. Corporate diagnostic evaluates 4 fundamental dimensions of your professional performance:",
+    tempoEstimado: "40 scale questions — estimated time: 15-20 minutes",
+    respostasConfidenciais: "Your responses are confidential — the company sees only aggregated data",
+    semRespostasCertas: "There are no right or wrong answers — answer honestly",
+    disclaimer: "This diagnostic is a reflection tool. Results are a starting point for conversation with a mentor.",
+
+    // Pillars
+    pilares: {
+      P: { letter: "P", name: "Principle", desc: "Reliability and ethical consistency base" },
+      A: { letter: "A", name: "Alignment", desc: "Strategic, relational and internal adherence" },
+      G: { letter: "G", name: "Governance", desc: "Multidimensional management capacity" },
+      O: { letter: "O", name: "Obedience", desc: "Execution, discipline and result generation" },
+    },
+
+    // Subgroups
+    subgrupos: {
+      vertical: "With leadership",
+      horizontal: "With peers",
+      internal: "With self",
+      disciplinar: "Disciplinary",
+      emocional: "Emotional",
+      financeiro: "Financial",
+      temporal: "Time management",
+      basica: "Basic Obedience",
+      radical: "Radical Obedience",
+      fruto: "Fruit",
+    },
+
+    // Status
+    status: {
+      solid: "Solid Pillar",
+      building: "Under Construction",
+      fragile: "Fragile Pillar",
+      collapse: "In Collapse",
+    },
+
+    // Questionnaire
+    pergunta: "Question",
+    de: "of",
+    respondidas: "answered",
+    anterior: "Previous",
+    proxima: "Next",
+    finalizar: "Finish Diagnostic",
+    salvando: "Saving diagnostic...",
+
+    // Scale labels
+    escalaF: ["Never", "Sometimes", "Frequently", "Always"],
+    escalaE: ["Not present", "Fragile", "Growing", "Solid"],
+
+    // Results
+    meusResultados: "My Results",
+    mediaGeral: "Overall Average",
+    perfilPAGO: "P.A.G.O. Profile",
+    voceVsEmpresa: "You vs Company",
+    voce: "You",
+    empresa: "Company",
+    respostas: "responses",
+    foco: "Focus",
+    nenhumResultado: "No results available. Complete the diagnostic first.",
+
+    // Cruz Profissional
+    cruzProfissional: "Professional Cross",
+    ser: "Being",
+    fazer: "Doing",
+    ter: "Having",
+    manifestar: "Manifesting",
+
+    // HR
+    convidarMembros: "Invite Members",
+    enviarConvites: "Send Invites",
+    adicionarLinha: "Add Row",
+    enviando: "Sending...",
+    email: "Email",
+    nome: "Name",
+    funcao: "Role",
+    departamento: "Department",
+    colaborador: "Employee",
+    adminRH: "HR Admin",
+    visualizador: "Viewer",
+    proprietario: "Owner",
+    convidado: "Invited",
+    ativo: "Active",
+    desativado: "Deactivated",
+    buscarMembro: "Search by name or email...",
+    nenhumMembro: "No members found",
+    emConstrucao: "Under Construction",
+    relatoriosDesc: "Department reports and CSV export will be available when there is corporate diagnostic data.",
+    membrosAtivos: "Active Members",
+    diagnosticos: "Diagnostics",
+    taxaConclusao: "Completion Rate",
+    pilarMaisFraco: "Weakest Pillar",
+    dadosDashboard: "Dashboard data will be populated as members complete their diagnostics.",
+    semPermissaoConvites: "You don't have permission to send invites. Contact the HR administrator.",
+
+    // Sinalização emocional
+    sinalizacaoEmocional: {
+      title: "Important Notice",
+      message: "Your Emotional Governance result suggests there may be an emotional wound beyond professional development. We recommend considering specialized support before coaching interventions.",
+    },
   },
 };
 
