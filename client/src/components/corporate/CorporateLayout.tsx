@@ -35,8 +35,10 @@ const hrMenu = [
 ];
 
 export default function CorporateLayout({ children }: { children: ReactNode }) {
-  const [, params] = useRoute("/corporate/:slug/:rest*");
-  const slug = params?.slug ?? "";
+  // Try both patterns: with and without sub-path
+  const [matchWithRest, paramsWithRest] = useRoute("/corporate/:slug/:rest*");
+  const [matchBase, paramsBase] = useRoute("/corporate/:slug");
+  const slug = paramsWithRest?.slug ?? paramsBase?.slug ?? "";
   const { user, loading: authLoading, logout } = useAuth();
   const [location, setLocation] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);

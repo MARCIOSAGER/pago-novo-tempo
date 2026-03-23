@@ -107,7 +107,6 @@ function Router() {
       </Route>
 
       {/* Corporate routes */}
-      <Route path="/corporate" component={CorporateHome} />
       <Route path="/corporate/invite/:token" component={InviteAccept} />
       <Route path="/corporate/:slug/hr/convites">
         <CorporateLayout><HRInvites /></CorporateLayout>
@@ -133,6 +132,7 @@ function Router() {
       <Route path="/corporate/:slug">
         <CorporateLayout><EmployeeDashboard /></CorporateLayout>
       </Route>
+      <Route path="/corporate" component={CorporateHome} />
 
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
