@@ -13,6 +13,11 @@ export const diagnosticoStatusEnum = pgEnum("diagnostico_status", [
   "reviewed",
   "archived",
 ]);
+export const demoRequestStatusEnum = pgEnum("demo_request_status", [
+  "pending",
+  "contacted",
+  "closed",
+]);
 
 /**
  * Core user table backing auth flow.
@@ -200,3 +205,18 @@ export const corporateDiagnostics = pgTable("corporate_diagnostics", {
   pilarMaisFraco: varchar("pilarMaisFraco", { length: 1 }).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+// ─── Demo Requests (Corporate) ──────────────────────────────────
+export const demoRequests = pgTable("demo_requests", {
+  id: serial("id").primaryKey(),
+  companyName: varchar("companyName", { length: 255 }).notNull(),
+  contactName: varchar("contactName", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 40 }).notNull(),
+  employeeRange: varchar("employeeRange", { length: 20 }).notNull(),
+  message: text("message"),
+  status: demoRequestStatusEnum("status").default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type DemoRequest = typeof demoRequests.$inferSelect;
+export type InsertDemoRequest = typeof demoRequests.$inferInsert;

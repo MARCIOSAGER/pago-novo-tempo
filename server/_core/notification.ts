@@ -400,6 +400,66 @@ export async function sendInviteEmail(data: InviteEmailData): Promise<boolean> {
   }
 }
 
+// ─── Corporate Demo Request Email ───────────────────────────
+
+export type DemoRequestEmailData = {
+  companyName: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  employeeRange: string;
+  message?: string | null;
+};
+
+export async function sendDemoRequestEmail(data: DemoRequestEmailData): Promise<boolean> {
+  if (!isSmtpConfigured()) {
+    console.warn("[Notification] SMTP not configured, skipping demo request email.");
+    return false;
+  }
+
+  const transporter = getTransporter();
+  const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
+  const toAddress = "contato@metodopago.com";
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+  <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: #C8A951; margin: 0; font-size: 24px;">P.A.G.O.</h1>
+    <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">Corporativo — Nova Solicitação</p>
+  </div>
+  <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none; border-radius: 0 0 8px 8px;">
+    <h2 style="color: #1A2744; margin: 0 0 20px; font-size: 18px;">Solicitação de Demonstração</h2>
+    <table style="width: 100%; border-collapse: collapse;">
+      <tr><td style="padding: 10px 0; color: #888; width: 140px; border-bottom: 1px solid #E8E0D4;">Empresa</td><td style="padding: 10px 0; font-weight: 600; border-bottom: 1px solid #E8E0D4;">${data.companyName}</td></tr>
+      <tr><td style="padding: 10px 0; color: #888; border-bottom: 1px solid #E8E0D4;">Responsável</td><td style="padding: 10px 0; font-weight: 600; border-bottom: 1px solid #E8E0D4;">${data.contactName}</td></tr>
+      <tr><td style="padding: 10px 0; color: #888; border-bottom: 1px solid #E8E0D4;">Email</td><td style="padding: 10px 0; border-bottom: 1px solid #E8E0D4;"><a href="mailto:${data.email}" style="color: #2A3A5C;">${data.email}</a></td></tr>
+      <tr><td style="padding: 10px 0; color: #888; border-bottom: 1px solid #E8E0D4;">Telefone</td><td style="padding: 10px 0; border-bottom: 1px solid #E8E0D4;"><a href="tel:${data.phone}" style="color: #2A3A5C;">${data.phone}</a></td></tr>
+      <tr><td style="padding: 10px 0; color: #888; border-bottom: 1px solid #E8E0D4;">Colaboradores</td><td style="padding: 10px 0; font-weight: 600; border-bottom: 1px solid #E8E0D4;">${data.employeeRange}</td></tr>
+      ${data.message ? `<tr><td style="padding: 10px 0; color: #888; vertical-align: top;">Mensagem</td><td style="padding: 10px 0;">${data.message}</td></tr>` : ""}
+    </table>
+    <div style="margin-top: 25px; text-align: center;">
+      <a href="https://metodopago.com/admin/organizations" style="display: inline-block; background: #1A2744; color: #C8A951; padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 600;">Ver no Painel Admin</a>
+    </div>
+  </div>
+</div></body></html>`;
+
+  try {
+    await transporter.sendMail({
+      from: fromAddress,
+      to: toAddress,
+      subject: `Nova Solicitação Corporativa — ${data.companyName}`,
+      text: `Nova solicitação de demonstração corporativa:\n\nEmpresa: ${data.companyName}\nResponsável: ${data.contactName}\nEmail: ${data.email}\nTelefone: ${data.phone}\nColaboradores: ${data.employeeRange}\n${data.message ? `Mensagem: ${data.message}` : ""}`,
+      encoding: "utf-8",
+      html,
+    });
+    console.log(`[Notification] Demo request email sent for ${data.companyName}`);
+    return true;
+  } catch (error) {
+    console.warn("[Notification] Demo request email failed:", error);
+    return false;
+  }
+}
+
 export async function notifyInscription(data: InscriptionData): Promise<void> {
   if (!isSmtpConfigured()) {
     console.warn("[Notification] SMTP not configured, skipping inscription emails.");

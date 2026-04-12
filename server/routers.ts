@@ -44,12 +44,13 @@ import {
   listCorporateDiagnosticsByMember,
   getCompanyAverages,
   listDiagnosticosByEmail,
+  createDemoRequest,
 } from "./db";
 import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
-import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf, sendInviteEmail } from "./_core/notification";
+import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf, sendInviteEmail, sendDemoRequestEmail } from "./_core/notification";
 import { generateDiagnosticoPdfBase64 } from "./diagnosticoPdf";
 import { computePillarSubgroups, computeWeakestSubgroupPerPillar } from "../shared/diagnostico";
 import pt from "../client/src/i18n/pt";
@@ -834,6 +835,22 @@ export const appRouter = router({
 
   // ─── Corporate Module ───────────────────────────────────────────
   corporate: router({
+    // Public: Demo request form
+    requestDemo: publicProcedure
+      .input(z.object({
+        companyName: z.string().min(2).max(255),
+        contactName: z.string().min(2).max(255),
+        email: z.string().email().max(320),
+        phone: z.string().min(8).max(40),
+        employeeRange: z.enum(["1-50", "51-200", "201-500", "500+"]),
+        message: z.string().max(1000).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const row = await createDemoRequest(input);
+        sendDemoRequestEmail(input).catch(() => {});
+        return { id: row.id };
+      }),
+
     // Admin: CRUD for organizations (super admin only)
     createOrg: adminProcedure
       .input(z.object({

@@ -1026,6 +1026,31 @@ const pt = {
     dadosDashboard: "Os dados do dashboard serão populados conforme os membros completarem seus diagnósticos.",
     semPermissaoConvites: "Você não tem permissão para enviar convites. Contate o administrador RH.",
 
+    // Demo Request Modal
+    demoRequest: {
+      title: "Solicitar Demonstração",
+      description: "Preencha os dados para agendar uma demonstração do P.A.G.O. Corporativo.",
+      companyName: "Nome da Empresa",
+      companyPlaceholder: "Ex: Empresa XYZ",
+      contactName: "Nome do Responsável",
+      contactPlaceholder: "Nome completo",
+      email: "Email Corporativo",
+      emailPlaceholder: "email@empresa.com",
+      phone: "Telefone / WhatsApp",
+      phonePlaceholder: "+55 11 99999-9999",
+      employeeRange: "Número de Colaboradores",
+      selectPlaceholder: "Selecione...",
+      message: "Mensagem",
+      messageOptional: "(opcional)",
+      messagePlaceholder: "Conte-nos mais sobre a sua necessidade...",
+      submit: "Enviar Solicitação",
+      submitting: "Enviando...",
+      error: "Erro ao enviar. Tente novamente.",
+      successTitle: "Solicitação Enviada!",
+      successMessage: "Recebemos os seus dados. A nossa equipa entrará em contacto em breve para agendar a demonstração.",
+      close: "Fechar",
+    },
+
     // Sinalização emocional
     sinalizacaoEmocional: {
       title: "Sinalização Importante",

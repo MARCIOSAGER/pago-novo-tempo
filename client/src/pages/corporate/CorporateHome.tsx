@@ -18,7 +18,9 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import DemoRequestModal from "@/components/corporate/DemoRequestModal";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -141,6 +143,7 @@ export default function CorporateHome() {
   const { user, loading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
+  const [demoOpen, setDemoOpen] = useState(false);
 
   const { data: orgs, isLoading } = trpc.corporate.myOrgs.useQuery(undefined, {
     enabled: !!user,
@@ -211,7 +214,7 @@ export default function CorporateHome() {
 
           <motion.div variants={fadeUp} custom={4} className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
-              onClick={() => setLocation("/mentoria")}
+              onClick={() => setDemoOpen(true)}
               className="group inline-flex items-center gap-3 bg-[#B8A88A] text-[#0F1B2D] font-[Montserrat] font-semibold text-sm uppercase tracking-wider px-8 py-4 rounded-lg hover:bg-[#D4C8A8] transition-colors duration-300"
             >
               Solicitar Demonstração
@@ -516,7 +519,7 @@ export default function CorporateHome() {
           </motion.p>
           <motion.div variants={fadeUp} custom={2}>
             <button
-              onClick={() => setLocation("/mentoria")}
+              onClick={() => setDemoOpen(true)}
               className="group inline-flex items-center gap-3 bg-[#B8A88A] text-[#0F1B2D] font-[Montserrat] font-semibold text-sm uppercase tracking-wider px-8 py-4 rounded-lg hover:bg-[#D4C8A8] transition-colors duration-300"
             >
               Solicitar Demonstração
@@ -626,6 +629,7 @@ export default function CorporateHome() {
       )}
 
       <Footer />
+      <DemoRequestModal open={demoOpen} onOpenChange={setDemoOpen} />
     </>
   );
 }

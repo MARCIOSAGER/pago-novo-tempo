@@ -24,6 +24,9 @@ import {
   questionnaires,
   corporateDiagnostics,
   InsertOrgMember as _IOM,
+  demoRequests,
+  InsertDemoRequest,
+  DemoRequest,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -732,4 +735,13 @@ export async function getCompanyAverages(orgId: number) {
     avgGeral: sql<number>`AVG("mediaGeral")`,
   }).from(corporateDiagnostics).where(eq(corporateDiagnostics.orgId, orgId));
   return result[0];
+}
+
+// ─── Demo Requests ──────────────────────────────────────────────
+
+export async function createDemoRequest(data: Omit<InsertDemoRequest, "id" | "createdAt" | "status">): Promise<DemoRequest> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [row] = await db.insert(demoRequests).values(data).returning();
+  return row;
 }

@@ -1028,6 +1028,31 @@ const es: Translations = {
     dadosDashboard: "Los datos del dashboard se llenarán a medida que los miembros completen sus diagnósticos.",
     semPermissaoConvites: "No tiene permiso para enviar invitaciones. Contacte al administrador de RH.",
 
+    // Demo Request Modal
+    demoRequest: {
+      title: "Solicitar Demostración",
+      description: "Complete los datos para agendar una demostración de P.A.G.O. Corporativo.",
+      companyName: "Nombre de la Empresa",
+      companyPlaceholder: "Ej: Empresa XYZ",
+      contactName: "Nombre del Responsable",
+      contactPlaceholder: "Nombre completo",
+      email: "Email Corporativo",
+      emailPlaceholder: "email@empresa.com",
+      phone: "Teléfono / WhatsApp",
+      phonePlaceholder: "+34 612 345 678",
+      employeeRange: "Número de Colaboradores",
+      selectPlaceholder: "Seleccione...",
+      message: "Mensaje",
+      messageOptional: "(opcional)",
+      messagePlaceholder: "Cuéntenos más sobre su necesidad...",
+      submit: "Enviar Solicitud",
+      submitting: "Enviando...",
+      error: "Error al enviar. Inténtelo de nuevo.",
+      successTitle: "¡Solicitud Enviada!",
+      successMessage: "Hemos recibido sus datos. Nuestro equipo se pondrá en contacto pronto para agendar la demostración.",
+      close: "Cerrar",
+    },
+
     // Sinalização emocional
     sinalizacaoEmocional: {
       title: "Señalización Importante",
