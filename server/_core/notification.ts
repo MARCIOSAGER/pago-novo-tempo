@@ -400,6 +400,51 @@ export async function sendInviteEmail(data: InviteEmailData): Promise<boolean> {
   }
 }
 
+// ─── Password Reset Email ───────────────────────────────────
+
+export async function sendPasswordResetEmail(email: string, name: string, resetUrl: string): Promise<boolean> {
+  if (!isSmtpConfigured()) {
+    console.warn("[Notification] SMTP not configured, skipping password reset email.");
+    return false;
+  }
+
+  const transporter = getTransporter();
+  const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+  <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: #C8A951; margin: 0; font-size: 24px;">P.A.G.O.</h1>
+    <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">Redefinição de Senha</p>
+  </div>
+  <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none; border-radius: 0 0 8px 8px;">
+    <p style="margin: 0 0 15px;">Olá${name ? ` ${name}` : ""},</p>
+    <p style="margin: 0 0 20px;">Recebemos uma solicitação para redefinir a sua senha. Clique no botão abaixo para criar uma nova senha:</p>
+    <div style="text-align: center; margin: 25px 0;">
+      <a href="${resetUrl}" style="display: inline-block; background: #1A2744; color: #C8A951; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600;">Redefinir Senha</a>
+    </div>
+    <p style="margin: 0 0 10px; font-size: 13px; color: #666;">Este link expira em 1 hora.</p>
+    <p style="margin: 0; font-size: 13px; color: #666;">Se você não solicitou esta redefinição, ignore este email.</p>
+  </div>
+</div></body></html>`;
+
+  try {
+    await transporter.sendMail({
+      from: fromAddress,
+      to: email,
+      subject: "Redefinir Senha — P.A.G.O.",
+      text: `Olá${name ? ` ${name}` : ""},\n\nClique no link abaixo para redefinir a sua senha:\n${resetUrl}\n\nEste link expira em 1 hora.\n\nSe você não solicitou esta redefinição, ignore este email.`,
+      encoding: "utf-8",
+      html,
+    });
+    console.log(`[Notification] Password reset email sent to ${email}`);
+    return true;
+  } catch (error) {
+    console.warn("[Notification] Password reset email failed:", error);
+    return false;
+  }
+}
+
 // ─── Corporate Demo Request Email ───────────────────────────
 
 export type DemoRequestEmailData = {

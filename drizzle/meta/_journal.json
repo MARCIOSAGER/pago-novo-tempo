@@ -8,6 +8,13 @@
       "when": 1776026770196,
       "tag": "0000_greedy_stryfe",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776029001368,
+      "tag": "0001_heavy_unus",
+      "breakpoints": true
     }
   ]
 }

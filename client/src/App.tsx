@@ -37,6 +37,10 @@ import HRInvites from "./pages/corporate/HRInvites";
 import Fundador from "./pages/Fundador";
 import Mentoria from "./pages/Mentoria";
 import Diagnostico from "./pages/Diagnostico";
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 
 function Router() {
   return (
@@ -48,6 +52,12 @@ function Router() {
       <Route path={"/fundador"} component={Fundador} />
       <Route path={"/mentoria"} component={Mentoria} />
       <Route path={"/diagnostico"} component={Diagnostico} />
+
+      {/* Auth routes */}
+      <Route path="/login" component={LoginPage} />
+      <Route path="/register" component={RegisterPage} />
+      <Route path="/forgot-password" component={ForgotPasswordPage} />
+      <Route path="/reset-password/:token" component={ResetPasswordPage} />
 
       {/* Admin routes — wrapped in AdminLayout with sidebar */}
       <Route path="/admin">

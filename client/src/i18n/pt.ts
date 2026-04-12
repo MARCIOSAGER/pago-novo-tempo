@@ -1,4 +1,49 @@
 const pt = {
+  // === AUTH ===
+  auth: {
+    loginSubtitle: "Acesse a sua conta",
+    continueGoogle: "Continuar com Google",
+    continueGithub: "Continuar com GitHub",
+    or: "ou",
+    emailPlaceholder: "Email",
+    passwordPlaceholder: "Senha",
+    forgotPassword: "Esqueceu a senha?",
+    loginButton: "Entrar",
+    loggingIn: "Entrando...",
+    loginError: "Erro ao fazer login. Tente novamente.",
+    noAccount: "Ainda não tem conta?",
+    createAccount: "Criar conta",
+    // Register
+    registerSubtitle: "Crie a sua conta",
+    namePlaceholder: "Nome completo",
+    confirmPasswordPlaceholder: "Confirmar senha",
+    registerButton: "Criar Conta",
+    registering: "Criando...",
+    registerError: "Erro ao criar conta. Tente novamente.",
+    passwordMismatch: "As senhas não coincidem.",
+    passwordTooShort: "A senha deve ter pelo menos 8 caracteres.",
+    hasAccount: "Já tem uma conta?",
+    loginLink: "Entrar",
+    // Forgot Password
+    forgotSubtitle: "Informe o seu email para redefinir a senha",
+    sendResetLink: "Enviar Link de Redefinição",
+    sending: "Enviando...",
+    forgotError: "Erro ao enviar. Tente novamente.",
+    forgotSuccessTitle: "Email Enviado!",
+    forgotSuccessMessage: "Se o email estiver cadastrado, você receberá um link para redefinir a sua senha.",
+    backToLogin: "Voltar ao Login",
+    // Reset Password
+    resetSubtitle: "Crie uma nova senha",
+    newPasswordPlaceholder: "Nova senha",
+    passwordRequirement: "Mínimo de 8 caracteres.",
+    resetButton: "Redefinir Senha",
+    resetting: "Redefinindo...",
+    resetError: "Erro ao redefinir. O link pode ter expirado.",
+    resetSuccessTitle: "Senha Redefinida!",
+    resetSuccessMessage: "A sua senha foi atualizada com sucesso. Faça login com a nova senha.",
+    goToLogin: "Ir para Login",
+  },
+
   // === NAVBAR ===
   nav: {
     about: "Sobre",

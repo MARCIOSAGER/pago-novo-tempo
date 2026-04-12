@@ -737,6 +737,48 @@ export async function getCompanyAverages(orgId: number) {
   return result[0];
 }
 
+// ─── Local Auth (Email + Password) ──────────────────────────────
+
+export async function getUserByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const [row] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  return row;
+}
+
+export async function createLocalUser(data: { email: string; name: string; passwordHash: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const openId = `local:${data.email}`;
+  const [row] = await db.insert(users).values({
+    openId,
+    email: data.email,
+    name: data.name,
+    passwordHash: data.passwordHash,
+    loginMethod: "email",
+  }).returning();
+  return row;
+}
+
+export async function setResetToken(userId: number, token: string, expiresAt: Date) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(users).set({ resetToken: token, resetTokenExpiresAt: expiresAt }).where(eq(users.id, userId));
+}
+
+export async function getUserByResetToken(token: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const [row] = await db.select().from(users).where(eq(users.resetToken, token)).limit(1);
+  return row;
+}
+
+export async function updatePasswordHash(userId: number, passwordHash: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(users).set({ passwordHash, resetToken: null, resetTokenExpiresAt: null }).where(eq(users.id, userId));
+}
+
 // ─── Demo Requests ──────────────────────────────────────────────
 
 export async function createDemoRequest(data: Omit<InsertDemoRequest, "id" | "createdAt" | "status">): Promise<DemoRequest> {

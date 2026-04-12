@@ -1,6 +1,48 @@
 import type { Translations } from "./pt";
 
 const es: Translations = {
+  // === AUTH ===
+  auth: {
+    loginSubtitle: "Acceda a su cuenta",
+    continueGoogle: "Continuar con Google",
+    continueGithub: "Continuar con GitHub",
+    or: "o",
+    emailPlaceholder: "Email",
+    passwordPlaceholder: "Contraseña",
+    forgotPassword: "¿Olvidó su contraseña?",
+    loginButton: "Iniciar Sesión",
+    loggingIn: "Iniciando...",
+    loginError: "Error al iniciar sesión. Inténtelo de nuevo.",
+    noAccount: "¿No tiene cuenta?",
+    createAccount: "Crear cuenta",
+    registerSubtitle: "Cree su cuenta",
+    namePlaceholder: "Nombre completo",
+    confirmPasswordPlaceholder: "Confirmar contraseña",
+    registerButton: "Crear Cuenta",
+    registering: "Creando...",
+    registerError: "Error al crear cuenta. Inténtelo de nuevo.",
+    passwordMismatch: "Las contraseñas no coinciden.",
+    passwordTooShort: "La contraseña debe tener al menos 8 caracteres.",
+    hasAccount: "¿Ya tiene cuenta?",
+    loginLink: "Iniciar sesión",
+    forgotSubtitle: "Ingrese su email para restablecer la contraseña",
+    sendResetLink: "Enviar Enlace de Restablecimiento",
+    sending: "Enviando...",
+    forgotError: "Error al enviar. Inténtelo de nuevo.",
+    forgotSuccessTitle: "¡Email Enviado!",
+    forgotSuccessMessage: "Si el email está registrado, recibirá un enlace para restablecer su contraseña.",
+    backToLogin: "Volver al Login",
+    resetSubtitle: "Cree una nueva contraseña",
+    newPasswordPlaceholder: "Nueva contraseña",
+    passwordRequirement: "Mínimo 8 caracteres.",
+    resetButton: "Restablecer Contraseña",
+    resetting: "Restableciendo...",
+    resetError: "Error al restablecer. El enlace puede haber expirado.",
+    resetSuccessTitle: "¡Contraseña Restablecida!",
+    resetSuccessMessage: "Su contraseña ha sido actualizada correctamente. Inicie sesión con la nueva contraseña.",
+    goToLogin: "Ir al Login",
+  },
+
   // === NAVBAR ===
   nav: {
     about: "Acerca de",

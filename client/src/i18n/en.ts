@@ -1,6 +1,48 @@
 import type { Translations } from "./pt";
 
 const en: Translations = {
+  // === AUTH ===
+  auth: {
+    loginSubtitle: "Sign in to your account",
+    continueGoogle: "Continue with Google",
+    continueGithub: "Continue with GitHub",
+    or: "or",
+    emailPlaceholder: "Email",
+    passwordPlaceholder: "Password",
+    forgotPassword: "Forgot password?",
+    loginButton: "Sign In",
+    loggingIn: "Signing in...",
+    loginError: "Login failed. Please try again.",
+    noAccount: "Don't have an account?",
+    createAccount: "Create account",
+    registerSubtitle: "Create your account",
+    namePlaceholder: "Full name",
+    confirmPasswordPlaceholder: "Confirm password",
+    registerButton: "Create Account",
+    registering: "Creating...",
+    registerError: "Registration failed. Please try again.",
+    passwordMismatch: "Passwords do not match.",
+    passwordTooShort: "Password must be at least 8 characters.",
+    hasAccount: "Already have an account?",
+    loginLink: "Sign in",
+    forgotSubtitle: "Enter your email to reset your password",
+    sendResetLink: "Send Reset Link",
+    sending: "Sending...",
+    forgotError: "Failed to send. Please try again.",
+    forgotSuccessTitle: "Email Sent!",
+    forgotSuccessMessage: "If the email is registered, you will receive a link to reset your password.",
+    backToLogin: "Back to Login",
+    resetSubtitle: "Create a new password",
+    newPasswordPlaceholder: "New password",
+    passwordRequirement: "Minimum 8 characters.",
+    resetButton: "Reset Password",
+    resetting: "Resetting...",
+    resetError: "Reset failed. The link may have expired.",
+    resetSuccessTitle: "Password Reset!",
+    resetSuccessMessage: "Your password has been updated successfully. Sign in with your new password.",
+    goToLogin: "Go to Login",
+  },
+
   // === NAVBAR ===
   nav: {
     about: "About",
