@@ -505,6 +505,53 @@ export async function sendDemoRequestEmail(data: DemoRequestEmailData): Promise<
   }
 }
 
+export async function sendDemoConfirmationEmail(data: DemoRequestEmailData): Promise<boolean> {
+  if (!isSmtpConfigured()) return false;
+
+  const transporter = getTransporter();
+  const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+  <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: #C8A951; margin: 0; font-size: 24px;">P.A.G.O.</h1>
+    <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">Corporativo</p>
+  </div>
+  <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none; border-radius: 0 0 8px 8px;">
+    <h2 style="color: #1A2744; margin: 0 0 15px; font-size: 18px;">Recebemos a sua solicitação!</h2>
+    <p style="margin: 0 0 20px; color: #555; line-height: 1.6;">Olá ${data.contactName},</p>
+    <p style="margin: 0 0 20px; color: #555; line-height: 1.6;">Obrigado pelo interesse no <strong>P.A.G.O. Corporativo</strong>. Recebemos os dados da empresa <strong>${data.companyName}</strong> e a nossa equipa irá analisá-los.</p>
+    <p style="margin: 0 0 20px; color: #555; line-height: 1.6;">Em breve entraremos em contacto para agendar uma demonstração e explicar como o diagnóstico pode transformar a performance da sua equipa.</p>
+    <div style="background: #F5F0E8; border-radius: 8px; padding: 20px; margin: 20px 0;">
+      <p style="margin: 0; font-size: 13px; color: #888;">Próximos passos:</p>
+      <ol style="margin: 10px 0 0; padding-left: 20px; color: #555; font-size: 14px; line-height: 1.8;">
+        <li>A nossa equipa analisa a sua solicitação</li>
+        <li>Entramos em contacto para agendar a demonstração</li>
+        <li>Após aprovação, você recebe um convite para criar a sua conta</li>
+        <li>Configure a sua equipa e inicie o diagnóstico</li>
+      </ol>
+    </div>
+    <p style="margin: 0; color: #888; font-size: 13px;">Se tiver alguma dúvida, responda a este email.</p>
+  </div>
+</div></body></html>`;
+
+  try {
+    await transporter.sendMail({
+      from: fromAddress,
+      to: data.email,
+      subject: `Recebemos a sua solicitação — P.A.G.O. Corporativo`,
+      text: `Olá ${data.contactName},\n\nObrigado pelo interesse no P.A.G.O. Corporativo. Recebemos os dados da empresa ${data.companyName} e a nossa equipa irá analisá-los.\n\nEm breve entraremos em contacto para agendar uma demonstração.\n\nEquipa P.A.G.O.`,
+      encoding: "utf-8",
+      html,
+    });
+    console.log(`[Notification] Demo confirmation email sent to ${data.email}`);
+    return true;
+  } catch (error) {
+    console.warn("[Notification] Demo confirmation email failed:", error);
+    return false;
+  }
+}
+
 export async function notifyInscription(data: InscriptionData): Promise<void> {
   if (!isSmtpConfigured()) {
     console.warn("[Notification] SMTP not configured, skipping inscription emails.");

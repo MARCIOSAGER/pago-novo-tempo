@@ -69,7 +69,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right: Login Form */}
-      <div className="w-full lg:w-1/2 bg-[#0F1B2D] flex items-center justify-center p-8">
+      <div className="w-full lg:w-1/2 bg-[#0F1B2D] flex items-center justify-center p-6 sm:p-8 min-h-screen">
         <div className="w-full max-w-md space-y-8">
           {/* Header */}
           <div className="text-center space-y-3">

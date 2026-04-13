@@ -56,7 +56,7 @@ import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
-import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf, sendInviteEmail, sendDemoRequestEmail } from "./_core/notification";
+import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf, sendInviteEmail, sendDemoRequestEmail, sendDemoConfirmationEmail } from "./_core/notification";
 import { generateDiagnosticoPdfBase64 } from "./diagnosticoPdf";
 import { computePillarSubgroups, computeWeakestSubgroupPerPillar } from "../shared/diagnostico";
 import pt from "../client/src/i18n/pt";
@@ -943,6 +943,7 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         const row = await createDemoRequest(input);
         sendDemoRequestEmail(input).catch(() => {});
+        sendDemoConfirmationEmail(input).catch(() => {});
         return { id: row.id };
       }),
 

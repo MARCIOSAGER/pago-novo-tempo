@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Eye, EyeOff, Loader2, Mail, Lock, User } from "lucide-react";
+import PasswordStrength from "@/components/PasswordStrength";
 
 export default function RegisterPage() {
   const { t } = useLanguage();
@@ -140,6 +141,7 @@ export default function RegisterPage() {
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
+              <PasswordStrength password={password} />
             </div>
 
             <div className="relative">

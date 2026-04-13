@@ -42,6 +42,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
+import ProfilePage from "./pages/auth/ProfilePage";
 
 function Router() {
   return (
@@ -59,6 +60,7 @@ function Router() {
       <Route path="/register" component={RegisterPage} />
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/reset-password/:token" component={ResetPasswordPage} />
+      <Route path="/profile" component={ProfilePage} />
 
       {/* Admin routes — wrapped in AdminLayout with sidebar */}
       <Route path="/admin">

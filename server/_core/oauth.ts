@@ -85,24 +85,43 @@ export function registerOAuthRoutes(app: Express) {
         return;
       }
 
-      // Upsert user in database
+      // Check if user already exists with this email (account linking)
       const openId = `google:${userInfo.id}`;
-      await db.upsertUser({
-        openId,
-        name: userInfo.name || null,
-        email: userInfo.email ?? null,
-        loginMethod: "google",
-        lastSignedIn: new Date(),
-      });
+      const existingByEmail = userInfo.email ? await db.getUserByEmail(userInfo.email) : null;
 
-      // Create session JWT
-      const sessionToken = await sdk.createSessionToken(openId, {
-        name: userInfo.name || "",
-        expiresInMs: ONE_YEAR_MS,
-      });
+      if (existingByEmail && existingByEmail.openId !== openId) {
+        // Link: update existing account to use Google openId
+        await db.upsertUser({
+          openId: existingByEmail.openId,
+          name: existingByEmail.name || userInfo.name || null,
+          email: userInfo.email ?? null,
+          loginMethod: "google",
+          lastSignedIn: new Date(),
+        });
+        // Create session with existing openId
+        const sessionToken = await sdk.createSessionToken(existingByEmail.openId, {
+          name: existingByEmail.name || userInfo.name || "",
+          expiresInMs: ONE_YEAR_MS,
+        });
+        const cookieOptions = getSessionCookieOptions(req);
+        res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      } else {
+        // Normal upsert
+        await db.upsertUser({
+          openId,
+          name: userInfo.name || null,
+          email: userInfo.email ?? null,
+          loginMethod: "google",
+          lastSignedIn: new Date(),
+        });
+        const sessionToken = await sdk.createSessionToken(openId, {
+          name: userInfo.name || "",
+          expiresInMs: ONE_YEAR_MS,
+        });
+        const cookieOptions = getSessionCookieOptions(req);
+        res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      }
 
-      const cookieOptions = getSessionCookieOptions(req);
-      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
       const returnTo = (req.query.state as string) || "/";
       const safePath = returnTo.startsWith("/") ? returnTo : "/";
       res.redirect(302, safePath);
@@ -185,24 +204,41 @@ export function registerOAuthRoutes(app: Express) {
         return;
       }
 
-      // Upsert user in database
+      // Check if user already exists with this email (account linking)
       const openId = `github:${userInfo.id}`;
-      await db.upsertUser({
-        openId,
-        name: userInfo.name || userInfo.login,
-        email: email ?? null,
-        loginMethod: "github",
-        lastSignedIn: new Date(),
-      });
+      const existingByEmail = email ? await db.getUserByEmail(email) : null;
+      const displayName = userInfo.name || userInfo.login;
 
-      // Create session JWT
-      const sessionToken = await sdk.createSessionToken(openId, {
-        name: userInfo.name || userInfo.login,
-        expiresInMs: ONE_YEAR_MS,
-      });
+      if (existingByEmail && existingByEmail.openId !== openId) {
+        await db.upsertUser({
+          openId: existingByEmail.openId,
+          name: existingByEmail.name || displayName,
+          email: email ?? null,
+          loginMethod: "github",
+          lastSignedIn: new Date(),
+        });
+        const sessionToken = await sdk.createSessionToken(existingByEmail.openId, {
+          name: existingByEmail.name || displayName,
+          expiresInMs: ONE_YEAR_MS,
+        });
+        const cookieOptions = getSessionCookieOptions(req);
+        res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      } else {
+        await db.upsertUser({
+          openId,
+          name: displayName,
+          email: email ?? null,
+          loginMethod: "github",
+          lastSignedIn: new Date(),
+        });
+        const sessionToken = await sdk.createSessionToken(openId, {
+          name: displayName,
+          expiresInMs: ONE_YEAR_MS,
+        });
+        const cookieOptions = getSessionCookieOptions(req);
+        res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      }
 
-      const cookieOptions = getSessionCookieOptions(req);
-      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
       const returnTo = (req.query.state as string) || "/";
       const safePath = returnTo.startsWith("/") ? returnTo : "/";
       res.redirect(302, safePath);
