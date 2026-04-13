@@ -681,6 +681,32 @@ export async function updateOrgMember(id: number, data: Partial<InsertOrgMember>
   return member;
 }
 
+export async function getOrgStats(orgId: number) {
+  const db = await getDb();
+  if (!db) return { totalMembers: 0, activeMembers: 0, invitedMembers: 0, diagnosticsCount: 0, owner: null as { name: string | null; email: string } | null };
+
+  const [members] = await db.select({
+    total: count(),
+    active: sql<number>`SUM(CASE WHEN ${orgMembers.status} = 'active' THEN 1 ELSE 0 END)`,
+    invited: sql<number>`SUM(CASE WHEN ${orgMembers.status} = 'invited' THEN 1 ELSE 0 END)`,
+  }).from(orgMembers).where(eq(orgMembers.orgId, orgId));
+
+  const [diag] = await db.select({ count: count() }).from(corporateDiagnostics).where(eq(corporateDiagnostics.orgId, orgId));
+
+  const [ownerRow] = await db.select({ name: orgMembers.name, email: orgMembers.email })
+    .from(orgMembers)
+    .where(and(eq(orgMembers.orgId, orgId), eq(orgMembers.role, "owner")))
+    .limit(1);
+
+  return {
+    totalMembers: members?.total ?? 0,
+    activeMembers: Number(members?.active ?? 0),
+    invitedMembers: Number(members?.invited ?? 0),
+    diagnosticsCount: diag?.count ?? 0,
+    owner: ownerRow ?? null,
+  };
+}
+
 export async function countActiveOrgMembers(orgId: number): Promise<number> {
   const db = await getDb();
   if (!db) return 0;

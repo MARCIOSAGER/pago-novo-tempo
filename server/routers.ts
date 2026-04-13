@@ -48,6 +48,7 @@ import {
   listDemoRequests,
   updateDemoRequestStatus,
   getDemoRequestById,
+  getOrgStats,
 } from "./db";
 import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
@@ -959,8 +960,18 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const org = await getOrganizationById(input.id);
         if (!org) throw new TRPCError({ code: "NOT_FOUND", message: "Organization not found" });
-        const memberCount = await countActiveOrgMembers(input.id);
-        return { ...org, memberCount };
+        const stats = await getOrgStats(input.id);
+        return { ...org, ...stats };
+      }),
+
+    getOrgMembers: adminProcedure
+      .input(z.object({
+        orgId: z.number().int().positive(),
+        page: z.number().int().min(1).default(1),
+        pageSize: z.number().int().min(1).max(100).default(50),
+      }))
+      .query(async ({ input }) => {
+        return listOrgMembers(input.orgId, { page: input.page, pageSize: input.pageSize });
       }),
 
     myOrgs: protectedProcedure
