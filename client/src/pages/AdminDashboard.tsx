@@ -49,12 +49,16 @@ function KpiCard({
   icon: Icon,
   description,
   loading,
+  iconBg,
+  iconColor,
 }: {
   title: string;
   value: number | string;
   icon: React.ElementType;
   description?: string;
   loading?: boolean;
+  iconBg?: string;
+  iconColor?: string;
 }) {
   return (
     <Card className="border-border/50">
@@ -75,8 +79,8 @@ function KpiCard({
               <p className="text-xs text-muted-foreground">{description}</p>
             )}
           </div>
-          <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-            <Icon className="h-4 w-4 text-primary" />
+          <div className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 ${iconBg || "bg-primary/10"}`}>
+            <Icon className={`h-4 w-4 ${iconColor || "text-primary"}`} />
           </div>
         </div>
       </CardContent>
@@ -123,67 +127,13 @@ export default function AdminDashboard() {
       </div>
       <Separator />
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard
-          title="Total de Inscrições"
-          value={metrics?.total ?? 0}
-          icon={Users}
-          loading={metricsLoading}
-        />
-        <KpiCard
-          title="Pendentes"
-          value={metrics?.pending ?? 0}
-          icon={Clock}
-          description="Aguardando contato"
-          loading={metricsLoading}
-        />
-        <KpiCard
-          title="Inscritos"
-          value={metrics?.enrolled ?? 0}
-          icon={UserCheck}
-          description="Confirmados na mentoria"
-          loading={metricsLoading}
-        />
-        <KpiCard
-          title="Rejeitados"
-          value={metrics?.rejected ?? 0}
-          icon={UserX}
-          loading={metricsLoading}
-        />
-      </div>
-
-      {/* Second row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <KpiCard
-          title="Contatados"
-          value={metrics?.contacted ?? 0}
-          icon={MessageSquare}
-          description="Em processo de contato"
-          loading={metricsLoading}
-        />
-        <KpiCard
-          title="Últimos 7 dias"
-          value={metrics?.last7Days ?? 0}
-          icon={TrendingUp}
-          description="Novas inscrições"
-          loading={metricsLoading}
-        />
-        <KpiCard
-          title="Últimos 30 dias"
-          value={metrics?.last30Days ?? 0}
-          icon={CalendarDays}
-          description="Novas inscrições"
-          loading={metricsLoading}
-        />
-      </div>
-
       {/* ─── Corporate Section ─── */}
-      <Separator />
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-foreground font-display">
-          Corporativo
-        </h2>
+      <div className="rounded-xl bg-gradient-to-r from-[#1A2744]/5 to-[#B8A88A]/5 border border-[#B8A88A]/15 p-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Building2 className="h-5 w-5 text-[#B8A88A]" />
+            <h2 className="text-lg font-semibold text-foreground font-display">Corporativo</h2>
+          </div>
         <div className="flex gap-2">
           <Link href="/admin/acessos">
             <Button variant="outline" size="sm" className="font-accent text-xs">
@@ -198,56 +148,139 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard
-          title="Organizacoes"
-          value={corpMetrics?.totalOrgs ?? 0}
-          icon={Building2}
-          loading={corpLoading}
-        />
-        <KpiCard
-          title="Membros Ativos"
-          value={corpMetrics?.activeMembers ?? 0}
-          icon={UserCheck}
-          description={`${corpMetrics?.invitedMembers ?? 0} convidados`}
-          loading={corpLoading}
-        />
-        <KpiCard
-          title="Diagnosticos Corp."
-          value={corpMetrics?.totalDiagnostics ?? 0}
-          icon={ClipboardList}
-          loading={corpLoading}
-        />
-        <KpiCard
-          title="Solicitacoes Pendentes"
-          value={corpMetrics?.pendingRequests ?? 0}
-          icon={Clock}
-          description="Aguardando aprovacao"
-          loading={corpLoading}
-        />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <KpiCard
+            title="Organizacoes"
+            value={corpMetrics?.totalOrgs ?? 0}
+            icon={Building2}
+            iconBg="bg-indigo-500/10"
+            iconColor="text-indigo-500"
+            loading={corpLoading}
+          />
+          <KpiCard
+            title="Membros Ativos"
+            value={corpMetrics?.activeMembers ?? 0}
+            icon={UserCheck}
+            iconBg="bg-emerald-500/10"
+            iconColor="text-emerald-500"
+            description={`${corpMetrics?.invitedMembers ?? 0} convidados`}
+            loading={corpLoading}
+          />
+          <KpiCard
+            title="Diagnosticos Corp."
+            value={corpMetrics?.totalDiagnostics ?? 0}
+            icon={ClipboardList}
+            iconBg="bg-purple-500/10"
+            iconColor="text-purple-500"
+            loading={corpLoading}
+          />
+          <KpiCard
+            title="Solicitacoes Pendentes"
+            value={corpMetrics?.pendingRequests ?? 0}
+            icon={Clock}
+            iconBg="bg-amber-500/10"
+            iconColor="text-amber-500"
+            description="Aguardando aprovacao"
+            loading={corpLoading}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <KpiCard
+            title="Total de Usuarios"
+            value={corpMetrics?.totalUsers ?? 0}
+            icon={Users}
+            iconBg="bg-blue-500/10"
+            iconColor="text-blue-500"
+            description="Todas as contas no sistema"
+            loading={corpLoading}
+          />
+          <KpiCard
+            title="Total de Membros"
+            value={corpMetrics?.totalMembers ?? 0}
+            icon={UserPlus}
+            iconBg="bg-teal-500/10"
+            iconColor="text-teal-500"
+            description="Vinculados a organizacoes"
+            loading={corpLoading}
+          />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <KpiCard
-          title="Total de Usuarios"
-          value={corpMetrics?.totalUsers ?? 0}
-          icon={Users}
-          description="Todas as contas no sistema"
-          loading={corpLoading}
-        />
-        <KpiCard
-          title="Total de Membros"
-          value={corpMetrics?.totalMembers ?? 0}
-          icon={UserPlus}
-          description="Vinculados a organizacoes"
-          loading={corpLoading}
-        />
-      </div>
+      {/* ─── Mentoria Section ─── */}
+      <div className="rounded-xl bg-gradient-to-r from-amber-500/5 to-orange-500/5 border border-amber-500/15 p-5 space-y-4">
+        <div className="flex items-center gap-2">
+          <Users className="h-5 w-5 text-amber-600" />
+          <h2 className="text-lg font-semibold text-foreground font-display">Mentoria</h2>
+        </div>
 
-      <Separator />
-      <h2 className="text-lg font-semibold text-foreground font-display">
-        Mentoria
-      </h2>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <KpiCard
+            title="Total de Inscricoes"
+            value={metrics?.total ?? 0}
+            icon={Users}
+            iconBg="bg-blue-500/10"
+            iconColor="text-blue-500"
+            loading={metricsLoading}
+          />
+          <KpiCard
+            title="Pendentes"
+            value={metrics?.pending ?? 0}
+            icon={Clock}
+            iconBg="bg-amber-500/10"
+            iconColor="text-amber-500"
+            description="Aguardando contato"
+            loading={metricsLoading}
+          />
+          <KpiCard
+            title="Inscritos"
+            value={metrics?.enrolled ?? 0}
+            icon={UserCheck}
+            iconBg="bg-emerald-500/10"
+            iconColor="text-emerald-500"
+            description="Confirmados na mentoria"
+            loading={metricsLoading}
+          />
+          <KpiCard
+            title="Rejeitados"
+            value={metrics?.rejected ?? 0}
+            icon={UserX}
+            iconBg="bg-red-500/10"
+            iconColor="text-red-500"
+            loading={metricsLoading}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+          <KpiCard
+            title="Contatados"
+            value={metrics?.contacted ?? 0}
+            icon={MessageSquare}
+            iconBg="bg-blue-500/10"
+            iconColor="text-blue-500"
+            description="Em processo de contato"
+            loading={metricsLoading}
+          />
+          <KpiCard
+            title="Ultimos 7 dias"
+            value={metrics?.last7Days ?? 0}
+            icon={TrendingUp}
+            iconBg="bg-green-500/10"
+            iconColor="text-green-500"
+            description="Novas inscricoes"
+            loading={metricsLoading}
+          />
+          <KpiCard
+            title="Ultimos 30 dias"
+            value={metrics?.last30Days ?? 0}
+            icon={CalendarDays}
+            iconBg="bg-violet-500/10"
+            iconColor="text-violet-500"
+            description="Novas inscricoes"
+            loading={metricsLoading}
+          />
+        </div>
+      </div>
 
       {/* Status Distribution */}
       {metrics && !metricsLoading && metrics.total > 0 && (
