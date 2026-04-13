@@ -40,6 +40,8 @@ import {
   Shield,
   Eye,
   UserCheck,
+  HelpCircle,
+  ChevronDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -385,25 +387,107 @@ function RequestsTab() {
   );
 }
 
+// ─── Admin Guide ────────────────────────────────────────────────
+
+function AdminGuide() {
+  const [open, setOpen] = useState(false);
+
+  const guideSteps = [
+    { num: "1", title: "Empresa solicita demo", desc: "Acessa /corporate, preenche formulario. Aparece aqui na aba Solicitacoes. Email enviado para contato@metodopago.com.", who: "Empresa" },
+    { num: "2", title: "Admin analisa e aprova", desc: "Clique em Aprovar, defina slug e max membros. Sistema cria a org e envia convite por email ao responsavel como proprietario.", who: "Admin" },
+    { num: "3", title: "Responsavel aceita convite", desc: "Recebe email com link, cria conta (email+senha, Google ou GitHub), aceita com consentimento LGPD, vira owner da org.", who: "Responsavel" },
+    { num: "4", title: "RH convida funcionarios", desc: "Acessa o painel da org, Convites, adiciona emails. Funcionarios recebem email com link de convite.", who: "RH" },
+    { num: "5", title: "Funcionarios fazem diagnostico", desc: "Criam conta, aceitam convite, respondem 44 perguntas, recebem perfil individual com radar e diagnostico.", who: "Funcionario" },
+    { num: "6", title: "RH visualiza resultados", desc: "Dashboard com medias por pilar, departamento e visao geral. Relatorios e exportacao de dados.", who: "RH" },
+  ];
+
+  const emailGuide = [
+    { trigger: "Empresa solicita demo", to: "contato@metodopago.com", subject: "Nova Solicitacao Corporativa" },
+    { trigger: "Admin aprova solicitacao", to: "Email do responsavel", subject: "Convite Diagnostico Corporativo P.A.G.O." },
+    { trigger: "RH envia convite", to: "Email do funcionario", subject: "Convite Diagnostico Corporativo P.A.G.O." },
+    { trigger: "Usuario pede reset de senha", to: "Email do usuario", subject: "Redefinir Senha P.A.G.O." },
+  ];
+
+  return (
+    <Card className="border-dashed">
+      <CardContent className="p-4">
+        <button onClick={() => setOpen(!open)} className="flex items-center gap-2 w-full text-left">
+          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm font-medium">Guia do Fluxo Corporativo</span>
+          <ChevronDown className={`h-4 w-4 ml-auto text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`} />
+        </button>
+        {open && (
+          <div className="mt-4 space-y-6">
+            <div>
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Fluxo de Acesso</h4>
+              <div className="space-y-3">
+                {guideSteps.map((s) => (
+                  <div key={s.num} className="flex gap-3 items-start">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+                      <span className="text-xs font-bold text-primary">{s.num}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium">{s.title}</p>
+                        <Badge variant="outline" className="text-[9px]">{s.who}</Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">{s.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Emails Automaticos</h4>
+              <div className="border rounded-lg overflow-hidden">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="bg-muted/50">
+                      <th className="text-left px-3 py-2 font-medium">Gatilho</th>
+                      <th className="text-left px-3 py-2 font-medium">Destinatario</th>
+                      <th className="text-left px-3 py-2 font-medium">Assunto</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {emailGuide.map((e, i) => (
+                      <tr key={i}>
+                        <td className="px-3 py-2">{e.trigger}</td>
+                        <td className="px-3 py-2 text-muted-foreground">{e.to}</td>
+                        <td className="px-3 py-2 text-muted-foreground">{e.subject}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 // ─── Main Page ──────────────────────────────────────────────────
 
 export default function AdminAcessos() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight font-display">Gestão de Acessos</h1>
+        <h1 className="text-2xl font-semibold tracking-tight font-display">Gestao de Acessos</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Usuários, organizações e solicitações de acesso
+          Usuarios, organizacoes e solicitacoes de acesso
         </p>
       </div>
+
+      <AdminGuide />
 
       <Tabs defaultValue="users">
         <TabsList>
           <TabsTrigger value="users" className="gap-1.5">
-            <Users className="h-4 w-4" /> Usuários
+            <Users className="h-4 w-4" /> Usuarios
           </TabsTrigger>
           <TabsTrigger value="requests" className="gap-1.5">
-            <Building2 className="h-4 w-4" /> Solicitações
+            <Building2 className="h-4 w-4" /> Solicitacoes
           </TabsTrigger>
         </TabsList>
 

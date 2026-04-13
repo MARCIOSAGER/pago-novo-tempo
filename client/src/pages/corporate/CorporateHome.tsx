@@ -101,18 +101,28 @@ const comparisonRows: { label: string; values: string[] }[] = [
 const steps = [
   {
     num: "1",
-    title: "Diagnóstico",
-    desc: "44 perguntas estratégicas respondidas em 15–20 minutos. Simples para o colaborador, profundo para a organização.",
+    title: "Solicite uma Demonstração",
+    desc: "Preencha o formulário com os dados da sua empresa. A nossa equipa irá analisar e entrar em contacto.",
   },
   {
     num: "2",
-    title: "Perfil P.A.G.O.",
-    desc: "Radar multidimensional + Cruz Profissional + diagnóstico personalizado com insights acionáveis.",
+    title: "Aprovação e Convite",
+    desc: "Após a aprovação, você receberá um email com um convite para criar a sua conta e aceder ao painel da organização.",
   },
   {
     num: "3",
-    title: "Desenvolvimento",
-    desc: "Plano de ação com recomendações específicas para cada pessoa, equipa e nível organizacional.",
+    title: "Configure a Sua Equipa",
+    desc: "Como administrador, convide os seus colaboradores por email. Cada um receberá um link para criar a conta e aceitar o convite.",
+  },
+  {
+    num: "4",
+    title: "Diagnóstico P.A.G.O.",
+    desc: "44 perguntas estratégicas respondidas em 15–20 minutos. Simples para o colaborador, profundo para a organização.",
+  },
+  {
+    num: "5",
+    title: "Resultados e Desenvolvimento",
+    desc: "Perfil individual com radar multidimensional + dashboard gerencial com visão completa da equipa e recomendações por departamento.",
   },
 ];
 
@@ -622,7 +632,7 @@ export default function CorporateHome() {
               className="inline-flex items-center gap-3 bg-[#B8A88A] text-[#0F1B2D] font-[Montserrat] font-semibold text-sm uppercase tracking-wider px-8 py-4 rounded-lg hover:bg-[#D4C8A8] transition-colors duration-300"
             >
               <LogIn className="w-4 h-4" />
-              Aceder com Google
+              Acessar Minha Conta
             </a>
           </div>
         </section>
