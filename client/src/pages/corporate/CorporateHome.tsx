@@ -221,7 +221,7 @@ export default function CorporateHome() {
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
             <a
-              href="/api/oauth/google?returnTo=/corporate"
+              href="/login?returnTo=%2Fcorporate"
               className="inline-flex items-center gap-2 text-[#FAFAF8]/50 font-[Montserrat] text-sm hover:text-[#B8A88A] transition-colors"
             >
               <LogIn className="w-4 h-4" />
@@ -618,7 +618,7 @@ export default function CorporateHome() {
               Se a sua organização já utiliza o P.A.G.O. Corporativo, faça login para aceder ao seu diagnóstico.
             </p>
             <a
-              href="/api/oauth/google?returnTo=/corporate"
+              href="/login?returnTo=%2Fcorporate"
               className="inline-flex items-center gap-3 bg-[#B8A88A] text-[#0F1B2D] font-[Montserrat] font-semibold text-sm uppercase tracking-wider px-8 py-4 rounded-lg hover:bg-[#D4C8A8] transition-colors duration-300"
             >
               <LogIn className="w-4 h-4" />
