@@ -681,6 +681,33 @@ export async function updateOrgMember(id: number, data: Partial<InsertOrgMember>
   return member;
 }
 
+export async function getCorporateMetrics() {
+  const db = await getDb();
+  if (!db) return { totalOrgs: 0, totalMembers: 0, activeMembers: 0, invitedMembers: 0, totalDiagnostics: 0, pendingRequests: 0, totalUsers: 0 };
+
+  const [[orgsResult], [membersResult], [diagResult], [requestsResult], [usersResult]] = await Promise.all([
+    db.select({ count: count() }).from(organizations),
+    db.select({
+      total: count(),
+      active: sql<number>`SUM(CASE WHEN ${orgMembers.status} = 'active' THEN 1 ELSE 0 END)`,
+      invited: sql<number>`SUM(CASE WHEN ${orgMembers.status} = 'invited' THEN 1 ELSE 0 END)`,
+    }).from(orgMembers),
+    db.select({ count: count() }).from(corporateDiagnostics),
+    db.select({ count: count() }).from(demoRequests).where(eq(demoRequests.status, "pending")),
+    db.select({ count: count() }).from(users),
+  ]);
+
+  return {
+    totalOrgs: orgsResult?.count ?? 0,
+    totalMembers: membersResult?.total ?? 0,
+    activeMembers: Number(membersResult?.active ?? 0),
+    invitedMembers: Number(membersResult?.invited ?? 0),
+    totalDiagnostics: diagResult?.count ?? 0,
+    pendingRequests: requestsResult?.count ?? 0,
+    totalUsers: usersResult?.count ?? 0,
+  };
+}
+
 export async function getOrgStats(orgId: number) {
   const db = await getDb();
   if (!db) return { totalMembers: 0, activeMembers: 0, invitedMembers: 0, diagnosticsCount: 0, owner: null as { name: string | null; email: string } | null };

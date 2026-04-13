@@ -11,6 +11,10 @@ import {
   MessageSquare,
   TrendingUp,
   CalendarDays,
+  Building2,
+  ClipboardList,
+  KeyRound,
+  UserPlus,
 } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -83,6 +87,8 @@ function KpiCard({
 export default function AdminDashboard() {
   const { data: metrics, isLoading: metricsLoading } =
     trpc.mentoria.metrics.useQuery();
+  const { data: corpMetrics, isLoading: corpLoading } =
+    trpc.accessManagement.corporateMetrics.useQuery();
   const { data: recentData, isLoading: recentLoading } =
     trpc.mentoria.listFiltered.useQuery({
       page: 1,
@@ -105,7 +111,7 @@ export default function AdminDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
           <h1 className="text-2xl font-semibold text-foreground font-display">
-            Painel de Mentoria
+            Painel Administrativo
           </h1>
           <p className="text-sm text-muted-foreground capitalize">{timestamp}</p>
         </div>
@@ -171,6 +177,77 @@ export default function AdminDashboard() {
           loading={metricsLoading}
         />
       </div>
+
+      {/* ─── Corporate Section ─── */}
+      <Separator />
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-foreground font-display">
+          Corporativo
+        </h2>
+        <div className="flex gap-2">
+          <Link href="/admin/acessos">
+            <Button variant="outline" size="sm" className="font-accent text-xs">
+              Gestao de Acessos
+            </Button>
+          </Link>
+          <Link href="/admin/organizations">
+            <Button variant="outline" size="sm" className="font-accent text-xs">
+              Organizacoes
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <KpiCard
+          title="Organizacoes"
+          value={corpMetrics?.totalOrgs ?? 0}
+          icon={Building2}
+          loading={corpLoading}
+        />
+        <KpiCard
+          title="Membros Ativos"
+          value={corpMetrics?.activeMembers ?? 0}
+          icon={UserCheck}
+          description={`${corpMetrics?.invitedMembers ?? 0} convidados`}
+          loading={corpLoading}
+        />
+        <KpiCard
+          title="Diagnosticos Corp."
+          value={corpMetrics?.totalDiagnostics ?? 0}
+          icon={ClipboardList}
+          loading={corpLoading}
+        />
+        <KpiCard
+          title="Solicitacoes Pendentes"
+          value={corpMetrics?.pendingRequests ?? 0}
+          icon={Clock}
+          description="Aguardando aprovacao"
+          loading={corpLoading}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <KpiCard
+          title="Total de Usuarios"
+          value={corpMetrics?.totalUsers ?? 0}
+          icon={Users}
+          description="Todas as contas no sistema"
+          loading={corpLoading}
+        />
+        <KpiCard
+          title="Total de Membros"
+          value={corpMetrics?.totalMembers ?? 0}
+          icon={UserPlus}
+          description="Vinculados a organizacoes"
+          loading={corpLoading}
+        />
+      </div>
+
+      <Separator />
+      <h2 className="text-lg font-semibold text-foreground font-display">
+        Mentoria
+      </h2>
 
       {/* Status Distribution */}
       {metrics && !metricsLoading && metrics.total > 0 && (

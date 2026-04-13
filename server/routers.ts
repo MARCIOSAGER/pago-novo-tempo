@@ -50,6 +50,7 @@ import {
   getDemoRequestById,
   getOrgStats,
   listAllUsersWithOrgs,
+  getCorporateMetrics,
 } from "./db";
 import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
@@ -840,6 +841,10 @@ export const appRouter = router({
 
   // ─── Access Management (Admin) ──────────────────────────────────
   accessManagement: router({
+    corporateMetrics: adminProcedure.query(async () => {
+      return getCorporateMetrics();
+    }),
+
     listUsers: adminProcedure
       .input(z.object({
         search: z.string().optional(),
