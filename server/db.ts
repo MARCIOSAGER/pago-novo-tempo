@@ -836,6 +836,44 @@ export async function updateDemoRequestStatus(id: number, status: "pending" | "c
   return row;
 }
 
+export async function listAllUsersWithOrgs(params: { search?: string; page: number; pageSize: number }) {
+  const db = await getDb();
+  if (!db) return { rows: [], total: 0 };
+  const { search, page, pageSize } = params;
+  const offset = (page - 1) * pageSize;
+
+  const where = search
+    ? or(like(users.name, `%${search}%`), like(users.email, `%${search}%`))
+    : undefined;
+
+  const [totalResult] = await db.select({ count: count() }).from(users).where(where);
+  const userRows = await db.select().from(users).where(where).orderBy(desc(users.createdAt)).limit(pageSize).offset(offset);
+
+  // Get org memberships for these users
+  const userIds = userRows.map(u => u.id);
+  const memberships = userIds.length > 0
+    ? await db.select({
+        userId: orgMembers.userId,
+        orgId: orgMembers.orgId,
+        orgName: organizations.name,
+        orgSlug: organizations.slug,
+        role: orgMembers.role,
+        status: orgMembers.status,
+      })
+      .from(orgMembers)
+      .innerJoin(organizations, eq(orgMembers.orgId, organizations.id))
+      .where(sql`${orgMembers.userId} IN (${sql.join(userIds.map(id => sql`${id}`), sql`, `)})`)
+    : [];
+
+  const rows = userRows.map(u => ({
+    ...u,
+    passwordHash: undefined, // strip sensitive field
+    orgs: memberships.filter(m => m.userId === u.id),
+  }));
+
+  return { rows, total: totalResult?.count ?? 0 };
+}
+
 export async function getDemoRequestById(id: number) {
   const db = await getDb();
   if (!db) return undefined;

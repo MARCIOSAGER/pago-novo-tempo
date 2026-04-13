@@ -49,6 +49,7 @@ import {
   updateDemoRequestStatus,
   getDemoRequestById,
   getOrgStats,
+  listAllUsersWithOrgs,
 } from "./db";
 import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
@@ -838,6 +839,18 @@ export const appRouter = router({
   }),
 
   // ─── Access Management (Admin) ──────────────────────────────────
+  accessManagement: router({
+    listUsers: adminProcedure
+      .input(z.object({
+        search: z.string().optional(),
+        page: z.number().int().min(1).default(1),
+        pageSize: z.number().int().min(1).max(100).default(20),
+      }))
+      .query(async ({ input }) => {
+        return listAllUsersWithOrgs(input);
+      }),
+  }),
+
   accessRequests: router({
     list: adminProcedure
       .input(z.object({
