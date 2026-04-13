@@ -128,12 +128,30 @@ export default function AdminLayout({
             Você não tem permissão para acessar o painel administrativo. Apenas
             administradores podem gerenciar as inscrições.
           </p>
-          <Link href="/">
-            <Button variant="outline" size="sm" className="gap-2 font-accent">
-              <ArrowLeft className="h-3.5 w-3.5" />
-              Voltar ao Site
+          <div className="bg-muted/50 rounded-lg p-4 w-full text-center space-y-1">
+            <p className="text-sm font-medium">{user.name || "—"}</p>
+            <p className="text-xs text-muted-foreground">{user.email || "—"}</p>
+          </div>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 font-accent"
+              onClick={async () => {
+                await fetch("/api/trpc/auth.logout", { method: "POST" });
+                window.location.href = getLoginUrl("/admin");
+              }}
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Trocar de Conta
             </Button>
-          </Link>
+            <Link href="/">
+              <Button variant="outline" size="sm" className="gap-2 font-accent">
+                <ArrowLeft className="h-3.5 w-3.5" />
+                Voltar ao Site
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     );
