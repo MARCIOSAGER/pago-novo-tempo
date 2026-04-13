@@ -28,6 +28,7 @@ import {
   UserCheck,
   UserPlus,
   Mail,
+  CalendarClock,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -114,7 +115,28 @@ function OrgMembers({ orgId }: { orgId: number }) {
 
 function OrgCard({ org, onDelete }: { org: any; onDelete: () => void }) {
   const [expanded, setExpanded] = useState(false);
+  const [editingDate, setEditingDate] = useState(false);
+  const [activeUntilInput, setActiveUntilInput] = useState(org.activeUntil ? new Date(org.activeUntil).toISOString().split("T")[0] : "");
+  const utils = trpc.useUtils();
   const { data: details } = trpc.corporate.getOrg.useQuery({ id: org.id });
+
+  const updateMutation = trpc.corporate.updateOrg.useMutation({
+    onSuccess: () => {
+      utils.corporate.listOrgs.invalidate();
+      utils.corporate.getOrg.invalidate({ id: org.id });
+      toast.success("Organização atualizada!");
+      setEditingDate(false);
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const changeStatus = (status: "active" | "trial" | "suspended") => {
+    updateMutation.mutate({ id: org.id, status });
+  };
+
+  const saveActiveUntil = () => {
+    updateMutation.mutate({ id: org.id, activeUntil: activeUntilInput || null });
+  };
 
   const stats = details || { totalMembers: 0, activeMembers: 0, invitedMembers: 0, diagnosticsCount: 0, owner: null };
 
@@ -142,7 +164,22 @@ function OrgCard({ org, onDelete }: { org: any; onDelete: () => void }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            {org.status !== "active" && (
+              <Button variant="outline" size="sm" className="h-7 text-xs text-emerald-600 border-emerald-300 hover:bg-emerald-50" onClick={() => changeStatus("active")}>
+                Ativar
+              </Button>
+            )}
+            {org.status !== "suspended" && (
+              <Button variant="outline" size="sm" className="h-7 text-xs text-red-600 border-red-300 hover:bg-red-50" onClick={() => changeStatus("suspended")}>
+                Suspender
+              </Button>
+            )}
+            {org.status !== "trial" && (
+              <Button variant="outline" size="sm" className="h-7 text-xs text-amber-600 border-amber-300 hover:bg-amber-50" onClick={() => changeStatus("trial")}>
+                Trial
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="icon"
@@ -186,6 +223,32 @@ function OrgCard({ org, onDelete }: { org: any; onDelete: () => void }) {
               <span className="text-muted-foreground">{stats.owner.name || stats.owner.email}</span>
             </div>
           )}
+          {/* Active Until */}
+          <div className="flex items-center gap-1.5 text-sm">
+            <CalendarClock className="h-4 w-4 text-orange-500" />
+            {editingDate ? (
+              <div className="flex items-center gap-1">
+                <input
+                  type="date"
+                  value={activeUntilInput}
+                  onChange={(e) => setActiveUntilInput(e.target.value)}
+                  className="text-xs border rounded px-1.5 py-0.5"
+                />
+                <Button variant="ghost" size="sm" className="h-6 px-1.5 text-xs" onClick={saveActiveUntil}>OK</Button>
+                <Button variant="ghost" size="sm" className="h-6 px-1.5 text-xs" onClick={() => setEditingDate(false)}>X</Button>
+              </div>
+            ) : (
+              <button onClick={() => setEditingDate(true)} className="text-muted-foreground hover:text-foreground transition-colors">
+                {org.activeUntil ? (
+                  <span className={new Date(org.activeUntil) < new Date() ? "text-red-500 font-semibold" : ""}>
+                    Valido ate {format(new Date(org.activeUntil), "dd/MM/yyyy")}
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground/50 italic">Sem validade</span>
+                )}
+              </button>
+            )}
+          </div>
           <span className="text-xs text-muted-foreground/60 self-center">
             Criada em {format(new Date(org.createdAt), "dd/MM/yyyy")}
           </span>

@@ -1036,13 +1036,18 @@ export const appRouter = router({
         id: z.number().int().positive(),
         name: z.string().min(2).max(255).optional(),
         status: z.enum(["active", "suspended", "trial"]).optional(),
+        activeUntil: z.string().optional().nullable(),
         maxMembers: z.number().int().min(1).max(10000).optional(),
         cnpj: z.string().max(18).optional(),
         privacyMinResponses: z.number().int().min(1).max(100).optional(),
         privacyShowIndividual: z.boolean().optional(),
       }))
       .mutation(async ({ input }) => {
-        const { id, ...data } = input;
+        const { id, activeUntil, ...rest } = input;
+        const data: any = { ...rest };
+        if (activeUntil !== undefined) {
+          data.activeUntil = activeUntil ? new Date(activeUntil) : null;
+        }
         const org = await updateOrganization(id, data);
         if (!org) throw new TRPCError({ code: "NOT_FOUND", message: "Organization not found" });
         return org;

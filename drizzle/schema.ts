@@ -142,6 +142,7 @@ export const organizations = pgTable("organizations", {
   maxMembers: integer("maxMembers").default(50).notNull(),
   privacyMinResponses: integer("privacyMinResponses").default(5).notNull(),
   privacyShowIndividual: boolean("privacyShowIndividual").default(false).notNull(),
+  activeUntil: timestamp("activeUntil"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
