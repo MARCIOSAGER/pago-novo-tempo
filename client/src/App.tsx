@@ -23,6 +23,7 @@ import AdminEmail from "./pages/AdminEmail";
 import AdminDiagnosticos from "./pages/AdminDiagnosticos";
 import AdminDiagnosticoDetalhe from "./pages/AdminDiagnosticoDetalhe";
 import AdminOrganizations from "./pages/AdminOrganizations";
+import AdminAcessos from "./pages/AdminAcessos";
 import CorporateHome from "./pages/corporate/CorporateHome";
 import InviteAccept from "./pages/corporate/InviteAccept";
 import CorporateLayout from "./components/corporate/CorporateLayout";
@@ -108,6 +109,11 @@ function Router() {
       <Route path="/admin/diagnosticos/:id">
         <AdminLayout>
           <AdminDiagnosticoDetalhe />
+        </AdminLayout>
+      </Route>
+      <Route path="/admin/acessos">
+        <AdminLayout>
+          <AdminAcessos />
         </AdminLayout>
       </Route>
       <Route path="/admin/organizations">

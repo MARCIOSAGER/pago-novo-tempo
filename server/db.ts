@@ -787,3 +787,32 @@ export async function createDemoRequest(data: Omit<InsertDemoRequest, "id" | "cr
   const [row] = await db.insert(demoRequests).values(data).returning();
   return row;
 }
+
+export async function listDemoRequests(opts: { status?: string; page?: number; pageSize?: number }) {
+  const db = await getDb();
+  if (!db) return { rows: [], total: 0 };
+  const page = opts.page ?? 1;
+  const pageSize = opts.pageSize ?? 20;
+  const offset = (page - 1) * pageSize;
+
+  const conditions = opts.status ? eq(demoRequests.status, opts.status as "pending" | "contacted" | "closed") : undefined;
+
+  const [totalResult] = await db.select({ count: count() }).from(demoRequests).where(conditions);
+  const rows = await db.select().from(demoRequests).where(conditions).orderBy(desc(demoRequests.id)).limit(pageSize).offset(offset);
+
+  return { rows, total: totalResult?.count ?? 0 };
+}
+
+export async function updateDemoRequestStatus(id: number, status: "pending" | "contacted" | "closed") {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [row] = await db.update(demoRequests).set({ status }).where(eq(demoRequests.id, id)).returning();
+  return row;
+}
+
+export async function getDemoRequestById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const [row] = await db.select().from(demoRequests).where(eq(demoRequests.id, id)).limit(1);
+  return row;
+}

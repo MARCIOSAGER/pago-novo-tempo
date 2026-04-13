@@ -45,6 +45,9 @@ import {
   getCompanyAverages,
   listDiagnosticosByEmail,
   createDemoRequest,
+  listDemoRequests,
+  updateDemoRequestStatus,
+  getDemoRequestById,
 } from "./db";
 import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
@@ -830,6 +833,79 @@ export const appRouter = router({
         return fetchUmami(
           `/api/websites/${ENV.analyticsWebsiteId}/metrics?${params}`
         );
+      }),
+  }),
+
+  // ─── Access Management (Admin) ──────────────────────────────────
+  accessRequests: router({
+    list: adminProcedure
+      .input(z.object({
+        status: z.enum(["pending", "contacted", "closed"]).optional(),
+        page: z.number().int().min(1).default(1),
+        pageSize: z.number().int().min(1).max(100).default(20),
+      }))
+      .query(async ({ input }) => {
+        return listDemoRequests(input);
+      }),
+
+    getById: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return getDemoRequestById(input.id);
+      }),
+
+    updateStatus: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(["pending", "contacted", "closed"]),
+      }))
+      .mutation(async ({ input }) => {
+        return updateDemoRequestStatus(input.id, input.status);
+      }),
+
+    approve: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        slug: z.string().min(2).max(100).regex(/^[a-z0-9-]+$/),
+        maxMembers: z.number().int().min(1).max(10000).default(50),
+      }))
+      .mutation(async ({ input }) => {
+        const request = await getDemoRequestById(input.id);
+        if (!request) throw new TRPCError({ code: "NOT_FOUND", message: "Solicitação não encontrada." });
+
+        // Create org
+        const org = await createOrganization({
+          name: request.companyName,
+          slug: input.slug,
+          maxMembers: input.maxMembers,
+        });
+
+        // Create member as owner
+        const token = nanoid(32);
+        const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        await createOrgMember({
+          orgId: org.id,
+          email: request.email,
+          name: request.contactName,
+          role: "owner",
+          inviteToken: token,
+          inviteExpiresAt: expiresAt,
+        });
+
+        // Send invite email
+        sendInviteEmail({
+          recipientEmail: request.email,
+          recipientName: request.contactName,
+          orgName: request.companyName,
+          inviterName: "P.A.G.O. Admin",
+          role: "owner",
+          inviteToken: token,
+        }).catch(() => {});
+
+        // Mark request as closed
+        await updateDemoRequestStatus(input.id, "closed");
+
+        return { orgId: org.id, orgSlug: input.slug };
       }),
   }),
 

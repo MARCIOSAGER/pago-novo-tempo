@@ -34,6 +34,7 @@ import {
   Mail,
   ClipboardList,
   Building2,
+  KeyRound,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation, Link } from "wouter";
@@ -49,6 +50,7 @@ const menuItems = [
   { icon: ImageIcon, label: "Mídia", path: "/admin/media" },
   { icon: Heart, label: "P.A.G.O Kids", path: "/admin/kids" },
   { icon: Mail, label: "Email", path: "/admin/email" },
+  { icon: KeyRound, label: "Gestão de Acessos", path: "/admin/acessos" },
   { icon: Building2, label: "Organizações", path: "/admin/organizations" },
 ];
 
