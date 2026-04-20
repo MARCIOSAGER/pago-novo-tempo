@@ -23,6 +23,7 @@ export const purchaseStatusEnum = pgEnum("purchase_status", [
   "delivered",
   "failed",
   "refunded",
+  "abandoned",
 ]);
 
 /**
@@ -252,6 +253,10 @@ export const purchases = pgTable("purchases", {
   rawSession: json("rawSession"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   deliveredAt: timestamp("deliveredAt"),
+  refundRequestedAt: timestamp("refundRequestedAt"),
+  refundReason: text("refundReason"),
+  refundDeniedAt: timestamp("refundDeniedAt"),
+  refundDenialNote: text("refundDenialNote"),
 });
 export type Purchase = typeof purchases.$inferSelect;
 export type InsertPurchase = typeof purchases.$inferInsert;

@@ -8,9 +8,12 @@ import {
   getSiteSetting,
   listPurchases,
   getPurchaseById,
+  getPurchaseBySessionId,
   getPurchaseMetrics,
   regeneratePurchaseToken,
   revokePurchaseToken,
+  requestPurchaseRefund,
+  denyPurchaseRefund,
   createInscription,
   listInscriptions,
   updateInscriptionStatus,
@@ -62,7 +65,7 @@ import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
-import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf, sendInviteEmail, sendDemoRequestEmail, sendDemoConfirmationEmail, sendEbookDeliveryEmail, sendPurchaseConfirmationEmail } from "./_core/notification";
+import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf, sendInviteEmail, sendDemoRequestEmail, sendDemoConfirmationEmail, sendEbookDeliveryEmail, sendPurchaseConfirmationEmail, sendRefundRequestReceivedEmail, sendRefundRequestAdminNotification, sendRefundDeniedEmail } from "./_core/notification";
 import { generateDiagnosticoPdfBase64 } from "./diagnosticoPdf";
 import { computePillarSubgroups, computeWeakestSubgroupPerPillar } from "../shared/diagnostico";
 import pt from "../client/src/i18n/pt";
@@ -823,7 +826,7 @@ export const appRouter = router({
         page: z.number().int().min(1).default(1),
         pageSize: z.number().int().min(1).max(200).default(50),
         productSlug: z.string().max(64).optional(),
-        status: z.enum(["pending", "delivered", "failed", "refunded"]).optional(),
+        status: z.enum(["pending", "delivered", "failed", "refunded", "abandoned"]).optional(),
       }))
       .query(async ({ input }) => {
         return listPurchases(input);
@@ -833,7 +836,7 @@ export const appRouter = router({
     metrics: adminProcedure
       .input(z.object({
         productSlug: z.string().max(64).optional(),
-        status: z.enum(["pending", "delivered", "failed", "refunded"]).optional(),
+        status: z.enum(["pending", "delivered", "failed", "refunded", "abandoned"]).optional(),
       }))
       .query(async ({ input }) => {
         return getPurchaseMetrics(input);
@@ -860,10 +863,12 @@ export const appRouter = router({
           const newExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
           await regeneratePurchaseToken(purchase.id, newToken, newExpiresAt);
           const downloadUrl = `${ENV.siteUrl}/api/purchases/download?token=${newToken}`;
+          const refundUrl = `${ENV.siteUrl}/reembolso?session_id=${encodeURIComponent(purchase.stripeSessionId)}`;
           await sendEbookDeliveryEmail({
             email: purchase.email,
             nome: purchase.customerName || purchase.email.split("@")[0],
             downloadUrl,
+            refundUrl,
             language: (purchase.language as "pt" | "en" | "es") || "pt",
             expiresAt: newExpiresAt,
             maxDownloads: purchase.maxDownloads,
@@ -893,6 +898,123 @@ export const appRouter = router({
           throw new TRPCError({ code: "BAD_REQUEST", message: "Apenas compras de ebook têm token." });
         }
         await revokePurchaseToken(purchase.id);
+        return { success: true };
+      }),
+
+    // Public: lookup purchase by session_id (for /reembolso page to display purchase info)
+    lookupBySession: publicProcedure
+      .input(z.object({ sessionId: z.string().min(1).max(255) }))
+      .query(async ({ input }) => {
+        const purchase = await getPurchaseBySessionId(input.sessionId);
+        if (!purchase) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
+        }
+        return {
+          id: purchase.id,
+          email: purchase.email,
+          customerName: purchase.customerName,
+          productSlug: purchase.productSlug,
+          language: purchase.language,
+          amountCents: purchase.amountCents,
+          currency: purchase.currency,
+          status: purchase.status,
+          createdAt: purchase.createdAt,
+          refundRequestedAt: purchase.refundRequestedAt,
+          refundDeniedAt: purchase.refundDeniedAt,
+        };
+      }),
+
+    // Public: submit refund request (identified by session_id)
+    requestRefund: publicProcedure
+      .input(z.object({
+        sessionId: z.string().min(1).max(255),
+        reason: z.string().min(5).max(2000),
+      }))
+      .mutation(async ({ input }) => {
+        const purchase = await getPurchaseBySessionId(input.sessionId);
+        if (!purchase) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
+        }
+        if (purchase.status === "refunded") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Esta compra já foi reembolsada." });
+        }
+        if (purchase.status === "abandoned") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Esta compra não foi concluída." });
+        }
+        if (purchase.refundRequestedAt && !purchase.refundDeniedAt) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Solicitação de reembolso já registrada. Aguarde retorno." });
+        }
+        // 7-day window per Brazilian CDC Art. 49
+        const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+        const elapsedMs = Date.now() - new Date(purchase.createdAt).getTime();
+        if (elapsedMs > sevenDaysMs) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "O prazo de 7 dias para reembolso sem justificativa expirou. Entre em contato pelo email para casos especiais." });
+        }
+
+        await requestPurchaseRefund(purchase.id, input.reason);
+
+        // Send confirmation to customer + notification to admin (best-effort; don't block response)
+        const lang = (purchase.language as "pt" | "en" | "es") || "pt";
+        const productLabels: Record<string, string> = { ebook: "Ebook P.A.G.O.", kit: "Kit P.A.G.O.", mentoria: "Mentoria P.A.G.O." };
+        const customerName = purchase.customerName || purchase.email.split("@")[0];
+        const productName = productLabels[purchase.productSlug] || purchase.productSlug;
+
+        try {
+          await sendRefundRequestReceivedEmail({
+            email: purchase.email,
+            nome: customerName,
+            productName,
+            language: lang,
+          });
+        } catch (e) {
+          console.warn("[Refund] customer confirmation email failed:", e);
+        }
+        try {
+          await sendRefundRequestAdminNotification({
+            purchaseId: purchase.id,
+            customerEmail: purchase.email,
+            customerName,
+            productName,
+            amountCents: purchase.amountCents,
+            reason: input.reason,
+          });
+        } catch (e) {
+          console.warn("[Refund] admin notification email failed:", e);
+        }
+
+        return { success: true };
+      }),
+
+    // Admin: deny a refund request
+    denyRefund: adminProcedure
+      .input(z.object({
+        id: z.number().int().positive(),
+        note: z.string().min(5).max(2000),
+      }))
+      .mutation(async ({ input }) => {
+        const purchase = await getPurchaseById(input.id);
+        if (!purchase) throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
+        if (!purchase.refundRequestedAt) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Esta compra não tem solicitação de reembolso." });
+        }
+        if (purchase.status === "refunded") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Esta compra já foi reembolsada." });
+        }
+        await denyPurchaseRefund(purchase.id, input.note);
+
+        try {
+          const lang = (purchase.language as "pt" | "en" | "es") || "pt";
+          const productLabels: Record<string, string> = { ebook: "Ebook P.A.G.O.", kit: "Kit P.A.G.O.", mentoria: "Mentoria P.A.G.O." };
+          await sendRefundDeniedEmail({
+            email: purchase.email,
+            nome: purchase.customerName || purchase.email.split("@")[0],
+            productName: productLabels[purchase.productSlug] || purchase.productSlug,
+            note: input.note,
+            language: lang,
+          });
+        } catch (e) {
+          console.warn("[Refund] denial email failed:", e);
+        }
         return { success: true };
       }),
   }),

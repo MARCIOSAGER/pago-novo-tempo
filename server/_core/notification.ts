@@ -638,6 +638,7 @@ export type EbookDeliveryData = {
   email: string;
   nome: string;
   downloadUrl: string;
+  refundUrl?: string;
   language: "pt" | "en" | "es";
   expiresAt: Date;
   maxDownloads: number;
@@ -679,6 +680,11 @@ export async function sendEbookDeliveryEmail(data: EbookDeliveryData): Promise<v
     <p style="font-size: 13px; color: #666; margin-top: 25px;">Se o botão não funcionar, copie e cole este link no seu navegador:<br/>
       <a href="${data.downloadUrl}" style="color: #1A2744; word-break: break-all; font-size: 12px;">${data.downloadUrl}</a>
     </p>
+
+    ${data.refundUrl ? `<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #E8E0D4; font-size: 12px; color: #888;">
+      <p style="margin: 0 0 6px;"><strong>Garantia de 7 dias (CDC Art. 49)</strong></p>
+      <p style="margin: 0;">Não ficou satisfeito? Você pode <a href="${data.refundUrl}" style="color: #1A2744;">solicitar reembolso</a> dentro de 7 dias da compra, sem precisar justificar.</p>
+    </div>` : ""}
   </div>
   <p style="text-align: center; color: #999; font-size: 10px; margin-top: 15px;">
     Pagamento processado por Stripe · metodopago.com
@@ -699,6 +705,192 @@ export async function sendEbookDeliveryEmail(data: EbookDeliveryData): Promise<v
     console.error("[Notification] Ebook delivery email failed:", error);
     throw error;
   }
+}
+
+type Lang = "pt" | "en" | "es";
+
+const REFUND_COPY: Record<Lang, {
+  receivedSubject: (product: string) => string;
+  receivedHeadline: string;
+  receivedP1: (nome: string) => string;
+  receivedP2: (product: string) => string;
+  receivedP3: string;
+  receivedSignature: string;
+  deniedSubject: (product: string) => string;
+  deniedHeadline: string;
+  deniedP1: (nome: string) => string;
+  deniedP2: (product: string) => string;
+  deniedNoteLabel: string;
+  deniedFooter: string;
+}> = {
+  pt: {
+    receivedSubject: (p) => `Solicitação de reembolso recebida — ${p}`,
+    receivedHeadline: "Solicitação Recebida",
+    receivedP1: (n) => `Olá ${n},`,
+    receivedP2: (p) => `Recebemos sua solicitação de reembolso da sua compra de <strong>${p}</strong>.`,
+    receivedP3: "Nossa equipe vai analisar e retornar em até 2 dias úteis pelo email. Se for aprovado dentro do prazo de 7 dias (CDC Art. 49), o valor é devolvido integralmente na mesma forma de pagamento.",
+    receivedSignature: "Obrigado pela paciência.",
+    deniedSubject: (p) => `Atualização sobre sua solicitação de reembolso — ${p}`,
+    deniedHeadline: "Solicitação Analisada",
+    deniedP1: (n) => `Olá ${n},`,
+    deniedP2: (p) => `Analisamos sua solicitação de reembolso de <strong>${p}</strong> e, neste caso, não conseguimos atender ao pedido.`,
+    deniedNoteLabel: "Motivo",
+    deniedFooter: "Se tiver dúvidas adicionais, responda este email — estamos à disposição.",
+  },
+  en: {
+    receivedSubject: (p) => `Refund request received — ${p}`,
+    receivedHeadline: "Request Received",
+    receivedP1: (n) => `Hi ${n},`,
+    receivedP2: (p) => `We received your refund request for <strong>${p}</strong>.`,
+    receivedP3: "Our team will review and reply within 2 business days. Approved requests within the 7-day window are refunded to the original payment method.",
+    receivedSignature: "Thanks for your patience.",
+    deniedSubject: (p) => `Update on your refund request — ${p}`,
+    deniedHeadline: "Request Reviewed",
+    deniedP1: (n) => `Hi ${n},`,
+    deniedP2: (p) => `We reviewed your refund request for <strong>${p}</strong> and could not approve it this time.`,
+    deniedNoteLabel: "Reason",
+    deniedFooter: "If you have further questions, reply to this email — we're here to help.",
+  },
+  es: {
+    receivedSubject: (p) => `Solicitud de reembolso recibida — ${p}`,
+    receivedHeadline: "Solicitud Recibida",
+    receivedP1: (n) => `Hola ${n},`,
+    receivedP2: (p) => `Recibimos tu solicitud de reembolso de <strong>${p}</strong>.`,
+    receivedP3: "Nuestro equipo revisará y responderá en hasta 2 días hábiles. Las aprobaciones dentro de 7 días son reembolsadas en la forma de pago original.",
+    receivedSignature: "Gracias por tu paciencia.",
+    deniedSubject: (p) => `Actualización sobre tu solicitud de reembolso — ${p}`,
+    deniedHeadline: "Solicitud Revisada",
+    deniedP1: (n) => `Hola ${n},`,
+    deniedP2: (p) => `Revisamos tu solicitud de reembolso de <strong>${p}</strong> y no podemos aprobarla en este caso.`,
+    deniedNoteLabel: "Motivo",
+    deniedFooter: "Si tienes más preguntas, responde este email — estamos disponibles.",
+  },
+};
+
+export type RefundRequestReceivedData = {
+  email: string;
+  nome: string;
+  productName: string;
+  language: Lang;
+};
+
+export async function sendRefundRequestReceivedEmail(data: RefundRequestReceivedData): Promise<void> {
+  if (!isSmtpConfigured()) return;
+  const t = REFUND_COPY[data.language];
+  const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+  <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: #C8A951; margin: 0; font-size: 22px;">P.A.G.O.</h1>
+    <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">${t.receivedHeadline}</p>
+  </div>
+  <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
+    <p style="font-size: 16px;">${t.receivedP1(data.nome)}</p>
+    <p>${t.receivedP2(data.productName)}</p>
+    <p style="font-size: 14px; color: #5A4E3A;">${t.receivedP3}</p>
+    <p style="margin-top: 25px;">${t.receivedSignature}</p>
+  </div>
+</div></body></html>`;
+
+  await getTransporter().sendMail({
+    from: fromAddress,
+    to: data.email,
+    subject: t.receivedSubject(data.productName),
+    text: `${t.receivedP1(data.nome)}\n\n${t.receivedP2(data.productName).replace(/<[^>]+>/g, "")}\n\n${t.receivedP3}\n\n${t.receivedSignature}`,
+    encoding: "utf-8",
+    html,
+  });
+}
+
+export type RefundRequestAdminNotificationData = {
+  purchaseId: number;
+  customerEmail: string;
+  customerName: string;
+  productName: string;
+  amountCents: number;
+  reason: string;
+};
+
+export async function sendRefundRequestAdminNotification(data: RefundRequestAdminNotificationData): Promise<void> {
+  if (!isSmtpConfigured() || !ENV.ownerEmail) return;
+  const fromAddress = `"P.A.G.O. — Alertas" <${ENV.smtpUser}>`;
+  const amount = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(data.amountCents / 100);
+  const escapeHtml = (s: string) => s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+  <div style="background: #7A3030; padding: 24px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: #fff; margin: 0; font-size: 20px;">⚠️ Solicitação de Reembolso</h1>
+  </div>
+  <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
+    <p>Um cliente solicitou reembolso. Decida no painel.</p>
+    <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+      <tr><td style="padding: 8px 0; color: #888; width: 120px;">Cliente</td><td style="padding: 8px 0;"><strong>${escapeHtml(data.customerName)}</strong></td></tr>
+      <tr><td style="padding: 8px 0; color: #888;">Email</td><td style="padding: 8px 0;">${escapeHtml(data.customerEmail)}</td></tr>
+      <tr><td style="padding: 8px 0; color: #888;">Produto</td><td style="padding: 8px 0;">${escapeHtml(data.productName)}</td></tr>
+      <tr><td style="padding: 8px 0; color: #888;">Valor</td><td style="padding: 8px 0;"><strong>${amount}</strong></td></tr>
+    </table>
+    <div style="background: #F5F0E8; border-left: 4px solid #C8A951; padding: 15px; margin: 15px 0; border-radius: 0 6px 6px 0;">
+      <p style="margin: 0 0 6px; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.1em;">Motivo informado</p>
+      <p style="margin: 0; font-size: 14px; white-space: pre-wrap;">${escapeHtml(data.reason)}</p>
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+      <a href="${ENV.siteUrl}/admin/compras" style="display: inline-block; background: #1A2744; color: #C8A951; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">ABRIR PAINEL</a>
+    </div>
+    <p style="font-size: 12px; color: #888; margin-top: 20px;">Purchase #${data.purchaseId}. Se aprovar, processe o reembolso no dashboard.stripe.com — o webhook atualiza o status automaticamente.</p>
+  </div>
+</div></body></html>`;
+
+  await getTransporter().sendMail({
+    from: fromAddress,
+    to: ENV.ownerEmail,
+    subject: `[AÇÃO] Reembolso solicitado: ${data.productName} — ${data.customerName}`,
+    text: `Cliente: ${data.customerName} <${data.customerEmail}>\nProduto: ${data.productName}\nValor: ${amount}\n\nMotivo:\n${data.reason}\n\nAbrir: ${ENV.siteUrl}/admin/compras`,
+    encoding: "utf-8",
+    html,
+  });
+}
+
+export type RefundDeniedData = {
+  email: string;
+  nome: string;
+  productName: string;
+  note: string;
+  language: Lang;
+};
+
+export async function sendRefundDeniedEmail(data: RefundDeniedData): Promise<void> {
+  if (!isSmtpConfigured()) return;
+  const t = REFUND_COPY[data.language];
+  const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
+  const escapeHtml = (s: string) => s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+  <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: #C8A951; margin: 0; font-size: 22px;">P.A.G.O.</h1>
+    <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">${t.deniedHeadline}</p>
+  </div>
+  <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
+    <p style="font-size: 16px;">${t.deniedP1(data.nome)}</p>
+    <p>${t.deniedP2(data.productName)}</p>
+    <div style="background: #F5F0E8; border-left: 4px solid #7A3030; padding: 15px; margin: 20px 0; border-radius: 0 6px 6px 0;">
+      <p style="margin: 0 0 6px; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.1em;">${t.deniedNoteLabel}</p>
+      <p style="margin: 0; font-size: 14px; color: #1A2744; white-space: pre-wrap;">${escapeHtml(data.note)}</p>
+    </div>
+    <p style="font-size: 13px; color: #666; margin-top: 20px;">${t.deniedFooter}</p>
+  </div>
+</div></body></html>`;
+
+  await getTransporter().sendMail({
+    from: fromAddress,
+    to: data.email,
+    subject: t.deniedSubject(data.productName),
+    text: `${t.deniedP1(data.nome)}\n\n${t.deniedP2(data.productName).replace(/<[^>]+>/g, "")}\n\n${t.deniedNoteLabel}: ${data.note}\n\n${t.deniedFooter}`,
+    encoding: "utf-8",
+    html,
+  });
 }
 
 export type PurchaseConfirmationData = {

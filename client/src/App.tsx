@@ -41,6 +41,7 @@ import Fundador from "./pages/Fundador";
 import Mentoria from "./pages/Mentoria";
 import Diagnostico from "./pages/Diagnostico";
 import Obrigado from "./pages/Obrigado";
+import Reembolso from "./pages/Reembolso";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
@@ -58,6 +59,7 @@ function Router() {
       <Route path={"/mentoria"} component={Mentoria} />
       <Route path={"/diagnostico"} component={Diagnostico} />
       <Route path={"/obrigado"} component={Obrigado} />
+      <Route path={"/reembolso"} component={Reembolso} />
 
       {/* Auth routes */}
       <Route path="/login" component={LoginPage} />

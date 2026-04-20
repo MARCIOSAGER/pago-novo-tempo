@@ -945,7 +945,7 @@ export async function listPurchases(opts: {
   page?: number;
   pageSize?: number;
   productSlug?: string;
-  status?: "pending" | "delivered" | "failed" | "refunded";
+  status?: "pending" | "delivered" | "failed" | "refunded" | "abandoned";
 }): Promise<{ rows: Purchase[]; total: number }> {
   const db = await getDb();
   if (!db) return { rows: [], total: 0 };
@@ -1011,14 +1011,35 @@ export async function revokePurchaseToken(id: number): Promise<void> {
   await db.update(purchases).set({ downloadToken: null, tokenExpiresAt: null }).where(eq(purchases.id, id));
 }
 
+export async function requestPurchaseRefund(id: number, reason: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(purchases).set({
+    refundRequestedAt: new Date(),
+    refundReason: reason,
+    refundDeniedAt: null,
+    refundDenialNote: null,
+  }).where(eq(purchases.id, id));
+}
+
+export async function denyPurchaseRefund(id: number, note: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(purchases).set({
+    refundDeniedAt: new Date(),
+    refundDenialNote: note,
+  }).where(eq(purchases.id, id));
+}
+
 export async function getPurchaseMetrics(opts: {
   productSlug?: string;
-  status?: "pending" | "delivered" | "failed" | "refunded";
+  status?: "pending" | "delivered" | "failed" | "refunded" | "abandoned";
 } = {}): Promise<{
   totalCount: number;
   deliveredCount: number;
   refundedCount: number;
   failedCount: number;
+  abandonedCount: number;
   grossRevenueCents: number;
   netRevenueCents: number;
   refundedRevenueCents: number;
@@ -1035,7 +1056,7 @@ export async function getPurchaseMetrics(opts: {
 }> {
   const db = await getDb();
   const empty = {
-    totalCount: 0, deliveredCount: 0, refundedCount: 0, failedCount: 0,
+    totalCount: 0, deliveredCount: 0, refundedCount: 0, failedCount: 0, abandonedCount: 0,
     grossRevenueCents: 0, netRevenueCents: 0, refundedRevenueCents: 0,
     avgTicketCents: 0, last7dCount: 0, last7dRevenueCents: 0, last30dCount: 0,
     last30dRevenueCents: 0, todayCount: 0, todayRevenueCents: 0,
@@ -1076,6 +1097,10 @@ export async function getPurchaseMetrics(opts: {
   const [failedRow] = await db.select({
     count: count(),
   }).from(purchases).where(and(baseWhere, eq(purchases.status, "failed")) as never);
+
+  const [abandonedRow] = await db.select({
+    count: count(),
+  }).from(purchases).where(and(baseWhere, eq(purchases.status, "abandoned")) as never);
 
   const [todayRow] = await db.select({
     count: count(),
@@ -1121,6 +1146,7 @@ export async function getPurchaseMetrics(opts: {
     deliveredCount,
     refundedCount: refundedRow?.count ?? 0,
     failedCount: failedRow?.count ?? 0,
+    abandonedCount: abandonedRow?.count ?? 0,
     grossRevenueCents,
     netRevenueCents: deliveredRevenueCents,
     refundedRevenueCents,

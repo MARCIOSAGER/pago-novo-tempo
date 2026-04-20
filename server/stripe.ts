@@ -107,10 +107,12 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
   try {
     if (slug === "ebook" && downloadToken && tokenExpiresAt) {
       const downloadUrl = `${ENV.siteUrl}/api/purchases/download?token=${downloadToken}`;
+      const refundUrl = `${ENV.siteUrl}/reembolso?session_id=${encodeURIComponent(session.id)}`;
       await sendEbookDeliveryEmail({
         email: purchase.email,
         nome: purchase.customerName || purchase.email.split("@")[0],
         downloadUrl,
+        refundUrl,
         language: finalLanguage ?? "pt",
         expiresAt: tokenExpiresAt,
         maxDownloads: DOWNLOAD_TOKEN_MAX_USES,
@@ -136,6 +138,40 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
     await markPurchaseFailed(purchase.id).catch(() => {});
     throw error;
   }
+}
+
+export async function handleCheckoutSessionExpired(session: Stripe.Checkout.Session): Promise<void> {
+  const existing = await getPurchaseBySessionId(session.id);
+  if (existing) return; // already recorded (either completed or previously abandoned)
+
+  const { slug, language } = extractProductSlug(session);
+  if (!slug) {
+    console.log(`[Stripe] Expired session ${session.id} without product — skipping`);
+    return;
+  }
+
+  const email = session.customer_details?.email ?? session.customer_email ?? "";
+  if (!email) {
+    console.log(`[Stripe] Expired session ${session.id} without email — skipping (no recovery possible)`);
+    return;
+  }
+
+  await createPurchase({
+    stripeSessionId: session.id,
+    stripePaymentIntentId: typeof session.payment_intent === "string" ? session.payment_intent : null,
+    email: email.toLowerCase(),
+    customerName: session.customer_details?.name ?? null,
+    productSlug: slug,
+    language: slug === "ebook" ? (language ?? "pt") : null,
+    amountCents: session.amount_total ?? 0,
+    currency: session.currency ?? "brl",
+    downloadToken: null,
+    maxDownloads: 0,
+    tokenExpiresAt: null,
+    status: "abandoned",
+    rawSession: session as unknown as Record<string, unknown>,
+  });
+  console.log(`[Stripe] Recorded abandoned cart for ${email} (${slug})`);
 }
 
 export async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {

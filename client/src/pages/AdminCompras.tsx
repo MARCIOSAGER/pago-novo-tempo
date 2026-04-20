@@ -25,17 +25,29 @@ import {
   Receipt,
   CheckCircle2,
   Undo2,
+  AlertCircle,
+  XCircle,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
-type Status = "pending" | "delivered" | "failed" | "refunded";
+type Status = "pending" | "delivered" | "failed" | "refunded" | "abandoned";
 
 const statusLabels: Record<Status, string> = {
   pending: "Pendente",
   delivered: "Entregue",
   failed: "Falhou",
   refunded: "Reembolsado",
+  abandoned: "Abandonado",
 };
 
 const statusColors: Record<Status, string> = {
@@ -43,6 +55,7 @@ const statusColors: Record<Status, string> = {
   delivered: "bg-emerald-500",
   failed: "bg-red-500",
   refunded: "bg-gray-500",
+  abandoned: "bg-slate-400",
 };
 
 const productIcons: Record<string, typeof BookOpen> = {
@@ -117,6 +130,9 @@ export default function AdminCompras() {
   const [page, setPage] = useState(1);
   const [productFilter, setProductFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [denyDialogOpen, setDenyDialogOpen] = useState(false);
+  const [denyTarget, setDenyTarget] = useState<{ id: number; reason: string | null; email: string } | null>(null);
+  const [denyNote, setDenyNote] = useState("");
   const pageSize = 25;
 
   const utils = trpc.useUtils();
@@ -150,6 +166,20 @@ export default function AdminCompras() {
     },
     onError: (e) => {
       toast.error(e.message || "Erro ao revogar.");
+    },
+  });
+
+  const denyRefund = trpc.purchases.denyRefund.useMutation({
+    onSuccess: () => {
+      toast.success("Solicitação negada. Cliente notificado por email.");
+      utils.purchases.list.invalidate();
+      utils.purchases.metrics.invalidate();
+      setDenyDialogOpen(false);
+      setDenyNote("");
+      setDenyTarget(null);
+    },
+    onError: (e) => {
+      toast.error(e.message || "Erro ao negar reembolso.");
     },
   });
 
@@ -270,6 +300,7 @@ export default function AdminCompras() {
                   <SelectItem value="delivered">Entregue</SelectItem>
                   <SelectItem value="failed">Falhou</SelectItem>
                   <SelectItem value="refunded">Reembolsado</SelectItem>
+                  <SelectItem value="abandoned">Abandonado</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -313,6 +344,7 @@ export default function AdminCompras() {
                     const Icon = productIcons[p.productSlug] || Package;
                     const status = (p.status as Status) || "pending";
                     const hasToken = Boolean(p.downloadToken);
+                    const pendingRefund = Boolean(p.refundRequestedAt && !p.refundDeniedAt && status !== "refunded");
                     return (
                       <tr key={p.id} className="hover:bg-muted/30 transition-colors">
                         <td className="px-4 py-3">
@@ -336,10 +368,18 @@ export default function AdminCompras() {
                           {formatCents(p.amountCents, p.currency)}
                         </td>
                         <td className="px-4 py-3">
-                          <Badge variant="outline" className="gap-1.5">
-                            <span className={`h-1.5 w-1.5 rounded-full ${statusColors[status]}`} />
-                            {statusLabels[status]}
-                          </Badge>
+                          <div className="flex flex-col gap-1">
+                            <Badge variant="outline" className="gap-1.5 w-fit">
+                              <span className={`h-1.5 w-1.5 rounded-full ${statusColors[status]}`} />
+                              {statusLabels[status]}
+                            </Badge>
+                            {pendingRefund && (
+                              <Badge variant="outline" className="gap-1 w-fit bg-amber-50 border-amber-300 text-amber-800 text-[10px]">
+                                <AlertCircle className="h-2.5 w-2.5" />
+                                Reembolso solicitado
+                              </Badge>
+                            )}
+                          </div>
                         </td>
                         <td className="px-4 py-3 text-xs text-muted-foreground">
                           {p.productSlug === "ebook" ? `${p.downloadCount}/${p.maxDownloads}` : "—"}
@@ -349,6 +389,21 @@ export default function AdminCompras() {
                         </td>
                         <td className="px-4 py-3 text-right whitespace-nowrap">
                           <div className="inline-flex gap-1">
+                            {pendingRefund && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  setDenyTarget({ id: p.id, reason: p.refundReason, email: p.email });
+                                  setDenyDialogOpen(true);
+                                }}
+                                className="h-8 gap-1.5 text-xs text-amber-700 hover:text-amber-800 hover:bg-amber-50"
+                                title="Negar reembolso"
+                              >
+                                <XCircle className="h-3.5 w-3.5" />
+                                Negar
+                              </Button>
+                            )}
                             <Button
                               size="sm"
                               variant="ghost"
@@ -419,6 +474,51 @@ export default function AdminCompras() {
       )}
 
       <RefreshCw className="hidden" />
+
+      <Dialog open={denyDialogOpen} onOpenChange={setDenyDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Negar solicitação de reembolso</DialogTitle>
+            <DialogDescription>
+              O cliente {denyTarget?.email && <span className="font-mono text-xs">{denyTarget.email}</span>} receberá um email com o motivo da negativa.
+            </DialogDescription>
+          </DialogHeader>
+          {denyTarget?.reason && (
+            <div className="border bg-muted/50 rounded p-3 text-xs">
+              <p className="text-muted-foreground mb-1">Motivo informado pelo cliente:</p>
+              <p className="whitespace-pre-wrap">{denyTarget.reason}</p>
+            </div>
+          )}
+          <div className="space-y-2">
+            <label htmlFor="deny-note" className="text-sm font-medium">
+              Motivo da negativa (mínimo 5 caracteres)
+            </label>
+            <Textarea
+              id="deny-note"
+              value={denyNote}
+              onChange={(e) => setDenyNote(e.target.value)}
+              placeholder="Ex: A compra foi há mais de 7 dias e o ebook já foi baixado 8 vezes..."
+              rows={4}
+              maxLength={2000}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDenyDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (!denyTarget || denyNote.trim().length < 5) return;
+                denyRefund.mutate({ id: denyTarget.id, note: denyNote.trim() });
+              }}
+              disabled={denyRefund.isPending || denyNote.trim().length < 5}
+            >
+              {denyRefund.isPending ? "Negando..." : "Confirmar negativa"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
