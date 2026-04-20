@@ -6,6 +6,10 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import {
   getSiteSetting,
+  listPurchases,
+  getPurchaseById,
+  regeneratePurchaseToken,
+  revokePurchaseToken,
   createInscription,
   listInscriptions,
   updateInscriptionStatus,
@@ -57,7 +61,7 @@ import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
-import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf, sendInviteEmail, sendDemoRequestEmail, sendDemoConfirmationEmail } from "./_core/notification";
+import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf, sendInviteEmail, sendDemoRequestEmail, sendDemoConfirmationEmail, sendEbookDeliveryEmail, sendPurchaseConfirmationEmail } from "./_core/notification";
 import { generateDiagnosticoPdfBase64 } from "./diagnosticoPdf";
 import { computePillarSubgroups, computeWeakestSubgroupPerPillar } from "../shared/diagnostico";
 import pt from "../client/src/i18n/pt";
@@ -808,6 +812,78 @@ export const appRouter = router({
     metrics: adminProcedure.query(async () => {
       return getDiagnosticoMetrics();
     }),
+  }),
+
+  // ─── Purchases (Stripe-backed orders) ──────────────────────
+  purchases: router({
+    // Admin: list purchases with filters
+    list: adminProcedure
+      .input(z.object({
+        page: z.number().int().min(1).default(1),
+        pageSize: z.number().int().min(1).max(200).default(50),
+        productSlug: z.string().max(64).optional(),
+        status: z.enum(["pending", "delivered", "failed", "refunded"]).optional(),
+      }))
+      .query(async ({ input }) => {
+        return listPurchases(input);
+      }),
+
+    // Admin: get single purchase
+    getById: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .query(async ({ input }) => {
+        const row = await getPurchaseById(input.id);
+        if (!row) throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
+        return row;
+      }),
+
+    // Admin: resend delivery email (regenerates token for ebook)
+    resend: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input }) => {
+        const purchase = await getPurchaseById(input.id);
+        if (!purchase) throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
+
+        if (purchase.productSlug === "ebook") {
+          const newToken = nanoid(32);
+          const newExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+          await regeneratePurchaseToken(purchase.id, newToken, newExpiresAt);
+          const downloadUrl = `${ENV.siteUrl}/api/purchases/download?token=${newToken}`;
+          await sendEbookDeliveryEmail({
+            email: purchase.email,
+            nome: purchase.customerName || purchase.email.split("@")[0],
+            downloadUrl,
+            language: (purchase.language as "pt" | "en" | "es") || "pt",
+            expiresAt: newExpiresAt,
+            maxDownloads: purchase.maxDownloads,
+          });
+        } else {
+          const productName = purchase.productSlug === "kit" ? "Kit P.A.G.O." : "Mentoria P.A.G.O.";
+          const nextStep = purchase.productSlug === "kit"
+            ? "Entraremos em contato em até 2 dias úteis no seu email para combinar o envio dos materiais físicos."
+            : "Nossa equipe entrará em contato nas próximas 24h úteis no seu email para agendar a primeira sessão.";
+          await sendPurchaseConfirmationEmail({
+            email: purchase.email,
+            nome: purchase.customerName || purchase.email.split("@")[0],
+            productName,
+            nextStep,
+          });
+        }
+        return { success: true };
+      }),
+
+    // Admin: revoke download token (ebook only)
+    revokeToken: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input }) => {
+        const purchase = await getPurchaseById(input.id);
+        if (!purchase) throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
+        if (purchase.productSlug !== "ebook") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Apenas compras de ebook têm token." });
+        }
+        await revokePurchaseToken(purchase.id);
+        return { success: true };
+      }),
   }),
 
   // ─── Diagnostic Offers (post-questionnaire landing) ────────

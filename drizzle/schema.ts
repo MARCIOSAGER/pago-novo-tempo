@@ -18,6 +18,12 @@ export const demoRequestStatusEnum = pgEnum("demo_request_status", [
   "contacted",
   "closed",
 ]);
+export const purchaseStatusEnum = pgEnum("purchase_status", [
+  "pending",
+  "delivered",
+  "failed",
+  "refunded",
+]);
 
 /**
  * Core user table backing auth flow.
@@ -224,3 +230,28 @@ export const demoRequests = pgTable("demo_requests", {
 });
 export type DemoRequest = typeof demoRequests.$inferSelect;
 export type InsertDemoRequest = typeof demoRequests.$inferInsert;
+
+/**
+ * Purchases — Stripe checkout records + download tokens for ebook deliveries.
+ */
+export const purchases = pgTable("purchases", {
+  id: serial("id").primaryKey(),
+  stripeSessionId: varchar("stripeSessionId", { length: 255 }).notNull().unique(),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }),
+  email: varchar("email", { length: 320 }).notNull(),
+  customerName: varchar("customerName", { length: 255 }),
+  productSlug: varchar("productSlug", { length: 64 }).notNull(),
+  language: varchar("language", { length: 8 }),
+  amountCents: integer("amountCents").notNull(),
+  currency: varchar("currency", { length: 8 }).notNull(),
+  downloadToken: varchar("downloadToken", { length: 64 }),
+  downloadCount: integer("downloadCount").default(0).notNull(),
+  maxDownloads: integer("maxDownloads").default(10).notNull(),
+  tokenExpiresAt: timestamp("tokenExpiresAt"),
+  status: purchaseStatusEnum("status").default("pending").notNull(),
+  rawSession: json("rawSession"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  deliveredAt: timestamp("deliveredAt"),
+});
+export type Purchase = typeof purchases.$inferSelect;
+export type InsertPurchase = typeof purchases.$inferInsert;

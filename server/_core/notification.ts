@@ -631,3 +631,125 @@ export async function notifyInscription(data: InscriptionData): Promise<void> {
     }
   }
 }
+
+// ─── Purchase Delivery Emails ───────────────────────────────
+
+export type EbookDeliveryData = {
+  email: string;
+  nome: string;
+  downloadUrl: string;
+  language: "pt" | "en" | "es";
+  expiresAt: Date;
+  maxDownloads: number;
+};
+
+export async function sendEbookDeliveryEmail(data: EbookDeliveryData): Promise<void> {
+  if (!isSmtpConfigured()) {
+    console.warn("[Notification] SMTP not configured, skipping ebook delivery email.");
+    return;
+  }
+  const transporter = getTransporter();
+  const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
+  const langNames = { pt: "Português", en: "English", es: "Español" } as const;
+  const expiresStr = data.expiresAt.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+  <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: #C8A951; margin: 0; font-size: 24px;">P.A.G.O.</h1>
+    <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">Seu Ebook chegou</p>
+  </div>
+  <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
+    <p style="font-size: 16px;">Olá <strong>${data.nome}</strong>,</p>
+    <p>Obrigado pela sua compra! Seu ebook <strong>P.A.G.O. (${langNames[data.language]})</strong> está pronto para download.</p>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${data.downloadUrl}" style="display: inline-block; background: #C8A951; color: #1A2744; padding: 16px 40px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 15px; letter-spacing: 0.05em;">BAIXAR EBOOK</a>
+    </div>
+
+    <div style="background: #F5F0E8; border-left: 4px solid #C8A951; padding: 15px; margin: 20px 0; border-radius: 0 6px 6px 0; font-size: 13px; color: #5A4E3A;">
+      <p style="margin: 0 0 8px;"><strong>Informações importantes:</strong></p>
+      <ul style="margin: 0; padding-left: 18px;">
+        <li>Link válido até <strong>${expiresStr}</strong></li>
+        <li>Até <strong>${data.maxDownloads} downloads</strong> permitidos</li>
+        <li>Este link é pessoal — não compartilhe</li>
+      </ul>
+    </div>
+
+    <p style="font-size: 13px; color: #666; margin-top: 25px;">Se o botão não funcionar, copie e cole este link no seu navegador:<br/>
+      <a href="${data.downloadUrl}" style="color: #1A2744; word-break: break-all; font-size: 12px;">${data.downloadUrl}</a>
+    </p>
+  </div>
+  <p style="text-align: center; color: #999; font-size: 10px; margin-top: 15px;">
+    Pagamento processado por Stripe · metodopago.com
+  </p>
+</div></body></html>`;
+
+  try {
+    await transporter.sendMail({
+      from: fromAddress,
+      to: data.email,
+      subject: `Seu Ebook P.A.G.O. (${langNames[data.language]}) — Link de Download`,
+      text: `Olá ${data.nome},\n\nObrigado pela sua compra! Baixe seu ebook P.A.G.O. (${langNames[data.language]}) aqui:\n${data.downloadUrl}\n\nLink válido até ${expiresStr} · Até ${data.maxDownloads} downloads permitidos.`,
+      encoding: "utf-8",
+      html,
+    });
+    console.log(`[Notification] Ebook delivery email sent to ${data.email} (${data.language})`);
+  } catch (error) {
+    console.error("[Notification] Ebook delivery email failed:", error);
+    throw error;
+  }
+}
+
+export type PurchaseConfirmationData = {
+  email: string;
+  nome: string;
+  productName: string;
+  nextStep: string;
+};
+
+export async function sendPurchaseConfirmationEmail(data: PurchaseConfirmationData): Promise<void> {
+  if (!isSmtpConfigured()) {
+    console.warn("[Notification] SMTP not configured, skipping confirmation email.");
+    return;
+  }
+  const transporter = getTransporter();
+  const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+  <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: #C8A951; margin: 0; font-size: 24px;">P.A.G.O.</h1>
+    <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">Pagamento Confirmado</p>
+  </div>
+  <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
+    <p style="font-size: 16px;">Olá <strong>${data.nome}</strong>,</p>
+    <p>Recebemos seu pagamento de <strong>${data.productName}</strong>. Obrigado pela confiança!</p>
+
+    <div style="background: #F5F0E8; border-left: 4px solid #C8A951; padding: 18px; margin: 25px 0; border-radius: 0 6px 6px 0;">
+      <p style="margin: 0 0 6px; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.1em;">Próximo passo</p>
+      <p style="margin: 0; font-size: 14px; color: #1A2744;">${data.nextStep}</p>
+    </div>
+
+    <p style="font-size: 13px; color: #666;">Se tiver qualquer dúvida, responda este email — estamos à disposição.</p>
+  </div>
+  <p style="text-align: center; color: #999; font-size: 10px; margin-top: 15px;">
+    Pagamento processado por Stripe · metodopago.com
+  </p>
+</div></body></html>`;
+
+  try {
+    await transporter.sendMail({
+      from: fromAddress,
+      to: data.email,
+      subject: `${data.productName} — Pagamento Confirmado`,
+      text: `Olá ${data.nome},\n\nRecebemos seu pagamento de ${data.productName}.\n\nPróximo passo: ${data.nextStep}\n\nSe tiver qualquer dúvida, responda este email.`,
+      encoding: "utf-8",
+      html,
+    });
+    console.log(`[Notification] Confirmation email sent to ${data.email} (${data.productName})`);
+  } catch (error) {
+    console.error("[Notification] Confirmation email failed:", error);
+    throw error;
+  }
+}

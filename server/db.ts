@@ -27,6 +27,9 @@ import {
   demoRequests,
   InsertDemoRequest,
   DemoRequest,
+  purchases,
+  InsertPurchase,
+  Purchase,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -906,4 +909,91 @@ export async function getDemoRequestById(id: number) {
   if (!db) return undefined;
   const [row] = await db.select().from(demoRequests).where(eq(demoRequests.id, id)).limit(1);
   return row;
+}
+
+// ─── Purchase Helpers ───────────────────────────────────────────
+
+export async function createPurchase(data: InsertPurchase): Promise<Purchase> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [row] = await db.insert(purchases).values(data).returning();
+  return row;
+}
+
+export async function getPurchaseBySessionId(stripeSessionId: string): Promise<Purchase | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const [row] = await db.select().from(purchases).where(eq(purchases.stripeSessionId, stripeSessionId)).limit(1);
+  return row;
+}
+
+export async function getPurchaseByToken(token: string): Promise<Purchase | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const [row] = await db.select().from(purchases).where(eq(purchases.downloadToken, token)).limit(1);
+  return row;
+}
+
+export async function getPurchaseById(id: number): Promise<Purchase | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const [row] = await db.select().from(purchases).where(eq(purchases.id, id)).limit(1);
+  return row;
+}
+
+export async function listPurchases(opts: {
+  page?: number;
+  pageSize?: number;
+  productSlug?: string;
+  status?: "pending" | "delivered" | "failed" | "refunded";
+}): Promise<{ rows: Purchase[]; total: number }> {
+  const db = await getDb();
+  if (!db) return { rows: [], total: 0 };
+  const page = Math.max(1, opts.page ?? 1);
+  const pageSize = Math.min(200, Math.max(1, opts.pageSize ?? 50));
+  const conditions = [] as Array<ReturnType<typeof eq>>;
+  if (opts.productSlug) conditions.push(eq(purchases.productSlug, opts.productSlug));
+  if (opts.status) conditions.push(eq(purchases.status, opts.status));
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const rows = await db.select().from(purchases)
+    .where(whereClause)
+    .orderBy(desc(purchases.createdAt))
+    .limit(pageSize)
+    .offset((page - 1) * pageSize);
+  const [totalRow] = await db.select({ count: count() }).from(purchases).where(whereClause);
+  return { rows, total: totalRow?.count ?? 0 };
+}
+
+export async function markPurchaseDelivered(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(purchases).set({ status: "delivered", deliveredAt: new Date() }).where(eq(purchases.id, id));
+}
+
+export async function markPurchaseFailed(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(purchases).set({ status: "failed" }).where(eq(purchases.id, id));
+}
+
+export async function incrementPurchaseDownloadCount(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(purchases).set({ downloadCount: sql`${purchases.downloadCount} + 1` }).where(eq(purchases.id, id));
+}
+
+export async function regeneratePurchaseToken(id: number, newToken: string, newExpiresAt: Date): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(purchases).set({
+    downloadToken: newToken,
+    downloadCount: 0,
+    tokenExpiresAt: newExpiresAt,
+  }).where(eq(purchases.id, id));
+}
+
+export async function revokePurchaseToken(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(purchases).set({ downloadToken: null, tokenExpiresAt: null }).where(eq(purchases.id, id));
 }

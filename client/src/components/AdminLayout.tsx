@@ -36,6 +36,7 @@ import {
   Building2,
   KeyRound,
   Package,
+  ShoppingCart,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation, Link } from "wouter";
@@ -49,6 +50,7 @@ const menuItems = [
   { icon: BarChart3, label: "Análises", path: "/admin/analytics" },
   { icon: Download, label: "Downloads", path: "/admin/downloads" },
   { icon: Package, label: "Ofertas", path: "/admin/ofertas" },
+  { icon: ShoppingCart, label: "Compras", path: "/admin/compras" },
   { icon: ImageIcon, label: "Mídia", path: "/admin/media" },
   { icon: Heart, label: "P.A.G.O Kids", path: "/admin/kids" },
   { icon: Mail, label: "Email", path: "/admin/email" },

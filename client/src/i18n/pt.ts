@@ -479,6 +479,15 @@ const pt = {
       comingSoon: "Em breve",
       language: "Idioma do ebook",
     },
+    thankYou: {
+      headline: "Obrigado pela sua compra!",
+      subheadline: "Recebemos seu pagamento com sucesso. Confira seu email em instantes — incluindo a caixa de spam.",
+      emailBadge: "Enviado para",
+      nextStep: "Enquanto isso, você pode voltar pro site.",
+      backHome: "Voltar ao site",
+      processing: "Processando seu pagamento...",
+      error: "Não conseguimos confirmar seu pagamento. Verifique seu email ou entre em contato.",
+    },
     pillars: {
       P: {
         letter: "P",

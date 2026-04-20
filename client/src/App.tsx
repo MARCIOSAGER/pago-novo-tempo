@@ -24,6 +24,7 @@ import AdminDiagnosticos from "./pages/AdminDiagnosticos";
 import AdminDiagnosticoDetalhe from "./pages/AdminDiagnosticoDetalhe";
 import AdminOrganizations from "./pages/AdminOrganizations";
 import AdminOfertas from "./pages/AdminOfertas";
+import AdminCompras from "./pages/AdminCompras";
 import AdminAcessos from "./pages/AdminAcessos";
 import CorporateHome from "./pages/corporate/CorporateHome";
 import InviteAccept from "./pages/corporate/InviteAccept";
@@ -39,6 +40,7 @@ import HRInvites from "./pages/corporate/HRInvites";
 import Fundador from "./pages/Fundador";
 import Mentoria from "./pages/Mentoria";
 import Diagnostico from "./pages/Diagnostico";
+import Obrigado from "./pages/Obrigado";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
@@ -55,6 +57,7 @@ function Router() {
       <Route path={"/fundador"} component={Fundador} />
       <Route path={"/mentoria"} component={Mentoria} />
       <Route path={"/diagnostico"} component={Diagnostico} />
+      <Route path={"/obrigado"} component={Obrigado} />
 
       {/* Auth routes */}
       <Route path="/login" component={LoginPage} />
@@ -127,6 +130,11 @@ function Router() {
       <Route path="/admin/ofertas">
         <AdminLayout>
           <AdminOfertas />
+        </AdminLayout>
+      </Route>
+      <Route path="/admin/compras">
+        <AdminLayout>
+          <AdminCompras />
         </AdminLayout>
       </Route>
 

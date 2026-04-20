@@ -478,6 +478,15 @@ const en: Translations = {
       comingSoon: "Coming soon",
       language: "Ebook language",
     },
+    thankYou: {
+      headline: "Thank you for your purchase!",
+      subheadline: "We received your payment. Check your email shortly — including spam folder.",
+      emailBadge: "Sent to",
+      nextStep: "Meanwhile, you can head back to the site.",
+      backHome: "Back to site",
+      processing: "Processing your payment...",
+      error: "We couldn't confirm your payment. Check your email or contact us.",
+    },
     pillars: {
       P: {
         letter: "P",

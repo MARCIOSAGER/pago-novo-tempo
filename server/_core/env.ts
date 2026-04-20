@@ -21,6 +21,11 @@ export const ENV = {
   smtpUser: process.env.SMTP_USER ?? "",
   smtpPass: process.env.SMTP_PASS ?? "",
   ownerEmail: process.env.OWNER_EMAIL ?? "",
+  // Stripe
+  stripeSecretKey: process.env.STRIPE_SECRET_KEY ?? "",
+  stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
+  // Public site URL (used for download links)
+  siteUrl: process.env.SITE_URL ?? "https://metodopago.com",
   // Analytics (Umami)
   analyticsEndpoint: process.env.VITE_ANALYTICS_ENDPOINT ?? "",
   analyticsWebsiteId: process.env.VITE_ANALYTICS_WEBSITE_ID ?? "",

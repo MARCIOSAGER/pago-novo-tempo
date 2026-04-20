@@ -1,0 +1,144 @@
+import Stripe from "stripe";
+import { nanoid } from "nanoid";
+import { ENV } from "./_core/env";
+import {
+  createPurchase,
+  getPurchaseBySessionId,
+  markPurchaseDelivered,
+  markPurchaseFailed,
+} from "./db";
+import { sendEbookDeliveryEmail, sendPurchaseConfirmationEmail } from "./_core/notification";
+
+let stripeClient: Stripe | null = null;
+
+export function getStripeClient(): Stripe {
+  if (!ENV.stripeSecretKey) {
+    throw new Error("STRIPE_SECRET_KEY is not configured");
+  }
+  if (!stripeClient) {
+    stripeClient = new Stripe(ENV.stripeSecretKey, {
+      apiVersion: "2026-03-25.dahlia",
+      typescript: true,
+    });
+  }
+  return stripeClient;
+}
+
+export function isStripeConfigured(): boolean {
+  return Boolean(ENV.stripeSecretKey);
+}
+
+export const DOWNLOAD_TOKEN_TTL_DAYS = 30;
+export const DOWNLOAD_TOKEN_MAX_USES = 10;
+
+type ProductSlug = "ebook" | "kit" | "mentoria";
+type EbookLang = "pt" | "en" | "es";
+
+function parseClientReferenceId(ref: string | null): { product?: ProductSlug; language?: EbookLang } {
+  if (!ref) return {};
+  const parts = ref.split("_");
+  const product = parts[0] as ProductSlug;
+  const language = (parts[1] as EbookLang) || undefined;
+  if (["ebook", "kit", "mentoria"].includes(product)) {
+    const out: { product: ProductSlug; language?: EbookLang } = { product };
+    if (language && ["pt", "en", "es"].includes(language)) out.language = language;
+    return out;
+  }
+  return {};
+}
+
+function extractProductSlug(session: Stripe.Checkout.Session): { slug: ProductSlug | null; language: EbookLang | null } {
+  const fromRef = parseClientReferenceId(session.client_reference_id ?? null);
+  if (fromRef.product) {
+    return { slug: fromRef.product, language: fromRef.language ?? null };
+  }
+  const metadataProduct = session.metadata?.product as ProductSlug | undefined;
+  if (metadataProduct && ["ebook", "kit", "mentoria"].includes(metadataProduct)) {
+    return { slug: metadataProduct, language: null };
+  }
+  return { slug: null, language: null };
+}
+
+export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session): Promise<void> {
+  const existing = await getPurchaseBySessionId(session.id);
+  if (existing && existing.status === "delivered") {
+    console.log(`[Stripe] Session ${session.id} already delivered, skipping`);
+    return;
+  }
+
+  const { slug, language } = extractProductSlug(session);
+  if (!slug) {
+    console.error(`[Stripe] Could not identify product for session ${session.id}`);
+    return;
+  }
+
+  const email = session.customer_details?.email ?? session.customer_email ?? "";
+  const customerName = session.customer_details?.name ?? "";
+  if (!email) {
+    console.error(`[Stripe] No email found for session ${session.id}`);
+    return;
+  }
+
+  const finalLanguage: EbookLang | null = slug === "ebook" ? (language ?? "pt") : null;
+  const downloadToken = slug === "ebook" ? nanoid(32) : null;
+  const tokenExpiresAt = slug === "ebook"
+    ? new Date(Date.now() + DOWNLOAD_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000)
+    : null;
+
+  const purchase = existing ?? await createPurchase({
+    stripeSessionId: session.id,
+    stripePaymentIntentId: typeof session.payment_intent === "string" ? session.payment_intent : null,
+    email: email.toLowerCase(),
+    customerName: customerName || null,
+    productSlug: slug,
+    language: finalLanguage,
+    amountCents: session.amount_total ?? 0,
+    currency: session.currency ?? "brl",
+    downloadToken,
+    maxDownloads: DOWNLOAD_TOKEN_MAX_USES,
+    tokenExpiresAt,
+    status: "pending",
+    rawSession: session as unknown as Record<string, unknown>,
+  });
+
+  try {
+    if (slug === "ebook" && downloadToken && tokenExpiresAt) {
+      const downloadUrl = `${ENV.siteUrl}/api/purchases/download?token=${downloadToken}`;
+      await sendEbookDeliveryEmail({
+        email: purchase.email,
+        nome: purchase.customerName || purchase.email.split("@")[0],
+        downloadUrl,
+        language: finalLanguage ?? "pt",
+        expiresAt: tokenExpiresAt,
+        maxDownloads: DOWNLOAD_TOKEN_MAX_USES,
+      });
+    } else if (slug === "kit") {
+      await sendPurchaseConfirmationEmail({
+        email: purchase.email,
+        nome: purchase.customerName || purchase.email.split("@")[0],
+        productName: "Kit P.A.G.O.",
+        nextStep: "Entraremos em contato em até 2 dias úteis no seu email para combinar o envio dos materiais físicos.",
+      });
+    } else if (slug === "mentoria") {
+      await sendPurchaseConfirmationEmail({
+        email: purchase.email,
+        nome: purchase.customerName || purchase.email.split("@")[0],
+        productName: "Mentoria P.A.G.O.",
+        nextStep: "Nossa equipe entrará em contato nas próximas 24h úteis no seu email para agendar a primeira sessão.",
+      });
+    }
+    await markPurchaseDelivered(purchase.id);
+  } catch (error) {
+    console.error(`[Stripe] Failed to deliver purchase ${purchase.id}:`, error);
+    await markPurchaseFailed(purchase.id).catch(() => {});
+    throw error;
+  }
+}
+
+export function constructWebhookEvent(rawBody: Buffer, signature: string): Stripe.Event {
+  if (!ENV.stripeWebhookSecret) {
+    throw new Error("STRIPE_WEBHOOK_SECRET is not configured");
+  }
+  const stripe = getStripeClient();
+  return stripe.webhooks.constructEvent(rawBody, signature, ENV.stripeWebhookSecret);
+}

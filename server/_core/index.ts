@@ -12,6 +12,11 @@ import { createContext } from "./context";
 import fs from "fs";
 import { applyAllSecurity } from "../security";
 import { LOCAL_UPLOADS_DIR } from "../storage";
+import { constructWebhookEvent, handleCheckoutSessionCompleted } from "../stripe";
+import {
+  getPurchaseByToken,
+  incrementPurchaseDownloadCount,
+} from "../db";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -38,6 +43,37 @@ async function startServer() {
 
   // Trust proxy for correct IP detection behind reverse proxy
   app.set('trust proxy', 1);
+
+  // Stripe webhook — MUST use raw body (signature verification needs exact bytes)
+  // Registered BEFORE any JSON parser to avoid consuming the body
+  app.post(
+    "/api/stripe/webhook",
+    express.raw({ type: "application/json", limit: "2mb" }),
+    async (req, res) => {
+      const signature = req.headers["stripe-signature"];
+      if (typeof signature !== "string") {
+        return res.status(400).json({ error: "Missing stripe-signature header" });
+      }
+      let event;
+      try {
+        event = constructWebhookEvent(req.body, signature);
+      } catch (err) {
+        console.error("[Stripe Webhook] Signature verification failed:", err);
+        return res.status(400).json({ error: "Invalid signature" });
+      }
+      try {
+        if (event.type === "checkout.session.completed") {
+          await handleCheckoutSessionCompleted(event.data.object);
+        } else {
+          console.log(`[Stripe Webhook] Ignored event type: ${event.type}`);
+        }
+      } catch (err) {
+        console.error(`[Stripe Webhook] Handler failed for ${event.type}:`, err);
+        return res.status(500).json({ error: "Handler error" });
+      }
+      res.json({ received: true });
+    }
+  );
 
   // Configure body parser with larger size limit for file uploads
   // MUST be registered BEFORE applyAllSecurity (which sets 1mb global limit)
@@ -105,6 +141,46 @@ async function startServer() {
         }
       });
     }
+    res.download(file.filepath, file.filename, (err) => {
+      if (err && !res.headersSent) {
+        res.status(404).json({ error: "Arquivo não encontrado" });
+      }
+    });
+  });
+
+  // ─── Secure Purchase Download (token-based) ──────────────
+  app.get("/api/purchases/download", async (req, res) => {
+    const token = typeof req.query.token === "string" ? req.query.token : "";
+    if (!token || token.length > 128) {
+      return res.status(400).json({ error: "Token inválido" });
+    }
+    const purchase = await getPurchaseByToken(token);
+    if (!purchase || !purchase.downloadToken) {
+      return res.status(404).json({ error: "Link inválido ou revogado." });
+    }
+    if (purchase.tokenExpiresAt && purchase.tokenExpiresAt < new Date()) {
+      return res.status(410).json({ error: "Link expirado. Entre em contato para receber um novo." });
+    }
+    if (purchase.downloadCount >= purchase.maxDownloads) {
+      return res.status(429).json({ error: "Limite de downloads atingido. Entre em contato para receber um novo link." });
+    }
+    if (purchase.productSlug !== "ebook") {
+      return res.status(400).json({ error: "Produto sem download associado." });
+    }
+
+    const lang = purchase.language ?? "pt";
+    const fileKey = `ebook-pdf-${lang}`;
+    const file = ebookFiles[fileKey];
+    if (!file) {
+      return res.status(500).json({ error: "Arquivo indisponível." });
+    }
+
+    try {
+      await incrementPurchaseDownloadCount(purchase.id);
+    } catch (err) {
+      console.error("[Download] Failed to increment count:", err);
+    }
+
     res.download(file.filepath, file.filename, (err) => {
       if (err && !res.headersSent) {
         res.status(404).json({ error: "Arquivo não encontrado" });
