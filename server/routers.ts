@@ -5,6 +5,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import {
+  getSiteSetting,
   createInscription,
   listInscriptions,
   updateInscriptionStatus,
@@ -60,6 +61,44 @@ import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf, sen
 import { generateDiagnosticoPdfBase64 } from "./diagnosticoPdf";
 import { computePillarSubgroups, computeWeakestSubgroupPerPillar } from "../shared/diagnostico";
 import pt from "../client/src/i18n/pt";
+
+// ─── Diagnostic Offers ──────────────────────────────────────────
+
+type DiagnosticoOffer = {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  ctaText: string;
+  ctaUrl: string;
+};
+
+const DEFAULT_DIAGNOSTICO_OFFERS: DiagnosticoOffer[] = [
+  {
+    id: "ebook",
+    title: "Ebook P.A.G.O.",
+    description: "O livro completo com os 4 pilares — Princípio, Alinhamento, Governo e Obediência — e como aplicá-los na sua vida.",
+    imageUrl: "",
+    ctaText: "Quero o ebook",
+    ctaUrl: "",
+  },
+  {
+    id: "kit",
+    title: "Kit P.A.G.O.",
+    description: "Ebook + diário de prática + caderno de reflexões + guia de estudos. Tudo que você precisa para começar.",
+    imageUrl: "",
+    ctaText: "Ver o kit",
+    ctaUrl: "",
+  },
+  {
+    id: "mentoria",
+    title: "Mentoria P.A.G.O.",
+    description: "Acompanhamento individual para aprofundar os 4 pilares com aplicação no seu contexto pessoal e profissional.",
+    imageUrl: "",
+    ctaText: "Saber mais",
+    ctaUrl: "/mentoria",
+  },
+];
 
 // ─── Zod Schemas (strict input validation) ──────────────────────
 
@@ -718,6 +757,38 @@ export const appRouter = router({
         return { success: true };
       }),
 
+    // Admin: download PDF (uses saved PDF if available, otherwise generates on-demand)
+    getPdf: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input }) => {
+        const result = await getDiagnosticoById(input.id);
+        if (!result) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Diagnóstico não encontrado." });
+        }
+
+        let pdfBase64 = result.pdfBase64;
+        if (!pdfBase64) {
+          const subgroups = computePillarSubgroups(
+            result.answersA as number[],
+            result.answersG as number[],
+            result.answersO as number[],
+          );
+          const weakestSubs = computeWeakestSubgroupPerPillar(subgroups);
+          pdfBase64 = await generateDiagnosticoPdfBase64({
+            nome: result.nome,
+            pillarAverages: { P: result.mediaP, A: result.mediaA, G: result.mediaG, O: result.mediaO },
+            overallAverage: result.mediaGeral,
+            weakestPillar: result.pilarMaisFraco as "P" | "A" | "G" | "O",
+            pillarSubgroups: subgroups,
+            weakestSubgroupPerPillar: weakestSubs,
+            t: { diagnostico: pt.diagnostico },
+          });
+        }
+
+        const filename = `diagnostico-${result.nome.replace(/\s+/g, "-")}-${result.id}.pdf`;
+        return { pdfBase64, filename };
+      }),
+
     // Admin: bulk delete diagnostics
     bulkDelete: adminProcedure
       .input(z.object({ ids: z.array(z.number().int().positive()).min(1).max(100) }))
@@ -737,6 +808,40 @@ export const appRouter = router({
     metrics: adminProcedure.query(async () => {
       return getDiagnosticoMetrics();
     }),
+  }),
+
+  // ─── Diagnostic Offers (post-questionnaire landing) ────────
+  offers: router({
+    // Public: list offers shown on the post-diagnostico landing
+    listForDiagnostico: publicProcedure.query(async () => {
+      const raw = await getSiteSetting("diagnostico_offers");
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) return parsed as DiagnosticoOffer[];
+        } catch {
+          // fall through to defaults
+        }
+      }
+      return DEFAULT_DIAGNOSTICO_OFFERS;
+    }),
+
+    // Admin: replace the full offers array
+    save: adminProcedure
+      .input(z.object({
+        offers: z.array(z.object({
+          id: z.string().min(1).max(64),
+          title: z.string().min(1).max(200),
+          description: z.string().min(1).max(1000),
+          imageUrl: z.string().max(2000).default(""),
+          ctaText: z.string().min(1).max(80),
+          ctaUrl: z.string().max(2000).default(""),
+        })).min(1).max(12),
+      }))
+      .mutation(async ({ input }) => {
+        await upsertSiteSetting("diagnostico_offers", JSON.stringify(input.offers));
+        return { success: true };
+      }),
   }),
 
   // ─── Ebook Downloads ───────────────────────────────────────

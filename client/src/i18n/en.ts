@@ -470,6 +470,13 @@ const en: Translations = {
       continueButton: "Continue",
       restartButton: "Start New",
     },
+    offer: {
+      skip: "Skip and see my result",
+      headline: "Congratulations on completing, {nome}!",
+      subheadline: "Before your result, discover tools that will deepen your journey through the 4 pillars.",
+      seeResult: "See my result",
+      comingSoon: "Coming soon",
+    },
     pillars: {
       P: {
         letter: "P",

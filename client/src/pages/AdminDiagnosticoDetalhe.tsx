@@ -28,6 +28,7 @@ import {
   RotateCcw,
   Send,
   Download,
+  FileDown,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -140,6 +141,30 @@ export default function AdminDiagnosticoDetalhe() {
       toast.error("Erro ao enviar email.");
     },
   });
+
+  const getPdf = trpc.diagnostico.getPdf.useMutation({
+    onSuccess: (data) => {
+      const byteChars = atob(data.pdfBase64);
+      const bytes = new Uint8Array(byteChars.length);
+      for (let i = 0; i < byteChars.length; i++) bytes[i] = byteChars.charCodeAt(i);
+      const blob = new Blob([bytes], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = data.filename;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast.success("PDF baixado!");
+    },
+    onError: () => {
+      toast.error("Erro ao gerar PDF.");
+    },
+  });
+
+  const handleDownloadPDF = () => {
+    if (!diag) return;
+    getPdf.mutate({ id: diag.id });
+  };
 
   const handleSendEmail = () => {
     if (!diag) return;
@@ -421,6 +446,16 @@ export default function AdminDiagnosticoDetalhe() {
             >
               <Download className="h-3.5 w-3.5" />
               Baixar CSV
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 font-accent text-xs"
+              onClick={handleDownloadPDF}
+              disabled={getPdf.isPending}
+            >
+              <FileDown className="h-3.5 w-3.5" />
+              {getPdf.isPending ? "Gerando..." : "Baixar PDF"}
             </Button>
             {diag.status !== "reviewed" && (
               <Button

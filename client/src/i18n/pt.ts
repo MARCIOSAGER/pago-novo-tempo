@@ -471,6 +471,13 @@ const pt = {
       continueButton: "Continuar",
       restartButton: "Iniciar Novo",
     },
+    offer: {
+      skip: "Pular e ver meu resultado",
+      headline: "Parabéns por concluir, {nome}!",
+      subheadline: "Antes do seu resultado, conheça ferramentas que vão aprofundar sua jornada nos 4 pilares.",
+      seeResult: "Ver meu resultado",
+      comingSoon: "Em breve",
+    },
     pillars: {
       P: {
         letter: "P",

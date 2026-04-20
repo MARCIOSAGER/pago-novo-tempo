@@ -9,6 +9,7 @@ import { useDiagnosticoReducer } from "./useDiagnosticoReducer";
 import type { PillarKey } from "./useDiagnosticoReducer";
 import DiagnosticoHeroSection from "./DiagnosticoHeroSection";
 import DiagnosticoIntro from "./DiagnosticoIntro";
+import DiagnosticoOffer from "./DiagnosticoOffer";
 
 export default function DiagnosticoQuestionnaire() {
   const { t } = useLanguage();
@@ -30,6 +31,7 @@ export default function DiagnosticoQuestionnaire() {
 
   const [showHighlights, setShowHighlights] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
+  const [showOffer, setShowOffer] = useState(true);
 
   const handleStart = useCallback(
     (nome: string, email: string) => {
@@ -57,8 +59,14 @@ export default function DiagnosticoQuestionnaire() {
 
   const handleRestart = useCallback(() => {
     dispatch({ type: "RESET" });
+    setShowOffer(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [dispatch]);
+
+  const handleOfferContinue = useCallback(() => {
+    setShowOffer(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   const handleNext = useCallback(() => {
     const currentStep = state.currentStep;
@@ -120,6 +128,11 @@ export default function DiagnosticoQuestionnaire() {
         <DiagnosticoIntro onStart={handleIntroComplete} />
       </div>
     );
+  }
+
+  // Offer landing (between last question and results)
+  if (state.currentStep === 5 && showOffer) {
+    return <DiagnosticoOffer nome={state.nome} onContinue={handleOfferContinue} />;
   }
 
   // Results screen
