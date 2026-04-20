@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 const REFUND_WINDOW_DAYS = 7;
@@ -30,12 +31,14 @@ export default function Reembolso() {
   const sessionId = getQueryParam("session_id");
   const copy = t.diagnostico.refund;
 
+  const [email, setEmail] = useState("");
+  const [emailConfirmed, setEmailConfirmed] = useState(false);
   const [reason, setReason] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const { data: purchase, isLoading, error } = trpc.purchases.lookupBySession.useQuery(
-    { sessionId: sessionId || "" },
+    { sessionId: sessionId || "", email: emailConfirmed ? email.trim().toLowerCase() : undefined },
     { enabled: Boolean(sessionId), retry: false }
   );
 
@@ -53,6 +56,16 @@ export default function Reembolso() {
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, []);
 
+  const handleEmailConfirm = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim().length < 5 || !email.includes("@")) {
+      setErrorMsg("Email inválido");
+      return;
+    }
+    setErrorMsg(null);
+    setEmailConfirmed(true);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!sessionId) return;
@@ -60,7 +73,7 @@ export default function Reembolso() {
       setErrorMsg(copy.reasonHelp);
       return;
     }
-    request.mutate({ sessionId, reason: reason.trim() });
+    request.mutate({ sessionId, email: email.trim().toLowerCase(), reason: reason.trim() });
   };
 
   const formatDate = (d: Date | string) =>
@@ -112,14 +125,58 @@ export default function Reembolso() {
               <InfoBox icon={AlertCircle} variant="warning" message={copy.noSessionId} />
             )}
 
-            {/* Loading */}
-            {sessionId && isLoading && (
+            {/* Email confirmation step — required before showing any PII */}
+            {sessionId && !emailConfirmed && !submitted && (
+              <form onSubmit={handleEmailConfirm} className="space-y-4 border border-navy/10 bg-white p-6">
+                <div>
+                  <Label htmlFor="email" className="font-accent text-xs uppercase tracking-[0.15em] text-navy mb-2 block">
+                    Email usado na compra
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="seu@email.com"
+                    required
+                    autoFocus
+                    maxLength={320}
+                  />
+                  <p className="text-xs text-navy/50 mt-1.5">
+                    Digite o mesmo email que usou na compra para verificarmos sua identidade.
+                  </p>
+                </div>
+                {errorMsg && (
+                  <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded p-3">
+                    {errorMsg}
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  className="w-full font-accent text-xs uppercase tracking-[0.2em] bg-navy text-warm-white px-8 py-3 hover:bg-navy-dark transition-colors"
+                >
+                  Continuar
+                </button>
+              </form>
+            )}
+
+            {/* Loading (after email confirmed) */}
+            {sessionId && emailConfirmed && isLoading && (
               <InfoBox icon={Clock} variant="neutral" message={copy.loading} />
             )}
 
-            {/* Lookup failed */}
-            {sessionId && !isLoading && error && (
-              <InfoBox icon={AlertCircle} variant="warning" message={copy.notFound} />
+            {/* Lookup failed (generic message — does not reveal if session_id or email is wrong) */}
+            {sessionId && emailConfirmed && !isLoading && error && (
+              <div className="space-y-3">
+                <InfoBox icon={AlertCircle} variant="warning" message={copy.notFound} />
+                <button
+                  type="button"
+                  onClick={() => { setEmailConfirmed(false); setEmail(""); }}
+                  className="text-xs text-navy/60 hover:text-navy underline"
+                >
+                  Tentar com outro email
+                </button>
+              </div>
             )}
 
             {/* Success */}
@@ -147,8 +204,8 @@ export default function Reembolso() {
               </motion.div>
             )}
 
-            {/* Purchase info + form */}
-            {purchase && !submitted && (
+            {/* Purchase info + form — only render after email confirmation */}
+            {purchase && emailConfirmed && !submitted && (
               <div className="space-y-6">
                 {/* Purchase summary card */}
                 <div className="border border-navy/10 bg-white p-6 space-y-3">

@@ -260,3 +260,14 @@ export const purchases = pgTable("purchases", {
 });
 export type Purchase = typeof purchases.$inferSelect;
 export type InsertPurchase = typeof purchases.$inferInsert;
+
+/**
+ * Stripe webhook event dedupe — prevents re-processing on Stripe retries.
+ */
+export const stripeEvents = pgTable("stripe_events", {
+  eventId: varchar("eventId", { length: 255 }).primaryKey(),
+  type: varchar("type", { length: 128 }).notNull(),
+  processedAt: timestamp("processedAt").defaultNow().notNull(),
+});
+export type StripeEvent = typeof stripeEvents.$inferSelect;
+export type InsertStripeEvent = typeof stripeEvents.$inferInsert;

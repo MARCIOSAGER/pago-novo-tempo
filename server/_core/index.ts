@@ -13,10 +13,8 @@ import fs from "fs";
 import { applyAllSecurity } from "../security";
 import { LOCAL_UPLOADS_DIR } from "../storage";
 import { constructWebhookEvent, handleCheckoutSessionCompleted, handleCheckoutSessionExpired, handleChargeRefunded, handleChargeDisputeCreated } from "../stripe";
-import {
-  getPurchaseByToken,
-  incrementPurchaseDownloadCount,
-} from "../db";
+import { claimDownloadSlot, tryRecordStripeEvent } from "../db";
+import rateLimit from "express-rate-limit";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -45,10 +43,20 @@ async function startServer() {
   app.set('trust proxy', 1);
 
   // Stripe webhook — MUST use raw body (signature verification needs exact bytes)
-  // Registered BEFORE any JSON parser to avoid consuming the body
+  // Registered BEFORE any JSON parser to avoid consuming the body.
+  // Rate limit: 600 req / 15 min / IP (generous to allow Stripe retries, blocks floods).
+  const webhookRateLimit = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 600,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many requests" },
+  });
   app.post(
     "/api/stripe/webhook",
-    express.raw({ type: "application/json", limit: "2mb" }),
+    webhookRateLimit,
+    // 1MB is well above Stripe event payload size (typically <100KB)
+    express.raw({ type: "application/json", limit: "1mb" }),
     async (req, res) => {
       const signature = req.headers["stripe-signature"];
       if (typeof signature !== "string") {
@@ -57,9 +65,20 @@ async function startServer() {
       let event;
       try {
         event = constructWebhookEvent(req.body, signature);
-      } catch (err) {
-        console.error("[Stripe Webhook] Signature verification failed:", err);
+      } catch {
+        // Don't log err object (may contain body/sig) — just a boolean signal
+        console.error("[Stripe Webhook] Signature verification failed");
         return res.status(400).json({ error: "Invalid signature" });
+      }
+      // Idempotency: dedupe by event.id. If already processed, ack immediately.
+      try {
+        const isNew = await tryRecordStripeEvent(event.id, event.type);
+        if (!isNew) {
+          return res.json({ received: true, deduped: true });
+        }
+      } catch (err) {
+        console.error(`[Stripe Webhook] Dedupe check failed for ${event.id}:`, (err as Error).message);
+        // Fail-open: continue processing (better to risk a duplicate than to lose an event)
       }
       try {
         if (event.type === "checkout.session.completed") {
@@ -74,7 +93,7 @@ async function startServer() {
           console.log(`[Stripe Webhook] Ignored event type: ${event.type}`);
         }
       } catch (err) {
-        console.error(`[Stripe Webhook] Handler failed for ${event.type}:`, err);
+        console.error(`[Stripe Webhook] Handler failed for ${event.type}:`, (err as Error).message);
         return res.status(500).json({ error: "Handler error" });
       }
       res.json({ received: true });
@@ -155,41 +174,42 @@ async function startServer() {
   });
 
   // ─── Secure Purchase Download (token-based) ──────────────
-  app.get("/api/purchases/download", async (req, res) => {
+  // Rate limit: 30 req / 15 min / IP to slow brute-force / enumeration.
+  const downloadRateLimit = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 30,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Muitas requisições. Tente novamente em alguns minutos." },
+  });
+  // Token format: nanoid(32) using URL-safe alphabet [A-Za-z0-9_-]
+  const TOKEN_REGEX = /^[A-Za-z0-9_-]{32}$/;
+  // Unified error to prevent state-disclosure oracle (missing/expired/limit all return same 404).
+  const DOWNLOAD_ERROR = { error: "Link inválido ou expirado." };
+
+  app.get("/api/purchases/download", downloadRateLimit, async (req, res) => {
     const token = typeof req.query.token === "string" ? req.query.token : "";
-    if (!token || token.length > 128) {
-      return res.status(400).json({ error: "Token inválido" });
+    if (!token || !TOKEN_REGEX.test(token)) {
+      return res.status(404).json(DOWNLOAD_ERROR);
     }
-    const purchase = await getPurchaseByToken(token);
-    if (!purchase || !purchase.downloadToken) {
-      return res.status(404).json({ error: "Link inválido ou revogado." });
-    }
-    if (purchase.tokenExpiresAt && purchase.tokenExpiresAt < new Date()) {
-      return res.status(410).json({ error: "Link expirado. Entre em contato para receber um novo." });
-    }
-    if (purchase.downloadCount >= purchase.maxDownloads) {
-      return res.status(429).json({ error: "Limite de downloads atingido. Entre em contato para receber um novo link." });
-    }
-    if (purchase.productSlug !== "ebook") {
-      return res.status(400).json({ error: "Produto sem download associado." });
+    // Atomic claim: validates token, expiry, quota, status, product AND increments count in 1 query.
+    const purchase = await claimDownloadSlot(token);
+    if (!purchase) {
+      return res.status(404).json(DOWNLOAD_ERROR);
     }
 
     const lang = purchase.language ?? "pt";
     const fileKey = `ebook-pdf-${lang}`;
     const file = ebookFiles[fileKey];
     if (!file) {
-      return res.status(500).json({ error: "Arquivo indisponível." });
-    }
-
-    try {
-      await incrementPurchaseDownloadCount(purchase.id);
-    } catch (err) {
-      console.error("[Download] Failed to increment count:", err);
+      // Misconfiguration on server side — log but don't leak details.
+      console.error(`[Download] Ebook file missing for lang=${lang}`);
+      return res.status(500).json({ error: "Erro interno." });
     }
 
     res.download(file.filepath, file.filename, (err) => {
       if (err && !res.headersSent) {
-        res.status(404).json({ error: "Arquivo não encontrado" });
+        res.status(500).json({ error: "Erro interno." });
       }
     });
   });

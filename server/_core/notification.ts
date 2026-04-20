@@ -14,6 +14,12 @@ const trimValue = (value: string): string => value.trim();
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.trim().length > 0;
 
+// Escape HTML special chars to prevent XSS from user-provided content (e.g., Stripe customer names, refund reasons)
+const escapeHtml = (s: string): string =>
+  String(s).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]!));
+
 const validatePayload = (input: NotificationPayload): NotificationPayload => {
   if (!isNonEmptyString(input.title)) {
     throw new TRPCError({
@@ -653,6 +659,7 @@ export async function sendEbookDeliveryEmail(data: EbookDeliveryData): Promise<v
   const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
   const langNames = { pt: "Português", en: "English", es: "Español" } as const;
   const expiresStr = data.expiresAt.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+  const safeNome = escapeHtml(data.nome);
 
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
 <div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
@@ -661,7 +668,7 @@ export async function sendEbookDeliveryEmail(data: EbookDeliveryData): Promise<v
     <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">Seu Ebook chegou</p>
   </div>
   <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
-    <p style="font-size: 16px;">Olá <strong>${data.nome}</strong>,</p>
+    <p style="font-size: 16px;">Olá <strong>${safeNome}</strong>,</p>
     <p>Obrigado pela sua compra! Seu ebook <strong>P.A.G.O. (${langNames[data.language]})</strong> está pronto para download.</p>
 
     <div style="text-align: center; margin: 30px 0;">
@@ -778,6 +785,8 @@ export async function sendRefundRequestReceivedEmail(data: RefundRequestReceived
   if (!isSmtpConfigured()) return;
   const t = REFUND_COPY[data.language];
   const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
+  const safeNome = escapeHtml(data.nome);
+  const safeProduct = escapeHtml(data.productName);
 
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
 <div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
@@ -786,8 +795,8 @@ export async function sendRefundRequestReceivedEmail(data: RefundRequestReceived
     <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">${t.receivedHeadline}</p>
   </div>
   <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
-    <p style="font-size: 16px;">${t.receivedP1(data.nome)}</p>
-    <p>${t.receivedP2(data.productName)}</p>
+    <p style="font-size: 16px;">${t.receivedP1(safeNome)}</p>
+    <p>${t.receivedP2(safeProduct)}</p>
     <p style="font-size: 14px; color: #5A4E3A;">${t.receivedP3}</p>
     <p style="margin-top: 25px;">${t.receivedSignature}</p>
   </div>
@@ -816,7 +825,6 @@ export async function sendRefundRequestAdminNotification(data: RefundRequestAdmi
   if (!isSmtpConfigured() || !ENV.ownerEmail) return;
   const fromAddress = `"P.A.G.O. — Alertas" <${ENV.smtpUser}>`;
   const amount = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(data.amountCents / 100);
-  const escapeHtml = (s: string) => s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
 <div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
@@ -864,7 +872,8 @@ export async function sendRefundDeniedEmail(data: RefundDeniedData): Promise<voi
   if (!isSmtpConfigured()) return;
   const t = REFUND_COPY[data.language];
   const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
-  const escapeHtml = (s: string) => s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+  const safeNome = escapeHtml(data.nome);
+  const safeProduct = escapeHtml(data.productName);
 
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
 <div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
@@ -873,8 +882,8 @@ export async function sendRefundDeniedEmail(data: RefundDeniedData): Promise<voi
     <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">${t.deniedHeadline}</p>
   </div>
   <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
-    <p style="font-size: 16px;">${t.deniedP1(data.nome)}</p>
-    <p>${t.deniedP2(data.productName)}</p>
+    <p style="font-size: 16px;">${t.deniedP1(safeNome)}</p>
+    <p>${t.deniedP2(safeProduct)}</p>
     <div style="background: #F5F0E8; border-left: 4px solid #7A3030; padding: 15px; margin: 20px 0; border-radius: 0 6px 6px 0;">
       <p style="margin: 0 0 6px; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.1em;">${t.deniedNoteLabel}</p>
       <p style="margin: 0; font-size: 14px; color: #1A2744; white-space: pre-wrap;">${escapeHtml(data.note)}</p>
@@ -908,6 +917,10 @@ export async function sendPurchaseConfirmationEmail(data: PurchaseConfirmationDa
   const transporter = getTransporter();
   const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
 
+  const safeNome = escapeHtml(data.nome);
+  const safeProduct = escapeHtml(data.productName);
+  const safeNextStep = escapeHtml(data.nextStep);
+
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
 <div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
   <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
@@ -915,12 +928,12 @@ export async function sendPurchaseConfirmationEmail(data: PurchaseConfirmationDa
     <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">Pagamento Confirmado</p>
   </div>
   <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
-    <p style="font-size: 16px;">Olá <strong>${data.nome}</strong>,</p>
-    <p>Recebemos seu pagamento de <strong>${data.productName}</strong>. Obrigado pela confiança!</p>
+    <p style="font-size: 16px;">Olá <strong>${safeNome}</strong>,</p>
+    <p>Recebemos seu pagamento de <strong>${safeProduct}</strong>. Obrigado pela confiança!</p>
 
     <div style="background: #F5F0E8; border-left: 4px solid #C8A951; padding: 18px; margin: 25px 0; border-radius: 0 6px 6px 0;">
       <p style="margin: 0 0 6px; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.1em;">Próximo passo</p>
-      <p style="margin: 0; font-size: 14px; color: #1A2744;">${data.nextStep}</p>
+      <p style="margin: 0; font-size: 14px; color: #1A2744;">${safeNextStep}</p>
     </div>
 
     <p style="font-size: 13px; color: #666;">Se tiver qualquer dúvida, responda este email — estamos à disposição.</p>

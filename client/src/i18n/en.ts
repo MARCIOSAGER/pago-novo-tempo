@@ -1142,6 +1142,23 @@ const en: Translations = {
       message: "Your Emotional Governance result suggests there may be an emotional wound beyond professional development. We recommend considering specialized support before coaching interventions.",
     },
   },
+
+  profile: {
+    purchases: {
+      title: "My Purchases",
+      empty: "You haven't made any purchases yet.",
+      downloads: "{count}/{max} downloads",
+      download: "Download",
+      requestRefund: "Request refund",
+      refundPending: "Refund request under review. You'll receive our reply by email.",
+      status: {
+        pending: "Pending",
+        delivered: "Delivered",
+        refunded: "Refunded",
+        failed: "Failed",
+      },
+    },
+  },
 };
 
 export default en;

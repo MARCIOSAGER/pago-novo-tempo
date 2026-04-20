@@ -30,6 +30,7 @@ import {
   purchases,
   InsertPurchase,
   Purchase,
+  stripeEvents,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -989,10 +990,55 @@ export async function getPurchaseByPaymentIntent(paymentIntentId: string): Promi
   return row;
 }
 
+export async function listPurchasesByEmail(email: string): Promise<Purchase[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(purchases)
+    .where(eq(purchases.email, email.toLowerCase()))
+    .orderBy(desc(purchases.createdAt));
+}
+
+/**
+ * Records a Stripe event as processed. Returns true if it's the first time we've seen it,
+ * false if it was already processed (for idempotency against webhook retries).
+ */
+export async function tryRecordStripeEvent(eventId: string, type: string): Promise<boolean> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const inserted = await db.insert(stripeEvents)
+    .values({ eventId, type })
+    .onConflictDoNothing({ target: stripeEvents.eventId })
+    .returning();
+  return inserted.length > 0;
+}
+
 export async function incrementPurchaseDownloadCount(id: number): Promise<void> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.update(purchases).set({ downloadCount: sql`${purchases.downloadCount} + 1` }).where(eq(purchases.id, id));
+}
+
+/**
+ * Atomically claim a download slot: validates token, not expired, under maxDownloads,
+ * status=delivered, product=ebook, and increments downloadCount in a single UPDATE.
+ * Returns the purchase record if claimed, or undefined if any check failed.
+ * Prevents race conditions where concurrent requests exceed maxDownloads.
+ */
+export async function claimDownloadSlot(token: string): Promise<Purchase | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db
+    .update(purchases)
+    .set({ downloadCount: sql`${purchases.downloadCount} + 1` })
+    .where(and(
+      eq(purchases.downloadToken, token),
+      eq(purchases.productSlug, "ebook"),
+      eq(purchases.status, "delivered"),
+      sql`${purchases.downloadCount} < ${purchases.maxDownloads}`,
+      sql`(${purchases.tokenExpiresAt} IS NULL OR ${purchases.tokenExpiresAt} > NOW())`,
+    ))
+    .returning();
+  return rows[0];
 }
 
 export async function regeneratePurchaseToken(id: number, newToken: string, newExpiresAt: Date): Promise<void> {

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { nanoid } from "nanoid";
+import { timingSafeEqual } from "node:crypto";
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
@@ -7,6 +8,7 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import {
   getSiteSetting,
   listPurchases,
+  listPurchasesByEmail,
   getPurchaseById,
   getPurchaseBySessionId,
   getPurchaseMetrics,
@@ -901,13 +903,103 @@ export const appRouter = router({
         return { success: true };
       }),
 
-    // Public: lookup purchase by session_id (for /reembolso page to display purchase info)
-    lookupBySession: publicProcedure
-      .input(z.object({ sessionId: z.string().min(1).max(255) }))
-      .query(async ({ input }) => {
-        const purchase = await getPurchaseBySessionId(input.sessionId);
+    // Authenticated: list purchases for the current user (by ctx.user.email)
+    listMine: protectedProcedure.query(async ({ ctx }) => {
+      const email = ctx.user.email;
+      if (!email) return [];
+      const rows = await listPurchasesByEmail(email);
+      // Hide abandoned from customer view (they don't need to see their own abandonments)
+      // and strip sensitive fields (token, rawSession)
+      return rows
+        .filter(r => r.status !== "abandoned")
+        .map(r => ({
+          id: r.id,
+          stripeSessionId: r.stripeSessionId,
+          productSlug: r.productSlug,
+          language: r.language,
+          amountCents: r.amountCents,
+          currency: r.currency,
+          status: r.status,
+          downloadCount: r.downloadCount,
+          maxDownloads: r.maxDownloads,
+          tokenExpiresAt: r.tokenExpiresAt,
+          tokenActive: Boolean(r.downloadToken),
+          refundRequestedAt: r.refundRequestedAt,
+          refundDeniedAt: r.refundDeniedAt,
+          createdAt: r.createdAt,
+          deliveredAt: r.deliveredAt,
+        }));
+    }),
+
+    // Authenticated: reissue the ebook download token for one of the user's own purchases
+    reissueMyDownload: protectedProcedure
+      .input(z.object({ purchaseId: z.number().int().positive() }))
+      .mutation(async ({ input, ctx }) => {
+        const email = ctx.user.email;
+        if (!email) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "Email da conta não disponível." });
+        }
+        const purchase = await getPurchaseById(input.purchaseId);
         if (!purchase) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
+        }
+        // Ownership check: compare emails case-insensitively
+        if (purchase.email.toLowerCase() !== email.toLowerCase()) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Esta compra não é sua." });
+        }
+        if (purchase.productSlug !== "ebook") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Apenas ebook tem download." });
+        }
+        if (purchase.status !== "delivered") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Esta compra não está disponível para download." });
+        }
+
+        const newToken = nanoid(32);
+        const newExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+        await regeneratePurchaseToken(purchase.id, newToken, newExpiresAt);
+
+        const downloadUrl = `${ENV.siteUrl}/api/purchases/download?token=${newToken}`;
+        return { downloadUrl };
+      }),
+
+    // Public: lookup purchase by session_id + email (for /reembolso page).
+    // Requires email to prevent session_id enumeration PII leakage. Timing-safe compare.
+    lookupBySession: publicProcedure
+      .input(z.object({
+        sessionId: z.string().min(1).max(255),
+        email: z.string().email().max(320).optional(),
+      }))
+      .query(async ({ input }) => {
+        const purchase = await getPurchaseBySessionId(input.sessionId);
+        // Always return NOT_FOUND for both missing and email-mismatch to avoid enumeration oracle.
+        if (!purchase) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
+        }
+        if (input.email) {
+          const storedBuf = Buffer.from(purchase.email.toLowerCase());
+          const providedBuf = Buffer.from(input.email.trim().toLowerCase());
+          const match = storedBuf.length === providedBuf.length
+            && timingSafeEqual(storedBuf, providedBuf);
+          if (!match) {
+            throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
+          }
+        } else {
+          // If no email provided, expose only NON-PII purchase meta (to allow the page to render the
+          // "enter your email to continue" prompt without leaking buyer identity).
+          return {
+            id: purchase.id,
+            email: null,
+            customerName: null,
+            productSlug: purchase.productSlug,
+            language: purchase.language,
+            amountCents: purchase.amountCents,
+            currency: purchase.currency,
+            status: purchase.status,
+            createdAt: purchase.createdAt,
+            refundRequestedAt: purchase.refundRequestedAt,
+            refundDeniedAt: purchase.refundDeniedAt,
+            requiresEmail: true,
+          } as const;
         }
         return {
           id: purchase.id,
@@ -921,18 +1013,28 @@ export const appRouter = router({
           createdAt: purchase.createdAt,
           refundRequestedAt: purchase.refundRequestedAt,
           refundDeniedAt: purchase.refundDeniedAt,
-        };
+          requiresEmail: false,
+        } as const;
       }),
 
-    // Public: submit refund request (identified by session_id)
+    // Public: submit refund request (identified by session_id + email match)
     requestRefund: publicProcedure
       .input(z.object({
         sessionId: z.string().min(1).max(255),
+        email: z.string().email().max(320),
         reason: z.string().min(5).max(2000),
       }))
       .mutation(async ({ input }) => {
         const purchase = await getPurchaseBySessionId(input.sessionId);
+        // Generic NOT_FOUND for both cases to avoid oracle
         if (!purchase) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
+        }
+        const storedBuf = Buffer.from(purchase.email.toLowerCase());
+        const providedBuf = Buffer.from(input.email.trim().toLowerCase());
+        const emailMatches = storedBuf.length === providedBuf.length
+          && timingSafeEqual(storedBuf, providedBuf);
+        if (!emailMatches) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
         }
         if (purchase.status === "refunded") {

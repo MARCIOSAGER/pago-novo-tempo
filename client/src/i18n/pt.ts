@@ -1143,6 +1143,23 @@ const pt = {
       message: "O seu resultado em Governo Emocional sugere que pode haver uma ferida emocional que vai além do desenvolvimento profissional. Recomendamos considerar acompanhamento especializado antes de intervenções de coaching.",
     },
   },
+
+  profile: {
+    purchases: {
+      title: "Minhas Compras",
+      empty: "Você ainda não fez nenhuma compra.",
+      downloads: "{count}/{max} downloads",
+      download: "Baixar",
+      requestRefund: "Solicitar reembolso",
+      refundPending: "Solicitação de reembolso em análise. Você receberá a resposta por email.",
+      status: {
+        pending: "Pendente",
+        delivered: "Entregue",
+        refunded: "Reembolsado",
+        failed: "Falhou",
+      },
+    },
+  },
 } as const;
 
 // Deep type that allows any string values for translations

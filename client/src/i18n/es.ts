@@ -1142,6 +1142,23 @@ const es: Translations = {
       message: "Su resultado en Gobierno Emocional sugiere que puede haber una herida emocional más allá del desarrollo profesional. Recomendamos considerar acompañamiento especializado antes de intervenciones de coaching.",
     },
   },
+
+  profile: {
+    purchases: {
+      title: "Mis Compras",
+      empty: "Aún no has realizado ninguna compra.",
+      downloads: "{count}/{max} descargas",
+      download: "Descargar",
+      requestRefund: "Solicitar reembolso",
+      refundPending: "Solicitud de reembolso en revisión. Recibirás nuestra respuesta por email.",
+      status: {
+        pending: "Pendiente",
+        delivered: "Entregado",
+        refunded: "Reembolsado",
+        failed: "Falló",
+      },
+    },
+  },
 };
 
 export default es;
