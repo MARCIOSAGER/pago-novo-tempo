@@ -271,3 +271,20 @@ export const stripeEvents = pgTable("stripe_events", {
 });
 export type StripeEvent = typeof stripeEvents.$inferSelect;
 export type InsertStripeEvent = typeof stripeEvents.$inferInsert;
+
+/**
+ * Admin audit log — records privileged actions for accountability and forensics.
+ */
+export const adminAuditLog = pgTable("admin_audit_log", {
+  id: serial("id").primaryKey(),
+  actorUserId: integer("actorUserId").notNull(),
+  actorEmail: varchar("actorEmail", { length: 320 }),
+  action: varchar("action", { length: 64 }).notNull(),
+  targetType: varchar("targetType", { length: 32 }),
+  targetId: varchar("targetId", { length: 64 }),
+  details: json("details").$type<Record<string, unknown>>(),
+  ipAddress: varchar("ipAddress", { length: 64 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AdminAuditLog = typeof adminAuditLog.$inferSelect;
+export type InsertAdminAuditLog = typeof adminAuditLog.$inferInsert;

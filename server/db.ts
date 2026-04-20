@@ -31,6 +31,9 @@ import {
   InsertPurchase,
   Purchase,
   stripeEvents,
+  adminAuditLog,
+  InsertAdminAuditLog,
+  AdminAuditLog,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -1010,6 +1013,44 @@ export async function tryRecordStripeEvent(eventId: string, type: string): Promi
     .onConflictDoNothing({ target: stripeEvents.eventId })
     .returning();
   return inserted.length > 0;
+}
+
+// ─── Admin Audit Log ────────────────────────────────────────────
+
+export async function writeAuditLog(entry: InsertAdminAuditLog): Promise<void> {
+  const db = await getDb();
+  if (!db) return; // fail-open: audit log must never break the action being audited
+  try {
+    await db.insert(adminAuditLog).values(entry);
+  } catch (err) {
+    console.error("[Audit] Failed to write log entry:", (err as Error).message);
+  }
+}
+
+export async function listAuditLog(opts: {
+  page?: number;
+  pageSize?: number;
+  action?: string;
+  actorUserId?: number;
+  targetType?: string;
+}): Promise<{ rows: AdminAuditLog[]; total: number }> {
+  const db = await getDb();
+  if (!db) return { rows: [], total: 0 };
+  const page = Math.max(1, opts.page ?? 1);
+  const pageSize = Math.min(200, Math.max(1, opts.pageSize ?? 50));
+  const conditions = [] as Array<ReturnType<typeof eq>>;
+  if (opts.action) conditions.push(eq(adminAuditLog.action, opts.action));
+  if (opts.actorUserId) conditions.push(eq(adminAuditLog.actorUserId, opts.actorUserId));
+  if (opts.targetType) conditions.push(eq(adminAuditLog.targetType, opts.targetType));
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+  const rows = await db.select().from(adminAuditLog)
+    .where(whereClause)
+    .orderBy(desc(adminAuditLog.createdAt))
+    .limit(pageSize)
+    .offset((page - 1) * pageSize);
+  const [totalRow] = await db.select({ count: count() }).from(adminAuditLog).where(whereClause);
+  return { rows, total: totalRow?.count ?? 0 };
 }
 
 export async function incrementPurchaseDownloadCount(id: number): Promise<void> {

@@ -37,6 +37,7 @@ import {
   KeyRound,
   Package,
   ShoppingCart,
+  ShieldCheck,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation, Link } from "wouter";
@@ -56,6 +57,7 @@ const menuItems = [
   { icon: Mail, label: "Email", path: "/admin/email" },
   { icon: KeyRound, label: "Gestão de Acessos", path: "/admin/acessos" },
   { icon: Building2, label: "Organizações", path: "/admin/organizations" },
+  { icon: ShieldCheck, label: "Auditoria", path: "/admin/auditoria" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "admin-sidebar-width";

@@ -16,6 +16,8 @@ import {
   revokePurchaseToken,
   requestPurchaseRefund,
   denyPurchaseRefund,
+  writeAuditLog,
+  listAuditLog,
   createInscription,
   listInscriptions,
   updateInscriptionStatus,
@@ -197,6 +199,28 @@ const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   }
   return next({ ctx });
 });
+
+/**
+ * Logs an admin action to the audit log. Fire-and-forget (does not block the response).
+ * Extracts IP from the request, including forwarded headers for reverse-proxy setups.
+ */
+function audit(ctx: { user: { id: number; email?: string | null }; req?: { ip?: string; headers?: Record<string, unknown> } },
+  action: string,
+  opts?: { targetType?: string; targetId?: string | number; details?: Record<string, unknown> }
+): void {
+  const forwarded = ctx.req?.headers?.["x-forwarded-for"];
+  const ipFromHeader = typeof forwarded === "string" ? forwarded.split(",")[0].trim() : undefined;
+  const ipAddress = ipFromHeader || ctx.req?.ip || undefined;
+  writeAuditLog({
+    actorUserId: ctx.user.id,
+    actorEmail: ctx.user.email || null,
+    action,
+    targetType: opts?.targetType ?? null,
+    targetId: opts?.targetId != null ? String(opts.targetId) : null,
+    details: opts?.details ?? null,
+    ipAddress: ipAddress ? ipAddress.slice(0, 64) : null,
+  }).catch(() => {});
+}
 
 // ─── Umami Analytics Helper ─────────────────────────────────────
 
@@ -704,20 +728,30 @@ export const appRouter = router({
         id: z.number().int().positive(),
         status: z.enum(["new", "reviewed", "archived"]),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         await updateDiagnosticoStatus(input.id, input.status);
+        audit(ctx, "diagnostico.updateStatus", {
+          targetType: "diagnostico",
+          targetId: input.id,
+          details: { status: input.status },
+        });
         return { success: true };
       }),
 
     // Admin: delete diagnostic
     delete: adminProcedure
       .input(z.object({ id: z.number().int().positive() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const result = await getDiagnosticoById(input.id);
         if (!result) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Diagnóstico não encontrado." });
         }
         await deleteDiagnostico(input.id);
+        audit(ctx, "diagnostico.delete", {
+          targetType: "diagnostico",
+          targetId: input.id,
+          details: { nome: result.nome, email: result.email },
+        });
         return { success: true };
       }),
 
@@ -727,7 +761,7 @@ export const appRouter = router({
         id: z.number().int().positive(),
         email: z.string().email().max(320).toLowerCase(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const result = await getDiagnosticoById(input.id);
         if (!result) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Diagnóstico não encontrado." });
@@ -764,6 +798,11 @@ export const appRouter = router({
         }
 
         await sendDiagnosticEmailWithPdf({ ...emailData, pdfBase64 });
+        audit(ctx, "diagnostico.sendEmail", {
+          targetType: "diagnostico",
+          targetId: input.id,
+          details: { recipientEmail: input.email },
+        });
         return { success: true };
       }),
 
@@ -802,10 +841,15 @@ export const appRouter = router({
     // Admin: bulk delete diagnostics
     bulkDelete: adminProcedure
       .input(z.object({ ids: z.array(z.number().int().positive()).min(1).max(100) }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         for (const id of input.ids) {
           await deleteDiagnostico(id);
         }
+        audit(ctx, "diagnostico.bulkDelete", {
+          targetType: "diagnostico",
+          targetId: `[${input.ids.length} ids]`,
+          details: { count: input.ids.length, ids: input.ids },
+        });
         return { success: true, deleted: input.ids.length };
       }),
 
@@ -818,6 +862,21 @@ export const appRouter = router({
     metrics: adminProcedure.query(async () => {
       return getDiagnosticoMetrics();
     }),
+  }),
+
+  // ─── Admin Audit Log ────────────────────────────────────────
+  audit: router({
+    list: adminProcedure
+      .input(z.object({
+        page: z.number().int().min(1).default(1),
+        pageSize: z.number().int().min(1).max(200).default(50),
+        action: z.string().max(64).optional(),
+        actorUserId: z.number().int().positive().optional(),
+        targetType: z.string().max(32).optional(),
+      }))
+      .query(async ({ input }) => {
+        return listAuditLog(input);
+      }),
   }),
 
   // ─── Purchases (Stripe-backed orders) ──────────────────────
@@ -865,7 +924,7 @@ export const appRouter = router({
     // Admin: resend delivery email (regenerates token for ebook)
     resend: adminProcedure
       .input(z.object({ id: z.number().int().positive() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const purchase = await getPurchaseById(input.id);
         if (!purchase) throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
 
@@ -896,19 +955,29 @@ export const appRouter = router({
             nextStep,
           });
         }
+        audit(ctx, "purchase.resend", {
+          targetType: "purchase",
+          targetId: purchase.id,
+          details: { productSlug: purchase.productSlug, email: purchase.email },
+        });
         return { success: true };
       }),
 
     // Admin: revoke download token (ebook only)
     revokeToken: adminProcedure
       .input(z.object({ id: z.number().int().positive() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const purchase = await getPurchaseById(input.id);
         if (!purchase) throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
         if (purchase.productSlug !== "ebook") {
           throw new TRPCError({ code: "BAD_REQUEST", message: "Apenas compras de ebook têm token." });
         }
         await revokePurchaseToken(purchase.id);
+        audit(ctx, "purchase.revokeToken", {
+          targetType: "purchase",
+          targetId: purchase.id,
+          details: { email: purchase.email },
+        });
         return { success: true };
       }),
 
@@ -1102,7 +1171,7 @@ export const appRouter = router({
         id: z.number().int().positive(),
         note: z.string().min(5).max(2000),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const purchase = await getPurchaseById(input.id);
         if (!purchase) throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
         if (!purchase.refundRequestedAt) {
@@ -1126,6 +1195,11 @@ export const appRouter = router({
         } catch (e) {
           console.warn("[Refund] denial email failed:", e);
         }
+        audit(ctx, "refund.deny", {
+          targetType: "purchase",
+          targetId: purchase.id,
+          details: { email: purchase.email, note: input.note },
+        });
         return { success: true };
       }),
   }),
@@ -1166,8 +1240,12 @@ export const appRouter = router({
           ),
         })).min(1).max(12),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         await upsertSiteSetting("diagnostico_offers", JSON.stringify(input.offers));
+        audit(ctx, "offers.save", {
+          targetType: "offers",
+          details: { count: input.offers.length, ids: input.offers.map(o => o.id) },
+        });
         return { success: true };
       }),
   }),

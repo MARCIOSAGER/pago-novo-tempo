@@ -50,6 +50,13 @@
       "when": 1776708000000,
       "tag": "0006_stripe_events_dedupe",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1776709000000,
+      "tag": "0007_admin_audit_log",
+      "breakpoints": true
     }
   ]
 }
