@@ -10,7 +10,7 @@ import { registerChatRoutes } from "./chat";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import fs from "fs";
-import { applyAllSecurity } from "../security";
+import { applyAllSecurity, refundLookupRateLimiter, refundRequestRateLimiter } from "../security";
 import { LOCAL_UPLOADS_DIR } from "../storage";
 import { constructWebhookEvent, handleCheckoutSessionCompleted, handleCheckoutSessionExpired, handleChargeRefunded, handleChargeDisputeCreated } from "../stripe";
 import { claimDownloadSlot, tryRecordStripeEvent } from "../db";
@@ -106,6 +106,10 @@ async function startServer() {
   app.use("/api/trpc/siteSettings.updateImage", express.json({ limit: "50mb" }));
   app.use("/api/trpc/diagnostico.sendEmailWithPdf", express.json({ limit: "15mb" }));
   app.use("/api/trpc/diagnostico.generatePdf", express.json({ limit: "5mb" }));
+
+  // Public refund endpoints — extra rate limits to prevent enumeration/abuse
+  app.use("/api/trpc/purchases.lookupBySession", refundLookupRateLimiter);
+  app.use("/api/trpc/purchases.requestRefund", refundRequestRateLimiter);
 
   // ─── Apply Security Layers ──────────────────────────────
   applyAllSecurity(app);

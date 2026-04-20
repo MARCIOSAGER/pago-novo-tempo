@@ -343,7 +343,7 @@ export default function AdminCompras() {
                   {data.rows.map((p) => {
                     const Icon = productIcons[p.productSlug] || Package;
                     const status = (p.status as Status) || "pending";
-                    const hasToken = Boolean(p.downloadToken);
+                    const hasToken = Boolean(p.hasDownloadToken);
                     const pendingRefund = Boolean(p.refundRequestedAt && !p.refundDeniedAt && status !== "refunded");
                     return (
                       <tr key={p.id} className="hover:bg-muted/30 transition-colors">

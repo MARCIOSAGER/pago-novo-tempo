@@ -96,6 +96,24 @@ export const authRateLimiter = rateLimit({
   },
 });
 
+// Refund lookup rate limiter: 10 requests per 15 minutes per IP (prevents enumeration)
+export const refundLookupRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Muitas tentativas. Aguarde alguns minutos.", code: "REFUND_LOOKUP_RATE_LIMIT" },
+});
+
+// Refund request rate limiter: 3 submissions per hour per IP (prevents abuse/spam)
+export const refundRequestRateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 3,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Limite de solicitações atingido. Tente novamente em 1 hora.", code: "REFUND_REQUEST_RATE_LIMIT" },
+});
+
 // ─── 3. HTTP Parameter Pollution Protection ─────────────────────
 export function applyHpp(app: Express) {
   app.use(hpp());

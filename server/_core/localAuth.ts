@@ -8,6 +8,7 @@ import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
 import { sendPasswordResetEmail } from "./notification";
 import { authRateLimiter } from "../security";
+import { ENV } from "./env";
 
 const registerSchema = z.object({
   name: z.string().min(2).max(255),
@@ -131,9 +132,9 @@ export function registerLocalAuthRoutes(app: Express) {
         const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
         await db.setResetToken(user.id, token, expiresAt);
 
-        const protocol = req.headers["x-forwarded-proto"] || req.protocol;
-        const host = req.get("host");
-        const resetUrl = `${protocol}://${host}/reset-password/${token}`;
+        // SEC: use ENV.siteUrl (validated at boot) — never req.get("host") / x-forwarded-proto
+        // which are attacker-controlled and enable account takeover via host header injection
+        const resetUrl = `${ENV.siteUrl}/reset-password/${token}`;
         sendPasswordResetEmail(user.email!, user.name || "", resetUrl).catch(() => {});
       }
 

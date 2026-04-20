@@ -1,3 +1,19 @@
+// SEC: fail-fast on missing critical secrets in production.
+// Empty JWT_SECRET would allow attackers to forge HS256 tokens signed with "".
+// Stripe/webhook secrets missing = silent runtime failure. Fail at boot instead.
+if (process.env.NODE_ENV === "production") {
+  const required = ["JWT_SECRET"];
+  const stripeConfigured = Boolean(process.env.STRIPE_SECRET_KEY);
+  if (stripeConfigured) {
+    // If Stripe is partially configured, both secrets must be present.
+    required.push("STRIPE_WEBHOOK_SECRET");
+  }
+  const missing = required.filter(k => !process.env[k]);
+  if (missing.length > 0) {
+    throw new Error(`[env] Missing required secrets in production: ${missing.join(", ")}`);
+  }
+}
+
 export const ENV = {
   cookieSecret: process.env.JWT_SECRET ?? "",
   databaseUrl: process.env.DATABASE_URL ?? "",
@@ -24,8 +40,16 @@ export const ENV = {
   // Stripe
   stripeSecretKey: process.env.STRIPE_SECRET_KEY ?? "",
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
-  // Public site URL (used for download links)
-  siteUrl: process.env.SITE_URL ?? "https://metodopago.com",
+  // Public site URL (used for download links). Validated below.
+  siteUrl: (() => {
+    const raw = process.env.SITE_URL ?? "https://metodopago.com";
+    const trimmed = raw.replace(/\/+$/, ""); // strip trailing slashes
+    if (!/^https?:\/\/[a-z0-9.-]+(:\d+)?$/i.test(trimmed)) {
+      console.warn(`[env] SITE_URL invalid format: "${raw}" — falling back to https://metodopago.com`);
+      return "https://metodopago.com";
+    }
+    return trimmed;
+  })(),
   // Analytics (Umami)
   analyticsEndpoint: process.env.VITE_ANALYTICS_ENDPOINT ?? "",
   analyticsWebsiteId: process.env.VITE_ANALYTICS_WEBSITE_ID ?? "",

@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getGoogleLoginUrl, getGithubLoginUrl } from "@/const";
 import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react";
+import { safeReturnTo } from "@/lib/utils";
 
 export default function LoginPage() {
   const { t } = useLanguage();
@@ -17,9 +18,9 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Get returnTo from URL params
+  // Get returnTo from URL params — sanitize to prevent open redirect (//evil.com)
   const params = new URLSearchParams(window.location.search);
-  const returnTo = params.get("returnTo") || "/";
+  const returnTo = safeReturnTo(params.get("returnTo"));
 
   // Redirect if already logged in
   if (user) {

@@ -1,5 +1,21 @@
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import type { Express, Request, Response } from "express";
+
+/**
+ * Validates that a returnTo path is a same-origin relative path.
+ * Rejects protocol-relative URLs (//evil.com), full URLs (http://...), schemes (javascript:),
+ * and backslash tricks (/\evil.com interpreted as //evil.com by some browsers).
+ */
+function safeReturnTo(returnTo: unknown): string {
+  if (typeof returnTo !== "string" || returnTo.length === 0 || returnTo.length > 2000) return "/";
+  // Must start with single slash
+  if (!returnTo.startsWith("/")) return "/";
+  // Reject protocol-relative (//host), backslash tricks (/\host), full URLs
+  if (returnTo.startsWith("//") || returnTo.startsWith("/\\") || returnTo.includes("://")) return "/";
+  // Reject control chars and whitespace
+  if (/[\x00-\x1f\s]/.test(returnTo)) return "/";
+  return returnTo;
+}
 import * as db from "../db";
 import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
@@ -122,9 +138,7 @@ export function registerOAuthRoutes(app: Express) {
         res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
       }
 
-      const returnTo = (req.query.state as string) || "/";
-      const safePath = returnTo.startsWith("/") ? returnTo : "/";
-      res.redirect(302, safePath);
+      res.redirect(302, safeReturnTo(req.query.state));
     } catch (error) {
       console.error("[OAuth/Google] Callback failed:", error);
       res.status(500).json({ error: "OAuth callback failed" });
@@ -239,9 +253,7 @@ export function registerOAuthRoutes(app: Express) {
         res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
       }
 
-      const returnTo = (req.query.state as string) || "/";
-      const safePath = returnTo.startsWith("/") ? returnTo : "/";
-      res.redirect(302, safePath);
+      res.redirect(302, safeReturnTo(req.query.state));
     } catch (error) {
       console.error("[OAuth/GitHub] Callback failed:", error);
       res.status(500).json({ error: "OAuth callback failed" });

@@ -822,7 +822,9 @@ export const appRouter = router({
 
   // ─── Purchases (Stripe-backed orders) ──────────────────────
   purchases: router({
-    // Admin: list purchases with filters
+    // Admin: list purchases with filters.
+    // SEC: strip rawSession (full Stripe session JSON) and downloadToken (live ebook token)
+    // before returning — defense-in-depth if admin session is compromised.
     list: adminProcedure
       .input(z.object({
         page: z.number().int().min(1).default(1),
@@ -831,7 +833,12 @@ export const appRouter = router({
         status: z.enum(["pending", "delivered", "failed", "refunded", "abandoned"]).optional(),
       }))
       .query(async ({ input }) => {
-        return listPurchases(input);
+        const { rows, total } = await listPurchases(input);
+        const sanitized = rows.map(({ rawSession, downloadToken, ...rest }) => ({
+          ...rest,
+          hasDownloadToken: Boolean(downloadToken),
+        }));
+        return { rows: sanitized, total };
       }),
 
     // Admin: aggregated metrics (respects optional filters)
@@ -844,13 +851,15 @@ export const appRouter = router({
         return getPurchaseMetrics(input);
       }),
 
-    // Admin: get single purchase
+    // Admin: get single purchase.
+    // SEC: strip rawSession and downloadToken (defense-in-depth).
     getById: adminProcedure
       .input(z.object({ id: z.number().int().positive() }))
       .query(async ({ input }) => {
         const row = await getPurchaseById(input.id);
         if (!row) throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
-        return row;
+        const { rawSession: _rs, downloadToken, ...rest } = row;
+        return { ...rest, hasDownloadToken: Boolean(downloadToken) };
       }),
 
     // Admin: resend delivery email (regenerates token for ebook)
@@ -1144,9 +1153,17 @@ export const appRouter = router({
           id: z.string().min(1).max(64),
           title: z.string().min(1).max(200),
           description: z.string().min(1).max(1000),
-          imageUrl: z.string().max(2000).default(""),
+          // SEC: URL allowlist — only https:// or absolute internal paths. Rejects
+          // javascript:, vbscript:, data:, blob:, file:, and protocol-relative (//evil.com).
+          imageUrl: z.string().max(2000).default("").refine(
+            (s) => s === "" || /^https:\/\/[^\s]+$/.test(s) || (/^\/[^\/]/.test(s) && !s.includes("://")),
+            { message: "imageUrl deve ser https:// ou caminho interno /..." }
+          ),
           ctaText: z.string().min(1).max(80),
-          ctaUrl: z.string().max(2000).default(""),
+          ctaUrl: z.string().max(2000).default("").refine(
+            (s) => s === "" || /^https:\/\/[^\s]+$/.test(s) || (/^\/[^\/]/.test(s) && !s.includes("://")),
+            { message: "ctaUrl deve ser https:// ou caminho interno /..." }
+          ),
         })).min(1).max(12),
       }))
       .mutation(async ({ input }) => {

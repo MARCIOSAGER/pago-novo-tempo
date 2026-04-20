@@ -42,7 +42,10 @@ export function getSessionCookieOptions(
   return {
     httpOnly: true,
     path: "/",
-    sameSite: "none",
+    // SEC: "lax" — cookie sent on top-level navigations but NOT on cross-site sub-requests
+    // (blocks CSRF via form POST from attacker origin). The app is not cross-origin embedded,
+    // so "none" was unnecessarily permissive.
+    sameSite: "lax",
     secure: isSecureRequest(req),
   };
 }

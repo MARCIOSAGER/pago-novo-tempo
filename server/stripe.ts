@@ -31,6 +31,9 @@ export function isStripeConfigured(): boolean {
   return Boolean(ENV.stripeSecretKey);
 }
 
+// SEC: strip CRLF to prevent log injection (fake log lines from user-controlled fields)
+const safeLog = (s: string): string => String(s).replace(/[\r\n]/g, " ").slice(0, 300);
+
 export const DOWNLOAD_TOKEN_TTL_DAYS = 30;
 export const DOWNLOAD_TOKEN_MAX_USES = 10;
 
@@ -171,7 +174,7 @@ export async function handleCheckoutSessionExpired(session: Stripe.Checkout.Sess
     status: "abandoned",
     rawSession: session as unknown as Record<string, unknown>,
   });
-  console.log(`[Stripe] Recorded abandoned cart for ${email} (${slug})`);
+  console.log(`[Stripe] Recorded abandoned cart for ${safeLog(email)} (${slug})`);
 }
 
 export async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
@@ -193,7 +196,7 @@ export async function handleChargeRefunded(charge: Stripe.Charge): Promise<void>
     await revokePurchaseToken(purchase.id);
     console.log(`[Stripe] Revoked ebook token for refunded purchase ${purchase.id}`);
   }
-  console.log(`[Stripe] Purchase ${purchase.id} marked as refunded (${purchase.email})`);
+  console.log(`[Stripe] Purchase ${purchase.id} marked as refunded (${safeLog(purchase.email)})`);
 }
 
 export async function handleChargeDisputeCreated(dispute: Stripe.Dispute): Promise<void> {
@@ -211,7 +214,7 @@ export async function handleChargeDisputeCreated(dispute: Stripe.Dispute): Promi
   if (purchase.productSlug === "ebook" && purchase.downloadToken) {
     await revokePurchaseToken(purchase.id);
   }
-  console.log(`[Stripe] Purchase ${purchase.id} flagged as disputed (${purchase.email})`);
+  console.log(`[Stripe] Purchase ${purchase.id} flagged as disputed (${safeLog(purchase.email)})`);
 }
 
 export function constructWebhookEvent(rawBody: Buffer, signature: string): Stripe.Event {

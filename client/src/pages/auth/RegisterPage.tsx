@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Eye, EyeOff, Loader2, Mail, Lock, User } from "lucide-react";
 import PasswordStrength from "@/components/PasswordStrength";
+import { safeReturnTo } from "@/lib/utils";
 
 export default function RegisterPage() {
   const { t } = useLanguage();
@@ -20,7 +21,7 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
 
   const params = new URLSearchParams(window.location.search);
-  const returnTo = params.get("returnTo") || "/";
+  const returnTo = safeReturnTo(params.get("returnTo"));
   const prefillEmail = params.get("email") || "";
 
   // Pre-fill email from invite
