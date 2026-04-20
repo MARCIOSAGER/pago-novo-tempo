@@ -477,6 +477,7 @@ const pt = {
       subheadline: "Antes do seu resultado, conheça ferramentas que vão aprofundar sua jornada nos 4 pilares.",
       seeResult: "Ver meu resultado",
       comingSoon: "Em breve",
+      language: "Idioma do ebook",
     },
     pillars: {
       P: {

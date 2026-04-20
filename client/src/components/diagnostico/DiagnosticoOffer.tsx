@@ -1,7 +1,16 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { ArrowRight, ExternalLink, ImageOff } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
+
+type EbookLang = "pt" | "en" | "es";
+
+const EBOOK_LANGS: { code: EbookLang; label: string; flag: string }[] = [
+  { code: "pt", label: "PT", flag: "🇧🇷" },
+  { code: "en", label: "EN", flag: "🇺🇸" },
+  { code: "es", label: "ES", flag: "🇪🇸" },
+];
 
 interface DiagnosticoOfferProps {
   nome: string;
@@ -9,8 +18,9 @@ interface DiagnosticoOfferProps {
 }
 
 export default function DiagnosticoOffer({ nome, onContinue }: DiagnosticoOfferProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { data: offers, isLoading } = trpc.offers.listForDiagnostico.useQuery();
+  const defaultLang: EbookLang = language === "en" || language === "es" ? language : "pt";
 
   const offer = t.diagnostico.offer;
   const firstName = nome.split(" ")[0] || nome;
@@ -72,6 +82,8 @@ export default function DiagnosticoOffer({ nome, onContinue }: DiagnosticoOfferP
                 product={product}
                 index={i}
                 comingSoonLabel={offer.comingSoon}
+                languageLabel={offer.language}
+                defaultLang={defaultLang}
               />
             ))}
           </div>
@@ -109,11 +121,28 @@ interface OfferCardProps {
   };
   index: number;
   comingSoonLabel: string;
+  languageLabel: string;
+  defaultLang: EbookLang;
 }
 
-function OfferCard({ product, index, comingSoonLabel }: OfferCardProps) {
+function OfferCard({ product, index, comingSoonLabel, languageLabel, defaultLang }: OfferCardProps) {
   const isAvailable = product.ctaUrl.trim().length > 0;
   const isExternal = /^https?:\/\//i.test(product.ctaUrl);
+  const isEbook = product.id === "ebook";
+  const [selectedLang, setSelectedLang] = useState<EbookLang>(defaultLang);
+
+  const finalCtaUrl = (() => {
+    if (!isAvailable) return product.ctaUrl;
+    const ref = isEbook ? `ebook_${selectedLang}` : product.id;
+    try {
+      const url = new URL(product.ctaUrl, window.location.origin);
+      url.searchParams.set("client_reference_id", ref);
+      return url.toString();
+    } catch {
+      const sep = product.ctaUrl.includes("?") ? "&" : "?";
+      return `${product.ctaUrl}${sep}client_reference_id=${ref}`;
+    }
+  })();
 
   return (
     <motion.div
@@ -146,9 +175,40 @@ function OfferCard({ product, index, comingSoonLabel }: OfferCardProps) {
           {product.description}
         </p>
 
+        {isEbook && isAvailable && (
+          <div className="mb-4">
+            <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-navy/50 mb-2">
+              {languageLabel}
+            </p>
+            <div className="flex gap-1.5" role="radiogroup" aria-label={languageLabel}>
+              {EBOOK_LANGS.map((lang) => {
+                const active = selectedLang === lang.code;
+                return (
+                  <button
+                    key={lang.code}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => setSelectedLang(lang.code)}
+                    className={
+                      "font-accent text-[11px] tracking-wider px-3 py-2 border transition-colors inline-flex items-center gap-1.5 " +
+                      (active
+                        ? "border-navy bg-navy text-warm-white"
+                        : "border-navy/20 text-navy/60 hover:border-navy/50 hover:text-navy")
+                    }
+                  >
+                    <span aria-hidden>{lang.flag}</span>
+                    {lang.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {isAvailable ? (
           <a
-            href={product.ctaUrl}
+            href={finalCtaUrl}
             target={isExternal ? "_blank" : undefined}
             rel={isExternal ? "noopener noreferrer" : undefined}
             className="font-accent text-xs uppercase tracking-[0.2em] bg-navy text-warm-white px-6 py-4 hover:bg-navy-dark transition-colors inline-flex items-center justify-center gap-2"

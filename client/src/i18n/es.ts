@@ -476,6 +476,7 @@ const es: Translations = {
       subheadline: "Antes de tu resultado, conoce herramientas que profundizarán tu jornada en los 4 pilares.",
       seeResult: "Ver mi resultado",
       comingSoon: "Próximamente",
+      language: "Idioma del ebook",
     },
     pillars: {
       P: {

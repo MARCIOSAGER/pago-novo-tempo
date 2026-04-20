@@ -476,6 +476,7 @@ const en: Translations = {
       subheadline: "Before your result, discover tools that will deepen your journey through the 4 pillars.",
       seeResult: "See my result",
       comingSoon: "Coming soon",
+      language: "Ebook language",
     },
     pillars: {
       P: {
