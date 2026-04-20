@@ -26,6 +26,7 @@ import AdminOrganizations from "./pages/AdminOrganizations";
 import AdminOfertas from "./pages/AdminOfertas";
 import AdminCompras from "./pages/AdminCompras";
 import AdminAuditoria from "./pages/AdminAuditoria";
+import AdminReembolsos from "./pages/AdminReembolsos";
 import AdminAcessos from "./pages/AdminAcessos";
 import CorporateHome from "./pages/corporate/CorporateHome";
 import InviteAccept from "./pages/corporate/InviteAccept";
@@ -138,6 +139,11 @@ function Router() {
       <Route path="/admin/compras">
         <AdminLayout>
           <AdminCompras />
+        </AdminLayout>
+      </Route>
+      <Route path="/admin/reembolsos">
+        <AdminLayout>
+          <AdminReembolsos />
         </AdminLayout>
       </Route>
       <Route path="/admin/auditoria">

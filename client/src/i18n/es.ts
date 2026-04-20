@@ -508,6 +508,8 @@ const es: Translations = {
       submitting: "Enviando...",
       successTitle: "¡Solicitud enviada!",
       successMessage: "Revisaremos en hasta 2 días hábiles y responderemos por email. Si se aprueba, el monto vuelve al método de pago original.",
+      protocolLabel: "Tu protocolo",
+      protocolHelp: "Guarda este código para referencia futura. También lo recibirás en tu email de confirmación.",
       backHome: "Volver al sitio",
       abandoned: "Esta compra no se completó — no hay nada para reembolsar.",
     },

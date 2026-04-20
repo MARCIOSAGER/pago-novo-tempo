@@ -329,9 +329,14 @@ function PurchaseItem({
       </div>
 
       {pendingRefund && (
-        <div className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">
-          <Clock className="h-3.5 w-3.5" />
-          {copy.refundPending}
+        <div className="flex items-center justify-between gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 flex-wrap">
+          <span className="inline-flex items-center gap-2">
+            <Clock className="h-3.5 w-3.5" />
+            {copy.refundPending}
+          </span>
+          <span className="font-mono text-[10px] bg-white px-2 py-0.5 rounded border border-amber-300">
+            REE-{purchase.id}-{new Date(purchase.createdAt).getFullYear()}
+          </span>
         </div>
       )}
 

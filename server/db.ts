@@ -1,4 +1,4 @@
-import { eq, desc, sql, and, like, or, count } from "drizzle-orm";
+import { eq, desc, sql, and, like, or, count, isNotNull, isNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import {
@@ -991,6 +991,44 @@ export async function getPurchaseByPaymentIntent(paymentIntentId: string): Promi
   if (!db) return undefined;
   const [row] = await db.select().from(purchases).where(eq(purchases.stripePaymentIntentId, paymentIntentId)).limit(1);
   return row;
+}
+
+export async function listRefundRequests(opts: {
+  tab: "pending" | "approved" | "denied";
+  page?: number;
+  pageSize?: number;
+}): Promise<{ rows: Purchase[]; total: number }> {
+  const db = await getDb();
+  if (!db) return { rows: [], total: 0 };
+  const page = Math.max(1, opts.page ?? 1);
+  const pageSize = Math.min(200, Math.max(1, opts.pageSize ?? 50));
+
+  let whereClause;
+  if (opts.tab === "pending") {
+    whereClause = and(
+      isNotNull(purchases.refundRequestedAt),
+      isNull(purchases.refundDeniedAt),
+      sql`${purchases.status} != 'refunded'`,
+    );
+  } else if (opts.tab === "approved") {
+    whereClause = and(
+      isNotNull(purchases.refundRequestedAt),
+      eq(purchases.status, "refunded"),
+    );
+  } else {
+    whereClause = and(
+      isNotNull(purchases.refundRequestedAt),
+      isNotNull(purchases.refundDeniedAt),
+    );
+  }
+
+  const rows = await db.select().from(purchases)
+    .where(whereClause)
+    .orderBy(desc(purchases.refundRequestedAt))
+    .limit(pageSize)
+    .offset((page - 1) * pageSize);
+  const [totalRow] = await db.select({ count: count() }).from(purchases).where(whereClause);
+  return { rows, total: totalRow?.count ?? 0 };
 }
 
 export async function listPurchasesByEmail(email: string): Promise<Purchase[]> {

@@ -38,6 +38,7 @@ import {
   Package,
   ShoppingCart,
   ShieldCheck,
+  Undo2,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation, Link } from "wouter";
@@ -52,6 +53,7 @@ const menuItems = [
   { icon: Download, label: "Downloads", path: "/admin/downloads" },
   { icon: Package, label: "Ofertas", path: "/admin/ofertas" },
   { icon: ShoppingCart, label: "Compras", path: "/admin/compras" },
+  { icon: Undo2, label: "Reembolsos", path: "/admin/reembolsos" },
   { icon: ImageIcon, label: "Mídia", path: "/admin/media" },
   { icon: Heart, label: "P.A.G.O Kids", path: "/admin/kids" },
   { icon: Mail, label: "Email", path: "/admin/email" },

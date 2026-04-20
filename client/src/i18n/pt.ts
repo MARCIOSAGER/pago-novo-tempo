@@ -509,6 +509,8 @@ const pt = {
       submitting: "Enviando...",
       successTitle: "Solicitação enviada!",
       successMessage: "Analisaremos em até 2 dias úteis e retornaremos no seu email. Se aprovado, o valor é devolvido na mesma forma de pagamento.",
+      protocolLabel: "Seu protocolo",
+      protocolHelp: "Guarde este código para referência futura. Você também vai receber ele no email de confirmação.",
       backHome: "Voltar ao site",
       abandoned: "Esta compra não foi concluída — não há nada para reembolsar.",
     },

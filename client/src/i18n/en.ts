@@ -508,6 +508,8 @@ const en: Translations = {
       submitting: "Submitting...",
       successTitle: "Request submitted!",
       successMessage: "We'll review within 2 business days and reply via email. If approved, the amount goes back to the original payment method.",
+      protocolLabel: "Your protocol",
+      protocolHelp: "Save this code for future reference. You'll also receive it in your confirmation email.",
       backHome: "Back to site",
       abandoned: "This purchase was not completed — nothing to refund.",
     },

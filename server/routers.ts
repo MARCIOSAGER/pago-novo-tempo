@@ -9,6 +9,7 @@ import {
   getSiteSetting,
   listPurchases,
   listPurchasesByEmail,
+  listRefundRequests,
   getPurchaseById,
   getPurchaseBySessionId,
   getPurchaseMetrics,
@@ -69,7 +70,9 @@ import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
-import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf, sendInviteEmail, sendDemoRequestEmail, sendDemoConfirmationEmail, sendEbookDeliveryEmail, sendPurchaseConfirmationEmail, sendRefundRequestReceivedEmail, sendRefundRequestAdminNotification, sendRefundDeniedEmail } from "./_core/notification";
+import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf, sendInviteEmail, sendDemoRequestEmail, sendDemoConfirmationEmail, sendEbookDeliveryEmail, sendPurchaseConfirmationEmail, sendRefundRequestReceivedEmail, sendRefundRequestAdminNotification, sendRefundDeniedEmail, sendRefundApprovedEmail } from "./_core/notification";
+import { issueStripeRefund } from "./stripe";
+import { formatRefundProtocol } from "../shared/refund";
 import { generateDiagnosticoPdfBase64 } from "./diagnosticoPdf";
 import { computePillarSubgroups, computeWeakestSubgroupPerPillar } from "../shared/diagnostico";
 import pt from "../client/src/i18n/pt";
@@ -1139,11 +1142,13 @@ export const appRouter = router({
         const customerName = purchase.customerName || purchase.email.split("@")[0];
         const productName = productLabels[purchase.productSlug] || purchase.productSlug;
 
+        const protocol = formatRefundProtocol(purchase.id, purchase.createdAt);
         try {
           await sendRefundRequestReceivedEmail({
             email: purchase.email,
             nome: customerName,
             productName,
+            protocol,
             language: lang,
           });
         } catch (e) {
@@ -1162,7 +1167,7 @@ export const appRouter = router({
           console.warn("[Refund] admin notification email failed:", e);
         }
 
-        return { success: true };
+        return { success: true, protocol };
       }),
 
     // Admin: deny a refund request
@@ -1182,6 +1187,7 @@ export const appRouter = router({
         }
         await denyPurchaseRefund(purchase.id, input.note);
 
+        const protocol = formatRefundProtocol(purchase.id, purchase.createdAt);
         try {
           const lang = (purchase.language as "pt" | "en" | "es") || "pt";
           const productLabels: Record<string, string> = { ebook: "Ebook P.A.G.O.", kit: "Kit P.A.G.O.", mentoria: "Mentoria P.A.G.O." };
@@ -1190,6 +1196,7 @@ export const appRouter = router({
             nome: purchase.customerName || purchase.email.split("@")[0],
             productName: productLabels[purchase.productSlug] || purchase.productSlug,
             note: input.note,
+            protocol,
             language: lang,
           });
         } catch (e) {
@@ -1198,9 +1205,81 @@ export const appRouter = router({
         audit(ctx, "refund.deny", {
           targetType: "purchase",
           targetId: purchase.id,
-          details: { email: purchase.email, note: input.note },
+          details: { email: purchase.email, note: input.note, protocol },
         });
         return { success: true };
+      }),
+
+    // Admin: list refund requests by tab (pending/approved/denied)
+    listRefunds: adminProcedure
+      .input(z.object({
+        tab: z.enum(["pending", "approved", "denied"]),
+        page: z.number().int().min(1).default(1),
+        pageSize: z.number().int().min(1).max(200).default(50),
+      }))
+      .query(async ({ input }) => {
+        const { rows, total } = await listRefundRequests(input);
+        const sanitized = rows.map(({ rawSession, downloadToken, ...rest }) => ({
+          ...rest,
+          protocol: formatRefundProtocol(rest.id, rest.createdAt),
+        }));
+        return { rows: sanitized, total };
+      }),
+
+    // Admin: approve a refund request (executes refund via Stripe API).
+    // Webhook charge.refunded will later mark purchase.status=refunded and revoke token (idempotent).
+    approveRefund: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input, ctx }) => {
+        const purchase = await getPurchaseById(input.id);
+        if (!purchase) throw new TRPCError({ code: "NOT_FOUND", message: "Compra não encontrada." });
+        if (purchase.status === "refunded") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Esta compra já foi reembolsada." });
+        }
+        if (purchase.status === "abandoned") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Compra abandonada não pode ser reembolsada." });
+        }
+        if (!purchase.stripePaymentIntentId) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Esta compra não tem payment_intent — reembolso não pode ser processado." });
+        }
+
+        const protocol = formatRefundProtocol(purchase.id, purchase.createdAt);
+        let refundId: string;
+        try {
+          const result = await issueStripeRefund({
+            paymentIntentId: purchase.stripePaymentIntentId,
+            metadata: { purchaseId: String(purchase.id), protocol },
+          });
+          refundId = result.refundId;
+        } catch (e) {
+          console.error("[Refund] Stripe refund failed:", (e as Error).message);
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: `Falha no Stripe: ${(e as Error).message}`,
+          });
+        }
+
+        // Send approval email (best-effort; don't block if it fails)
+        try {
+          const lang = (purchase.language as "pt" | "en" | "es") || "pt";
+          const productLabels: Record<string, string> = { ebook: "Ebook P.A.G.O.", kit: "Kit P.A.G.O.", mentoria: "Mentoria P.A.G.O." };
+          await sendRefundApprovedEmail({
+            email: purchase.email,
+            nome: purchase.customerName || purchase.email.split("@")[0],
+            productName: productLabels[purchase.productSlug] || purchase.productSlug,
+            protocol,
+            language: lang,
+          });
+        } catch (e) {
+          console.warn("[Refund] approval email failed:", (e as Error).message);
+        }
+
+        audit(ctx, "refund.approve", {
+          targetType: "purchase",
+          targetId: purchase.id,
+          details: { email: purchase.email, protocol, stripeRefundId: refundId, amountCents: purchase.amountCents },
+        });
+        return { success: true, protocol, refundId };
       }),
   }),
 

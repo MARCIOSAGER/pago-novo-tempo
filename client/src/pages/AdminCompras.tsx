@@ -374,10 +374,12 @@ export default function AdminCompras() {
                               {statusLabels[status]}
                             </Badge>
                             {pendingRefund && (
-                              <Badge variant="outline" className="gap-1 w-fit bg-amber-50 border-amber-300 text-amber-800 text-[10px]">
-                                <AlertCircle className="h-2.5 w-2.5" />
-                                Reembolso solicitado
-                              </Badge>
+                              <a href="/admin/reembolsos" className="w-fit">
+                                <Badge variant="outline" className="gap-1 w-fit bg-amber-50 border-amber-300 text-amber-800 text-[10px] cursor-pointer hover:bg-amber-100">
+                                  <AlertCircle className="h-2.5 w-2.5" />
+                                  Reembolso solicitado →
+                                </Badge>
+                              </a>
                             )}
                           </div>
                         </td>

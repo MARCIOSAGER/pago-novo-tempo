@@ -177,6 +177,28 @@ export async function handleCheckoutSessionExpired(session: Stripe.Checkout.Sess
   console.log(`[Stripe] Recorded abandoned cart for ${safeLog(email)} (${slug})`);
 }
 
+/**
+ * Issue a refund via the Stripe API for a given purchase.
+ * The subsequent charge.refunded webhook will mark the purchase as refunded in our DB
+ * and revoke the ebook token (idempotent thanks to stripe_events dedupe).
+ * Returns the Stripe refund ID on success.
+ */
+export async function issueStripeRefund(params: {
+  paymentIntentId: string;
+  amountCents?: number;
+  reason?: "duplicate" | "fraudulent" | "requested_by_customer";
+  metadata?: Record<string, string>;
+}): Promise<{ refundId: string }> {
+  const stripe = getStripeClient();
+  const refund = await stripe.refunds.create({
+    payment_intent: params.paymentIntentId,
+    amount: params.amountCents,
+    reason: params.reason ?? "requested_by_customer",
+    metadata: params.metadata,
+  });
+  return { refundId: refund.id };
+}
+
 export async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
   const paymentIntentId = typeof charge.payment_intent === "string" ? charge.payment_intent : null;
   if (!paymentIntentId) {

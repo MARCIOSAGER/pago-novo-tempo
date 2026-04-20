@@ -35,6 +35,7 @@ export default function Reembolso() {
   const [emailConfirmed, setEmailConfirmed] = useState(false);
   const [reason, setReason] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [protocol, setProtocol] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const { data: purchase, isLoading, error } = trpc.purchases.lookupBySession.useQuery(
@@ -43,8 +44,9 @@ export default function Reembolso() {
   );
 
   const request = trpc.purchases.requestRefund.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       setSubmitted(true);
+      setProtocol(data.protocol);
       setErrorMsg(null);
     },
     onError: (e) => {
@@ -193,6 +195,21 @@ export default function Reembolso() {
                 <p className="font-body text-sm text-navy/70 mb-6 max-w-md mx-auto">
                   {copy.successMessage}
                 </p>
+
+                {protocol && (
+                  <div className="bg-white border border-emerald-200 rounded p-5 mb-6 max-w-sm mx-auto">
+                    <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-navy/60 mb-2">
+                      {copy.protocolLabel}
+                    </p>
+                    <p className="font-mono text-xl font-semibold text-navy tracking-wider">
+                      {protocol}
+                    </p>
+                    <p className="text-xs text-navy/50 mt-3">
+                      {copy.protocolHelp}
+                    </p>
+                  </div>
+                )}
+
                 <button
                   type="button"
                   onClick={() => setLocation("/")}

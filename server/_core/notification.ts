@@ -717,60 +717,88 @@ export async function sendEbookDeliveryEmail(data: EbookDeliveryData): Promise<v
 type Lang = "pt" | "en" | "es";
 
 const REFUND_COPY: Record<Lang, {
-  receivedSubject: (product: string) => string;
+  protocolLabel: string;
+  receivedSubject: (product: string, protocol: string) => string;
   receivedHeadline: string;
   receivedP1: (nome: string) => string;
   receivedP2: (product: string) => string;
   receivedP3: string;
   receivedSignature: string;
-  deniedSubject: (product: string) => string;
+  deniedSubject: (product: string, protocol: string) => string;
   deniedHeadline: string;
   deniedP1: (nome: string) => string;
   deniedP2: (product: string) => string;
   deniedNoteLabel: string;
   deniedFooter: string;
+  approvedSubject: (product: string, protocol: string) => string;
+  approvedHeadline: string;
+  approvedP1: (nome: string) => string;
+  approvedP2: (product: string) => string;
+  approvedP3: string;
+  approvedSignature: string;
 }> = {
   pt: {
-    receivedSubject: (p) => `Solicitação de reembolso recebida — ${p}`,
+    protocolLabel: "Protocolo",
+    receivedSubject: (p, proto) => `[${proto}] Solicitação de reembolso recebida — ${p}`,
     receivedHeadline: "Solicitação Recebida",
     receivedP1: (n) => `Olá ${n},`,
     receivedP2: (p) => `Recebemos sua solicitação de reembolso da sua compra de <strong>${p}</strong>.`,
     receivedP3: "Nossa equipe vai analisar e retornar em até 2 dias úteis pelo email. Se for aprovado dentro do prazo de 7 dias (CDC Art. 49), o valor é devolvido integralmente na mesma forma de pagamento.",
     receivedSignature: "Obrigado pela paciência.",
-    deniedSubject: (p) => `Atualização sobre sua solicitação de reembolso — ${p}`,
+    deniedSubject: (p, proto) => `[${proto}] Atualização sobre sua solicitação de reembolso — ${p}`,
     deniedHeadline: "Solicitação Analisada",
     deniedP1: (n) => `Olá ${n},`,
     deniedP2: (p) => `Analisamos sua solicitação de reembolso de <strong>${p}</strong> e, neste caso, não conseguimos atender ao pedido.`,
     deniedNoteLabel: "Motivo",
     deniedFooter: "Se tiver dúvidas adicionais, responda este email — estamos à disposição.",
+    approvedSubject: (p, proto) => `[${proto}] Reembolso aprovado — ${p}`,
+    approvedHeadline: "Reembolso Aprovado",
+    approvedP1: (n) => `Olá ${n},`,
+    approvedP2: (p) => `Seu reembolso de <strong>${p}</strong> foi <strong>aprovado</strong>.`,
+    approvedP3: "O valor será devolvido na mesma forma de pagamento em até 5 a 10 dias úteis, dependendo da bandeira. Você receberá confirmação da Stripe no email usado na compra.",
+    approvedSignature: "Obrigado pelo contato e pela honestidade.",
   },
   en: {
-    receivedSubject: (p) => `Refund request received — ${p}`,
+    protocolLabel: "Protocol",
+    receivedSubject: (p, proto) => `[${proto}] Refund request received — ${p}`,
     receivedHeadline: "Request Received",
     receivedP1: (n) => `Hi ${n},`,
     receivedP2: (p) => `We received your refund request for <strong>${p}</strong>.`,
     receivedP3: "Our team will review and reply within 2 business days. Approved requests within the 7-day window are refunded to the original payment method.",
     receivedSignature: "Thanks for your patience.",
-    deniedSubject: (p) => `Update on your refund request — ${p}`,
+    deniedSubject: (p, proto) => `[${proto}] Update on your refund request — ${p}`,
     deniedHeadline: "Request Reviewed",
     deniedP1: (n) => `Hi ${n},`,
     deniedP2: (p) => `We reviewed your refund request for <strong>${p}</strong> and could not approve it this time.`,
     deniedNoteLabel: "Reason",
     deniedFooter: "If you have further questions, reply to this email — we're here to help.",
+    approvedSubject: (p, proto) => `[${proto}] Refund approved — ${p}`,
+    approvedHeadline: "Refund Approved",
+    approvedP1: (n) => `Hi ${n},`,
+    approvedP2: (p) => `Your refund for <strong>${p}</strong> has been <strong>approved</strong>.`,
+    approvedP3: "The amount will be returned to your original payment method within 5–10 business days depending on your card issuer. You'll receive a confirmation from Stripe at the email used for the purchase.",
+    approvedSignature: "Thank you for reaching out.",
   },
   es: {
-    receivedSubject: (p) => `Solicitud de reembolso recibida — ${p}`,
+    protocolLabel: "Protocolo",
+    receivedSubject: (p, proto) => `[${proto}] Solicitud de reembolso recibida — ${p}`,
     receivedHeadline: "Solicitud Recibida",
     receivedP1: (n) => `Hola ${n},`,
     receivedP2: (p) => `Recibimos tu solicitud de reembolso de <strong>${p}</strong>.`,
     receivedP3: "Nuestro equipo revisará y responderá en hasta 2 días hábiles. Las aprobaciones dentro de 7 días son reembolsadas en la forma de pago original.",
     receivedSignature: "Gracias por tu paciencia.",
-    deniedSubject: (p) => `Actualización sobre tu solicitud de reembolso — ${p}`,
+    deniedSubject: (p, proto) => `[${proto}] Actualización sobre tu solicitud de reembolso — ${p}`,
     deniedHeadline: "Solicitud Revisada",
     deniedP1: (n) => `Hola ${n},`,
     deniedP2: (p) => `Revisamos tu solicitud de reembolso de <strong>${p}</strong> y no podemos aprobarla en este caso.`,
     deniedNoteLabel: "Motivo",
     deniedFooter: "Si tienes más preguntas, responde este email — estamos disponibles.",
+    approvedSubject: (p, proto) => `[${proto}] Reembolso aprobado — ${p}`,
+    approvedHeadline: "Reembolso Aprobado",
+    approvedP1: (n) => `Hola ${n},`,
+    approvedP2: (p) => `Tu reembolso de <strong>${p}</strong> fue <strong>aprobado</strong>.`,
+    approvedP3: "El monto será devuelto a tu método de pago original en 5 a 10 días hábiles dependiendo de la tarjeta. Recibirás confirmación de Stripe en el email usado en la compra.",
+    approvedSignature: "Gracias por el contacto.",
   },
 };
 
@@ -778,8 +806,16 @@ export type RefundRequestReceivedData = {
   email: string;
   nome: string;
   productName: string;
+  protocol: string;
   language: Lang;
 };
+
+function protocolBox(label: string, protocol: string): string {
+  return `<div style="background: #F5F0E8; border: 1px solid #E8E0D4; padding: 12px 16px; margin: 20px 0; border-radius: 4px; text-align: center;">
+    <p style="margin: 0 0 4px; font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.15em;">${label}</p>
+    <p style="margin: 0; font-family: 'Courier New', monospace; font-size: 16px; font-weight: 600; color: #1A2744; letter-spacing: 0.05em;">${protocol}</p>
+  </div>`;
+}
 
 export async function sendRefundRequestReceivedEmail(data: RefundRequestReceivedData): Promise<void> {
   if (!isSmtpConfigured()) return;
@@ -797,6 +833,7 @@ export async function sendRefundRequestReceivedEmail(data: RefundRequestReceived
   <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
     <p style="font-size: 16px;">${t.receivedP1(safeNome)}</p>
     <p>${t.receivedP2(safeProduct)}</p>
+    ${protocolBox(t.protocolLabel, data.protocol)}
     <p style="font-size: 14px; color: #5A4E3A;">${t.receivedP3}</p>
     <p style="margin-top: 25px;">${t.receivedSignature}</p>
   </div>
@@ -805,8 +842,48 @@ export async function sendRefundRequestReceivedEmail(data: RefundRequestReceived
   await getTransporter().sendMail({
     from: fromAddress,
     to: data.email,
-    subject: t.receivedSubject(data.productName),
-    text: `${t.receivedP1(data.nome)}\n\n${t.receivedP2(data.productName).replace(/<[^>]+>/g, "")}\n\n${t.receivedP3}\n\n${t.receivedSignature}`,
+    subject: t.receivedSubject(data.productName, data.protocol),
+    text: `${t.receivedP1(data.nome)}\n\n${t.receivedP2(data.productName).replace(/<[^>]+>/g, "")}\n\n${t.protocolLabel}: ${data.protocol}\n\n${t.receivedP3}\n\n${t.receivedSignature}`,
+    encoding: "utf-8",
+    html,
+  });
+}
+
+export type RefundApprovedData = {
+  email: string;
+  nome: string;
+  productName: string;
+  protocol: string;
+  language: Lang;
+};
+
+export async function sendRefundApprovedEmail(data: RefundApprovedData): Promise<void> {
+  if (!isSmtpConfigured()) return;
+  const t = REFUND_COPY[data.language];
+  const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
+  const safeNome = escapeHtml(data.nome);
+  const safeProduct = escapeHtml(data.productName);
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+  <div style="background: linear-gradient(135deg, #2E5E3E, #3D8A54); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: #FFFFFF; margin: 0; font-size: 22px;">P.A.G.O.</h1>
+    <p style="color: rgba(255,255,255,0.85); margin: 5px 0 0; font-size: 13px;">${t.approvedHeadline}</p>
+  </div>
+  <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
+    <p style="font-size: 16px;">${t.approvedP1(safeNome)}</p>
+    <p style="font-size: 15px;">${t.approvedP2(safeProduct)}</p>
+    ${protocolBox(t.protocolLabel, data.protocol)}
+    <p style="font-size: 14px; color: #5A4E3A;">${t.approvedP3}</p>
+    <p style="margin-top: 25px;">${t.approvedSignature}</p>
+  </div>
+</div></body></html>`;
+
+  await getTransporter().sendMail({
+    from: fromAddress,
+    to: data.email,
+    subject: t.approvedSubject(data.productName, data.protocol),
+    text: `${t.approvedP1(data.nome)}\n\n${t.approvedP2(data.productName).replace(/<[^>]+>/g, "")}\n\n${t.protocolLabel}: ${data.protocol}\n\n${t.approvedP3}\n\n${t.approvedSignature}`,
     encoding: "utf-8",
     html,
   });
@@ -865,6 +942,7 @@ export type RefundDeniedData = {
   nome: string;
   productName: string;
   note: string;
+  protocol: string;
   language: Lang;
 };
 
@@ -884,6 +962,7 @@ export async function sendRefundDeniedEmail(data: RefundDeniedData): Promise<voi
   <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
     <p style="font-size: 16px;">${t.deniedP1(safeNome)}</p>
     <p>${t.deniedP2(safeProduct)}</p>
+    ${protocolBox(t.protocolLabel, data.protocol)}
     <div style="background: #F5F0E8; border-left: 4px solid #7A3030; padding: 15px; margin: 20px 0; border-radius: 0 6px 6px 0;">
       <p style="margin: 0 0 6px; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.1em;">${t.deniedNoteLabel}</p>
       <p style="margin: 0; font-size: 14px; color: #1A2744; white-space: pre-wrap;">${escapeHtml(data.note)}</p>
@@ -895,8 +974,8 @@ export async function sendRefundDeniedEmail(data: RefundDeniedData): Promise<voi
   await getTransporter().sendMail({
     from: fromAddress,
     to: data.email,
-    subject: t.deniedSubject(data.productName),
-    text: `${t.deniedP1(data.nome)}\n\n${t.deniedP2(data.productName).replace(/<[^>]+>/g, "")}\n\n${t.deniedNoteLabel}: ${data.note}\n\n${t.deniedFooter}`,
+    subject: t.deniedSubject(data.productName, data.protocol),
+    text: `${t.deniedP1(data.nome)}\n\n${t.deniedP2(data.productName).replace(/<[^>]+>/g, "")}\n\n${t.protocolLabel}: ${data.protocol}\n\n${t.deniedNoteLabel}: ${data.note}\n\n${t.deniedFooter}`,
     encoding: "utf-8",
     html,
   });
