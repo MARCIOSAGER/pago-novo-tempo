@@ -21,6 +21,10 @@ import {
   BookOpen,
   Package,
   GraduationCap,
+  TrendingUp,
+  Receipt,
+  CheckCircle2,
+  Undo2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -60,6 +64,55 @@ function formatCents(cents: number, currency: string) {
   }).format(cents / 100);
 }
 
+function formatBrl(cents: number) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(cents / 100);
+}
+
+interface MetricCardProps {
+  label: string;
+  value: string;
+  sub?: string;
+  icon: React.ElementType;
+  accent?: "default" | "success" | "warning" | "danger";
+  loading?: boolean;
+}
+
+function MetricCard({ label, value, sub, icon: Icon, accent = "default", loading }: MetricCardProps) {
+  const accentColors = {
+    default: "text-muted-foreground",
+    success: "text-emerald-600",
+    warning: "text-amber-600",
+    danger: "text-red-600",
+  };
+  return (
+    <Card>
+      <CardContent className="pt-6">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5">
+              {label}
+            </p>
+            {loading ? (
+              <Skeleton className="h-8 w-24" />
+            ) : (
+              <>
+                <p className={`text-2xl font-bold tracking-tight ${accentColors[accent]}`}>
+                  {value}
+                </p>
+                {sub && <p className="text-xs text-muted-foreground mt-1">{sub}</p>}
+              </>
+            )}
+          </div>
+          <Icon className={`h-5 w-5 ${accentColors[accent]} flex-shrink-0`} />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function AdminCompras() {
   const [page, setPage] = useState(1);
   const [productFilter, setProductFilter] = useState<string>("all");
@@ -67,17 +120,22 @@ export default function AdminCompras() {
   const pageSize = 25;
 
   const utils = trpc.useUtils();
+  const filterArgs = {
+    productSlug: productFilter === "all" ? undefined : productFilter,
+    status: statusFilter === "all" ? undefined : (statusFilter as Status),
+  };
   const { data, isLoading } = trpc.purchases.list.useQuery({
     page,
     pageSize,
-    productSlug: productFilter === "all" ? undefined : productFilter,
-    status: statusFilter === "all" ? undefined : (statusFilter as Status),
+    ...filterArgs,
   });
+  const { data: metrics, isLoading: metricsLoading } = trpc.purchases.metrics.useQuery(filterArgs);
 
   const resend = trpc.purchases.resend.useMutation({
     onSuccess: () => {
       toast.success("Email reenviado!");
       utils.purchases.list.invalidate();
+      utils.purchases.metrics.invalidate();
     },
     onError: (e) => {
       toast.error(e.message || "Erro ao reenviar.");
@@ -88,6 +146,7 @@ export default function AdminCompras() {
     onSuccess: () => {
       toast.success("Token revogado.");
       utils.purchases.list.invalidate();
+      utils.purchases.metrics.invalidate();
     },
     onError: (e) => {
       toast.error(e.message || "Erro ao revogar.");
@@ -107,6 +166,81 @@ export default function AdminCompras() {
           Todas as compras processadas via Stripe. Reenvie email de entrega ou revogue links de download do ebook.
         </p>
       </div>
+
+      {/* KPI cards — respect current filters */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <MetricCard
+          label="Receita líquida"
+          value={metrics ? formatBrl(metrics.netRevenueCents) : "—"}
+          sub={metrics ? `${metrics.deliveredCount} entregue${metrics.deliveredCount === 1 ? "" : "s"}` : undefined}
+          icon={TrendingUp}
+          accent="success"
+          loading={metricsLoading}
+        />
+        <MetricCard
+          label="Ticket médio"
+          value={metrics ? formatBrl(metrics.avgTicketCents) : "—"}
+          sub="de compras entregues"
+          icon={Receipt}
+          loading={metricsLoading}
+        />
+        <MetricCard
+          label="Últimos 7 dias"
+          value={metrics ? formatBrl(metrics.last7dRevenueCents) : "—"}
+          sub={metrics ? `${metrics.last7dCount} venda${metrics.last7dCount === 1 ? "" : "s"}` : undefined}
+          icon={CheckCircle2}
+          loading={metricsLoading}
+        />
+        <MetricCard
+          label="Reembolsos"
+          value={metrics ? formatBrl(metrics.refundedRevenueCents) : "—"}
+          sub={metrics ? `${metrics.refundedCount} ${metrics.refundedCount === 1 ? "reembolso" : "reembolsos"}` : undefined}
+          icon={Undo2}
+          accent={metrics && metrics.refundedCount > 0 ? "danger" : "default"}
+          loading={metricsLoading}
+        />
+      </div>
+
+      {/* Product breakdown — only show if no product filter */}
+      {productFilter === "all" && metrics && metrics.byProduct.length > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Por produto</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {metrics.byProduct.map((p) => {
+                const Icon = productIcons[p.productSlug] || Package;
+                return (
+                  <div key={p.productSlug} className="flex items-center gap-3 p-3 border rounded bg-muted/30">
+                    <Icon className="h-5 w-5 text-muted-foreground" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium">{productLabels[p.productSlug] || p.productSlug}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {p.count} {p.count === 1 ? "compra" : "compras"} · {formatBrl(p.revenueCents)}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            {metrics.byLanguage.length > 0 && (
+              <div className="mt-4 pt-4 border-t">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Ebook por idioma</p>
+                <div className="flex gap-2 flex-wrap">
+                  {metrics.byLanguage.map((l) => (
+                    <Badge key={l.language} variant="outline" className="gap-1.5">
+                      <span className="font-mono text-[10px] uppercase">{l.language}</span>
+                      <span>·</span>
+                      <span>{l.count}</span>
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader className="pb-3">

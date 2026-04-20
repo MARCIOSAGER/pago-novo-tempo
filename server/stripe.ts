@@ -4,8 +4,11 @@ import { ENV } from "./_core/env";
 import {
   createPurchase,
   getPurchaseBySessionId,
+  getPurchaseByPaymentIntent,
   markPurchaseDelivered,
   markPurchaseFailed,
+  markPurchaseRefunded,
+  revokePurchaseToken,
 } from "./db";
 import { sendEbookDeliveryEmail, sendPurchaseConfirmationEmail } from "./_core/notification";
 
@@ -133,6 +136,46 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
     await markPurchaseFailed(purchase.id).catch(() => {});
     throw error;
   }
+}
+
+export async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
+  const paymentIntentId = typeof charge.payment_intent === "string" ? charge.payment_intent : null;
+  if (!paymentIntentId) {
+    console.warn("[Stripe] charge.refunded without payment_intent");
+    return;
+  }
+  const purchase = await getPurchaseByPaymentIntent(paymentIntentId);
+  if (!purchase) {
+    console.warn(`[Stripe] Refunded charge ${charge.id} not found in purchases (pi: ${paymentIntentId})`);
+    return;
+  }
+  if (purchase.status === "refunded") return;
+
+  await markPurchaseRefunded(purchase.id);
+
+  if (purchase.productSlug === "ebook" && purchase.downloadToken) {
+    await revokePurchaseToken(purchase.id);
+    console.log(`[Stripe] Revoked ebook token for refunded purchase ${purchase.id}`);
+  }
+  console.log(`[Stripe] Purchase ${purchase.id} marked as refunded (${purchase.email})`);
+}
+
+export async function handleChargeDisputeCreated(dispute: Stripe.Dispute): Promise<void> {
+  const paymentIntentId = typeof dispute.payment_intent === "string" ? dispute.payment_intent : null;
+  if (!paymentIntentId) {
+    console.warn("[Stripe] dispute.created without payment_intent");
+    return;
+  }
+  const purchase = await getPurchaseByPaymentIntent(paymentIntentId);
+  if (!purchase) {
+    console.warn(`[Stripe] Disputed charge ${dispute.charge} not found in purchases (pi: ${paymentIntentId})`);
+    return;
+  }
+  await markPurchaseFailed(purchase.id);
+  if (purchase.productSlug === "ebook" && purchase.downloadToken) {
+    await revokePurchaseToken(purchase.id);
+  }
+  console.log(`[Stripe] Purchase ${purchase.id} flagged as disputed (${purchase.email})`);
 }
 
 export function constructWebhookEvent(rawBody: Buffer, signature: string): Stripe.Event {

@@ -8,6 +8,7 @@ import {
   getSiteSetting,
   listPurchases,
   getPurchaseById,
+  getPurchaseMetrics,
   regeneratePurchaseToken,
   revokePurchaseToken,
   createInscription,
@@ -826,6 +827,16 @@ export const appRouter = router({
       }))
       .query(async ({ input }) => {
         return listPurchases(input);
+      }),
+
+    // Admin: aggregated metrics (respects optional filters)
+    metrics: adminProcedure
+      .input(z.object({
+        productSlug: z.string().max(64).optional(),
+        status: z.enum(["pending", "delivered", "failed", "refunded"]).optional(),
+      }))
+      .query(async ({ input }) => {
+        return getPurchaseMetrics(input);
       }),
 
     // Admin: get single purchase

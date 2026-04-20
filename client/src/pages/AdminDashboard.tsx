@@ -15,6 +15,12 @@ import {
   ClipboardList,
   KeyRound,
   UserPlus,
+  ShoppingCart,
+  Receipt,
+  Undo2,
+  BookOpen,
+  Package,
+  GraduationCap,
 } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -41,6 +47,13 @@ function formatDate(date: Date | string) {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+function formatBrl(cents: number) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(cents / 100);
 }
 
 function KpiCard({
@@ -98,6 +111,8 @@ export default function AdminDashboard() {
       page: 1,
       pageSize: 5,
     });
+  const { data: salesMetrics, isLoading: salesLoading } =
+    trpc.purchases.metrics.useQuery({});
 
   const now = new Date();
   const timestamp = now.toLocaleDateString("pt-BR", {
@@ -205,6 +220,79 @@ export default function AdminDashboard() {
             loading={corpLoading}
           />
         </div>
+      </div>
+
+      {/* ─── Vendas (Stripe) Section ─── */}
+      <div className="rounded-xl bg-gradient-to-r from-emerald-500/5 to-teal-500/5 border border-emerald-500/15 p-5 space-y-4">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-2">
+            <ShoppingCart className="h-5 w-5 text-emerald-600" />
+            <h2 className="text-lg font-semibold text-foreground font-display">Vendas</h2>
+          </div>
+          <Link href="/admin/compras">
+            <Button size="sm" variant="outline" className="h-8">Ver todas as compras</Button>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <KpiCard
+            title="Receita liquida"
+            value={salesMetrics ? formatBrl(salesMetrics.netRevenueCents) : "R$ 0,00"}
+            icon={TrendingUp}
+            iconBg="bg-emerald-500/10"
+            iconColor="text-emerald-600"
+            description={salesMetrics ? `${salesMetrics.deliveredCount} compra${salesMetrics.deliveredCount === 1 ? "" : "s"} entregue${salesMetrics.deliveredCount === 1 ? "" : "s"}` : undefined}
+            loading={salesLoading}
+          />
+          <KpiCard
+            title="Ticket medio"
+            value={salesMetrics ? formatBrl(salesMetrics.avgTicketCents) : "R$ 0,00"}
+            icon={Receipt}
+            iconBg="bg-blue-500/10"
+            iconColor="text-blue-600"
+            description="por compra entregue"
+            loading={salesLoading}
+          />
+          <KpiCard
+            title="Ultimos 7 dias"
+            value={salesMetrics ? formatBrl(salesMetrics.last7dRevenueCents) : "R$ 0,00"}
+            icon={CalendarDays}
+            iconBg="bg-green-500/10"
+            iconColor="text-green-600"
+            description={salesMetrics ? `${salesMetrics.last7dCount} venda${salesMetrics.last7dCount === 1 ? "" : "s"}` : undefined}
+            loading={salesLoading}
+          />
+          <KpiCard
+            title="Reembolsos"
+            value={salesMetrics ? formatBrl(salesMetrics.refundedRevenueCents) : "R$ 0,00"}
+            icon={Undo2}
+            iconBg={salesMetrics && salesMetrics.refundedCount > 0 ? "bg-red-500/10" : "bg-muted"}
+            iconColor={salesMetrics && salesMetrics.refundedCount > 0 ? "text-red-600" : "text-muted-foreground"}
+            description={salesMetrics ? `${salesMetrics.refundedCount} ${salesMetrics.refundedCount === 1 ? "reembolso" : "reembolsos"}` : undefined}
+            loading={salesLoading}
+          />
+        </div>
+
+        {/* Breakdown por produto */}
+        {salesMetrics && salesMetrics.byProduct.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+            {salesMetrics.byProduct.map((p) => {
+              const Icon = p.productSlug === "ebook" ? BookOpen : p.productSlug === "kit" ? Package : GraduationCap;
+              const productLabels: Record<string, string> = { ebook: "Ebook", kit: "Kit", mentoria: "Mentoria" };
+              return (
+                <div key={p.productSlug} className="flex items-center gap-3 p-3 border rounded-lg bg-background/50">
+                  <Icon className="h-5 w-5 text-muted-foreground" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium">{productLabels[p.productSlug] || p.productSlug}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {p.count} {p.count === 1 ? "venda" : "vendas"} · {formatBrl(p.revenueCents)}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* ─── Mentoria Section ─── */}

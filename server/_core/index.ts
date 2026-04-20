@@ -12,7 +12,7 @@ import { createContext } from "./context";
 import fs from "fs";
 import { applyAllSecurity } from "../security";
 import { LOCAL_UPLOADS_DIR } from "../storage";
-import { constructWebhookEvent, handleCheckoutSessionCompleted } from "../stripe";
+import { constructWebhookEvent, handleCheckoutSessionCompleted, handleChargeRefunded, handleChargeDisputeCreated } from "../stripe";
 import {
   getPurchaseByToken,
   incrementPurchaseDownloadCount,
@@ -64,6 +64,10 @@ async function startServer() {
       try {
         if (event.type === "checkout.session.completed") {
           await handleCheckoutSessionCompleted(event.data.object);
+        } else if (event.type === "charge.refunded") {
+          await handleChargeRefunded(event.data.object);
+        } else if (event.type === "charge.dispute.created") {
+          await handleChargeDisputeCreated(event.data.object);
         } else {
           console.log(`[Stripe Webhook] Ignored event type: ${event.type}`);
         }
