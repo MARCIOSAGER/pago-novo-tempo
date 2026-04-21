@@ -19,13 +19,17 @@ export default function MinhasCompras() {
   const [, setLocation] = useLocation();
   const copy = t.profile.purchases;
 
+  // IMPORTANT: all hooks must be called unconditionally — never inside/after early returns.
+  // Query is gated via `enabled` so it only fires when user is authenticated.
+  const { data: purchases, isLoading } = trpc.purchases.listMine.useQuery(undefined, {
+    enabled: !loading && !!user,
+  });
+
   if (loading) return null;
   if (!user) {
     setLocation("/login?returnTo=/minhas-compras");
     return null;
   }
-
-  const { data: purchases, isLoading } = trpc.purchases.listMine.useQuery();
 
   return (
     <>
