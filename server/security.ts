@@ -114,6 +114,15 @@ export const refundRequestRateLimiter = rateLimit({
   message: { error: "Limite de solicitações atingido. Tente novamente em 1 hora.", code: "REFUND_REQUEST_RATE_LIMIT" },
 });
 
+// Lookup link rate limiter: 3 requests per 15 minutes per IP (prevents email spam)
+export const lookupLinkRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 3,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Muitas solicitações de link. Aguarde alguns minutos.", code: "LOOKUP_LINK_RATE_LIMIT" },
+});
+
 // ─── 3. HTTP Parameter Pollution Protection ─────────────────────
 export function applyHpp(app: Express) {
   app.use(hpp());

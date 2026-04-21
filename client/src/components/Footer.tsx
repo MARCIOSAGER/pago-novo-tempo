@@ -107,7 +107,10 @@ export default function Footer() {
           <p className="font-accent text-[10px] uppercase tracking-[0.2em] text-warm-white/50">
             &copy; {new Date().getFullYear()} {t.footer.copyright}
           </p>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6 flex-wrap">
+            <Link href="/consultar-pedidos" className="font-accent text-[11px] uppercase tracking-[0.15em] text-warm-white/50 hover:text-gold transition-colors duration-300">
+              {t.footer.myOrders}
+            </Link>
             <Link href="/privacidade" className="font-accent text-[11px] uppercase tracking-[0.15em] text-warm-white/50 hover:text-gold transition-colors duration-300">
               {t.footer.privacy}
             </Link>

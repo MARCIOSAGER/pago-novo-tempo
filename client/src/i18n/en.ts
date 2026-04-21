@@ -302,6 +302,7 @@ const en: Translations = {
     contactLabel: "Contact",
     contactCta: "Sign Up for Mentoring",
     copyright: "P.A.G.O New Season. All rights reserved.",
+    myOrders: "My Orders",
     privacy: "Privacy",
     terms: "Terms of Use",
     cookies: "Cookies",
@@ -1142,6 +1143,32 @@ const en: Translations = {
     sinalizacaoEmocional: {
       title: "Important Notice",
       message: "Your Emotional Governance result suggests there may be an emotional wound beyond professional development. We recommend considering specialized support before coaching interventions.",
+    },
+  },
+
+  orders: {
+    lookup: {
+      title: "Look up my orders",
+      subtitle: "Enter the email used at purchase and we'll send a secure link to access your orders.",
+      emailLabel: "Purchase email",
+      emailHelp: "We'll send the access link to this email.",
+      sendLink: "Send link",
+      sending: "Sending...",
+      sentTitle: "Link sent!",
+      sentMessage: "If {email} has orders with us, you'll receive the link shortly.",
+      sentTip: "Check your inbox and spam folder. The link expires in 30 minutes.",
+      invalidEmail: "Invalid email.",
+      howItWorks: "How it works",
+      step1: "You receive a unique link in your email",
+      step2: "Click the link and access your orders list",
+      step3: "You can re-download the ebook, see refund status and submit new requests",
+    },
+    view: {
+      title: "My Orders",
+      loading: "Loading your orders...",
+      invalidLink: "Invalid or expired link.",
+      requestNew: "Request new link",
+      empty: "No orders found for this email.",
     },
   },
 

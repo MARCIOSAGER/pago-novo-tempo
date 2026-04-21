@@ -10,6 +10,9 @@ import {
   listPurchases,
   listPurchasesByEmail,
   listRefundRequests,
+  createLookupToken,
+  validateLookupToken,
+  invalidatePriorLookupTokens,
   getPurchaseById,
   getPurchaseBySessionId,
   getPurchaseMetrics,
@@ -70,9 +73,10 @@ import { storagePut } from "./storage";
 import { honeypotCheck, validateFileUpload } from "./security";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
-import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf, sendInviteEmail, sendDemoRequestEmail, sendDemoConfirmationEmail, sendEbookDeliveryEmail, sendPurchaseConfirmationEmail, sendRefundRequestReceivedEmail, sendRefundRequestAdminNotification, sendRefundDeniedEmail, sendRefundApprovedEmail } from "./_core/notification";
+import { notifyInscription, sendDiagnosticEmail, sendDiagnosticEmailWithPdf, sendInviteEmail, sendDemoRequestEmail, sendDemoConfirmationEmail, sendEbookDeliveryEmail, sendPurchaseConfirmationEmail, sendRefundRequestReceivedEmail, sendRefundRequestAdminNotification, sendRefundDeniedEmail, sendRefundApprovedEmail, sendLookupLinkEmail } from "./_core/notification";
 import { issueStripeRefund } from "./stripe";
 import { formatRefundProtocol } from "../shared/refund";
+import { createHash } from "node:crypto";
 import { generateDiagnosticoPdfBase64 } from "./diagnosticoPdf";
 import { computePillarSubgroups, computeWeakestSubgroupPerPillar } from "../shared/diagnostico";
 import pt from "../client/src/i18n/pt";
@@ -1039,6 +1043,92 @@ export const appRouter = router({
         const newExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
         await regeneratePurchaseToken(purchase.id, newToken, newExpiresAt);
 
+        const downloadUrl = `${ENV.siteUrl}/api/purchases/download?token=${newToken}`;
+        return { downloadUrl };
+      }),
+
+    // Public: request a magic-link email to consult orders (anonymous customers).
+    // Always returns success to prevent email enumeration. Invalidates prior unused
+    // tokens for the email before issuing a new one.
+    sendLookupLink: publicProcedure
+      .input(z.object({ email: z.string().email().max(320) }))
+      .mutation(async ({ input }) => {
+        const emailLower = input.email.trim().toLowerCase();
+        // Only send link if the email has at least one non-abandoned purchase
+        const purchases = await listPurchasesByEmail(emailLower);
+        const hasPurchases = purchases.some(p => p.status !== "abandoned");
+        if (hasPurchases) {
+          await invalidatePriorLookupTokens(emailLower);
+          const rawToken = nanoid(32);
+          const tokenHash = createHash("sha256").update(rawToken).digest("hex");
+          const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 min
+          await createLookupToken(emailLower, tokenHash, expiresAt);
+          const linkUrl = `${ENV.siteUrl}/meus-pedidos/${rawToken}`;
+          try {
+            await sendLookupLinkEmail({ email: emailLower, linkUrl, expiresInMinutes: 30 });
+          } catch (e) {
+            console.warn("[LookupLink] email send failed:", (e as Error).message);
+          }
+        }
+        // Always return success regardless of whether email exists (anti-enumeration)
+        return { success: true };
+      }),
+
+    // Public: consume a magic-link token and return the user's purchases.
+    // Token is single-use and atomic (consumed even if multiple tabs are open).
+    consumeLookupToken: publicProcedure
+      .input(z.object({ token: z.string().regex(/^[A-Za-z0-9_-]{32}$/) }))
+      .mutation(async ({ input }) => {
+        const tokenHash = createHash("sha256").update(input.token).digest("hex");
+        const consumed = await validateLookupToken(tokenHash);
+        if (!consumed) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Link inválido ou expirado." });
+        }
+        const rows = await listPurchasesByEmail(consumed.emailLower);
+        return {
+          email: consumed.emailLower,
+          purchases: rows
+            .filter(r => r.status !== "abandoned")
+            .map(r => ({
+              id: r.id,
+              stripeSessionId: r.stripeSessionId,
+              productSlug: r.productSlug,
+              language: r.language,
+              amountCents: r.amountCents,
+              currency: r.currency,
+              status: r.status,
+              downloadCount: r.downloadCount,
+              maxDownloads: r.maxDownloads,
+              tokenActive: Boolean(r.downloadToken),
+              refundRequestedAt: r.refundRequestedAt,
+              refundDeniedAt: r.refundDeniedAt,
+              createdAt: r.createdAt,
+              deliveredAt: r.deliveredAt,
+            })),
+        };
+      }),
+
+    // Public: anonymous download re-issue via lookup-token session (client re-sends token + purchase id).
+    // Used when the /meus-pedidos page wants to give the user a fresh ebook download link.
+    reissueAnonymousDownload: publicProcedure
+      .input(z.object({
+        token: z.string().regex(/^[A-Za-z0-9_-]{32}$/),
+        purchaseId: z.number().int().positive(),
+      }))
+      .mutation(async ({ input }) => {
+        const tokenHash = createHash("sha256").update(input.token).digest("hex");
+        const purchase = await getPurchaseById(input.purchaseId);
+        if (!purchase || purchase.productSlug !== "ebook" || purchase.status !== "delivered") {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Download indisponível." });
+        }
+        const session = await validateLookupToken(tokenHash);
+        if (!session || session.emailLower !== purchase.email.toLowerCase()) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Token inválido para este pedido." });
+        }
+
+        const newToken = nanoid(32);
+        const newExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+        await regeneratePurchaseToken(purchase.id, newToken, newExpiresAt);
         const downloadUrl = `${ENV.siteUrl}/api/purchases/download?token=${newToken}`;
         return { downloadUrl };
       }),

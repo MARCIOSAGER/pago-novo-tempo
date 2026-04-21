@@ -34,6 +34,7 @@ import {
   adminAuditLog,
   InsertAdminAuditLog,
   AdminAuditLog,
+  purchaseLookupTokens,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -1029,6 +1030,51 @@ export async function listRefundRequests(opts: {
     .offset((page - 1) * pageSize);
   const [totalRow] = await db.select({ count: count() }).from(purchases).where(whereClause);
   return { rows, total: totalRow?.count ?? 0 };
+}
+
+// ─── Purchase Lookup Tokens (magic link for anonymous customers) ────
+
+export async function invalidatePriorLookupTokens(emailLower: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(purchaseLookupTokens)
+    .set({ usedAt: new Date() })
+    .where(and(
+      eq(purchaseLookupTokens.emailLower, emailLower),
+      isNull(purchaseLookupTokens.usedAt),
+    ));
+}
+
+export async function createLookupToken(emailLower: string, tokenHash: string, expiresAt: Date): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(purchaseLookupTokens).values({ emailLower, tokenHash, expiresAt });
+}
+
+/**
+ * Validates a lookup token (not expired, not revoked). Returns associated email if valid.
+ * Tokens are valid for multiple uses within the 30-min expiration window. First use is
+ * recorded in usedAt for audit, but subsequent uses within the window are allowed.
+ */
+export async function validateLookupToken(tokenHash: string): Promise<{ emailLower: string } | null> {
+  const db = await getDb();
+  if (!db) return null;
+  // First: stamp usedAt if still null (first use). Return the row regardless.
+  await db.update(purchaseLookupTokens)
+    .set({ usedAt: new Date() })
+    .where(and(
+      eq(purchaseLookupTokens.tokenHash, tokenHash),
+      isNull(purchaseLookupTokens.usedAt),
+    ));
+  // Then: fetch the token row if still valid (not expired).
+  const [row] = await db.select({ emailLower: purchaseLookupTokens.emailLower })
+    .from(purchaseLookupTokens)
+    .where(and(
+      eq(purchaseLookupTokens.tokenHash, tokenHash),
+      sql`${purchaseLookupTokens.expiresAt} > NOW()`,
+    ))
+    .limit(1);
+  return row ?? null;
 }
 
 export async function listPurchasesByEmail(email: string): Promise<Purchase[]> {

@@ -690,7 +690,8 @@ export async function sendEbookDeliveryEmail(data: EbookDeliveryData): Promise<v
 
     ${data.refundUrl ? `<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #E8E0D4; font-size: 12px; color: #888;">
       <p style="margin: 0 0 6px;"><strong>Garantia de 7 dias (CDC Art. 49)</strong></p>
-      <p style="margin: 0;">Não ficou satisfeito? Você pode <a href="${data.refundUrl}" style="color: #1A2744;">solicitar reembolso</a> dentro de 7 dias da compra, sem precisar justificar.</p>
+      <p style="margin: 0 0 10px;">Não ficou satisfeito? Você pode <a href="${data.refundUrl}" style="color: #1A2744;">solicitar reembolso</a> dentro de 7 dias da compra, sem precisar justificar.</p>
+      <p style="margin: 0;">Perdeu este email? <a href="${ENV.siteUrl}/consultar-pedidos" style="color: #1A2744;">Consulte seus pedidos aqui</a> usando seu email.</p>
     </div>` : ""}
   </div>
   <p style="text-align: center; color: #999; font-size: 10px; margin-top: 15px;">
@@ -844,6 +845,53 @@ export async function sendRefundRequestReceivedEmail(data: RefundRequestReceived
     to: data.email,
     subject: t.receivedSubject(data.productName, data.protocol),
     text: `${t.receivedP1(data.nome)}\n\n${t.receivedP2(data.productName).replace(/<[^>]+>/g, "")}\n\n${t.protocolLabel}: ${data.protocol}\n\n${t.receivedP3}\n\n${t.receivedSignature}`,
+    encoding: "utf-8",
+    html,
+  });
+}
+
+export type LookupLinkData = {
+  email: string;
+  linkUrl: string;
+  expiresInMinutes: number;
+};
+
+export async function sendLookupLinkEmail(data: LookupLinkData): Promise<void> {
+  if (!isSmtpConfigured()) return;
+  const fromAddress = `"P.A.G.O. — Novo Tempo" <${ENV.smtpUser}>`;
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>
+<div style="font-family: 'Segoe UI', Tahoma, sans-serif; max-width: 600px; margin: 0 auto; color: #1A2744;">
+  <div style="background: linear-gradient(135deg, #1A2744, #2A3A5C); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: #C8A951; margin: 0; font-size: 22px;">P.A.G.O.</h1>
+    <p style="color: rgba(255,255,255,0.7); margin: 5px 0 0; font-size: 13px;">Consultar pedidos</p>
+  </div>
+  <div style="padding: 30px; background: #FAFAF8; border: 1px solid #E8E0D4; border-top: none;">
+    <p style="font-size: 16px;">Olá,</p>
+    <p>Você solicitou acesso aos seus pedidos. Clique no botão abaixo para visualizá-los — baixar ebook, ver status de reembolso, etc.</p>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${data.linkUrl}" style="display: inline-block; background: #C8A951; color: #1A2744; padding: 14px 36px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 14px; letter-spacing: 0.05em;">VER MEUS PEDIDOS</a>
+    </div>
+    <div style="background: #F5F0E8; border-left: 4px solid #C8A951; padding: 14px; margin: 18px 0; border-radius: 0 6px 6px 0; font-size: 12px; color: #5A4E3A;">
+      <p style="margin: 0 0 4px;"><strong>Informações de segurança:</strong></p>
+      <ul style="margin: 0; padding-left: 18px;">
+        <li>Este link expira em <strong>${data.expiresInMinutes} minutos</strong></li>
+        <li>Uso único — após acessar, ele é invalidado</li>
+        <li>Se não foi você que solicitou, ignore este email</li>
+      </ul>
+    </div>
+    <p style="font-size: 12px; color: #666;">Se o botão não funcionar, copie e cole este link:<br/>
+      <a href="${data.linkUrl}" style="color: #1A2744; word-break: break-all; font-size: 11px;">${data.linkUrl}</a>
+    </p>
+  </div>
+  <p style="text-align: center; color: #999; font-size: 10px; margin-top: 15px;">metodopago.com</p>
+</div></body></html>`;
+
+  await getTransporter().sendMail({
+    from: fromAddress,
+    to: data.email,
+    subject: "Seus pedidos P.A.G.O. — Link de acesso",
+    text: `Olá,\n\nVocê solicitou acesso aos seus pedidos.\n\nAcesse: ${data.linkUrl}\n\nEste link expira em ${data.expiresInMinutes} minutos e é de uso único. Se não foi você, ignore.`,
     encoding: "utf-8",
     html,
   });

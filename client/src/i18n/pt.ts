@@ -303,6 +303,7 @@ const pt = {
     contactLabel: "Contato",
     contactCta: "Inscreva-se na Mentoria",
     copyright: "P.A.G.O Novo Tempo. Todos os direitos reservados.",
+    myOrders: "Meus Pedidos",
     privacy: "Privacidade",
     terms: "Termos de Uso",
     cookies: "Cookies",
@@ -1143,6 +1144,32 @@ const pt = {
     sinalizacaoEmocional: {
       title: "Sinalização Importante",
       message: "O seu resultado em Governo Emocional sugere que pode haver uma ferida emocional que vai além do desenvolvimento profissional. Recomendamos considerar acompanhamento especializado antes de intervenções de coaching.",
+    },
+  },
+
+  orders: {
+    lookup: {
+      title: "Consultar meus pedidos",
+      subtitle: "Digite o email usado na compra e enviamos um link seguro para acessar seus pedidos.",
+      emailLabel: "Email da compra",
+      emailHelp: "Enviaremos o link de acesso para este email.",
+      sendLink: "Enviar link",
+      sending: "Enviando...",
+      sentTitle: "Link enviado!",
+      sentMessage: "Se {email} tem pedidos conosco, você receberá o link em alguns instantes.",
+      sentTip: "Confira sua caixa de entrada e a pasta de spam. O link expira em 30 minutos.",
+      invalidEmail: "Email inválido.",
+      howItWorks: "Como funciona",
+      step1: "Você recebe um link único no seu email",
+      step2: "Clica no link e acessa a lista dos seus pedidos",
+      step3: "Pode baixar ebook novamente, ver status de reembolsos e solicitar novos",
+    },
+    view: {
+      title: "Meus Pedidos",
+      loading: "Carregando seus pedidos...",
+      invalidLink: "Link inválido ou expirado.",
+      requestNew: "Solicitar novo link",
+      empty: "Nenhum pedido encontrado neste email.",
     },
   },
 

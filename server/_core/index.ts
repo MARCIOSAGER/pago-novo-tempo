@@ -10,7 +10,7 @@ import { registerChatRoutes } from "./chat";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import fs from "fs";
-import { applyAllSecurity, refundLookupRateLimiter, refundRequestRateLimiter } from "../security";
+import { applyAllSecurity, refundLookupRateLimiter, refundRequestRateLimiter, lookupLinkRateLimiter } from "../security";
 import { LOCAL_UPLOADS_DIR } from "../storage";
 import { constructWebhookEvent, handleCheckoutSessionCompleted, handleCheckoutSessionExpired, handleChargeRefunded, handleChargeDisputeCreated } from "../stripe";
 import { claimDownloadSlot, tryRecordStripeEvent } from "../db";
@@ -110,6 +110,7 @@ async function startServer() {
   // Public refund endpoints — extra rate limits to prevent enumeration/abuse
   app.use("/api/trpc/purchases.lookupBySession", refundLookupRateLimiter);
   app.use("/api/trpc/purchases.requestRefund", refundRequestRateLimiter);
+  app.use("/api/trpc/purchases.sendLookupLink", lookupLinkRateLimiter);
 
   // ─── Apply Security Layers ──────────────────────────────
   applyAllSecurity(app);

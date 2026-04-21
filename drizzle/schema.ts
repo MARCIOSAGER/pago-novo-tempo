@@ -273,6 +273,21 @@ export type StripeEvent = typeof stripeEvents.$inferSelect;
 export type InsertStripeEvent = typeof stripeEvents.$inferInsert;
 
 /**
+ * Purchase lookup tokens — magic links for anonymous customers to access their orders.
+ * Token is stored hashed (SHA-256); raw token only exists in the email sent to the user.
+ */
+export const purchaseLookupTokens = pgTable("purchase_lookup_tokens", {
+  id: serial("id").primaryKey(),
+  emailLower: varchar("emailLower", { length: 320 }).notNull(),
+  tokenHash: varchar("tokenHash", { length: 128 }).notNull().unique(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  usedAt: timestamp("usedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type PurchaseLookupToken = typeof purchaseLookupTokens.$inferSelect;
+export type InsertPurchaseLookupToken = typeof purchaseLookupTokens.$inferInsert;
+
+/**
  * Admin audit log — records privileged actions for accountability and forensics.
  */
 export const adminAuditLog = pgTable("admin_audit_log", {
