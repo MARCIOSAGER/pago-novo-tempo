@@ -1235,117 +1235,83 @@ export async function getPurchaseMetrics(opts: {
   };
   if (!db) return empty;
 
-  // Normalize drizzle's db.execute() result — may return array, { rows: [] }, or other shape.
-  const toArray = <T>(result: unknown): T[] => {
-    if (Array.isArray(result)) return result as T[];
-    if (result && typeof result === "object" && "rows" in result && Array.isArray((result as { rows: unknown }).rows)) {
-      return (result as { rows: T[] }).rows;
-    }
-    return [];
-  };
-
   try {
-    const productSlug = opts.productSlug ?? null;
-    const statusIn = opts.status ?? null;
     const now = new Date();
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const d7 = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const d30 = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-    // Single aggregate query — faster than 10 round-trips and simpler to reason about.
-    // Uses parameterized placeholders via Drizzle's sql.
-    const rows = await db.execute<{
-      total_count: string; gross_revenue: string;
-      delivered_count: string; delivered_revenue: string;
-      refunded_count: string; refunded_revenue: string;
-      failed_count: string; abandoned_count: string;
-      today_count: string; today_revenue: string;
-      last7d_count: string; last7d_revenue: string;
-      last30d_count: string; last30d_revenue: string;
-    }>(sql`
-      SELECT
-        COUNT(*) AS total_count,
-        COALESCE(SUM("amountCents"), 0) AS gross_revenue,
-        COUNT(*) FILTER (WHERE status = 'delivered') AS delivered_count,
-        COALESCE(SUM("amountCents") FILTER (WHERE status = 'delivered'), 0) AS delivered_revenue,
-        COUNT(*) FILTER (WHERE status = 'refunded') AS refunded_count,
-        COALESCE(SUM("amountCents") FILTER (WHERE status = 'refunded'), 0) AS refunded_revenue,
-        COUNT(*) FILTER (WHERE status = 'failed') AS failed_count,
-        COUNT(*) FILTER (WHERE status = 'abandoned') AS abandoned_count,
-        COUNT(*) FILTER (WHERE status = 'delivered' AND "createdAt" >= ${startOfToday}) AS today_count,
-        COALESCE(SUM("amountCents") FILTER (WHERE status = 'delivered' AND "createdAt" >= ${startOfToday}), 0) AS today_revenue,
-        COUNT(*) FILTER (WHERE status = 'delivered' AND "createdAt" >= NOW() - INTERVAL '7 days') AS last7d_count,
-        COALESCE(SUM("amountCents") FILTER (WHERE status = 'delivered' AND "createdAt" >= NOW() - INTERVAL '7 days'), 0) AS last7d_revenue,
-        COUNT(*) FILTER (WHERE status = 'delivered' AND "createdAt" >= NOW() - INTERVAL '30 days') AS last30d_count,
-        COALESCE(SUM("amountCents") FILTER (WHERE status = 'delivered' AND "createdAt" >= NOW() - INTERVAL '30 days'), 0) AS last30d_revenue
-      FROM purchases
-      WHERE (${productSlug}::text IS NULL OR "productSlug" = ${productSlug})
-        AND (${statusIn}::text IS NULL OR status::text = ${statusIn})
-    `);
+    // Fetch ALL purchase rows matching the base filter, then aggregate in JS.
+    // Simplest possible approach — no raw SQL, no FILTER clauses, no Drizzle query builder edge cases.
+    // For expected scale (thousands of purchases), this is plenty fast.
+    const conditions = [];
+    if (opts.productSlug) conditions.push(eq(purchases.productSlug, opts.productSlug));
+    if (opts.status) conditions.push(eq(purchases.status, opts.status));
+    const whereExpr = conditions.length > 0 ? (conditions.length === 1 ? conditions[0] : and(...conditions)) : undefined;
 
-    const arr = toArray<Record<string, string | number>>(rows);
-    const r = arr[0] ?? {};
-    // Diagnostic logging to surface drizzle/postgres-js result shape
-    console.log("[Metrics] debug — arr.length:", arr.length,
-      "isArray(rows):", Array.isArray(rows),
-      "rows.length:", (rows as { length?: number })?.length,
-      "r keys:", Object.keys(r).slice(0, 20),
-      "r sample:", JSON.stringify(r).slice(0, 300));
+    const rows: Purchase[] = whereExpr
+      ? await db.select().from(purchases).where(whereExpr)
+      : await db.select().from(purchases);
 
-    const byProduct = await db.execute<{ product_slug: string; count: string; revenue_cents: string }>(sql`
-      SELECT "productSlug" AS product_slug, COUNT(*) AS count,
-        COALESCE(SUM("amountCents") FILTER (WHERE status = 'delivered'), 0) AS revenue_cents
-      FROM purchases
-      WHERE (${productSlug}::text IS NULL OR "productSlug" = ${productSlug})
-        AND (${statusIn}::text IS NULL OR status::text = ${statusIn})
-      GROUP BY "productSlug"
-    `);
+    // Aggregate in memory
+    let totalCount = 0, grossRevenue = 0;
+    let deliveredCount = 0, deliveredRevenue = 0;
+    let refundedCount = 0, refundedRevenue = 0;
+    let failedCount = 0, abandonedCount = 0;
+    let todayCount = 0, todayRevenue = 0;
+    let d7Count = 0, d7Revenue = 0;
+    let d30Count = 0, d30Revenue = 0;
+    const byProductMap = new Map<string, { count: number; revenue: number }>();
+    const byLanguageMap = new Map<string, number>();
+    const byStatusMap = new Map<string, number>();
 
-    const byLanguage = await db.execute<{ language: string | null; count: string }>(sql`
-      SELECT language, COUNT(*) AS count
-      FROM purchases
-      WHERE "productSlug" = 'ebook'
-        AND (${productSlug}::text IS NULL OR "productSlug" = ${productSlug})
-        AND (${statusIn}::text IS NULL OR status::text = ${statusIn})
-      GROUP BY language
-    `);
+    for (const p of rows) {
+      const created = new Date(p.createdAt);
+      totalCount++;
+      grossRevenue += p.amountCents;
 
-    const byStatus = await db.execute<{ status: string; count: string }>(sql`
-      SELECT status::text AS status, COUNT(*) AS count
-      FROM purchases
-      WHERE (${productSlug}::text IS NULL OR "productSlug" = ${productSlug})
-      GROUP BY status
-    `);
+      if (p.status === "delivered") { deliveredCount++; deliveredRevenue += p.amountCents; }
+      if (p.status === "refunded") { refundedCount++; refundedRevenue += p.amountCents; }
+      if (p.status === "failed") failedCount++;
+      if (p.status === "abandoned") abandonedCount++;
 
-    const deliveredCount = Number(r.delivered_count ?? 0);
-    const deliveredRevenueCents = Number(r.delivered_revenue ?? 0);
+      if (p.status === "delivered" && created >= startOfToday) { todayCount++; todayRevenue += p.amountCents; }
+      if (p.status === "delivered" && created >= d7) { d7Count++; d7Revenue += p.amountCents; }
+      if (p.status === "delivered" && created >= d30) { d30Count++; d30Revenue += p.amountCents; }
+
+      const prod = byProductMap.get(p.productSlug) ?? { count: 0, revenue: 0 };
+      prod.count++;
+      if (p.status === "delivered") prod.revenue += p.amountCents;
+      byProductMap.set(p.productSlug, prod);
+
+      if (p.productSlug === "ebook" && p.language) {
+        byLanguageMap.set(p.language, (byLanguageMap.get(p.language) ?? 0) + 1);
+      }
+
+      byStatusMap.set(p.status, (byStatusMap.get(p.status) ?? 0) + 1);
+    }
 
     return {
-      totalCount: Number(r.total_count ?? 0),
+      totalCount,
       deliveredCount,
-      refundedCount: Number(r.refunded_count ?? 0),
-      failedCount: Number(r.failed_count ?? 0),
-      abandonedCount: Number(r.abandoned_count ?? 0),
-      grossRevenueCents: Number(r.gross_revenue ?? 0),
-      netRevenueCents: deliveredRevenueCents,
-      refundedRevenueCents: Number(r.refunded_revenue ?? 0),
-      avgTicketCents: deliveredCount > 0 ? Math.round(deliveredRevenueCents / deliveredCount) : 0,
-      last7dCount: Number(r.last7d_count ?? 0),
-      last7dRevenueCents: Number(r.last7d_revenue ?? 0),
-      last30dCount: Number(r.last30d_count ?? 0),
-      last30dRevenueCents: Number(r.last30d_revenue ?? 0),
-      todayCount: Number(r.today_count ?? 0),
-      todayRevenueCents: Number(r.today_revenue ?? 0),
-      byProduct: toArray<{ product_slug: string; count: string; revenue_cents: string }>(byProduct).map(x => ({
-        productSlug: x.product_slug,
-        count: Number(x.count),
-        revenueCents: Number(x.revenue_cents),
+      refundedCount,
+      failedCount,
+      abandonedCount,
+      grossRevenueCents: grossRevenue,
+      netRevenueCents: deliveredRevenue,
+      refundedRevenueCents: refundedRevenue,
+      avgTicketCents: deliveredCount > 0 ? Math.round(deliveredRevenue / deliveredCount) : 0,
+      last7dCount: d7Count,
+      last7dRevenueCents: d7Revenue,
+      last30dCount: d30Count,
+      last30dRevenueCents: d30Revenue,
+      todayCount,
+      todayRevenueCents: todayRevenue,
+      byProduct: Array.from(byProductMap.entries()).map(([productSlug, v]) => ({
+        productSlug, count: v.count, revenueCents: v.revenue,
       })),
-      byLanguage: toArray<{ language: string | null; count: string }>(byLanguage)
-        .filter(x => x.language !== null)
-        .map(x => ({ language: x.language!, count: Number(x.count) })),
-      byStatus: toArray<{ status: string; count: string }>(byStatus).map(x => ({
-        status: x.status,
-        count: Number(x.count),
-      })),
+      byLanguage: Array.from(byLanguageMap.entries()).map(([language, count]) => ({ language, count })),
+      byStatus: Array.from(byStatusMap.entries()).map(([status, count]) => ({ status, count })),
     };
   } catch (err) {
     console.error("[Metrics] getPurchaseMetrics failed:", (err as Error).message);
