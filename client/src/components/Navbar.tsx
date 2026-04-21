@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, User, LogOut, Settings, Shield, ShoppingBag } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -7,10 +8,18 @@ import LanguageSelector from "@/components/LanguageSelector";
 
 const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo_ea5770c3.jpeg";
 
+// Routes that are NOT the homepage — these have light backgrounds and need dark nav text always
+function isLightBgRoute(pathname: string): boolean {
+  return pathname !== "/";
+}
+
 export default function Navbar() {
   const { t } = useLanguage();
   const { user, logout } = useAuth();
-  const [scrolled, setScrolled] = useState(false);
+  const [location] = useLocation();
+  const [scrolledInternal, setScrolledInternal] = useState(false);
+  // Force "scrolled" styling on non-home routes so nav text has proper contrast
+  const scrolled = scrolledInternal || isLightBgRoute(location);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -27,7 +36,7 @@ export default function Navbar() {
   ];
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 60);
+    const handleScroll = () => setScrolledInternal(window.scrollY > 60);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);

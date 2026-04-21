@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
-  User, Mail, Lock, ArrowLeft, Loader2, CheckCircle2, ShoppingBag,
+  User, Mail, Lock, ArrowLeft, Loader2, CheckCircle2,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import PasswordStrength from "@/components/PasswordStrength";
@@ -191,21 +191,6 @@ export default function ProfilePage() {
             </Card>
           )}
 
-          <Card>
-            <CardContent className="p-4">
-              <button
-                type="button"
-                onClick={() => setLocation("/minhas-compras")}
-                className="w-full flex items-center justify-between hover:bg-gray-50 rounded p-2 transition-colors"
-              >
-                <span className="flex items-center gap-3">
-                  <ShoppingBag className="h-5 w-5 text-gray-500" />
-                  <span className="text-sm font-medium">Ver minhas compras</span>
-                </span>
-                <ArrowLeft className="h-4 w-4 rotate-180 text-gray-400" />
-              </button>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </>
