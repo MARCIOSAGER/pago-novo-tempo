@@ -288,6 +288,26 @@ const pt = {
         question: "Como funciona o modelo White-Label?",
         answer: "O P.A.G.O está desenvolvendo uma plataforma escalável que permitirá que igrejas, organizações e mentores apliquem a metodologia com sua própria marca. Se você tem interesse em levar o P.A.G.O para sua comunidade, entre em contato conosco.",
       },
+      {
+        question: "Como faço para comprar o Ebook P.A.G.O?",
+        answer: "Depois de completar o diagnóstico gratuito em /diagnostico, você vê uma página com os produtos disponíveis. Clique no Ebook, escolha o idioma (Português, Inglês ou Espanhol) e o pagamento é processado com segurança pelo Stripe — aceita cartão e Pix. A entrega é imediata por email com link de download exclusivo.",
+      },
+      {
+        question: "Como recebo o ebook depois de comprar?",
+        answer: "Em poucos segundos após a confirmação do pagamento, você recebe um email com um link único de download válido por 30 dias (até 10 downloads). O email também traz link para solicitar reembolso (garantia de 7 dias) e para consultar seus pedidos caso perca o email original.",
+      },
+      {
+        question: "Posso pedir reembolso se não gostar do ebook?",
+        answer: "Sim. Conforme o Código de Defesa do Consumidor (Art. 49), você tem 7 dias de garantia a partir da compra para solicitar reembolso sem precisar justificar. Acesse /reembolso com o link que veio no seu email de entrega, preencha o formulário, e respondemos em até 2 dias úteis. Se aprovado, o valor é devolvido integralmente na mesma forma de pagamento em 5 a 10 dias úteis.",
+      },
+      {
+        question: "Perdi o email com o link do ebook. E agora?",
+        answer: "Sem problema. Acesse /consultar-pedidos, digite o email usado na compra, e enviaremos um link seguro (válido por 30 minutos) para você acessar todos os seus pedidos. A partir daí você pode baixar o ebook novamente, ver status de reembolsos e solicitar novos se ainda dentro do prazo de 7 dias.",
+      },
+      {
+        question: "O pagamento é seguro?",
+        answer: "Sim. Todos os pagamentos são processados pelo Stripe, um dos gateways de pagamento mais utilizados no mundo, com certificação PCI DSS nível 1. Nós não armazenamos dados de cartão de crédito em nossos servidores — tudo passa diretamente pela infraestrutura segura do Stripe. Você recebe recibo por email e pode pagar com cartão ou Pix.",
+      },
     ],
   },
 

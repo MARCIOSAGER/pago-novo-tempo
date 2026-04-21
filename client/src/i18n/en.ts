@@ -287,6 +287,26 @@ const en: Translations = {
         question: "How does the White-Label model work?",
         answer: "P.A.G.O is developing a scalable platform that will allow churches, organizations, and mentors to apply the methodology under their own brand. If you are interested in bringing P.A.G.O to your community, please contact us.",
       },
+      {
+        question: "How do I buy the P.A.G.O Ebook?",
+        answer: "After completing the free diagnostic at /diagnostico, you'll see a page with the available products. Click the Ebook, choose the language (Portuguese, English, or Spanish) and payment is processed securely via Stripe — accepts card and Pix. Delivery is immediate by email with an exclusive download link.",
+      },
+      {
+        question: "How do I receive the ebook after purchase?",
+        answer: "Within seconds of payment confirmation, you'll receive an email with a unique download link valid for 30 days (up to 10 downloads). The email also includes a refund link (7-day guarantee) and a way to look up your orders in case you lose the original email.",
+      },
+      {
+        question: "Can I get a refund if I don't like the ebook?",
+        answer: "Yes. Under Brazilian Consumer Protection Code (Art. 49), you have a 7-day guarantee from purchase to request a refund without needing to justify. Access /reembolso using the link from your delivery email, fill out the form, and we respond within 2 business days. If approved, the full amount is returned to the original payment method within 5–10 business days.",
+      },
+      {
+        question: "I lost the email with the ebook link. Now what?",
+        answer: "No problem. Go to /consultar-pedidos, enter the email used at purchase, and we'll send a secure link (valid 30 minutes) to access all your orders. From there you can download the ebook again, see refund statuses, and submit new requests if still within the 7-day window.",
+      },
+      {
+        question: "Is payment secure?",
+        answer: "Yes. All payments are processed by Stripe, one of the most trusted payment gateways in the world, certified PCI DSS Level 1. We do not store credit card data on our servers — everything goes through Stripe's secure infrastructure. You receive a receipt by email and can pay with card or Pix.",
+      },
     ],
   },
 
