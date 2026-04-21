@@ -1235,123 +1235,104 @@ export async function getPurchaseMetrics(opts: {
   };
   if (!db) return empty;
 
-  const now = new Date();
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const d7 = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-  const d30 = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  try {
+    const productSlug = opts.productSlug ?? null;
+    const statusIn = opts.status ?? null;
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  // Helper: build a where clause from an array of conditions, returning a single SQL or undefined.
-  const buildWhere = (...conds: Array<ReturnType<typeof eq> | ReturnType<typeof sql> | undefined>) => {
-    const defined = conds.filter((c): c is NonNullable<typeof c> => c !== undefined);
-    if (defined.length === 0) return undefined;
-    if (defined.length === 1) return defined[0];
-    return and(...defined);
-  };
+    // Single aggregate query — faster than 10 round-trips and simpler to reason about.
+    // Uses parameterized placeholders via Drizzle's sql.
+    const rows = await db.execute<{
+      total_count: string; gross_revenue: string;
+      delivered_count: string; delivered_revenue: string;
+      refunded_count: string; refunded_revenue: string;
+      failed_count: string; abandoned_count: string;
+      today_count: string; today_revenue: string;
+      last7d_count: string; last7d_revenue: string;
+      last30d_count: string; last30d_revenue: string;
+    }>(sql`
+      SELECT
+        COUNT(*) AS total_count,
+        COALESCE(SUM("amountCents"), 0) AS gross_revenue,
+        COUNT(*) FILTER (WHERE status = 'delivered') AS delivered_count,
+        COALESCE(SUM("amountCents") FILTER (WHERE status = 'delivered'), 0) AS delivered_revenue,
+        COUNT(*) FILTER (WHERE status = 'refunded') AS refunded_count,
+        COALESCE(SUM("amountCents") FILTER (WHERE status = 'refunded'), 0) AS refunded_revenue,
+        COUNT(*) FILTER (WHERE status = 'failed') AS failed_count,
+        COUNT(*) FILTER (WHERE status = 'abandoned') AS abandoned_count,
+        COUNT(*) FILTER (WHERE status = 'delivered' AND "createdAt" >= ${startOfToday}) AS today_count,
+        COALESCE(SUM("amountCents") FILTER (WHERE status = 'delivered' AND "createdAt" >= ${startOfToday}), 0) AS today_revenue,
+        COUNT(*) FILTER (WHERE status = 'delivered' AND "createdAt" >= NOW() - INTERVAL '7 days') AS last7d_count,
+        COALESCE(SUM("amountCents") FILTER (WHERE status = 'delivered' AND "createdAt" >= NOW() - INTERVAL '7 days'), 0) AS last7d_revenue,
+        COUNT(*) FILTER (WHERE status = 'delivered' AND "createdAt" >= NOW() - INTERVAL '30 days') AS last30d_count,
+        COALESCE(SUM("amountCents") FILTER (WHERE status = 'delivered' AND "createdAt" >= NOW() - INTERVAL '30 days'), 0) AS last30d_revenue
+      FROM purchases
+      WHERE (${productSlug}::text IS NULL OR "productSlug" = ${productSlug})
+        AND (${statusIn}::text IS NULL OR status::text = ${statusIn})
+    `);
 
-  const productFilter = opts.productSlug ? eq(purchases.productSlug, opts.productSlug) : undefined;
-  const statusFilter = opts.status ? eq(purchases.status, opts.status) : undefined;
+    const r = (rows as unknown as Array<Record<string, string>>)[0] ?? {} as Record<string, string>;
 
-  const [totalRow] = await db.select({
-    count: count(),
-    revenue: sql<string>`COALESCE(SUM(${purchases.amountCents}), 0)`,
-  }).from(purchases).where(buildWhere(productFilter, statusFilter));
+    const byProduct = await db.execute<{ product_slug: string; count: string; revenue_cents: string }>(sql`
+      SELECT "productSlug" AS product_slug, COUNT(*) AS count,
+        COALESCE(SUM("amountCents") FILTER (WHERE status = 'delivered'), 0) AS revenue_cents
+      FROM purchases
+      WHERE (${productSlug}::text IS NULL OR "productSlug" = ${productSlug})
+        AND (${statusIn}::text IS NULL OR status::text = ${statusIn})
+      GROUP BY "productSlug"
+    `);
 
-  const [deliveredRow] = await db.select({
-    count: count(),
-    revenue: sql<string>`COALESCE(SUM(${purchases.amountCents}), 0)`,
-  }).from(purchases).where(buildWhere(productFilter, eq(purchases.status, "delivered")));
+    const byLanguage = await db.execute<{ language: string | null; count: string }>(sql`
+      SELECT language, COUNT(*) AS count
+      FROM purchases
+      WHERE "productSlug" = 'ebook'
+        AND (${productSlug}::text IS NULL OR "productSlug" = ${productSlug})
+        AND (${statusIn}::text IS NULL OR status::text = ${statusIn})
+      GROUP BY language
+    `);
 
-  const [refundedRow] = await db.select({
-    count: count(),
-    revenue: sql<string>`COALESCE(SUM(${purchases.amountCents}), 0)`,
-  }).from(purchases).where(buildWhere(productFilter, eq(purchases.status, "refunded")));
+    const byStatus = await db.execute<{ status: string; count: string }>(sql`
+      SELECT status::text AS status, COUNT(*) AS count
+      FROM purchases
+      WHERE (${productSlug}::text IS NULL OR "productSlug" = ${productSlug})
+      GROUP BY status
+    `);
 
-  const [failedRow] = await db.select({
-    count: count(),
-  }).from(purchases).where(buildWhere(productFilter, eq(purchases.status, "failed")));
+    const deliveredCount = Number(r.delivered_count ?? 0);
+    const deliveredRevenueCents = Number(r.delivered_revenue ?? 0);
 
-  const [abandonedRow] = await db.select({
-    count: count(),
-  }).from(purchases).where(buildWhere(productFilter, eq(purchases.status, "abandoned")));
-
-  const [todayRow] = await db.select({
-    count: count(),
-    revenue: sql<string>`COALESCE(SUM(${purchases.amountCents}), 0)`,
-  }).from(purchases).where(buildWhere(
-    productFilter,
-    statusFilter,
-    eq(purchases.status, "delivered"),
-    sql`${purchases.createdAt} >= ${startOfToday}`,
-  ));
-
-  const [d7Row] = await db.select({
-    count: count(),
-    revenue: sql<string>`COALESCE(SUM(${purchases.amountCents}), 0)`,
-  }).from(purchases).where(buildWhere(
-    productFilter,
-    statusFilter,
-    eq(purchases.status, "delivered"),
-    sql`${purchases.createdAt} >= ${d7}`,
-  ));
-
-  const [d30Row] = await db.select({
-    count: count(),
-    revenue: sql<string>`COALESCE(SUM(${purchases.amountCents}), 0)`,
-  }).from(purchases).where(buildWhere(
-    productFilter,
-    statusFilter,
-    eq(purchases.status, "delivered"),
-    sql`${purchases.createdAt} >= ${d30}`,
-  ));
-
-  const byProductRows = await db.select({
-    productSlug: purchases.productSlug,
-    count: count(),
-    revenueCents: sql<string>`COALESCE(SUM(CASE WHEN ${purchases.status} = 'delivered' THEN ${purchases.amountCents} ELSE 0 END), 0)`,
-  }).from(purchases).where(buildWhere(productFilter, statusFilter)).groupBy(purchases.productSlug);
-
-  const byLanguageRows = await db.select({
-    language: purchases.language,
-    count: count(),
-  }).from(purchases)
-    .where(buildWhere(productFilter, statusFilter, eq(purchases.productSlug, "ebook")))
-    .groupBy(purchases.language);
-
-  const byStatusRows = await db.select({
-    status: purchases.status,
-    count: count(),
-  }).from(purchases).where(buildWhere(productFilter)).groupBy(purchases.status);
-
-  const totalCount = totalRow?.count ?? 0;
-  const grossRevenueCents = Number(totalRow?.revenue ?? 0);
-  const deliveredRevenueCents = Number(deliveredRow?.revenue ?? 0);
-  const refundedRevenueCents = Number(refundedRow?.revenue ?? 0);
-  const deliveredCount = deliveredRow?.count ?? 0;
-
-  return {
-    totalCount,
-    deliveredCount,
-    refundedCount: refundedRow?.count ?? 0,
-    failedCount: failedRow?.count ?? 0,
-    abandonedCount: abandonedRow?.count ?? 0,
-    grossRevenueCents,
-    netRevenueCents: deliveredRevenueCents,
-    refundedRevenueCents,
-    avgTicketCents: deliveredCount > 0 ? Math.round(deliveredRevenueCents / deliveredCount) : 0,
-    last7dCount: d7Row?.count ?? 0,
-    last7dRevenueCents: Number(d7Row?.revenue ?? 0),
-    last30dCount: d30Row?.count ?? 0,
-    last30dRevenueCents: Number(d30Row?.revenue ?? 0),
-    todayCount: todayRow?.count ?? 0,
-    todayRevenueCents: Number(todayRow?.revenue ?? 0),
-    byProduct: byProductRows.map(r => ({
-      productSlug: r.productSlug,
-      count: r.count,
-      revenueCents: Number(r.revenueCents),
-    })),
-    byLanguage: byLanguageRows
-      .filter(r => r.language !== null)
-      .map(r => ({ language: r.language!, count: r.count })),
-    byStatus: byStatusRows.map(r => ({ status: r.status, count: r.count })),
-  };
+    return {
+      totalCount: Number(r.total_count ?? 0),
+      deliveredCount,
+      refundedCount: Number(r.refunded_count ?? 0),
+      failedCount: Number(r.failed_count ?? 0),
+      abandonedCount: Number(r.abandoned_count ?? 0),
+      grossRevenueCents: Number(r.gross_revenue ?? 0),
+      netRevenueCents: deliveredRevenueCents,
+      refundedRevenueCents: Number(r.refunded_revenue ?? 0),
+      avgTicketCents: deliveredCount > 0 ? Math.round(deliveredRevenueCents / deliveredCount) : 0,
+      last7dCount: Number(r.last7d_count ?? 0),
+      last7dRevenueCents: Number(r.last7d_revenue ?? 0),
+      last30dCount: Number(r.last30d_count ?? 0),
+      last30dRevenueCents: Number(r.last30d_revenue ?? 0),
+      todayCount: Number(r.today_count ?? 0),
+      todayRevenueCents: Number(r.today_revenue ?? 0),
+      byProduct: (byProduct as unknown as Array<{ product_slug: string; count: string; revenue_cents: string }>).map(x => ({
+        productSlug: x.product_slug,
+        count: Number(x.count),
+        revenueCents: Number(x.revenue_cents),
+      })),
+      byLanguage: (byLanguage as unknown as Array<{ language: string | null; count: string }>)
+        .filter(x => x.language !== null)
+        .map(x => ({ language: x.language!, count: Number(x.count) })),
+      byStatus: (byStatus as unknown as Array<{ status: string; count: string }>).map(x => ({
+        status: x.status,
+        count: Number(x.count),
+      })),
+    };
+  } catch (err) {
+    console.error("[Metrics] getPurchaseMetrics failed:", (err as Error).message);
+    return empty;
+  }
 }
