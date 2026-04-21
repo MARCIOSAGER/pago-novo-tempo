@@ -1281,12 +1281,14 @@ export async function getPurchaseMetrics(opts: {
         AND (${statusIn}::text IS NULL OR status::text = ${statusIn})
     `);
 
-    const r = toArray<Record<string, string | number>>(rows)[0] ?? {};
-    if (Object.keys(r).length === 0) {
-      console.warn("[Metrics] Empty result from metrics query; rows type:", typeof rows,
-        "isArray:", Array.isArray(rows),
-        "keys:", Object.keys((rows ?? {}) as object).slice(0, 5));
-    }
+    const arr = toArray<Record<string, string | number>>(rows);
+    const r = arr[0] ?? {};
+    // Diagnostic logging to surface drizzle/postgres-js result shape
+    console.log("[Metrics] debug — arr.length:", arr.length,
+      "isArray(rows):", Array.isArray(rows),
+      "rows.length:", (rows as { length?: number })?.length,
+      "r keys:", Object.keys(r).slice(0, 20),
+      "r sample:", JSON.stringify(r).slice(0, 300));
 
     const byProduct = await db.execute<{ product_slug: string; count: string; revenue_cents: string }>(sql`
       SELECT "productSlug" AS product_slug, COUNT(*) AS count,
