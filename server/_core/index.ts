@@ -42,6 +42,36 @@ async function startServer() {
   // Trust proxy for correct IP detection behind reverse proxy
   app.set('trust proxy', 1);
 
+  // ─── Canonical Host Redirect ──────────────────────────────────
+  // Redirects all non-canonical hostnames (www, alternate domains) to metodopago.com
+  // preserving path + query. Must run BEFORE security middleware so the redirect is
+  // returned immediately without other processing.
+  const CANONICAL_HOST = "metodopago.com";
+  const ALTERNATE_HOSTS = new Set([
+    "www.metodopago.com",
+    "metodopago.com.br",
+    "www.metodopago.com.br",
+    "pago.life",
+    "www.pago.life",
+  ]);
+  app.use((req, res, next) => {
+    // Respect x-forwarded-host (set by Coolify/Traefik) when present, else req.hostname
+    const fwdHost = req.headers["x-forwarded-host"];
+    const rawHost = (Array.isArray(fwdHost) ? fwdHost[0] : fwdHost) || req.hostname;
+    const host = String(rawHost).toLowerCase().split(",")[0].trim();
+
+    // Skip for health checks and webhooks (different callers, don't break them)
+    if (req.path === "/api/stripe/webhook" || req.path === "/api/health") return next();
+    // Skip for local development
+    if (host === "localhost" || host.startsWith("127.0.0.1") || host.startsWith("192.168.")) return next();
+
+    if (ALTERNATE_HOSTS.has(host)) {
+      const target = `https://${CANONICAL_HOST}${req.originalUrl}`;
+      return res.redirect(301, target);
+    }
+    next();
+  });
+
   // Stripe webhook — MUST use raw body (signature verification needs exact bytes)
   // Registered BEFORE any JSON parser to avoid consuming the body.
   // Rate limit: 600 req / 15 min / IP (generous to allow Stripe retries, blocks floods).
