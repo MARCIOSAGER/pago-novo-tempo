@@ -1148,11 +1148,16 @@ const en: Translations = {
   profile: {
     purchases: {
       title: "My Purchases",
+      subtitle: "All products you've acquired. Download again or request a refund within 7 days.",
       empty: "You haven't made any purchases yet.",
+      exploreProducts: "Explore products",
+      backLabel: "Back",
       downloads: "{count}/{max} downloads",
       download: "Download",
       requestRefund: "Request refund",
       refundPending: "Refund request under review. You'll receive our reply by email.",
+      refundDenied: "Refund request denied. See details in your email.",
+      refundCompleted: "This purchase has been refunded.",
       status: {
         pending: "Pending",
         delivered: "Delivered",

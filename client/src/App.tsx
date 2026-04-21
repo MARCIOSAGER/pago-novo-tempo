@@ -49,6 +49,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import ProfilePage from "./pages/auth/ProfilePage";
+import MinhasCompras from "./pages/MinhasCompras";
 
 function Router() {
   return (
@@ -69,6 +70,7 @@ function Router() {
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/reset-password/:token" component={ResetPasswordPage} />
       <Route path="/profile" component={ProfilePage} />
+      <Route path="/minhas-compras" component={MinhasCompras} />
 
       {/* Admin routes — wrapped in AdminLayout with sidebar */}
       <Route path="/admin">

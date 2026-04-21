@@ -1148,11 +1148,16 @@ const es: Translations = {
   profile: {
     purchases: {
       title: "Mis Compras",
+      subtitle: "Todos los productos que adquiriste. Descarga de nuevo o solicita reembolso dentro de 7 días.",
       empty: "Aún no has realizado ninguna compra.",
+      exploreProducts: "Explorar productos",
+      backLabel: "Volver",
       downloads: "{count}/{max} descargas",
       download: "Descargar",
       requestRefund: "Solicitar reembolso",
       refundPending: "Solicitud de reembolso en revisión. Recibirás nuestra respuesta por email.",
+      refundDenied: "Solicitud de reembolso denegada. Consulta los detalles en tu email.",
+      refundCompleted: "Esta compra fue reembolsada.",
       status: {
         pending: "Pendiente",
         delivered: "Entregado",

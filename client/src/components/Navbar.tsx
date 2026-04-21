@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, LogOut, Settings, Shield } from "lucide-react";
+import { Menu, X, User, LogOut, Settings, Shield, ShoppingBag } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/_core/hooks/useAuth";
 import LanguageSelector from "@/components/LanguageSelector";
@@ -112,6 +112,9 @@ export default function Navbar() {
                         </div>
                         <a href="/profile" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => setUserMenuOpen(false)}>
                           <Settings className="h-4 w-4" /> Meu Perfil
+                        </a>
+                        <a href="/minhas-compras" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => setUserMenuOpen(false)}>
+                          <ShoppingBag className="h-4 w-4" /> Minhas Compras
                         </a>
                         {user.role === "admin" && (
                           <a href="/admin" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => setUserMenuOpen(false)}>

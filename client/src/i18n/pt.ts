@@ -1149,11 +1149,16 @@ const pt = {
   profile: {
     purchases: {
       title: "Minhas Compras",
+      subtitle: "Todos os produtos que você adquiriu. Baixe novamente ou solicite reembolso dentro de 7 dias.",
       empty: "Você ainda não fez nenhuma compra.",
+      exploreProducts: "Explorar produtos",
+      backLabel: "Voltar",
       downloads: "{count}/{max} downloads",
       download: "Baixar",
       requestRefund: "Solicitar reembolso",
       refundPending: "Solicitação de reembolso em análise. Você receberá a resposta por email.",
+      refundDenied: "Solicitação de reembolso negada. Veja detalhes no email.",
+      refundCompleted: "Esta compra foi reembolsada.",
       status: {
         pending: "Pendente",
         delivered: "Entregue",
