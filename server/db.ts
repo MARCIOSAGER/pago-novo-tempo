@@ -1235,76 +1235,92 @@ export async function getPurchaseMetrics(opts: {
   };
   if (!db) return empty;
 
-  const conditions = [] as Array<ReturnType<typeof eq>>;
-  if (opts.productSlug) conditions.push(eq(purchases.productSlug, opts.productSlug));
-  if (opts.status) conditions.push(eq(purchases.status, opts.status));
-  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-
   const now = new Date();
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const d7 = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
   const d30 = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-  // Count-only per status (independent of status filter)
-  const baseConditions = [] as Array<ReturnType<typeof eq>>;
-  if (opts.productSlug) baseConditions.push(eq(purchases.productSlug, opts.productSlug));
-  const baseWhere = baseConditions.length > 0 ? and(...baseConditions) : undefined;
+  // Helper: build a where clause from an array of conditions, returning a single SQL or undefined.
+  const buildWhere = (...conds: Array<ReturnType<typeof eq> | ReturnType<typeof sql> | undefined>) => {
+    const defined = conds.filter((c): c is NonNullable<typeof c> => c !== undefined);
+    if (defined.length === 0) return undefined;
+    if (defined.length === 1) return defined[0];
+    return and(...defined);
+  };
+
+  const productFilter = opts.productSlug ? eq(purchases.productSlug, opts.productSlug) : undefined;
+  const statusFilter = opts.status ? eq(purchases.status, opts.status) : undefined;
 
   const [totalRow] = await db.select({
     count: count(),
-    revenue: sql<number>`COALESCE(SUM(${purchases.amountCents}), 0)`,
-  }).from(purchases).where(baseWhere);
+    revenue: sql<string>`COALESCE(SUM(${purchases.amountCents}), 0)`,
+  }).from(purchases).where(buildWhere(productFilter, statusFilter));
 
   const [deliveredRow] = await db.select({
     count: count(),
-    revenue: sql<number>`COALESCE(SUM(${purchases.amountCents}), 0)`,
-  }).from(purchases).where(and(baseWhere, eq(purchases.status, "delivered")) as never);
+    revenue: sql<string>`COALESCE(SUM(${purchases.amountCents}), 0)`,
+  }).from(purchases).where(buildWhere(productFilter, eq(purchases.status, "delivered")));
 
   const [refundedRow] = await db.select({
     count: count(),
-    revenue: sql<number>`COALESCE(SUM(${purchases.amountCents}), 0)`,
-  }).from(purchases).where(and(baseWhere, eq(purchases.status, "refunded")) as never);
+    revenue: sql<string>`COALESCE(SUM(${purchases.amountCents}), 0)`,
+  }).from(purchases).where(buildWhere(productFilter, eq(purchases.status, "refunded")));
 
   const [failedRow] = await db.select({
     count: count(),
-  }).from(purchases).where(and(baseWhere, eq(purchases.status, "failed")) as never);
+  }).from(purchases).where(buildWhere(productFilter, eq(purchases.status, "failed")));
 
   const [abandonedRow] = await db.select({
     count: count(),
-  }).from(purchases).where(and(baseWhere, eq(purchases.status, "abandoned")) as never);
+  }).from(purchases).where(buildWhere(productFilter, eq(purchases.status, "abandoned")));
 
   const [todayRow] = await db.select({
     count: count(),
-    revenue: sql<number>`COALESCE(SUM(${purchases.amountCents}), 0)`,
-  }).from(purchases).where(and(whereClause, eq(purchases.status, "delivered"), sql`${purchases.createdAt} >= ${startOfToday}`) as never);
+    revenue: sql<string>`COALESCE(SUM(${purchases.amountCents}), 0)`,
+  }).from(purchases).where(buildWhere(
+    productFilter,
+    statusFilter,
+    eq(purchases.status, "delivered"),
+    sql`${purchases.createdAt} >= ${startOfToday}`,
+  ));
 
   const [d7Row] = await db.select({
     count: count(),
-    revenue: sql<number>`COALESCE(SUM(${purchases.amountCents}), 0)`,
-  }).from(purchases).where(and(whereClause, eq(purchases.status, "delivered"), sql`${purchases.createdAt} >= ${d7}`) as never);
+    revenue: sql<string>`COALESCE(SUM(${purchases.amountCents}), 0)`,
+  }).from(purchases).where(buildWhere(
+    productFilter,
+    statusFilter,
+    eq(purchases.status, "delivered"),
+    sql`${purchases.createdAt} >= ${d7}`,
+  ));
 
   const [d30Row] = await db.select({
     count: count(),
-    revenue: sql<number>`COALESCE(SUM(${purchases.amountCents}), 0)`,
-  }).from(purchases).where(and(whereClause, eq(purchases.status, "delivered"), sql`${purchases.createdAt} >= ${d30}`) as never);
+    revenue: sql<string>`COALESCE(SUM(${purchases.amountCents}), 0)`,
+  }).from(purchases).where(buildWhere(
+    productFilter,
+    statusFilter,
+    eq(purchases.status, "delivered"),
+    sql`${purchases.createdAt} >= ${d30}`,
+  ));
 
   const byProductRows = await db.select({
     productSlug: purchases.productSlug,
     count: count(),
-    revenueCents: sql<number>`COALESCE(SUM(${purchases.amountCents}) FILTER (WHERE ${purchases.status} = 'delivered'), 0)`,
-  }).from(purchases).where(whereClause).groupBy(purchases.productSlug);
+    revenueCents: sql<string>`COALESCE(SUM(CASE WHEN ${purchases.status} = 'delivered' THEN ${purchases.amountCents} ELSE 0 END), 0)`,
+  }).from(purchases).where(buildWhere(productFilter, statusFilter)).groupBy(purchases.productSlug);
 
   const byLanguageRows = await db.select({
     language: purchases.language,
     count: count(),
   }).from(purchases)
-    .where(and(whereClause, eq(purchases.productSlug, "ebook")) as never)
+    .where(buildWhere(productFilter, statusFilter, eq(purchases.productSlug, "ebook")))
     .groupBy(purchases.language);
 
   const byStatusRows = await db.select({
     status: purchases.status,
     count: count(),
-  }).from(purchases).where(baseWhere).groupBy(purchases.status);
+  }).from(purchases).where(buildWhere(productFilter)).groupBy(purchases.status);
 
   const totalCount = totalRow?.count ?? 0;
   const grossRevenueCents = Number(totalRow?.revenue ?? 0);
