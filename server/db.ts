@@ -1235,6 +1235,15 @@ export async function getPurchaseMetrics(opts: {
   };
   if (!db) return empty;
 
+  // Normalize drizzle's db.execute() result — may return array, { rows: [] }, or other shape.
+  const toArray = <T>(result: unknown): T[] => {
+    if (Array.isArray(result)) return result as T[];
+    if (result && typeof result === "object" && "rows" in result && Array.isArray((result as { rows: unknown }).rows)) {
+      return (result as { rows: T[] }).rows;
+    }
+    return [];
+  };
+
   try {
     const productSlug = opts.productSlug ?? null;
     const statusIn = opts.status ?? null;
@@ -1272,7 +1281,12 @@ export async function getPurchaseMetrics(opts: {
         AND (${statusIn}::text IS NULL OR status::text = ${statusIn})
     `);
 
-    const r = (rows as unknown as Array<Record<string, string>>)[0] ?? {} as Record<string, string>;
+    const r = toArray<Record<string, string | number>>(rows)[0] ?? {};
+    if (Object.keys(r).length === 0) {
+      console.warn("[Metrics] Empty result from metrics query; rows type:", typeof rows,
+        "isArray:", Array.isArray(rows),
+        "keys:", Object.keys((rows ?? {}) as object).slice(0, 5));
+    }
 
     const byProduct = await db.execute<{ product_slug: string; count: string; revenue_cents: string }>(sql`
       SELECT "productSlug" AS product_slug, COUNT(*) AS count,
@@ -1318,15 +1332,15 @@ export async function getPurchaseMetrics(opts: {
       last30dRevenueCents: Number(r.last30d_revenue ?? 0),
       todayCount: Number(r.today_count ?? 0),
       todayRevenueCents: Number(r.today_revenue ?? 0),
-      byProduct: (byProduct as unknown as Array<{ product_slug: string; count: string; revenue_cents: string }>).map(x => ({
+      byProduct: toArray<{ product_slug: string; count: string; revenue_cents: string }>(byProduct).map(x => ({
         productSlug: x.product_slug,
         count: Number(x.count),
         revenueCents: Number(x.revenue_cents),
       })),
-      byLanguage: (byLanguage as unknown as Array<{ language: string | null; count: string }>)
+      byLanguage: toArray<{ language: string | null; count: string }>(byLanguage)
         .filter(x => x.language !== null)
         .map(x => ({ language: x.language!, count: Number(x.count) })),
-      byStatus: (byStatus as unknown as Array<{ status: string; count: string }>).map(x => ({
+      byStatus: toArray<{ status: string; count: string }>(byStatus).map(x => ({
         status: x.status,
         count: Number(x.count),
       })),
