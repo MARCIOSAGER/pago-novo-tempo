@@ -43,31 +43,35 @@ async function startServer() {
   app.set('trust proxy', 1);
 
   // ─── Canonical Host Redirect ──────────────────────────────────
-  // Redirects all non-canonical hostnames (www, alternate domains) to metodopago.com
-  // preserving path + query. Must run BEFORE security middleware so the redirect is
-  // returned immediately without other processing.
-  const CANONICAL_HOST = "metodopago.com";
-  const ALTERNATE_HOSTS = new Set([
+  // Two sites share the same container, distinguished by Host header:
+  //   • Main (pessoa física):    metodopago.com  — alternates redirect here
+  //   • Corp (B2B):              pagocorp.com    — alternates redirect here
+  // Preserves path + query on redirect. Must run BEFORE security middleware.
+  const CANONICAL_MAIN = "metodopago.com";
+  const CANONICAL_CORP = "pagocorp.com";
+  const REDIRECTS_TO_MAIN = new Set([
     "www.metodopago.com",
     "metodopago.com.br",
     "www.metodopago.com.br",
     "pago.life",
     "www.pago.life",
   ]);
+  const REDIRECTS_TO_CORP = new Set([
+    "www.pagocorp.com",
+  ]);
   app.use((req, res, next) => {
-    // Respect x-forwarded-host (set by Coolify/Traefik) when present, else req.hostname
     const fwdHost = req.headers["x-forwarded-host"];
     const rawHost = (Array.isArray(fwdHost) ? fwdHost[0] : fwdHost) || req.hostname;
     const host = String(rawHost).toLowerCase().split(",")[0].trim();
 
-    // Skip for health checks and webhooks (different callers, don't break them)
     if (req.path === "/api/stripe/webhook" || req.path === "/api/health") return next();
-    // Skip for local development
     if (host === "localhost" || host.startsWith("127.0.0.1") || host.startsWith("192.168.")) return next();
 
-    if (ALTERNATE_HOSTS.has(host)) {
-      const target = `https://${CANONICAL_HOST}${req.originalUrl}`;
-      return res.redirect(301, target);
+    if (REDIRECTS_TO_MAIN.has(host)) {
+      return res.redirect(301, `https://${CANONICAL_MAIN}${req.originalUrl}`);
+    }
+    if (REDIRECTS_TO_CORP.has(host)) {
+      return res.redirect(301, `https://${CANONICAL_CORP}${req.originalUrl}`);
     }
     next();
   });

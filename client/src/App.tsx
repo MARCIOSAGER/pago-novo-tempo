@@ -52,11 +52,17 @@ import ProfilePage from "./pages/auth/ProfilePage";
 import MinhasCompras from "./pages/MinhasCompras";
 import ConsultarPedidos from "./pages/ConsultarPedidos";
 import MeusPedidos from "./pages/MeusPedidos";
+import { useSiteContext } from "./hooks/useSiteContext";
+
+function HomeByHost() {
+  const site = useSiteContext();
+  return site === "corp" ? <CorporateHome /> : <Home />;
+}
 
 function Router() {
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
+      <Route path={"/"} component={HomeByHost} />
       <Route path={"/privacidade"} component={PrivacyPolicy} />
       <Route path={"/termos"} component={TermsOfUse} />
       <Route path={"/cookies"} component={CookiePolicy} />
