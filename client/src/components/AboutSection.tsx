@@ -148,6 +148,9 @@ export default function AboutSection() {
               {t.diagnostico.homeCta} →
             </a>
           </div>
+          <p className="font-body text-sm text-navy/60 italic leading-relaxed text-center mt-5 max-w-2xl mx-auto">
+            {t.diagnostico.homeCtaContext}
+          </p>
         </FadeIn>
       </div>
     </section>

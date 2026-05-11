@@ -83,7 +83,32 @@ const en: Translations = {
     problemText: "Prosperity without governance leads to downfall. Growth without structure leads to collapse. Faith without alignment leads to confusion.",
     answerLabel: "The Answer",
     answerText: "**P.A.G.O** is a path to structure your spiritual, emotional, and practical life with maturity and direction.",
-    quote: "\"Restored men build strong families. Strong families sustain solid businesses. Solid businesses impact territories.\"",
+    quote: "\"A life governed from within transforms everything around it — family, calling, relationships, legacy. It is not a success method. It is a life reorganization system grounded in immutable biblical principles.\"",
+  },
+
+  // === FOR WHOM ===
+  forWhom: {
+    label: "This method is for you",
+    title: "Do you recognize any of these patterns?",
+    items: [
+      {
+        title: "You have faith — but lack structure",
+        description: "You love God, you pray, you attend church. But your routine still doesn't reflect what you believe. Your spiritual life is separate from your practical life.",
+      },
+      {
+        title: "You start — but don't sustain",
+        description: "You've begun changes, processes, commitments. But without inner governance, the cycles repeat. It's not a lack of will. It's a lack of system.",
+      },
+      {
+        title: "You grow — but without foundation",
+        description: "Achievements come, but the sense of inner fragility remains. What is built quickly, crumbles quickly. The bedrock is missing.",
+      },
+      {
+        title: "You want legacy — not just results",
+        description: "You don't just want to win. You want to build something that lasts. Something your children will inherit — not goods, but character, structure, and principles.",
+      },
+    ],
+    closing: "If you recognized yourself in at least one of these, the P.A.G.O Method was made for you.",
   },
 
   // === PILLARS ===
@@ -123,7 +148,7 @@ const en: Translations = {
   overview: {
     label: "The System",
     title: "P.A.G.O",
-    flipHint: "Hover to reveal",
+    flipHint: "Tap or hover to reveal",
     cards: [
       {
         description: "Integrity, management, sowing, excellence, and faithfulness. Five non-negotiable foundations that sustain every decision and define the character of those who lead.",
@@ -147,6 +172,7 @@ const en: Translations = {
     nameSurname: "Evangelista",
     role1: "Builder of Structures",
     role2: "Organizer of Destinies",
+    bio0: "I built businesses, led teams, and maintained a structured public life — while there were areas of my own life that still had no real governance. There was misalignment between what I preached and what I practiced in silence. Between what I believed and what I actually lived in secret. It was by facing this with brutal honesty — and with the help of the Holy Spirit — that P.A.G.O ceased to be an idea and became a lived system. I know what it is to be on this side, without governance. And I know what it is to be on the other side. I come to show you the way.",
     bio1: "Jefferson Evangelista is not just an entrepreneur. He is a builder of structures and an organizer of destinies. His story did not begin in business, but in the awareness that without spiritual, emotional, and strategic governance, any growth crumbles.",
     bio2: "At the helm of Interaja and multiple business fronts, Jefferson never sought only profit. He always sought structure, sustainability, and legacy. He thinks about governance before thinking about expansion. He thinks about foundation before thinking about visibility.",
     quote: "\"P.A.G.O was not an idea I simply created. It was a vision that the Holy Spirit delivered to me. I only organized, structured, and systematized what I received.\"",
@@ -156,7 +182,7 @@ const en: Translations = {
     founderPage: {
       visionLabel: "The Vision",
       visionTitle: "The Vision of P.A.G.O",
-      visionText: "P.A.G.O was born from the conviction that restored men build strong families, strong families sustain solid businesses, and solid businesses impact territories. It is not a success method — it is a life reorganization system grounded in immutable biblical principles.",
+      visionText: "P.A.G.O was born from the conviction that a life governed from within transforms everything around it — family, calling, relationships, legacy. It is not a success method — it is a life reorganization system grounded in immutable biblical principles.",
       visionText2: "The vision is simple and profound: to lead men and women to live with spiritual governance, emotional alignment, and strategic obedience. Not to be seen, but to endure. Not to grow fast, but to build a legacy that stands the test of time.",
       backToHome: "Back to Home",
     },
@@ -186,6 +212,36 @@ const en: Translations = {
         description: "The complete methodology manual with the 4 pillars, practical exercises, foundational verses, and space for personal notes.",
       },
     ],
+  },
+
+  // === BENEFITS ===
+  benefits: {
+    label: "The mentoring",
+    title: "What changes in your life with P.A.G.O",
+    subtitle: "It's not just another Christian content. It's a lived system, structured for those tired of starting and stopping.",
+    items: [
+      {
+        letter: "P",
+        title: "Principle — You stop living in doubt",
+        description: "Clarity about the non-negotiable foundations of your life. What is the Word, what is culture, what is inherited habit. Your decisions gain direction.",
+      },
+      {
+        letter: "A",
+        title: "Alignment — Your choices stop costing you peace",
+        description: "When what you believe, feel, and do walk in the same direction, the anxiety of choosing disappears. You act with coherence — not with performance.",
+      },
+      {
+        letter: "G",
+        title: "Governance — You take back command of your routine",
+        description: "Practical structure for time, finances, emotions, and priorities. Not as self-help. As stewardship — managing well what God has entrusted.",
+      },
+      {
+        letter: "O",
+        title: "Obedience — Fruit that comes from obeying",
+        description: "Fruit stops being an achievement won by force and becomes the natural consequence of a life in order. Consistency beats talent. Discipline beats motivation.",
+      },
+    ],
+    closing: "You don't need more motivation. You need governance.",
   },
 
   // === CTA / FORM ===
@@ -944,6 +1000,7 @@ const en: Translations = {
       },
     },
     homeCta: "Take the Free Diagnostic",
+    homeCtaContext: "In which of the 4 pillars is your life leaking the most? The P.A.G.O Diagnostic reveals this in 3 minutes — free, no complicated sign-up.",
     emotionalAlert: {
       label: "An Important Note",
       text: "A low score in Emotional Governance can have two distinct origins.\n\nThe first is lack of discipline — and governance is the answer.\n\nThe second is an unhealed wound that hijacks your reactions before you can govern them.\n\nIf you notice that you try but can't — that the reaction happens before the decision — this may be a sign that something needs to be processed, not just disciplined.\n\nThe mentoring will help you distinguish between the two.",

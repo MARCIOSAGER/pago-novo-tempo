@@ -72,6 +72,12 @@ export default function JeffersonSection() {
 
             <FadeIn delay={0.4}>
               <p className="font-body text-base text-navy/75 leading-relaxed">
+                {t.jefferson.bio0}
+              </p>
+            </FadeIn>
+
+            <FadeIn delay={0.45}>
+              <p className="font-body text-base text-navy/75 leading-relaxed">
                 {t.jefferson.bio1}
               </p>
             </FadeIn>

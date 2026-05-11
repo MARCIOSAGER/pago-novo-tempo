@@ -84,7 +84,32 @@ const pt = {
     problemText: "Prosperidade sem governo gera queda. Crescimento sem estrutura gera colapso. Fé sem alinhamento gera confusão.",
     answerLabel: "A Resposta",
     answerText: "**O P.A.G.O** é um caminho para estruturar a vida espiritual, emocional e prática com maturidade e direção.",
-    quote: "\"Homens restaurados constroem famílias fortes. Famílias fortes sustentam empresas sólidas. Empresas sólidas impactam territórios.\"",
+    quote: "\"Uma vida governada por dentro transforma tudo ao redor — família, chamado, relacionamentos, legado. Não é um método de sucesso. É um sistema de reorganização de vida fundamentado em princípios bíblicos imutáveis.\"",
+  },
+
+  // === FOR WHOM ===
+  forWhom: {
+    label: "Este método é para você",
+    title: "Você reconhece algum desses padrões?",
+    items: [
+      {
+        title: "Você tem fé — mas falta estrutura",
+        description: "Ama a Deus, ora, frequenta a igreja. Mas sua rotina ainda não reflete o que você crê. A vida espiritual está separada da vida prática.",
+      },
+      {
+        title: "Você começa — mas não sustenta",
+        description: "Já iniciou mudanças, processos, compromissos. Mas sem governo interior, os ciclos se repetem. Não é falta de vontade. É falta de sistema.",
+      },
+      {
+        title: "Você cresce — mas sem base",
+        description: "Conquistas chegam, mas a sensação de fragilidade interna persiste. O que foi construído rápido, desmorona rápido. Falta alicerce.",
+      },
+      {
+        title: "Você quer legado — não apenas resultado",
+        description: "Não quer apenas vencer. Quer construir algo que dure. Que seus filhos herdem não bens, mas caráter, estrutura e princípios.",
+      },
+    ],
+    closing: "Se você se reconheceu em pelo menos um desses pontos, o Método P.A.G.O foi feito para você.",
   },
 
   // === PILLARS ===
@@ -124,7 +149,7 @@ const pt = {
   overview: {
     label: "O Sistema",
     title: "P.A.G.O",
-    flipHint: "Passe o mouse para revelar",
+    flipHint: "Toque ou passe o mouse para revelar",
     cards: [
       {
         description: "Integridade, gestão, semeadura, excelência e fidelidade. Cinco fundamentos inegociáveis que sustentam toda decisão e definem o caráter de quem lidera.",
@@ -148,6 +173,7 @@ const pt = {
     nameSurname: "Evangelista",
     role1: "Construtor de Estruturas",
     role2: "Organizador de Destinos",
+    bio0: "Construí negócios, conduzi equipes e mantive uma vida pública estruturada — enquanto havia áreas da minha própria vida que ainda não tinham governo real. Havia desalinhamento entre o que eu pregava e o que eu praticava no silêncio. Entre o que eu acreditava e o que eu de fato vivia no secreto. Foi ao enfrentar isso com honestidade brutal — e com a ajuda do Espírito Santo — que o P.A.G.O deixou de ser uma ideia e se tornou um sistema vivido. Eu sei o que é estar do lado de cá, sem governo. E sei o que é estar do outro lado. Venho te mostrar o caminho.",
     bio1: "Jefferson Evangelista não é apenas um empreendedor. Ele é um construtor de estruturas e um organizador de destinos. Sua história não começou nos negócios, mas na consciência de que sem governo espiritual, emocional e estratégico, qualquer crescimento desmorona.",
     bio2: "À frente da Interaja e de múltiplas frentes empresariais, Jefferson nunca buscou apenas lucro. Sempre buscou estrutura, sustentabilidade e legado. Ele pensa em governança antes de pensar em expansão. Pensa em base antes de pensar em visibilidade.",
     quote: "\"O P.A.G.O não foi uma ideia que eu simplesmente criei. Foi uma visão que o Espírito Santo me entregou. Eu apenas organizei, estruturei e sistematizei aquilo que recebi.\"",
@@ -157,7 +183,7 @@ const pt = {
     founderPage: {
       visionLabel: "A Visão",
       visionTitle: "A Visão do P.A.G.O",
-      visionText: "O P.A.G.O nasceu da convicção de que homens restaurados constroem famílias fortes, famílias fortes sustentam empresas sólidas e empresas sólidas impactam territórios. Não é um método de sucesso — é um sistema de reorganização de vida fundamentado em princípios bíblicos imutáveis.",
+      visionText: "O P.A.G.O nasceu da convicção de que uma vida governada por dentro transforma tudo ao redor — família, chamado, relacionamentos, legado. Não é um método de sucesso — é um sistema de reorganização de vida fundamentado em princípios bíblicos imutáveis.",
       visionText2: "A visão é simples e profunda: levar homens e mulheres a viverem com governo espiritual, alinhamento emocional e obediência estratégica. Não para aparecer, mas para permanecer. Não para crescer rápido, mas para construir um legado que resista ao tempo.",
       backToHome: "Voltar ao Início",
     },
@@ -187,6 +213,36 @@ const pt = {
         description: "O manual completo da metodologia com os 4 pilares, exercícios práticos, versículos fundamentadores e espaço para anotações pessoais.",
       },
     ],
+  },
+
+  // === BENEFITS ===
+  benefits: {
+    label: "A mentoria",
+    title: "O que muda na sua vida com o P.A.G.O",
+    subtitle: "Não é mais um conteúdo cristão. É um sistema vivido, estruturado para quem está cansado de começar e parar.",
+    items: [
+      {
+        letter: "P",
+        title: "Princípio — Você para de viver na dúvida",
+        description: "Clareza sobre os fundamentos inegociáveis da sua vida. O que é Palavra, o que é cultura, o que é hábito herdado. Suas decisões ganham direção.",
+      },
+      {
+        letter: "A",
+        title: "Alinhamento — Suas escolhas param de te custar paz",
+        description: "Quando o que você crê, sente e faz caminham na mesma direção, a ansiedade da escolha some. Você age com coerência — não com performance.",
+      },
+      {
+        letter: "G",
+        title: "Governo — Você volta a comandar sua rotina",
+        description: "Estrutura prática para tempo, finanças, emoções e prioridades. Não como auto-ajuda. Como mordomia — administrar bem o que Deus confiou.",
+      },
+      {
+        letter: "O",
+        title: "Obediência — Resultados que vêm do obedecer",
+        description: "O fruto deixa de ser conquista no grito e passa a ser consequência natural de uma vida em ordem. Constância vence talento. Disciplina vence motivação.",
+      },
+    ],
+    closing: "Você não precisa de mais motivação. Você precisa de governo.",
   },
 
   // === CTA / FORM ===
@@ -945,6 +1001,7 @@ const pt = {
       },
     },
     homeCta: "Fazer o Diagnóstico Gratuito",
+    homeCtaContext: "Em qual dos 4 pilares sua vida está com maior vazamento? O Diagnóstico P.A.G.O revela isso em 3 minutos — gratuito, sem cadastro complicado.",
     emotionalAlert: {
       label: "Uma Observação Importante",
       text: "Uma nota baixa no Governo Emocional pode ter duas origens distintas.\n\nA primeira é falta de disciplina — e o governo é a resposta.\n\nA segunda é uma ferida ainda aberta que sequestra suas reações antes de você poder governá-las.\n\nSe você percebe que tenta mas não consegue — que a reação acontece antes da decisão — isso pode ser um sinal de que algo precisa ser processado, não apenas disciplinado.\n\nA mentoria vai te ajudar a distinguir os dois.",
