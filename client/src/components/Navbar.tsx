@@ -44,7 +44,6 @@ export default function Navbar() {
         { label: t.nav.kit, href: "/#kit" },
         { label: t.nav.kids, href: "/#kids" },
         { label: t.nav.faq, href: "/#faq" },
-        { label: t.nav.corporate, href: "https://pagocorp.com" },
       ];
 
   useEffect(() => {

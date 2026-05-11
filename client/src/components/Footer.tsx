@@ -24,7 +24,6 @@ export default function Footer() {
         { label: t.nav.jefferson, href: "/#jefferson" },
         { label: t.nav.kit, href: "/#kit" },
         { label: t.nav.faq, href: "/#faq" },
-        { label: t.nav.corporate, href: "https://pagocorp.com" },
       ];
 
   const contactEmail = site === "corp" ? "contato@pagocorp.com" : "contato@metodopago.com";

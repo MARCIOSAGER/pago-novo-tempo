@@ -86,6 +86,10 @@ async function startServer() {
     if (host === CANONICAL_CORP && PF_ONLY_PATHS.has(req.path)) {
       return res.redirect(301, `https://${CANONICAL_MAIN}${req.originalUrl}`);
     }
+    // Redirect corporate-only paths from main host to corp host
+    if (host === CANONICAL_MAIN && req.path.startsWith("/corporate")) {
+      return res.redirect(301, `https://${CANONICAL_CORP}${req.originalUrl}`);
+    }
     next();
   });
 
