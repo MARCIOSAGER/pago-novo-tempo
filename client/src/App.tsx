@@ -11,6 +11,7 @@ import TermsOfUse from "./pages/TermsOfUse";
 import CookiePolicy from "./pages/CookiePolicy";
 import CookieBanner from "./components/CookieBanner";
 import PagoChatBot from "./components/PagoChatBot";
+import HostAwareMeta from "./components/HostAwareMeta";
 import AdminLayout from "./components/AdminLayout";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminInscricoes from "./pages/AdminInscricoes";
@@ -206,6 +207,7 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
+          <HostAwareMeta />
           <Router />
           <CookieBanner />
           <PagoChatBot />

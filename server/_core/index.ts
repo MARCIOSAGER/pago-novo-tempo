@@ -59,6 +59,15 @@ async function startServer() {
   const REDIRECTS_TO_CORP = new Set([
     "www.pagocorp.com",
   ]);
+  // Paths that only make sense on the main (pessoa física) site.
+  // When visited on pagocorp.com, 301 to the main site preserving the path + query.
+  const PF_ONLY_PATHS = new Set([
+    "/mentoria",
+    "/diagnostico",
+    "/fundador",
+    "/obrigado",
+    "/reembolso",
+  ]);
   app.use((req, res, next) => {
     const fwdHost = req.headers["x-forwarded-host"];
     const rawHost = (Array.isArray(fwdHost) ? fwdHost[0] : fwdHost) || req.hostname;
@@ -72,6 +81,10 @@ async function startServer() {
     }
     if (REDIRECTS_TO_CORP.has(host)) {
       return res.redirect(301, `https://${CANONICAL_CORP}${req.originalUrl}`);
+    }
+    // Redirect pessoa-física-only paths from corp host to main host
+    if (host === CANONICAL_CORP && PF_ONLY_PATHS.has(req.path)) {
+      return res.redirect(301, `https://${CANONICAL_MAIN}${req.originalUrl}`);
     }
     next();
   });
