@@ -4,7 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, User, LogOut, Settings, Shield, ShoppingBag } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useSiteContext } from "@/hooks/useSiteContext";
 import LanguageSelector from "@/components/LanguageSelector";
+import DemoRequestModal from "@/components/corporate/DemoRequestModal";
 
 const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo_ea5770c3.jpeg";
 
@@ -17,23 +19,33 @@ export default function Navbar() {
   const { t } = useLanguage();
   const { user, logout } = useAuth();
   const [location] = useLocation();
+  const site = useSiteContext();
   const [scrolledInternal, setScrolledInternal] = useState(false);
   // Force "scrolled" styling on non-home routes so nav text has proper contrast
   const scrolled = scrolledInternal || isLightBgRoute(location);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [demoOpen, setDemoOpen] = useState(false);
 
-  const navLinks = [
-    { label: t.nav.about, href: "/#sobre" },
-    { label: t.nav.mentoria, href: "/mentoria" },
-    { label: t.nav.diagnostico, href: "/diagnostico" },
-    { label: t.nav.pillars, href: "/#pilares" },
-    { label: t.nav.jefferson, href: "/#jefferson" },
-    { label: t.nav.kit, href: "/#kit" },
-    { label: t.nav.kids, href: "/#kids" },
-    { label: t.nav.faq, href: "/#faq" },
-    { label: t.nav.corporate, href: "/corporate" },
-  ];
+  const navLinks = site === "corp"
+    ? [
+        { label: t.nav.pillars, href: "/#pilares" },
+        { label: t.nav.comparativo, href: "/#comparativo" },
+        { label: t.nav.howItWorks, href: "/#como-funciona" },
+        { label: t.nav.casos, href: "/#casos" },
+        { label: t.nav.crossToMain, href: "https://metodopago.com" },
+      ]
+    : [
+        { label: t.nav.about, href: "/#sobre" },
+        { label: t.nav.mentoria, href: "/mentoria" },
+        { label: t.nav.diagnostico, href: "/diagnostico" },
+        { label: t.nav.pillars, href: "/#pilares" },
+        { label: t.nav.jefferson, href: "/#jefferson" },
+        { label: t.nav.kit, href: "/#kit" },
+        { label: t.nav.kids, href: "/#kids" },
+        { label: t.nav.faq, href: "/#faq" },
+        { label: t.nav.corporate, href: "https://pagocorp.com" },
+      ];
 
   useEffect(() => {
     const handleScroll = () => setScrolledInternal(window.scrollY > 60);
@@ -140,6 +152,17 @@ export default function Navbar() {
                     </>
                   )}
                 </div>
+              ) : site === "corp" ? (
+                <button
+                  onClick={() => setDemoOpen(true)}
+                  className={`font-accent text-[9px] xl:text-[11px] 2xl:text-xs uppercase tracking-[0.1em] xl:tracking-[0.15em] px-3 xl:px-5 py-2.5 whitespace-nowrap shrink-0 transition-colors duration-300 ${
+                    scrolled
+                      ? "bg-navy text-warm-white hover:bg-navy-light"
+                      : "bg-warm-white/20 text-warm-white border border-warm-white/40 hover:bg-warm-white/30"
+                  }`}
+                >
+                  {t.nav.demo}
+                </button>
               ) : (
                 <a
                   href="/#inscricao"
@@ -217,6 +240,13 @@ export default function Navbar() {
                     Sair
                   </button>
                 </>
+              ) : site === "corp" ? (
+                <button
+                  onClick={() => { setMobileOpen(false); setDemoOpen(true); }}
+                  className="font-accent text-sm uppercase tracking-[0.2em] bg-navy text-warm-white px-8 py-4 text-center hover:bg-navy-light transition-colors"
+                >
+                  {t.nav.demo}
+                </button>
               ) : (
                 <a
                   href="/#inscricao"
@@ -230,6 +260,10 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {site === "corp" && (
+        <DemoRequestModal open={demoOpen} onOpenChange={setDemoOpen} />
+      )}
     </>
   );
 }

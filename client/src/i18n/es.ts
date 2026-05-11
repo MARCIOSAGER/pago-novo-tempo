@@ -57,6 +57,11 @@ const es: Translations = {
     mentoria: "La Mentoría",
     diagnostico: "Diagnóstico",
     corporate: "Corporativo",
+    comparativo: "Comparativo",
+    howItWorks: "Cómo Funciona",
+    casos: "Casos",
+    demo: "Solicitar Demo",
+    crossToMain: "Persona Física",
   },
 
   // === HERO ===

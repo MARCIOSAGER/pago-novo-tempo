@@ -58,6 +58,11 @@ const pt = {
     mentoria: "A Mentoria",
     diagnostico: "Diagnóstico",
     corporate: "Corporativo",
+    comparativo: "Comparativo",
+    howItWorks: "Como Funciona",
+    casos: "Casos",
+    demo: "Solicitar Demo",
+    crossToMain: "Pessoa Física",
   },
 
   // === HERO ===

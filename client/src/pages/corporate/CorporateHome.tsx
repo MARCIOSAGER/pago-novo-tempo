@@ -245,7 +245,7 @@ export default function CorporateHome() {
       </section>
 
       {/* ─── 4 PILLARS ─── */}
-      <section className="bg-[#1A2744] py-24 px-6">
+      <section id="pilares" className="bg-[#1A2744] py-24 px-6 scroll-mt-20">
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial="hidden"
@@ -306,7 +306,7 @@ export default function CorporateHome() {
       </section>
 
       {/* ─── COMPARISON TABLE ─── */}
-      <section className="bg-[#0F1B2D] py-24 px-6">
+      <section id="comparativo" className="bg-[#0F1B2D] py-24 px-6 scroll-mt-20">
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial="hidden"
@@ -390,7 +390,7 @@ export default function CorporateHome() {
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section className="bg-[#1A2744] py-24 px-6">
+      <section id="como-funciona" className="bg-[#1A2744] py-24 px-6 scroll-mt-20">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial="hidden"
@@ -449,7 +449,7 @@ export default function CorporateHome() {
       </section>
 
       {/* ─── USE CASES ─── */}
-      <section className="bg-[#0F1B2D] py-24 px-6">
+      <section id="casos" className="bg-[#0F1B2D] py-24 px-6 scroll-mt-20">
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial="hidden"
@@ -505,7 +505,7 @@ export default function CorporateHome() {
       </section>
 
       {/* ─── FINAL CTA ─── */}
-      <section className="bg-gradient-to-b from-[#0F1B2D] to-[#1A2744] py-28 px-6">
+      <section id="contato" className="bg-gradient-to-b from-[#0F1B2D] to-[#1A2744] py-28 px-6 scroll-mt-20">
         <motion.div
           initial="hidden"
           whileInView="visible"

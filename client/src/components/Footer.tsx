@@ -1,19 +1,34 @@
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSiteContext } from "@/hooks/useSiteContext";
 
 const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo_ea5770c3.jpeg";
 
 export default function Footer() {
   const { t } = useLanguage();
+  const site = useSiteContext();
 
-  const navLinks = [
-    { label: t.nav.about, href: "/#sobre" },
-    { label: t.nav.mentoria, href: "/mentoria" },
-    { label: t.nav.pillars, href: "/#pilares" },
-    { label: t.nav.jefferson, href: "/#jefferson" },
-    { label: t.nav.kit, href: "/#kit" },
-    { label: t.nav.faq, href: "/#faq" },
-  ];
+  const navLinks = site === "corp"
+    ? [
+        { label: t.nav.pillars, href: "/#pilares" },
+        { label: t.nav.comparativo, href: "/#comparativo" },
+        { label: t.nav.howItWorks, href: "/#como-funciona" },
+        { label: t.nav.casos, href: "/#casos" },
+        { label: t.nav.demo, href: "/#contato" },
+        { label: t.nav.crossToMain, href: "https://metodopago.com" },
+      ]
+    : [
+        { label: t.nav.about, href: "/#sobre" },
+        { label: t.nav.mentoria, href: "/mentoria" },
+        { label: t.nav.pillars, href: "/#pilares" },
+        { label: t.nav.jefferson, href: "/#jefferson" },
+        { label: t.nav.kit, href: "/#kit" },
+        { label: t.nav.faq, href: "/#faq" },
+        { label: t.nav.corporate, href: "https://pagocorp.com" },
+      ];
+
+  const contactEmail = site === "corp" ? "contato@pagocorp.com" : "contato@metodopago.com";
+  const contactHref = site === "corp" ? "/#contato" : "/#inscricao";
 
   return (
     <footer className="bg-navy py-20">
@@ -87,13 +102,13 @@ export default function Footer() {
             </p>
             <div className="space-y-3">
               <a
-                href="/#inscricao"
+                href={contactHref}
                 className="block font-body text-sm text-warm-white/70 hover:text-warm-white transition-colors duration-300"
               >
-                {t.footer.contactCta}
+                {site === "corp" ? t.nav.demo : t.footer.contactCta}
               </a>
               <p className="font-body text-sm text-warm-white/70">
-                contato@metodopago.com
+                {contactEmail}
               </p>
             </div>
           </div>
