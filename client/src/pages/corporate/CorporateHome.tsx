@@ -327,8 +327,8 @@ export default function CorporateHome() {
             style={{ borderColor: `${GOLD}30` }}
           >
             <img
-              src="/PAGO_Arvore_Corp.png"
-              alt="Árvore P.A.G.O Corp — Princípio, Alinhamento, Governo, Obediência"
+              src="/tree-roots.webp"
+              alt="Árvore com raízes profundas — metáfora do Governo Interior"
               className="w-full h-full object-cover"
             />
           </motion.div>
