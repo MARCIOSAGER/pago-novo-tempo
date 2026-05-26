@@ -13,6 +13,26 @@ const tamanhoToRange: Record<string, EmployeeRange> = {
   t4: "500+",
 };
 
+// Lusófonos primeiro (mercado-alvo), depois principais globais
+const dialCodes: { code: string; flag: string; name: string }[] = [
+  { code: "+55", flag: "🇧🇷", name: "Brasil" },
+  { code: "+351", flag: "🇵🇹", name: "Portugal" },
+  { code: "+244", flag: "🇦🇴", name: "Angola" },
+  { code: "+258", flag: "🇲🇿", name: "Moçambique" },
+  { code: "+238", flag: "🇨🇻", name: "Cabo Verde" },
+  { code: "+245", flag: "🇬🇼", name: "Guiné-Bissau" },
+  { code: "+670", flag: "🇹🇱", name: "Timor-Leste" },
+  { code: "+239", flag: "🇸🇹", name: "São Tomé" },
+  { code: "+1", flag: "🇺🇸", name: "EUA/Canadá" },
+  { code: "+34", flag: "🇪🇸", name: "Espanha" },
+  { code: "+44", flag: "🇬🇧", name: "Reino Unido" },
+  { code: "+33", flag: "🇫🇷", name: "França" },
+  { code: "+49", flag: "🇩🇪", name: "Alemanha" },
+  { code: "+39", flag: "🇮🇹", name: "Itália" },
+  { code: "+52", flag: "🇲🇽", name: "México" },
+  { code: "+54", flag: "🇦🇷", name: "Argentina" },
+];
+
 export default function B2BQualificationForm() {
   const { t } = useLanguage();
   const f = t.corporate.home.qualForm;
@@ -24,6 +44,8 @@ export default function B2BQualificationForm() {
   const [cargoKey, setCargoKey] = useState<"" | "c1" | "c2" | "c3" | "c4">("");
   const [empresa, setEmpresa] = useState("");
   const [email, setEmail] = useState("");
+  const [dialCode, setDialCode] = useState("+55");
+  const [phoneDigits, setPhoneDigits] = useState("");
 
   const mutation = trpc.corporate.requestDemo.useMutation();
   const sent = mutation.isSuccess;
@@ -36,7 +58,8 @@ export default function B2BQualificationForm() {
   };
 
   const canStep1 = tamanhoKey !== "" && desafioKey !== "";
-  const canStep2 = nome.length >= 2 && cargoKey !== "" && empresa.length >= 2 && email.includes("@");
+  const phoneDigitsClean = phoneDigits.replace(/\D/g, "");
+  const canStep2 = nome.length >= 2 && cargoKey !== "" && empresa.length >= 2 && email.includes("@") && phoneDigitsClean.length >= 7;
 
   const handleNext = () => {
     if (canStep1) setStep(2);
@@ -51,7 +74,7 @@ export default function B2BQualificationForm() {
       companyName: empresa,
       contactName: nome,
       email,
-      phone: "Não informado (form B2B)",
+      phone: `${dialCode} ${phoneDigitsClean}`,
       employeeRange,
       message: msg,
     });
@@ -197,6 +220,33 @@ export default function B2BQualificationForm() {
                 onChange={(e) => setEmpresa(e.target.value)}
                 required
               />
+            </div>
+
+            <div>
+              <label className={labelClass}>{f.telefoneLabel}</label>
+              <div className="grid grid-cols-[110px_1fr] gap-2">
+                <select
+                  className={`${inputClass} appearance-none px-2 text-center`}
+                  value={dialCode}
+                  onChange={(e) => setDialCode(e.target.value)}
+                  aria-label={f.paisLabel}
+                >
+                  {dialCodes.map((d) => (
+                    <option key={d.code + d.name} value={d.code}>
+                      {d.flag} {d.code}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="tel"
+                  inputMode="tel"
+                  className={inputClass}
+                  placeholder={f.telefonePlaceholder}
+                  value={phoneDigits}
+                  onChange={(e) => setPhoneDigits(e.target.value)}
+                  required
+                />
+              </div>
             </div>
 
             <div>
