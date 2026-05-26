@@ -188,30 +188,10 @@ export default function CorporateHome() {
           <motion.p
             variants={fadeUp}
             custom={2}
-            className="font-[Montserrat] text-base sm:text-lg text-[#FAFAF8]/70 mb-10 leading-relaxed max-w-2xl"
+            className="font-[Montserrat] text-base sm:text-lg text-[#FAFAF8]/70 leading-relaxed max-w-2xl"
           >
             {c.hero.subtitle}
           </motion.p>
-
-          <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row items-start gap-4">
-            <button
-              onClick={() => scrollToId("proximos-passos")}
-              className="group inline-flex items-center gap-3 font-[Montserrat] font-semibold text-sm uppercase tracking-wider px-8 py-4 rounded-lg transition-colors duration-300"
-              style={{ background: GOLD, color: NAVY }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = GOLD_LIGHT)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = GOLD)}
-            >
-              {c.hero.ctaPrimary}
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button
-              onClick={() => scrollToId("roi")}
-              className="inline-flex items-center gap-2 font-[Montserrat] text-sm uppercase tracking-wider px-8 py-4 rounded-lg border transition-colors duration-300"
-              style={{ borderColor: `${GOLD}55`, color: "#FAFAF8" }}
-            >
-              {c.hero.ctaSecondary}
-            </button>
-          </motion.div>
         </motion.div>
       </section>
 
@@ -712,6 +692,26 @@ export default function CorporateHome() {
               ))}
             </div>
           </div>
+
+          {/* CTA após comparativa */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.6 }}
+            className="flex justify-center mt-16"
+          >
+            <button
+              onClick={() => scrollToId("proximos-passos")}
+              className="btn-shine group inline-flex items-center gap-3 font-[Montserrat] font-semibold text-sm uppercase tracking-wider px-10 py-4 rounded-lg transition-colors duration-300 shadow-lg"
+              style={{ background: GOLD, color: NAVY }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = GOLD_LIGHT)}
+              onMouseLeave={(e) => (e.currentTarget.style.background = GOLD)}
+            >
+              {c.hero.ctaPrimary}
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </motion.div>
         </div>
       </section>
 
