@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 import {
   Shield, Users, BarChart3, Target, Building2,
   ArrowRight, CheckCircle2,
-  LogIn, AlertTriangle, TrendingDown, DollarSign,
+  LogIn, AlertTriangle, TrendingDown, TrendingUp, DollarSign,
   Quote,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -188,10 +188,34 @@ export default function CorporateHome() {
           <motion.p
             variants={fadeUp}
             custom={2}
-            className="font-[Montserrat] text-base sm:text-lg text-[#FAFAF8]/70 leading-relaxed max-w-2xl"
+            className="font-[Montserrat] text-base sm:text-lg text-[#FAFAF8]/70 mb-10 leading-relaxed max-w-2xl"
           >
             {c.hero.subtitle}
           </motion.p>
+
+          <motion.div variants={fadeUp} custom={3}>
+            <button
+              onClick={() => scrollToId("roi")}
+              className="btn-shine btn-shine-delay group inline-flex items-center gap-3 font-[Montserrat] text-sm uppercase tracking-[0.2em] px-8 py-4 rounded-lg border backdrop-blur-sm transition-colors duration-300"
+              style={{
+                borderColor: `${GOLD}60`,
+                color: GOLD_LIGHT,
+                background: `${GOLD}0D`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = `${GOLD}1F`;
+                e.currentTarget.style.borderColor = GOLD;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = `${GOLD}0D`;
+                e.currentTarget.style.borderColor = `${GOLD}60`;
+              }}
+            >
+              <TrendingUp className="w-4 h-4" />
+              {c.hero.ctaSecondary}
+              <ArrowRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+            </button>
+          </motion.div>
         </motion.div>
       </section>
 
