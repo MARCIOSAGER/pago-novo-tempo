@@ -317,38 +317,20 @@ export default function CorporateHome() {
             </motion.p>
           </motion.div>
 
-          {/* Tree metaphor — abstract SVG */}
+          {/* Tree metaphor — Árvore P.A.G.O Corp */}
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.7 }}
-            className="relative aspect-square max-w-md mx-auto rounded-2xl overflow-hidden border flex items-center justify-center"
-            style={{ borderColor: `${GOLD}30`, background: `${NAVY}` }}
+            className="relative aspect-square max-w-md mx-auto rounded-2xl overflow-hidden border"
+            style={{ borderColor: `${GOLD}30` }}
           >
-            <StarField count={40} color={`${GOLD}88`} />
-            <svg viewBox="0 0 240 240" className="relative z-10 w-3/4 h-3/4">
-              {/* Tree trunk */}
-              <path d="M120 40 L120 130" stroke={GOLD} strokeWidth="3" fill="none" />
-              {/* Branches */}
-              <path d="M120 70 Q90 60 70 40" stroke={GOLD} strokeWidth="2" fill="none" opacity="0.7" />
-              <path d="M120 70 Q150 60 170 40" stroke={GOLD} strokeWidth="2" fill="none" opacity="0.7" />
-              <path d="M120 90 Q95 85 80 70" stroke={GOLD} strokeWidth="1.5" fill="none" opacity="0.5" />
-              <path d="M120 90 Q145 85 160 70" stroke={GOLD} strokeWidth="1.5" fill="none" opacity="0.5" />
-              {/* Leaves cluster */}
-              <circle cx="120" cy="50" r="35" fill={GOLD} opacity="0.08" />
-              <circle cx="120" cy="50" r="22" fill={GOLD} opacity="0.12" />
-              {/* Ground line */}
-              <line x1="40" y1="130" x2="200" y2="130" stroke={GOLD} strokeWidth="0.5" opacity="0.3" strokeDasharray="2 4" />
-              {/* Roots */}
-              <path d="M120 130 Q100 160 80 200" stroke={GOLD} strokeWidth="2.5" fill="none" />
-              <path d="M120 130 Q140 160 160 200" stroke={GOLD} strokeWidth="2.5" fill="none" />
-              <path d="M120 130 Q120 170 120 210" stroke={GOLD} strokeWidth="2.5" fill="none" />
-              <path d="M100 150 Q85 175 65 195" stroke={GOLD} strokeWidth="1.5" fill="none" opacity="0.7" />
-              <path d="M140 150 Q155 175 175 195" stroke={GOLD} strokeWidth="1.5" fill="none" opacity="0.7" />
-              <path d="M90 165 Q70 185 50 195" stroke={GOLD} strokeWidth="1" fill="none" opacity="0.5" />
-              <path d="M150 165 Q170 185 190 195" stroke={GOLD} strokeWidth="1" fill="none" opacity="0.5" />
-            </svg>
+            <img
+              src="/PAGO_Arvore_Corp.png"
+              alt="Árvore P.A.G.O Corp — Princípio, Alinhamento, Governo, Obediência"
+              className="w-full h-full object-cover"
+            />
           </motion.div>
         </div>
       </section>
