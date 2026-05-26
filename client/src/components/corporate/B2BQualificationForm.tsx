@@ -51,7 +51,7 @@ export default function B2BQualificationForm() {
       companyName: empresa,
       contactName: nome,
       email,
-      phone: "n/a",
+      phone: "Não informado (form B2B)",
       employeeRange,
       message: msg,
     });
