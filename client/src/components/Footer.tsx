@@ -10,12 +10,12 @@ export default function Footer() {
 
   const navLinks = site === "corp"
     ? [
-        { label: t.nav.pillars, href: "/#pilares" },
-        { label: t.nav.comparativo, href: "/#comparativo" },
+        { label: t.nav.problema, href: "/#problema" },
+        { label: t.nav.metodo, href: "/#metodo" },
+        { label: t.nav.diagnostico, href: "/#diagnostico" },
+        { label: t.nav.roi, href: "/#roi" },
         { label: t.nav.howItWorks, href: "/#como-funciona" },
-        { label: t.nav.casos, href: "/#casos" },
-        { label: t.nav.demo, href: "/#contato" },
-        { label: t.nav.crossToMain, href: "https://metodopago.com" },
+        { label: t.nav.demo, href: "/#proximos-passos" },
       ]
     : [
         { label: t.nav.about, href: "/#sobre" },
@@ -27,7 +27,7 @@ export default function Footer() {
       ];
 
   const contactEmail = site === "corp" ? "contato@pagocorp.com" : "contato@metodopago.com";
-  const contactHref = site === "corp" ? "/#contato" : "/#inscricao";
+  const contactHref = site === "corp" ? "/#proximos-passos" : "/#inscricao";
 
   return (
     <footer className="bg-navy py-20">

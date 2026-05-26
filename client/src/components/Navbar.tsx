@@ -6,7 +6,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useSiteContext } from "@/hooks/useSiteContext";
 import LanguageSelector from "@/components/LanguageSelector";
-import DemoRequestModal from "@/components/corporate/DemoRequestModal";
 
 const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo_ea5770c3.jpeg";
 
@@ -25,15 +24,14 @@ export default function Navbar() {
   const scrolled = scrolledInternal || isLightBgRoute(location);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [demoOpen, setDemoOpen] = useState(false);
 
   const navLinks = site === "corp"
     ? [
-        { label: t.nav.pillars, href: "/#pilares" },
-        { label: t.nav.comparativo, href: "/#comparativo" },
+        { label: t.nav.problema, href: "/#problema" },
+        { label: t.nav.metodo, href: "/#metodo" },
+        { label: t.nav.diagnostico, href: "/#diagnostico" },
+        { label: t.nav.roi, href: "/#roi" },
         { label: t.nav.howItWorks, href: "/#como-funciona" },
-        { label: t.nav.casos, href: "/#casos" },
-        { label: t.nav.crossToMain, href: "https://metodopago.com" },
       ]
     : [
         { label: t.nav.about, href: "/#sobre" },
@@ -152,8 +150,8 @@ export default function Navbar() {
                   )}
                 </div>
               ) : site === "corp" ? (
-                <button
-                  onClick={() => setDemoOpen(true)}
+                <a
+                  href="/#proximos-passos"
                   className={`font-accent text-[9px] xl:text-[11px] 2xl:text-xs uppercase tracking-[0.1em] xl:tracking-[0.15em] px-3 xl:px-5 py-2.5 whitespace-nowrap shrink-0 transition-colors duration-300 ${
                     scrolled
                       ? "bg-navy text-warm-white hover:bg-navy-light"
@@ -161,7 +159,7 @@ export default function Navbar() {
                   }`}
                 >
                   {t.nav.demo}
-                </button>
+                </a>
               ) : (
                 <a
                   href="/#inscricao"
@@ -240,12 +238,13 @@ export default function Navbar() {
                   </button>
                 </>
               ) : site === "corp" ? (
-                <button
-                  onClick={() => { setMobileOpen(false); setDemoOpen(true); }}
+                <a
+                  href="/#proximos-passos"
+                  onClick={() => setMobileOpen(false)}
                   className="font-accent text-sm uppercase tracking-[0.2em] bg-navy text-warm-white px-8 py-4 text-center hover:bg-navy-light transition-colors"
                 >
                   {t.nav.demo}
-                </button>
+                </a>
               ) : (
                 <a
                   href="/#inscricao"
@@ -260,9 +259,6 @@ export default function Navbar() {
         )}
       </AnimatePresence>
 
-      {site === "corp" && (
-        <DemoRequestModal open={demoOpen} onOpenChange={setDemoOpen} />
-      )}
     </>
   );
 }

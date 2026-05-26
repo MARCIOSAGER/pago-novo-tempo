@@ -2,152 +2,77 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
 import {
-  Shield,
-  Users,
-  BarChart3,
-  Target,
-  Briefcase,
-  GraduationCap,
-  Building2,
-  ArrowRight,
-  ChevronRight,
-  Sparkles,
-  CheckCircle2,
-  LogIn,
+  Shield, Users, BarChart3, Target, Building2,
+  ArrowRight, CheckCircle2,
+  LogIn, AlertTriangle, TrendingDown, DollarSign,
+  Quote,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DemoRequestModal from "@/components/corporate/DemoRequestModal";
+import CustoInvisivelCalculator from "@/components/corporate/CustoInvisivelCalculator";
+import B2BQualificationForm from "@/components/corporate/B2BQualificationForm";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, delay: i * 0.1 },
+    transition: { duration: 0.6, delay: i * 0.08 },
   }),
 };
 
 const stagger = {
-  visible: { transition: { staggerChildren: 0.12 } },
+  visible: { transition: { staggerChildren: 0.1 } },
 };
 
-const pillars = [
-  {
-    letter: "P",
-    name: "Princípio",
-    desc: "Base de confiabilidade e consistência ética",
-    icon: Shield,
-  },
-  {
-    letter: "A",
-    name: "Alinhamento",
-    desc: "Aderência estratégica, relacional e interna",
-    icon: Target,
-  },
-  {
-    letter: "G",
-    name: "Governo",
-    desc: "Capacidade de gestão multidimensional",
-    icon: BarChart3,
-  },
-  {
-    letter: "O",
-    name: "Obediência",
-    desc: "Execução, disciplina e geração de resultados",
-    icon: Users,
-  },
-];
+const NAVY = "#0B1120";
+const NAVY_2 = "#0F1B2D";
+const GOLD = "#C9A84C";
+const GOLD_LIGHT = "#D4B86A";
 
-const comparisonTools = ["DISC", "MBTI", "CliftonStrengths", "P.A.G.O."];
+function scrollToId(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
-const comparisonRows: { label: string; values: string[] }[] = [
-  {
-    label: "Foco principal",
-    values: [
-      "Comportamento observável",
-      "Preferências cognitivas",
-      "Talentos naturais",
-      "Identidade integral da pessoa",
-    ],
-  },
-  {
-    label: "O que mede",
-    values: [
-      "Estilo de comunicação",
-      "Tipo psicológico",
-      "Pontos fortes",
-      "Caráter, alinhamento, gestão e execução",
-    ],
-  },
-  {
-    label: "Granularidade",
-    values: ["4 perfis", "16 tipos", "34 temas", "4 pilares × 11 indicadores"],
-  },
-  {
-    label: "Aplicação primária",
-    values: [
-      "Comunicação em equipa",
-      "Autoconhecimento",
-      "Desenvolvimento individual",
-      "Diagnóstico organizacional completo",
-    ],
-  },
-];
-
-const steps = [
-  {
-    num: "1",
-    title: "Solicite uma Demonstração",
-    desc: "Preencha o formulário com os dados da sua empresa. A nossa equipa irá analisar e entrar em contacto.",
-  },
-  {
-    num: "2",
-    title: "Aprovação e Convite",
-    desc: "Após a aprovação, você receberá um email com um convite para criar a sua conta e aceder ao painel da organização.",
-  },
-  {
-    num: "3",
-    title: "Configure a Sua Equipa",
-    desc: "Como administrador, convide os seus colaboradores por email. Cada um receberá um link para criar a conta e aceitar o convite.",
-  },
-  {
-    num: "4",
-    title: "Diagnóstico P.A.G.O.",
-    desc: "44 perguntas estratégicas respondidas em 15–20 minutos. Simples para o colaborador, profundo para a organização.",
-  },
-  {
-    num: "5",
-    title: "Resultados e Desenvolvimento",
-    desc: "Perfil individual com radar multidimensional + dashboard gerencial com visão completa da equipa e recomendações por departamento.",
-  },
-];
-
-const useCases = [
-  {
-    icon: Users,
-    title: "Diagnóstico de Equipas",
-    desc: "Mapeie forças e lacunas de cada equipa com precisão multidimensional.",
-  },
-  {
-    icon: Briefcase,
-    title: "Recrutamento Estratégico",
-    desc: "Coloque a pessoa certa no lugar certo — pelo que ela faz e por quem ela é.",
-  },
-  {
-    icon: GraduationCap,
-    title: "Formação de Líderes",
-    desc: "Identifique perfis de liderança e desenvolva competências com base em dados reais.",
-  },
-  {
-    icon: Building2,
-    title: "Cultura Organizacional",
-    desc: "Alinhe valores pessoais com valores da empresa para construir cultura autêntica.",
-  },
-];
+function StarField({ count = 80, color = GOLD }: { count?: number; color?: string }) {
+  const stars = useMemo(
+    () =>
+      Array.from({ length: count }, () => ({
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        size: 1 + Math.random() * 2.2,
+        delay: Math.random() * 4,
+        duration: 2 + Math.random() * 4,
+        opacity: 0.25 + Math.random() * 0.5,
+      })),
+    [count]
+  );
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {stars.map((s, i) => (
+        <span
+          key={i}
+          className="absolute rounded-full animate-pulse"
+          style={{
+            top: `${s.top}%`,
+            left: `${s.left}%`,
+            width: `${s.size}px`,
+            height: `${s.size}px`,
+            backgroundColor: color,
+            opacity: s.opacity,
+            animationDelay: `${s.delay}s`,
+            animationDuration: `${s.duration}s`,
+            boxShadow: s.size > 2 ? `0 0 ${s.size * 2}px ${color}` : undefined,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function CorporateHome() {
   const { user, loading: authLoading } = useAuth();
@@ -159,7 +84,6 @@ export default function CorporateHome() {
     enabled: !!user,
   });
 
-  // If user has exactly one org, redirect directly
   if (orgs && orgs.length === 1) {
     setLocation(`/corporate/${orgs[0].orgSlug}`);
     return null;
@@ -167,86 +91,133 @@ export default function CorporateHome() {
 
   const c = t.corporate.home;
 
+  const pillars = [
+    { ...c.metodo.p, icon: Shield },
+    { ...c.metodo.a, icon: Target },
+    { ...c.metodo.g, icon: BarChart3 },
+    { ...c.metodo.o, icon: Users },
+  ];
+
+  const problemaStats = [
+    { value: c.problema.stat1Value, label: c.problema.stat1Label, icon: Users },
+    { value: c.problema.stat2Value, label: c.problema.stat2Label, icon: TrendingDown },
+    { value: c.problema.stat3Value, label: c.problema.stat3Label, icon: AlertTriangle },
+    { value: c.problema.stat4Value, label: c.problema.stat4Label, icon: DollarSign },
+  ];
+
+  const roiCards = [
+    { title: c.roi.card1Title, problem: c.roi.card1Problem, impact: c.roi.card1Impact, saving: c.roi.card1Saving },
+    { title: c.roi.card2Title, problem: c.roi.card2Problem, impact: c.roi.card2Impact, saving: c.roi.card2Saving },
+    { title: c.roi.card3Title, problem: c.roi.card3Problem, impact: c.roi.card3Impact, saving: c.roi.card3Saving },
+    { title: c.roi.card4Title, problem: c.roi.card4Problem, impact: c.roi.card4Impact, saving: c.roi.card4Saving },
+  ];
+
+  const implSteps = [
+    { num: c.implementacao.step1Num, title: c.implementacao.step1Title, period: c.implementacao.step1Period, desc: c.implementacao.step1Desc },
+    { num: c.implementacao.step2Num, title: c.implementacao.step2Title, period: c.implementacao.step2Period, desc: c.implementacao.step2Desc },
+    { num: c.implementacao.step3Num, title: c.implementacao.step3Title, period: c.implementacao.step3Period, desc: c.implementacao.step3Desc },
+    { num: c.implementacao.step4Num, title: c.implementacao.step4Title, period: c.implementacao.step4Period, desc: c.implementacao.step4Desc },
+  ];
+
+  const proximosSteps = [
+    { num: "1", title: c.proximosPassos.step1Title, desc: c.proximosPassos.step1Desc },
+    { num: "2", title: c.proximosPassos.step2Title, desc: c.proximosPassos.step2Desc },
+    { num: "3", title: c.proximosPassos.step3Title, desc: c.proximosPassos.step3Desc },
+    { num: "4", title: c.proximosPassos.step4Title, desc: c.proximosPassos.step4Desc },
+  ];
+
+  const levels = [
+    { name: c.diagnostico.levelSolidName, range: c.diagnostico.levelSolidRange, desc: c.diagnostico.levelSolidDesc, color: "#2E8B6A" },
+    { name: c.diagnostico.levelBuildingName, range: c.diagnostico.levelBuildingRange, desc: c.diagnostico.levelBuildingDesc, color: "#C9A84C" },
+    { name: c.diagnostico.levelFragileName, range: c.diagnostico.levelFragileRange, desc: c.diagnostico.levelFragileDesc, color: "#E08538" },
+    { name: c.diagnostico.levelCollapseName, range: c.diagnostico.levelCollapseRange, desc: c.diagnostico.levelCollapseDesc, color: "#C03A3A" },
+  ];
+
+  const tools = ["DISC", "MBTI", "CliftonStrengths", "P.A.G.O."];
+  const compRows = [
+    { label: c.comparativo.rowAFocus, values: [c.comparativo.rowAFocusDisc, c.comparativo.rowAFocusMbti, c.comparativo.rowAFocusCs, c.comparativo.rowAFocusPago] },
+    { label: c.comparativo.rowAMede, values: [c.comparativo.rowAMedeDisc, c.comparativo.rowAMedeMbti, c.comparativo.rowAMedeCs, c.comparativo.rowAMedePago] },
+    { label: c.comparativo.rowAGran, values: [c.comparativo.rowAGranDisc, c.comparativo.rowAGranMbti, c.comparativo.rowAGranCs, c.comparativo.rowAGranPago] },
+    { label: c.comparativo.rowAAplic, values: [c.comparativo.rowAAplicDisc, c.comparativo.rowAAplicMbti, c.comparativo.rowAAplicCs, c.comparativo.rowAAplicPago] },
+  ];
+  const climaRows = [
+    [c.comparativo.rowB1Trad, c.comparativo.rowB1Pago],
+    [c.comparativo.rowB2Trad, c.comparativo.rowB2Pago],
+    [c.comparativo.rowB3Trad, c.comparativo.rowB3Pago],
+    [c.comparativo.rowB4Trad, c.comparativo.rowB4Pago],
+    [c.comparativo.rowB5Trad, c.comparativo.rowB5Pago],
+    [c.comparativo.rowB6Trad, c.comparativo.rowB6Pago],
+  ];
+
+  const credBullets = [c.credibilidade.bullet1, c.credibilidade.bullet2, c.credibilidade.bullet3, c.credibilidade.bullet4];
+
   return (
-    <>
+    <div style={{ background: NAVY, color: "#FAFAF8" }}>
       <Navbar />
 
       {/* ─── HERO ─── */}
-      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden">
-        {/* Hero background image */}
-        <img
-          src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&h=1080&fit=crop&crop=center&q=80"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ filter: "brightness(0.3) saturate(0.4)" }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0F1B2D]/50 via-[#0F1B2D]/70 to-[#1A2744]" />
+      <section className="relative min-h-[92vh] flex items-center overflow-hidden pt-20" style={{ background: NAVY }}>
+        <StarField count={120} />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0B1120]" />
 
         <motion.div
           initial="hidden"
           animate="visible"
           variants={stagger}
-          className="relative z-10 max-w-3xl mx-auto px-6 text-center"
+          className="relative z-10 max-w-4xl mx-auto px-6"
         >
-          <motion.div variants={fadeUp} custom={0} className="mb-6">
-            <span className="inline-flex items-center gap-2 text-[#B8A88A] font-[Montserrat] text-xs uppercase tracking-[0.25em] border border-[#B8A88A]/20 rounded-full px-4 py-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
-              Performance Humana Organizacional
-            </span>
-          </motion.div>
+          <motion.p
+            variants={fadeUp}
+            custom={0}
+            className="font-[Montserrat] text-xs uppercase tracking-[0.3em] mb-6"
+            style={{ color: GOLD }}
+          >
+            {c.hero.eyebrow}
+          </motion.p>
 
           <motion.h1
             variants={fadeUp}
             custom={1}
-            className="font-[Cormorant] text-5xl sm:text-6xl md:text-7xl font-semibold text-[#D4C8A8] leading-[1.1] mb-6"
+            className="font-[Cormorant] text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.05] mb-7"
           >
-            P.A.G.O.
-            <br />
-            <span className="text-[#FAFAF8]">Corporativo</span>
+            <span className="text-[#FAFAF8]">{c.hero.titleLine1}</span>{" "}
+            <span style={{ color: GOLD }}>{c.hero.titleLine2A}</span>{" "}
+            <span className="text-[#FAFAF8]">{c.hero.titleLine2B}</span>
           </motion.h1>
 
           <motion.p
             variants={fadeUp}
             custom={2}
-            className="font-[Montserrat] text-lg sm:text-xl text-[#FAFAF8]/70 mb-8 leading-relaxed"
+            className="font-[Montserrat] text-base sm:text-lg text-[#FAFAF8]/70 mb-10 leading-relaxed max-w-2xl"
           >
-            Performance Humana Baseada em Fundamentos
+            {c.hero.subtitle}
           </motion.p>
 
-          <motion.blockquote
-            variants={fadeUp}
-            custom={3}
-            className="font-[Cormorant] italic text-lg sm:text-xl text-[#FAFAF8]/50 max-w-xl mx-auto mb-12 leading-relaxed"
-          >
-            "Colocamos a pessoa certa no lugar certo — não apenas pelo que ela faz,
-            mas por quem ela é."
-          </motion.blockquote>
-
-          <motion.div variants={fadeUp} custom={4} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row items-start gap-4">
             <button
-              onClick={() => setDemoOpen(true)}
-              className="group inline-flex items-center gap-3 bg-[#B8A88A] text-[#0F1B2D] font-[Montserrat] font-semibold text-sm uppercase tracking-wider px-8 py-4 rounded-lg hover:bg-[#D4C8A8] transition-colors duration-300"
+              onClick={() => scrollToId("proximos-passos")}
+              className="group inline-flex items-center gap-3 font-[Montserrat] font-semibold text-sm uppercase tracking-wider px-8 py-4 rounded-lg transition-colors duration-300"
+              style={{ background: GOLD, color: NAVY }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = GOLD_LIGHT)}
+              onMouseLeave={(e) => (e.currentTarget.style.background = GOLD)}
             >
-              Solicitar Demonstração
+              {c.hero.ctaPrimary}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
-            <a
-              href="/login?returnTo=%2Fcorporate"
-              className="inline-flex items-center gap-2 text-[#FAFAF8]/50 font-[Montserrat] text-sm hover:text-[#B8A88A] transition-colors"
+            <button
+              onClick={() => scrollToId("roi")}
+              className="inline-flex items-center gap-2 font-[Montserrat] text-sm uppercase tracking-wider px-8 py-4 rounded-lg border transition-colors duration-300"
+              style={{ borderColor: `${GOLD}55`, color: "#FAFAF8" }}
             >
-              <LogIn className="w-4 h-4" />
-              Já tem convite? Acessar
-            </a>
+              {c.hero.ctaSecondary}
+            </button>
           </motion.div>
         </motion.div>
-
-        {/* bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#1A2744] to-transparent" />
       </section>
 
-      {/* ─── 4 PILLARS ─── */}
-      <section id="pilares" className="bg-[#1A2744] py-24 px-6 scroll-mt-20">
-        <div className="max-w-5xl mx-auto">
+      {/* ─── PROBLEMA ─── */}
+      <section id="problema" className="relative py-24 lg:py-32 scroll-mt-20" style={{ background: NAVY }}>
+        <div className="max-w-6xl mx-auto px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -254,20 +225,153 @@ export default function CorporateHome() {
             variants={stagger}
             className="text-center mb-16"
           >
-            <motion.p
-              variants={fadeUp}
-              custom={0}
-              className="font-[Montserrat] text-xs uppercase tracking-[0.25em] text-[#B8A88A] mb-3"
-            >
-              Metodologia
+            <motion.p variants={fadeUp} custom={0} className="font-[Montserrat] text-xs uppercase tracking-[0.3em] mb-4" style={{ color: GOLD }}>
+              {c.problema.eyebrow}
             </motion.p>
-            <motion.h2
-              variants={fadeUp}
-              custom={1}
-              className="font-[Cormorant] text-3xl sm:text-4xl font-semibold text-[#FAFAF8]"
-            >
-              Os 4 Pilares da Performance Humana
+            <motion.h2 variants={fadeUp} custom={1} className="font-[Cormorant] text-3xl sm:text-4xl md:text-5xl font-semibold leading-tight max-w-3xl mx-auto mb-6">
+              {c.problema.titleA} <span style={{ color: GOLD }} className="italic">{c.problema.titleHighlight}</span> {c.problema.titleB}
             </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="font-[Montserrat] text-base text-[#FAFAF8]/65 max-w-2xl mx-auto leading-relaxed">
+              {c.problema.lead}
+            </motion.p>
+          </motion.div>
+
+          {/* Stats grid */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            variants={stagger}
+            className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-14"
+          >
+            {problemaStats.map((s, i) => {
+              const Icon = s.icon;
+              return (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  custom={i}
+                  className="rounded-xl p-6 border text-center"
+                  style={{ background: `${NAVY_2}80`, borderColor: `${GOLD}25` }}
+                >
+                  <Icon className="w-5 h-5 mx-auto mb-4" style={{ color: `${GOLD}99` }} />
+                  <p className="font-[Cormorant] text-4xl font-bold mb-2" style={{ color: GOLD }}>
+                    {s.value}
+                  </p>
+                  <p className="font-[Montserrat] text-xs text-[#FAFAF8]/55 leading-relaxed">
+                    {s.label}
+                  </p>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+
+          {/* Example box */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.5 }}
+            className="max-w-2xl mx-auto rounded-2xl p-8 sm:p-10 border text-center"
+            style={{ background: `${NAVY_2}90`, borderColor: `${GOLD}40` }}
+          >
+            <p className="font-[Montserrat] text-sm text-[#FAFAF8]/70 mb-4">
+              {c.problema.exampleTitle}
+            </p>
+            <p className="font-[Cormorant] text-4xl sm:text-5xl font-bold mb-3" style={{ color: GOLD }}>
+              {c.problema.exampleValue}
+            </p>
+            <p className="font-[Montserrat] text-sm text-[#FAFAF8]/60">
+              {c.problema.exampleSuffix}
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── CAUSA ─── */}
+      <section id="causa" className="relative py-24 lg:py-32 scroll-mt-20 overflow-hidden" style={{ background: NAVY_2 }}>
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            variants={stagger}
+          >
+            <motion.p variants={fadeUp} custom={0} className="font-[Montserrat] text-xs uppercase tracking-[0.3em] mb-4" style={{ color: GOLD }}>
+              {c.causa.eyebrow}
+            </motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="font-[Cormorant] text-3xl sm:text-4xl md:text-5xl font-semibold leading-tight mb-6">
+              {c.causa.title1}{" "}
+              <span style={{ color: GOLD }} className="italic">{c.causa.title2}</span>
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="font-[Montserrat] text-base text-[#FAFAF8]/70 mb-5 leading-relaxed">
+              {c.causa.p1}
+            </motion.p>
+            <motion.p variants={fadeUp} custom={3} className="font-[Montserrat] text-base text-[#FAFAF8]/80 mb-5 leading-relaxed">
+              {c.causa.p2Pre}{" "}
+              <span style={{ color: GOLD }} className="font-semibold">{c.causa.p2Highlight}</span>{" "}
+              {c.causa.p2Post}
+            </motion.p>
+            <motion.p variants={fadeUp} custom={4} className="font-[Montserrat] text-sm text-[#FAFAF8]/55 leading-relaxed">
+              {c.causa.p3}
+            </motion.p>
+          </motion.div>
+
+          {/* Tree metaphor — abstract SVG */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.7 }}
+            className="relative aspect-square max-w-md mx-auto rounded-2xl overflow-hidden border flex items-center justify-center"
+            style={{ borderColor: `${GOLD}30`, background: `${NAVY}` }}
+          >
+            <StarField count={40} color={`${GOLD}88`} />
+            <svg viewBox="0 0 240 240" className="relative z-10 w-3/4 h-3/4">
+              {/* Tree trunk */}
+              <path d="M120 40 L120 130" stroke={GOLD} strokeWidth="3" fill="none" />
+              {/* Branches */}
+              <path d="M120 70 Q90 60 70 40" stroke={GOLD} strokeWidth="2" fill="none" opacity="0.7" />
+              <path d="M120 70 Q150 60 170 40" stroke={GOLD} strokeWidth="2" fill="none" opacity="0.7" />
+              <path d="M120 90 Q95 85 80 70" stroke={GOLD} strokeWidth="1.5" fill="none" opacity="0.5" />
+              <path d="M120 90 Q145 85 160 70" stroke={GOLD} strokeWidth="1.5" fill="none" opacity="0.5" />
+              {/* Leaves cluster */}
+              <circle cx="120" cy="50" r="35" fill={GOLD} opacity="0.08" />
+              <circle cx="120" cy="50" r="22" fill={GOLD} opacity="0.12" />
+              {/* Ground line */}
+              <line x1="40" y1="130" x2="200" y2="130" stroke={GOLD} strokeWidth="0.5" opacity="0.3" strokeDasharray="2 4" />
+              {/* Roots */}
+              <path d="M120 130 Q100 160 80 200" stroke={GOLD} strokeWidth="2.5" fill="none" />
+              <path d="M120 130 Q140 160 160 200" stroke={GOLD} strokeWidth="2.5" fill="none" />
+              <path d="M120 130 Q120 170 120 210" stroke={GOLD} strokeWidth="2.5" fill="none" />
+              <path d="M100 150 Q85 175 65 195" stroke={GOLD} strokeWidth="1.5" fill="none" opacity="0.7" />
+              <path d="M140 150 Q155 175 175 195" stroke={GOLD} strokeWidth="1.5" fill="none" opacity="0.7" />
+              <path d="M90 165 Q70 185 50 195" stroke={GOLD} strokeWidth="1" fill="none" opacity="0.5" />
+              <path d="M150 165 Q170 185 190 195" stroke={GOLD} strokeWidth="1" fill="none" opacity="0.5" />
+            </svg>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── METODOLOGIA / 4 PILLARS ─── */}
+      <section id="metodo" className="relative py-24 lg:py-32 scroll-mt-20" style={{ background: NAVY }}>
+        <div className="max-w-6xl mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
+            className="text-center mb-14"
+          >
+            <motion.p variants={fadeUp} custom={0} className="font-[Montserrat] text-xs uppercase tracking-[0.3em] mb-4" style={{ color: GOLD }}>
+              {c.metodo.eyebrow}
+            </motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="font-[Cormorant] text-3xl sm:text-4xl md:text-5xl font-semibold mb-4 max-w-3xl mx-auto">
+              {c.metodo.title}
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="font-[Montserrat] text-sm text-[#FAFAF8]/60 max-w-2xl mx-auto">
+              {c.metodo.subtitle}
+            </motion.p>
           </motion.div>
 
           <motion.div
@@ -275,7 +379,7 @@ export default function CorporateHome() {
             whileInView="visible"
             viewport={{ once: true, margin: "-60px" }}
             variants={stagger}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
           >
             {pillars.map((p, i) => {
               const Icon = p.icon;
@@ -284,20 +388,29 @@ export default function CorporateHome() {
                   key={p.letter}
                   variants={fadeUp}
                   custom={i}
-                  className="group relative bg-[#0F1B2D]/60 border border-[#B8A88A]/10 rounded-xl p-8 hover:border-[#B8A88A]/25 transition-colors duration-300"
+                  className="group relative rounded-xl p-7 border transition-colors duration-300"
+                  style={{ background: `${NAVY_2}80`, borderColor: `${GOLD}20` }}
                 >
-                  <div className="flex items-center gap-3 mb-5">
-                    <span className="font-[Cormorant] text-4xl font-bold text-[#D4C8A8]">
+                  <div className="flex items-start justify-between mb-5">
+                    <span className="font-[Cormorant] text-5xl font-bold" style={{ color: GOLD }}>
                       {p.letter}
                     </span>
-                    <Icon className="w-5 h-5 text-[#B8A88A]/50" />
+                    <Icon className="w-5 h-5 mt-2" style={{ color: `${GOLD}66` }} />
                   </div>
-                  <h3 className="font-[Cormorant] text-xl font-semibold text-[#FAFAF8] mb-2">
+                  <h3 className="font-[Cormorant] text-2xl font-semibold text-[#FAFAF8] mb-1">
                     {p.name}
                   </h3>
-                  <p className="font-[Montserrat] text-sm text-[#FAFAF8]/50 leading-relaxed">
+                  <p className="font-[Montserrat] text-[10px] uppercase tracking-[0.18em] mb-4" style={{ color: GOLD }}>
+                    {p.slogan}
+                  </p>
+                  <p className="font-[Montserrat] text-sm text-[#FAFAF8]/60 leading-relaxed mb-4">
                     {p.desc}
                   </p>
+                  <div className="pt-4 border-t" style={{ borderColor: `${GOLD}15` }}>
+                    <p className="font-[Montserrat] text-[11px] text-[#FAFAF8]/45 italic leading-relaxed">
+                      {p.sub}
+                    </p>
+                  </div>
                 </motion.div>
               );
             })}
@@ -305,246 +418,449 @@ export default function CorporateHome() {
         </div>
       </section>
 
-      {/* ─── COMPARISON TABLE ─── */}
-      <section id="comparativo" className="bg-[#0F1B2D] py-24 px-6 scroll-mt-20">
-        <div className="max-w-5xl mx-auto">
+      {/* ─── DIAGNÓSTICO / FERRAMENTA ─── */}
+      <section id="diagnostico" className="relative py-24 lg:py-32 scroll-mt-20" style={{ background: NAVY_2 }}>
+        <div className="max-w-6xl mx-auto px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
             variants={stagger}
-            className="text-center mb-16"
+            className="text-center mb-14"
           >
-            <motion.p
-              variants={fadeUp}
-              custom={0}
-              className="font-[Montserrat] text-xs uppercase tracking-[0.25em] text-[#B8A88A] mb-3"
-            >
-              Comparativo
+            <motion.p variants={fadeUp} custom={0} className="font-[Montserrat] text-xs uppercase tracking-[0.3em] mb-4" style={{ color: GOLD }}>
+              {c.diagnostico.eyebrow}
             </motion.p>
-            <motion.h2
-              variants={fadeUp}
-              custom={1}
-              className="font-[Cormorant] text-3xl sm:text-4xl font-semibold text-[#FAFAF8]"
-            >
-              Por que P.A.G.O.?
+            <motion.h2 variants={fadeUp} custom={1} className="font-[Cormorant] text-3xl sm:text-4xl md:text-5xl font-semibold mb-5">
+              {c.diagnostico.title}
             </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="font-[Montserrat] text-base text-[#FAFAF8]/65 max-w-2xl mx-auto leading-relaxed">
+              {c.diagnostico.subtitle}
+            </motion.p>
+          </motion.div>
+
+          {/* Features pills */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-wrap justify-center gap-3 mb-14"
+          >
+            {[c.diagnostico.feat1, c.diagnostico.feat2, c.diagnostico.feat3, c.diagnostico.feat4].map((f) => (
+              <span
+                key={f}
+                className="inline-flex items-center gap-2 font-[Montserrat] text-xs sm:text-sm text-[#FAFAF8]/80 px-4 py-2 rounded-full border"
+                style={{ borderColor: `${GOLD}30`, background: `${NAVY}80` }}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" style={{ color: GOLD }} />
+                {f}
+              </span>
+            ))}
+          </motion.div>
+
+          {/* Result levels */}
+          <div className="max-w-3xl mx-auto">
+            <p className="font-[Montserrat] text-xs uppercase tracking-[0.25em] text-[#FAFAF8]/40 mb-5 text-center">
+              {c.diagnostico.levelsTitle}
+            </p>
+            <div className="space-y-3">
+              {levels.map((lv, i) => (
+                <motion.div
+                  key={lv.name}
+                  initial={{ opacity: 0, x: -16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-20px" }}
+                  transition={{ delay: i * 0.08, duration: 0.4 }}
+                  className="flex items-center gap-4 sm:gap-6 px-5 py-4 rounded-lg border"
+                  style={{ background: `${NAVY}60`, borderColor: `${GOLD}15` }}
+                >
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: lv.color }} />
+                  <span className="font-[Cormorant] text-xl font-semibold text-[#FAFAF8] w-32 flex-shrink-0">
+                    {lv.name}
+                  </span>
+                  <span className="font-[Montserrat] text-xs text-[#FAFAF8]/50 w-20 flex-shrink-0 font-medium">
+                    {lv.range}
+                  </span>
+                  <span className="font-[Montserrat] text-sm text-[#FAFAF8]/60">
+                    — {lv.desc}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── ROI / RESULTADOS ─── */}
+      <section id="roi" className="relative py-24 lg:py-32 scroll-mt-20" style={{ background: NAVY }}>
+        <div className="max-w-6xl mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
+            className="text-center mb-14"
+          >
+            <motion.p variants={fadeUp} custom={0} className="font-[Montserrat] text-xs uppercase tracking-[0.3em] mb-4" style={{ color: GOLD }}>
+              {c.roi.eyebrow}
+            </motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="font-[Cormorant] text-3xl sm:text-4xl md:text-5xl font-semibold mb-5">
+              {c.roi.title}
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="font-[Montserrat] text-base text-[#FAFAF8]/65 max-w-2xl mx-auto">
+              {c.roi.subtitleA}{" "}
+              <span style={{ color: GOLD }} className="font-semibold">{c.roi.subtitleHighlight}</span>
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            variants={stagger}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-12"
+          >
+            {roiCards.map((card, i) => (
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                custom={i}
+                className="rounded-xl p-6 border flex flex-col"
+                style={{ background: `${NAVY_2}80`, borderColor: `${GOLD}20` }}
+              >
+                <h3 className="font-[Cormorant] text-xl font-semibold text-[#FAFAF8] mb-5">
+                  {card.title}
+                </h3>
+                <div className="space-y-4 flex-1">
+                  <div>
+                    <p className="font-[Montserrat] text-[10px] uppercase tracking-[0.2em] text-[#FAFAF8]/40 mb-1">
+                      {c.roi.labelProblem}
+                    </p>
+                    <p className="font-[Montserrat] text-xs text-[#FAFAF8]/70 leading-relaxed">
+                      {card.problem}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-[Montserrat] text-[10px] uppercase tracking-[0.2em] text-[#FAFAF8]/40 mb-1">
+                      {c.roi.labelImpact}
+                    </p>
+                    <p className="font-[Montserrat] text-xs font-semibold" style={{ color: GOLD }}>
+                      {card.impact}
+                    </p>
+                  </div>
+                  <div className="pt-3 border-t" style={{ borderColor: `${GOLD}15` }}>
+                    <p className="font-[Montserrat] text-[10px] uppercase tracking-[0.2em] text-[#FAFAF8]/40 mb-1">
+                      {c.roi.labelSaving}
+                    </p>
+                    <p className="font-[Cormorant] text-2xl font-bold" style={{ color: GOLD }}>
+                      {card.saving}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Total */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.5 }}
+            className="max-w-md mx-auto text-center rounded-2xl p-8 border"
+            style={{ background: `${NAVY_2}b0`, borderColor: `${GOLD}50` }}
+          >
+            <p className="font-[Montserrat] text-xs uppercase tracking-[0.25em] text-[#FAFAF8]/60 mb-3">
+              {c.roi.totalLabel}
+            </p>
+            <p className="font-[Cormorant] text-5xl sm:text-6xl font-bold" style={{ color: GOLD }}>
+              {c.roi.totalValue}
+              <span className="text-2xl ml-2 text-[#FAFAF8]/40 font-normal">{c.roi.totalSuffix}</span>
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── CALCULADORA ─── */}
+      <section id="calculadora" className="relative py-24 lg:py-32 scroll-mt-20" style={{ background: NAVY_2 }}>
+        <div className="max-w-6xl mx-auto px-6">
+          <CustoInvisivelCalculator onCta={() => scrollToId("proximos-passos")} />
+        </div>
+      </section>
+
+      {/* ─── IMPLEMENTAÇÃO ─── */}
+      <section id="como-funciona" className="relative py-24 lg:py-32 scroll-mt-20" style={{ background: NAVY }}>
+        <div className="max-w-5xl mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
+            className="text-center mb-14"
+          >
+            <motion.p variants={fadeUp} custom={0} className="font-[Montserrat] text-xs uppercase tracking-[0.3em] mb-4" style={{ color: GOLD }}>
+              {c.implementacao.eyebrow}
+            </motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="font-[Cormorant] text-3xl sm:text-4xl md:text-5xl font-semibold mb-5 leading-tight">
+              {c.implementacao.titleA}{" "}
+              <span style={{ color: GOLD }} className="italic">{c.implementacao.titleHighlight}</span>
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="font-[Montserrat] text-sm text-[#FAFAF8]/60 max-w-2xl mx-auto">
+              {c.implementacao.subtitle}
+            </motion.p>
           </motion.div>
 
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-40px" }}
-            variants={fadeUp}
-            custom={0}
-            className="overflow-x-auto"
-          >
-            <table className="w-full min-w-[640px] border-collapse">
-              <thead>
-                <tr>
-                  <th className="text-left font-[Montserrat] text-xs uppercase tracking-wider text-[#FAFAF8]/30 pb-4 pr-4 w-[160px]" />
-                  {comparisonTools.map((tool) => (
-                    <th
-                      key={tool}
-                      className={`text-left font-[Montserrat] text-xs uppercase tracking-wider pb-4 px-4 ${
-                        tool === "P.A.G.O."
-                          ? "text-[#D4C8A8]"
-                          : "text-[#FAFAF8]/40"
-                      }`}
-                    >
-                      {tool}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {comparisonRows.map((row, ri) => (
-                  <tr
-                    key={row.label}
-                    className={ri < comparisonRows.length - 1 ? "border-b border-[#FAFAF8]/5" : ""}
-                  >
-                    <td className="font-[Montserrat] text-sm text-[#FAFAF8]/50 py-5 pr-4 align-top">
-                      {row.label}
-                    </td>
-                    {row.values.map((val, vi) => (
-                      <td
-                        key={vi}
-                        className={`font-[Montserrat] text-sm py-5 px-4 align-top leading-relaxed ${
-                          vi === 3
-                            ? "text-[#D4C8A8] font-medium"
-                            : "text-[#FAFAF8]/40"
-                        }`}
-                      >
-                        {vi === 3 && (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-[#B8A88A] inline-block mr-1.5 -mt-0.5" />
-                        )}
-                        {val}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ─── HOW IT WORKS ─── */}
-      <section id="como-funciona" className="bg-[#1A2744] py-24 px-6 scroll-mt-20">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
             variants={stagger}
-            className="text-center mb-16"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
           >
-            <motion.p
-              variants={fadeUp}
-              custom={0}
-              className="font-[Montserrat] text-xs uppercase tracking-[0.25em] text-[#B8A88A] mb-3"
-            >
-              Processo
-            </motion.p>
-            <motion.h2
-              variants={fadeUp}
-              custom={1}
-              className="font-[Cormorant] text-3xl sm:text-4xl font-semibold text-[#FAFAF8]"
-            >
-              Como Funciona
-            </motion.h2>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
-            variants={stagger}
-            className="space-y-8"
-          >
-            {steps.map((step, i) => (
+            {implSteps.map((step, i) => (
               <motion.div
                 key={step.num}
                 variants={fadeUp}
                 custom={i}
-                className="flex gap-6 sm:gap-8 items-start"
+                className="relative rounded-xl p-6 border"
+                style={{ background: `${NAVY_2}80`, borderColor: `${GOLD}20` }}
               >
-                <div className="flex-shrink-0 w-12 h-12 rounded-full border border-[#B8A88A]/20 flex items-center justify-center">
-                  <span className="font-[Cormorant] text-xl font-bold text-[#D4C8A8]">
-                    {step.num}
-                  </span>
-                </div>
-                <div className="pt-1">
-                  <h3 className="font-[Cormorant] text-xl font-semibold text-[#FAFAF8] mb-2">
-                    {step.title}
-                  </h3>
-                  <p className="font-[Montserrat] text-sm text-[#FAFAF8]/50 leading-relaxed max-w-lg">
-                    {step.desc}
-                  </p>
-                </div>
+                <p className="font-[Cormorant] text-5xl font-bold mb-3" style={{ color: `${GOLD}55` }}>
+                  {step.num}
+                </p>
+                <h3 className="font-[Cormorant] text-xl font-semibold text-[#FAFAF8] mb-1">
+                  {step.title}
+                </h3>
+                <p className="font-[Montserrat] text-[10px] uppercase tracking-[0.2em] mb-3" style={{ color: GOLD }}>
+                  {step.period}
+                </p>
+                <p className="font-[Montserrat] text-sm text-[#FAFAF8]/55 leading-relaxed">
+                  {step.desc}
+                </p>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* ─── USE CASES ─── */}
-      <section id="casos" className="bg-[#0F1B2D] py-24 px-6 scroll-mt-20">
-        <div className="max-w-5xl mx-auto">
+      {/* ─── COMPARATIVO ─── */}
+      <section id="comparativo" className="relative py-24 lg:py-32 scroll-mt-20" style={{ background: NAVY_2 }}>
+        <div className="max-w-6xl mx-auto px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
             variants={stagger}
-            className="text-center mb-16"
+            className="text-center mb-14"
           >
-            <motion.p
-              variants={fadeUp}
-              custom={0}
-              className="font-[Montserrat] text-xs uppercase tracking-[0.25em] text-[#B8A88A] mb-3"
-            >
-              Aplicações
+            <motion.p variants={fadeUp} custom={0} className="font-[Montserrat] text-xs uppercase tracking-[0.3em] mb-4" style={{ color: GOLD }}>
+              {c.comparativo.eyebrow}
             </motion.p>
-            <motion.h2
-              variants={fadeUp}
-              custom={1}
-              className="font-[Cormorant] text-3xl sm:text-4xl font-semibold text-[#FAFAF8]"
-            >
-              Casos de Uso
+            <motion.h2 variants={fadeUp} custom={1} className="font-[Cormorant] text-3xl sm:text-4xl md:text-5xl font-semibold mb-5">
+              {c.comparativo.title}
             </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="font-[Montserrat] text-sm text-[#FAFAF8]/60 max-w-2xl mx-auto">
+              {c.comparativo.subtitle}
+            </motion.p>
+          </motion.div>
+
+          {/* vs Assessment */}
+          <div className="mb-16">
+            <h3 className="font-[Cormorant] text-xl sm:text-2xl font-semibold text-[#FAFAF8] text-center mb-8">
+              {c.comparativo.sectionA}
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[720px] border-collapse">
+                <thead>
+                  <tr>
+                    <th className="text-left font-[Montserrat] text-[10px] uppercase tracking-wider text-[#FAFAF8]/30 pb-4 pr-4 w-[160px]" />
+                    {tools.map((tool) => (
+                      <th key={tool} className="text-left font-[Montserrat] text-xs uppercase tracking-wider pb-4 px-4"
+                        style={{ color: tool === "P.A.G.O." ? GOLD : "rgba(250,250,248,0.4)" }}>
+                        {tool}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {compRows.map((row, ri) => (
+                    <tr key={row.label} className={ri < compRows.length - 1 ? "border-b" : ""} style={{ borderColor: "rgba(250,250,248,0.05)" }}>
+                      <td className="font-[Montserrat] text-sm text-[#FAFAF8]/50 py-5 pr-4 align-top">
+                        {row.label}
+                      </td>
+                      {row.values.map((val, vi) => (
+                        <td key={vi} className="font-[Montserrat] text-sm py-5 px-4 align-top leading-relaxed"
+                          style={{ color: vi === 3 ? GOLD : "rgba(250,250,248,0.4)", fontWeight: vi === 3 ? 500 : 400 }}>
+                          {vi === 3 && <CheckCircle2 className="w-3.5 h-3.5 inline-block mr-1.5 -mt-0.5" style={{ color: GOLD }} />}
+                          {val}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* vs Climate */}
+          <div>
+            <h3 className="font-[Cormorant] text-xl sm:text-2xl font-semibold text-[#FAFAF8] text-center mb-8">
+              {c.comparativo.sectionB}
+            </h3>
+            <div className="max-w-4xl mx-auto rounded-xl overflow-hidden border" style={{ borderColor: `${GOLD}20` }}>
+              <div className="grid grid-cols-2">
+                <div className="font-[Cormorant] text-sm sm:text-base font-semibold text-[#FAFAF8]/50 px-5 py-4 text-center border-r" style={{ background: `${NAVY}60`, borderColor: `${GOLD}20` }}>
+                  {c.comparativo.tradHeader}
+                </div>
+                <div className="font-[Cormorant] text-sm sm:text-base font-semibold px-5 py-4 text-center" style={{ background: `${GOLD}15`, color: GOLD }}>
+                  {c.comparativo.pagoHeader}
+                </div>
+              </div>
+              {climaRows.map((row, ri) => (
+                <div key={ri} className="grid grid-cols-2 border-t" style={{ borderColor: `${GOLD}10` }}>
+                  <div className="font-[Montserrat] text-xs sm:text-sm text-[#FAFAF8]/55 px-5 py-4 border-r" style={{ borderColor: `${GOLD}10` }}>
+                    {row[0]}
+                  </div>
+                  <div className="font-[Montserrat] text-xs sm:text-sm px-5 py-4 flex items-start gap-2" style={{ color: "rgba(250,250,248,0.9)" }}>
+                    <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" style={{ color: GOLD }} />
+                    {row[1]}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── CREDIBILIDADE / Jefferson ─── */}
+      <section id="credibilidade" className="relative py-24 lg:py-32 scroll-mt-20" style={{ background: NAVY }}>
+        <div className="max-w-5xl mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
+            className="text-center mb-14"
+          >
+            <motion.p variants={fadeUp} custom={0} className="font-[Montserrat] text-xs uppercase tracking-[0.3em] mb-4" style={{ color: GOLD }}>
+              {c.credibilidade.eyebrow}
+            </motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="font-[Cormorant] text-3xl sm:text-4xl md:text-5xl font-semibold max-w-3xl mx-auto leading-tight">
+              {c.credibilidade.title}
+            </motion.h2>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.6 }}
+            className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-8 lg:gap-12 items-start rounded-2xl p-8 sm:p-10 border"
+            style={{ background: `${NAVY_2}80`, borderColor: `${GOLD}25` }}
+          >
+            {/* Avatar */}
+            <div className="flex flex-col items-center text-center">
+              <div className="w-32 h-32 rounded-full flex items-center justify-center mb-4 border-2"
+                style={{ background: `${GOLD}15`, borderColor: `${GOLD}50`, color: GOLD }}>
+                <span className="font-[Cormorant] text-4xl font-bold">JE</span>
+              </div>
+              <p className="font-[Cormorant] text-lg font-semibold text-[#FAFAF8]">
+                {c.credibilidade.name}
+              </p>
+              <p className="font-[Montserrat] text-[11px] uppercase tracking-wider mt-1" style={{ color: GOLD }}>
+                {c.credibilidade.role}
+              </p>
+            </div>
+
+            <div>
+              <p className="font-[Montserrat] text-sm text-[#FAFAF8]/75 leading-relaxed mb-5">
+                {c.credibilidade.bio1}
+              </p>
+              <p className="font-[Montserrat] text-sm text-[#FAFAF8]/60 leading-relaxed mb-6">
+                {c.credibilidade.bio2}
+              </p>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 mb-6">
+                {credBullets.map((b) => (
+                  <li key={b} className="font-[Montserrat] text-xs text-[#FAFAF8]/70 flex items-start gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" style={{ color: GOLD }} />
+                    {b}
+                  </li>
+                ))}
+              </ul>
+              <blockquote className="relative pl-6 border-l-2 italic font-[Cormorant] text-lg sm:text-xl text-[#FAFAF8]/85"
+                style={{ borderColor: GOLD }}>
+                <Quote className="absolute -left-3 -top-1 w-5 h-5" style={{ color: GOLD }} />
+                "{c.credibilidade.quote}"
+              </blockquote>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── PRÓXIMOS PASSOS + FORM ─── */}
+      <section id="proximos-passos" className="relative py-24 lg:py-32 scroll-mt-20 overflow-hidden" style={{ background: NAVY_2 }}>
+        <StarField count={50} />
+        <div className="relative max-w-5xl mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
+            className="text-center mb-14"
+          >
+            <motion.p variants={fadeUp} custom={0} className="font-[Montserrat] text-xs uppercase tracking-[0.3em] mb-4" style={{ color: GOLD }}>
+              {c.proximosPassos.eyebrow}
+            </motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="font-[Cormorant] text-3xl sm:text-4xl md:text-5xl font-semibold mb-5 leading-tight">
+              {c.proximosPassos.titleA}{" "}
+              <span style={{ color: GOLD }} className="italic">{c.proximosPassos.titleHighlight}</span>{" "}
+              {c.proximosPassos.titleB}
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="font-[Montserrat] text-sm text-[#FAFAF8]/60 max-w-2xl mx-auto">
+              {c.proximosPassos.subtitle}
+            </motion.p>
           </motion.div>
 
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
+            viewport={{ once: true, margin: "-40px" }}
             variants={stagger}
-            className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-14"
           >
-            {useCases.map((uc, i) => {
-              const Icon = uc.icon;
-              return (
-                <motion.div
-                  key={uc.title}
-                  variants={fadeUp}
-                  custom={i}
-                  className="bg-[#1A2744]/50 border border-[#B8A88A]/8 rounded-xl p-8 hover:border-[#B8A88A]/20 transition-colors duration-300"
-                >
-                  <Icon className="w-6 h-6 text-[#B8A88A]/60 mb-5" />
-                  <h3 className="font-[Cormorant] text-xl font-semibold text-[#FAFAF8] mb-2">
-                    {uc.title}
-                  </h3>
-                  <p className="font-[Montserrat] text-sm text-[#FAFAF8]/50 leading-relaxed">
-                    {uc.desc}
-                  </p>
-                </motion.div>
-              );
-            })}
+            {proximosSteps.map((step, i) => (
+              <motion.div
+                key={step.num}
+                variants={fadeUp}
+                custom={i}
+                className="rounded-xl p-5 border text-center"
+                style={{ background: `${NAVY}90`, borderColor: `${GOLD}20` }}
+              >
+                <div className="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center border"
+                  style={{ borderColor: `${GOLD}50`, color: GOLD }}>
+                  <span className="font-[Cormorant] text-lg font-bold">{step.num}</span>
+                </div>
+                <h3 className="font-[Cormorant] text-base sm:text-lg font-semibold text-[#FAFAF8] mb-2">
+                  {step.title}
+                </h3>
+                <p className="font-[Montserrat] text-xs text-[#FAFAF8]/55 leading-relaxed">
+                  {step.desc}
+                </p>
+              </motion.div>
+            ))}
           </motion.div>
+
+          <B2BQualificationForm />
         </div>
       </section>
 
-      {/* ─── FINAL CTA ─── */}
-      <section id="contato" className="bg-gradient-to-b from-[#0F1B2D] to-[#1A2744] py-28 px-6 scroll-mt-20">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          variants={stagger}
-          className="max-w-2xl mx-auto text-center"
-        >
-          <motion.h2
-            variants={fadeUp}
-            custom={0}
-            className="font-[Cormorant] text-3xl sm:text-4xl font-semibold text-[#FAFAF8] mb-4"
-          >
-            Pronto para transformar a performance da sua equipa?
-          </motion.h2>
-          <motion.p
-            variants={fadeUp}
-            custom={1}
-            className="font-[Montserrat] text-sm text-[#FAFAF8]/50 mb-10"
-          >
-            Agende uma demonstração e descubra como o P.A.G.O. pode revelar o verdadeiro potencial da sua organização.
-          </motion.p>
-          <motion.div variants={fadeUp} custom={2}>
-            <button
-              onClick={() => setDemoOpen(true)}
-              className="group inline-flex items-center gap-3 bg-[#B8A88A] text-[#0F1B2D] font-[Montserrat] font-semibold text-sm uppercase tracking-wider px-8 py-4 rounded-lg hover:bg-[#D4C8A8] transition-colors duration-300"
-            >
-              Solicitar Demonstração
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* ─── ORG SELECTOR (logged-in users) ─── */}
+      {/* ─── ORG SELECTOR (logged-in) ─── */}
       {user && (
-        <section className="bg-[#1A2744] py-20 px-6">
+        <section className="relative py-20 px-6" style={{ background: NAVY }}>
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-10">
-              <Building2 className="w-10 h-10 text-[#B8A88A] mx-auto mb-4" />
+              <Building2 className="w-10 h-10 mx-auto mb-4" style={{ color: GOLD }} />
               <h2 className="font-[Cormorant] text-2xl font-semibold text-[#FAFAF8] mb-2">
                 {c.title}
               </h2>
@@ -555,51 +871,39 @@ export default function CorporateHome() {
 
             {authLoading || isLoading ? (
               <div className="flex justify-center">
-                <div className="w-8 h-8 border-2 border-[#B8A88A]/30 border-t-[#B8A88A] rounded-full animate-spin" />
+                <div className="w-8 h-8 rounded-full animate-spin border-2"
+                  style={{ borderColor: `${GOLD}40`, borderTopColor: GOLD }} />
               </div>
             ) : orgs && orgs.length > 0 ? (
-              <div className="space-y-4">
-                {orgs.map(
-                  (org: {
-                    orgId: number;
-                    orgName: string;
-                    orgSlug: string;
-                    orgLogo: string | null;
-                    memberRole: string;
-                  }) => (
-                    <button
-                      key={org.orgId}
-                      onClick={() => setLocation(`/corporate/${org.orgSlug}`)}
-                      className="w-full flex items-center justify-between bg-[#0F1B2D]/60 border border-[#B8A88A]/10 rounded-xl p-6 hover:border-[#B8A88A]/25 transition-colors duration-300 group"
-                    >
-                      <div className="flex items-center gap-4">
-                        {org.orgLogo ? (
-                          <img
-                            src={org.orgLogo}
-                            alt={org.orgName}
-                            className="w-12 h-12 rounded-lg object-cover"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 rounded-lg bg-[#B8A88A]/10 flex items-center justify-center">
-                            <Building2 className="w-6 h-6 text-[#B8A88A]" />
-                          </div>
-                        )}
-                        <div className="text-left">
-                          <p className="font-[Cormorant] text-lg font-semibold text-[#FAFAF8]">
-                            {org.orgName}
-                          </p>
-                          <p className="font-[Montserrat] text-[#FAFAF8]/40 text-xs uppercase tracking-wider">
-                            {org.memberRole.replace("_", " ")}
-                          </p>
+              <div className="space-y-3">
+                {orgs.map((org: { orgId: number; orgName: string; orgSlug: string; orgLogo: string | null; memberRole: string }) => (
+                  <button
+                    key={org.orgId}
+                    onClick={() => setLocation(`/corporate/${org.orgSlug}`)}
+                    className="w-full flex items-center justify-between rounded-xl p-5 border group transition-colors"
+                    style={{ background: `${NAVY_2}80`, borderColor: `${GOLD}20` }}
+                  >
+                    <div className="flex items-center gap-4">
+                      {org.orgLogo ? (
+                        <img src={org.orgLogo} alt={org.orgName} className="w-11 h-11 rounded-lg object-cover" />
+                      ) : (
+                        <div className="w-11 h-11 rounded-lg flex items-center justify-center" style={{ background: `${GOLD}15` }}>
+                          <Building2 className="w-5 h-5" style={{ color: GOLD }} />
                         </div>
+                      )}
+                      <div className="text-left">
+                        <p className="font-[Cormorant] text-lg font-semibold text-[#FAFAF8]">{org.orgName}</p>
+                        <p className="font-[Montserrat] text-[#FAFAF8]/40 text-[10px] uppercase tracking-wider">
+                          {org.memberRole.replace("_", " ")}
+                        </p>
                       </div>
-                      <ArrowRight className="w-5 h-5 text-[#B8A88A]/40 group-hover:text-[#B8A88A] transition-colors" />
-                    </button>
-                  )
-                )}
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-[#FAFAF8]/40 group-hover:text-[#FAFAF8] transition-colors" />
+                  </button>
+                ))}
               </div>
             ) : (
-              <div className="bg-[#0F1B2D]/60 border border-[#B8A88A]/10 rounded-xl p-8 text-center">
+              <div className="rounded-xl p-8 text-center border" style={{ background: `${NAVY_2}80`, borderColor: `${GOLD}20` }}>
                 <p className="font-[Montserrat] text-sm text-[#FAFAF8]/50">
                   {c.noOrgs}
                 </p>
@@ -611,28 +915,19 @@ export default function CorporateHome() {
 
       {/* Login section for non-authenticated users */}
       {!user && !authLoading && (
-        <section className="relative bg-[#0F1B2D] py-20 px-6 overflow-hidden">
-          <img
-            src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&h=600&fit=crop&crop=center&q=80"
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ filter: "brightness(0.2) saturate(0.3)" }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0F1B2D]/80 via-[#0F1B2D]/60 to-[#0F1B2D]/80" />
-          <div className="relative z-10 max-w-lg mx-auto text-center">
-            <LogIn className="w-8 h-8 text-[#B8A88A] mx-auto mb-4" />
+        <section className="relative py-20 px-6" style={{ background: NAVY }}>
+          <div className="max-w-lg mx-auto text-center">
+            <LogIn className="w-7 h-7 mx-auto mb-4" style={{ color: GOLD }} />
             <h2 className="font-[Cormorant] text-2xl font-semibold text-[#FAFAF8] mb-3">
-              Já recebeu um convite?
+              {c.loginPrompt}
             </h2>
-            <p className="font-[Montserrat] text-sm text-[#FAFAF8]/40 mb-8 leading-relaxed">
-              Se a sua organização já utiliza o P.A.G.O. Corporativo, faça login para aceder ao seu diagnóstico.
-            </p>
             <a
               href="/login?returnTo=%2Fcorporate"
-              className="inline-flex items-center gap-3 bg-[#B8A88A] text-[#0F1B2D] font-[Montserrat] font-semibold text-sm uppercase tracking-wider px-8 py-4 rounded-lg hover:bg-[#D4C8A8] transition-colors duration-300"
+              className="inline-flex items-center gap-3 font-[Montserrat] font-semibold text-sm uppercase tracking-wider px-7 py-3.5 rounded-lg transition-colors duration-300"
+              style={{ background: GOLD, color: NAVY }}
             >
               <LogIn className="w-4 h-4" />
-              Acessar Minha Conta
+              {c.loginButton}
             </a>
           </div>
         </section>
@@ -640,6 +935,6 @@ export default function CorporateHome() {
 
       <Footer />
       <DemoRequestModal open={demoOpen} onOpenChange={setDemoOpen} />
-    </>
+    </div>
   );
 }
