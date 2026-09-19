@@ -7,7 +7,8 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useSiteContext } from "@/hooks/useSiteContext";
 import LanguageSelector from "@/components/LanguageSelector";
 
-const LOGO_URL = "/images/logo.webp";
+const LOGO_DARK_INK = "/images/logo-wordmark.webp";   // tinta navy, p/ fundo claro
+const LOGO_LIGHT_INK = "/images/logo-wordmark-light.webp"; // tinta clara, p/ fundo escuro
 
 // Routes that are NOT the homepage — these have light backgrounds and need dark nav text always
 function isLightBgRoute(pathname: string): boolean {
@@ -65,26 +66,18 @@ export default function Navbar() {
         <div className="max-w-[1440px] mx-auto px-4 lg:px-6 xl:px-10">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <a href="/" className="flex items-center gap-3 shrink-0 mr-4 xl:mr-8">
-              <span className="h-12 w-12 shrink-0 rounded-full bg-white overflow-hidden flex items-center justify-center">
-                <img
-                  src={LOGO_URL}
-                  alt="P.A.G.O Novo Tempo"
-                  className="h-full w-full object-cover scale-[1.75]"
-                />
-              </span>
-              <div className="hidden sm:block lg:hidden xl:block">
-                <span className={`font-display text-xl font-semibold tracking-wide transition-colors duration-500 ${
-                  scrolled ? "text-navy" : "text-warm-white"
-                }`}>
-                  P.A.G.O
-                </span>
-                <span className={`block font-accent text-[10px] uppercase tracking-[0.3em] transition-colors duration-500 ${
-                  scrolled ? "text-blue-muted" : "text-warm-white/70"
-                }`}>
-                  {t.nav.tagline}
-                </span>
-              </div>
+            <a href="/" className="relative block h-10 lg:h-11 shrink-0 mr-4 xl:mr-8" aria-label="P.A.G.O Novo Tempo">
+              <img
+                src={LOGO_LIGHT_INK}
+                alt="P.A.G.O Novo Tempo"
+                className={`h-full w-auto transition-opacity duration-500 ${scrolled ? "opacity-0" : "opacity-100"}`}
+              />
+              <img
+                src={LOGO_DARK_INK}
+                alt=""
+                aria-hidden="true"
+                className={`absolute inset-0 h-full w-auto transition-opacity duration-500 ${scrolled ? "opacity-100" : "opacity-0"}`}
+              />
             </a>
 
             {/* Desktop Nav */}

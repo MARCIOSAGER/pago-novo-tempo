@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContext } from "@/hooks/useSiteContext";
 
-const LOGO_URL = "/images/logo.webp";
+const LOGO_URL = "/images/logo-wordmark-light.webp";
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -35,23 +35,11 @@ export default function Footer() {
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 mb-16">
           {/* Brand */}
           <div className="lg:col-span-4">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="h-12 w-12 shrink-0 rounded-full bg-white overflow-hidden flex items-center justify-center">
-                <img
-                  src={LOGO_URL}
-                  alt="P.A.G.O Novo Tempo"
-                  className="h-full w-full object-cover scale-[1.75]"
-                />
-              </span>
-              <div>
-                <span className="font-display text-xl font-semibold text-warm-white tracking-wide">
-                  P.A.G.O
-                </span>
-                <span className="block font-accent text-[10px] uppercase tracking-[0.3em] text-gold">
-                  {t.nav.tagline}
-                </span>
-              </div>
-            </div>
+            <img
+              src={LOGO_URL}
+              alt="P.A.G.O Novo Tempo"
+              className="h-12 w-auto mb-6"
+            />
             <p className="font-body text-sm text-warm-white/70 leading-relaxed max-w-sm">
               {t.footer.description}
             </p>
