@@ -21,7 +21,7 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
   );
 }
 
-const HERO_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/hero-bg-fyJtxWkcWj2UeE7kR85wJt.webp";
+const HERO_BG = "/images/pillars/hero-bg.png";
 
 export default function CTASection() {
   const { t } = useLanguage();

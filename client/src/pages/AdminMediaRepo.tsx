@@ -33,18 +33,18 @@ interface MediaItem {
 
 const logos: MediaItem[] = [
   {
-    name: "Logo P.A.G.O — Branco",
-    description: "Logo principal em fundo transparente, versão branca para fundos escuros.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo-white-5ULVBxzBhJzXMoTJVXNLbQ.webp",
+    name: "Logo P.A.G.O — Fundo escuro",
+    description: "Logo em branco sobre navy, para fundos escuros e redes sociais.",
+    url: "/images/logo-dark.webp",
     category: "logo",
-    dimensions: "512×512",
+    dimensions: "2048×2048",
   },
   {
-    name: "Logo P.A.G.O — Circular",
-    description: "Logo circular para uso em avatares, perfis de redes sociais e favicon.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo-circle-hSRNNRjjkpHjSKMfuEKkpH.webp",
+    name: "Logo P.A.G.O — Ícone",
+    description: "Marca em moldura dourada usada no menu, rodapé e avatares.",
+    url: "/images/logo.webp",
     category: "logo",
-    dimensions: "512×512",
+    dimensions: "2048×2048",
   },
 ];
 

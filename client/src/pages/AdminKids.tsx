@@ -76,49 +76,49 @@ const illustrations: Illustration[] = [
   {
     title: "Capa — Crianças Construindo",
     description: "Três crianças construindo uma casa com blocos P.A.G.O sobre a rocha.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-cover-YXFafqXyCNBnqLPKUrfJyB.png",
+    url: "/images/kids/capa.jpeg",
     chapter: "Capa",
   },
   {
     title: "Os Dois Construtores",
     description: "Duas casas: uma na rocha firme, outra na areia — parábola de Mateus 7:24-27.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-ch1-builders-YA5WrSMQaqx6SoHwYspcQM.png",
+    url: "/images/kids/principio.jpeg",
     chapter: "Cap. 1",
   },
   {
     title: "Daniel e a Comida do Rei",
     description: "Daniel recusando a comida do rei, escolhendo seguir seus princípios.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-ch2-daniel-7y6M4xTRiBLh8aTbqVJzPa.png",
+    url: "/images/kids/alinhamento.jpeg",
     chapter: "Cap. 2",
   },
   {
     title: "Noé e a Arca",
     description: "Noé construindo a arca com animais ao redor — obediência e alinhamento.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-ch3-noah-FNP7LjziRUZjAZgD6u4bba.png",
+    url: "",
     chapter: "Cap. 3",
   },
   {
     title: "Navio com Bandeiras P.A.G.O",
     description: "Navio navegando com bandeiras dos 4 pilares — governo e direção.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-ch4-ship-8CZgvngTa28Tg79fAXBxZo.png",
+    url: "/images/kids/governo.jpeg",
     chapter: "Cap. 4",
   },
   {
     title: "Davi e Golias",
     description: "Davi enfrentando Golias com coragem — obediência e confiança em Deus.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-ch5-david-ZyaG6ACBHyHVFeVWJ3nkeD.png",
+    url: "/images/kids/obediencia.jpeg",
     chapter: "Cap. 5",
   },
   {
     title: "Casa Completa com 4 Pilares",
     description: "Casa colorida com os 4 pilares P.A.G.O — integração final.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-ch6-house-jvqcdRzsdVKSQveo947cpe.png",
+    url: "",
     chapter: "Cap. 6",
   },
   {
     title: "Mapa da Missão 7 Dias",
     description: "Mapa de aventura com 7 pontos — desafio semanal em família.",
-    url: "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-ch7-mission-mQHHDJ5szUEpsey9XNcCdP.png",
+    url: "",
     chapter: "Cap. 7",
   },
 ];
@@ -266,11 +266,17 @@ export default function AdminKids() {
           {illustrations.map((illust) => (
             <Card key={illust.title} className="border-border/50 overflow-hidden group hover:shadow-md transition-shadow">
               <div className="aspect-square overflow-hidden bg-muted relative">
-                <img
-                  src={illust.url}
-                  alt={illust.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {illust.url ? (
+                  <img
+                    src={illust.url}
+                    alt={illust.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-[10px] text-muted-foreground text-center px-3 font-accent">
+                    Original perdido —<br />reenviar arquivo
+                  </div>
+                )}
                 <Badge className="absolute top-2 left-2 text-[9px]" variant="secondary">
                   {illust.chapter}
                 </Badge>
@@ -282,15 +288,17 @@ export default function AdminKids() {
                 <p className="text-[10px] text-muted-foreground line-clamp-2">
                   {illust.description}
                 </p>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-7 gap-1 text-[10px] font-accent mt-2 w-full"
-                  onClick={() => window.open(illust.url, "_blank")}
-                >
-                  <ExternalLink className="h-3 w-3" />
-                  Abrir Original
-                </Button>
+                {illust.url && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 gap-1 text-[10px] font-accent mt-2 w-full"
+                    onClick={() => window.open(illust.url, "_blank")}
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                    Abrir Original
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))}

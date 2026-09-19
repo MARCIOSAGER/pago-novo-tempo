@@ -7,7 +7,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useSiteContext } from "@/hooks/useSiteContext";
 import LanguageSelector from "@/components/LanguageSelector";
 
-const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-logo_ea5770c3.jpeg";
+const LOGO_URL = "/images/logo.webp";
 
 // Routes that are NOT the homepage — these have light backgrounds and need dark nav text always
 function isLightBgRoute(pathname: string): boolean {
@@ -66,11 +66,13 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <a href="/" className="flex items-center gap-3 shrink-0 mr-4 xl:mr-8">
-              <img
-                src={LOGO_URL}
-                alt="P.A.G.O Novo Tempo"
-                className="h-12 w-12 rounded-full object-cover"
-              />
+              <span className="h-12 w-12 shrink-0 rounded-full bg-white overflow-hidden flex items-center justify-center">
+                <img
+                  src={LOGO_URL}
+                  alt="P.A.G.O Novo Tempo"
+                  className="h-full w-full object-cover scale-[1.75]"
+                />
+              </span>
               <div className="hidden sm:block lg:hidden xl:block">
                 <span className={`font-display text-xl font-semibold tracking-wide transition-colors duration-500 ${
                   scrolled ? "text-navy" : "text-warm-white"

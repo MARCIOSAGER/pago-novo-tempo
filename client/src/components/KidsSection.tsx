@@ -4,9 +4,13 @@ import { BookOpen, Palette, Calendar, Heart, Download, Eye, Star, Users, Award }
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteLinks } from "@/hooks/useSiteLinks";
 
-const KIDS_COVER_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-cover-YXFafqXyCNBnqLPKUrfJyB.png";
-const KIDS_HOUSE_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-ch6-house-jvqcdRzsdVKSQveo947cpe.png";
-const KIDS_BUILDERS_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310419663028643999/FWKBucVCwodcLLRRkU5GKw/pago-kids-ch1-builders-YA5WrSMQaqx6SoHwYspcQM.png";
+const KIDS_COVER_URL = "/images/kids/capa.jpeg";
+const KIDS_PILLARS = [
+  { src: "/images/kids/principio.jpeg", alt: "P.A.G.O Kids — Princípio" },
+  { src: "/images/kids/alinhamento.jpeg", alt: "P.A.G.O Kids — Alinhamento" },
+  { src: "/images/kids/governo.jpeg", alt: "P.A.G.O Kids — Governo" },
+  { src: "/images/kids/obediencia.jpeg", alt: "P.A.G.O Kids — Obediência" },
+];
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -77,9 +81,9 @@ export default function KidsSection() {
 
         {/* Main content — Book showcase + Features */}
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-20">
-          {/* Left — Book cover with floating illustrations */}
+          {/* Left — Book cover + pillar pages */}
           <FadeIn delay={0.1}>
-            <div className="relative flex justify-center">
+            <div className="flex flex-col items-center gap-6">
               {/* Main book cover */}
               <motion.div
                 className="relative z-10"
@@ -101,23 +105,19 @@ export default function KidsSection() {
                 </div>
               </motion.div>
 
-              {/* Floating illustration — builders */}
-              <motion.img
-                src={KIDS_BUILDERS_URL}
-                alt=""
-                className="absolute -left-4 top-8 w-28 h-28 rounded-xl shadow-lg object-cover border-4 border-white z-0 hidden lg:block"
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              />
-
-              {/* Floating illustration — house */}
-              <motion.img
-                src={KIDS_HOUSE_URL}
-                alt=""
-                className="absolute -right-4 bottom-8 w-24 h-24 rounded-xl shadow-lg object-cover border-4 border-white z-0 hidden lg:block"
-                animate={{ y: [0, 8, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              />
+              {/* Páginas dos pilares */}
+              <div className="grid grid-cols-4 gap-2 sm:gap-3 w-72 lg:w-80">
+                {KIDS_PILLARS.map((pillar, i) => (
+                  <motion.img
+                    key={pillar.src}
+                    src={pillar.src}
+                    alt={pillar.alt}
+                    className="w-full aspect-[9/16] object-cover rounded-lg shadow-md border-2 border-white"
+                    animate={{ y: [0, -6, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
+                  />
+                ))}
+              </div>
             </div>
           </FadeIn>
 
